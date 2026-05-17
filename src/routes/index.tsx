@@ -37,19 +37,28 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
+  const [bookingTour, setBookingTour] = useState<Tour | null>(null);
   return (
     <div className="min-h-screen bg-paper text-ink">
       <Nav overlay />
       <Hero />
       <AboutSection />
-      <FlashDeals />
+      <FlashDeals onBook={setBookingTour} />
       <WhyTravel />
-      <PopularTours />
+      <PopularTours onBook={setBookingTour} />
       <Destinations />
       <Gallery />
       <TravelTipsAndSignup />
       <Footer />
       <WhatsappFab />
+      <BookingModal
+        tour={bookingTour}
+        open={!!bookingTour}
+        onOpenChange={(v) => !v && setBookingTour(null)}
+      />
+    </div>
+  );
+}
     </div>
   );
 }
