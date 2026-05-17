@@ -30,11 +30,7 @@ export function Nav({ overlay = false }: { overlay?: boolean }) {
         </div>
         <Link
           to="/tours"
-          className={`px-5 py-2 rounded-full eyebrow font-medium border transition-all ${
-            solid
-              ? "border-ink/20 hover:bg-ink hover:text-paper"
-              : "border-white/30 hover:bg-white hover:text-ink"
-          }`}
+          className="px-5 py-2 rounded-full eyebrow font-medium border border-white/30 hover:bg-gold hover:text-ink hover:border-gold transition-all"
         >
           Book Experience
         </Link>
