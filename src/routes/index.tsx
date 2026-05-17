@@ -234,7 +234,7 @@ function AboutSection() {
 
 /* ============================== FLASH DEALS ============================== */
 
-function FlashDeals() {
+function FlashDeals({ onBook }: { onBook: (t: Tour) => void }) {
   const deals = tours.slice(0, 4);
   return (
     <section className="bg-cloud/60 py-20 md:py-24">
@@ -253,7 +253,7 @@ function FlashDeals() {
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {deals.map((t) => (
-            <FlashCard key={t.slug} tour={t} />
+            <FlashCard key={t.slug} tour={t} onBook={() => onBook(t)} />
           ))}
         </div>
       </div>
@@ -261,7 +261,7 @@ function FlashDeals() {
   );
 }
 
-function FlashCard({ tour }: { tour: typeof tours[number] }) {
+function FlashCard({ tour, onBook }: { tour: Tour; onBook: () => void }) {
   return (
     <Link
       to="/tours/$slug"
