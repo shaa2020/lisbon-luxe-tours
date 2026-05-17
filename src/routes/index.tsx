@@ -1,312 +1,317 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import heroImg from "@/assets/hero-lisbon.jpg";
+import alfamaImg from "@/assets/tour-alfama.jpg";
+import sintraImg from "@/assets/tour-sintra.jpg";
+import belemImg from "@/assets/dest-belem.jpg";
+import cascaisImg from "@/assets/dest-cascais.jpg";
+import caboImg from "@/assets/tour-caboroca.jpg";
 import vanImg from "@/assets/fleet-van.jpg";
-import { tours, categories } from "@/data/tours";
-import { TourCard } from "@/components/site/TourCard";
 import { Nav } from "@/components/site/Nav";
 import { Footer } from "@/components/site/Footer";
 import { WhatsappFab } from "@/components/site/Whatsapp";
 
 export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: "Lumen Lisboa — Private Tuk Tuk & Luxury Tours in Portugal" },
+      {
+        name: "description",
+        content:
+          "Private tuk-tuk and chauffeured tours across Lisbon, Sintra, Belém, Cascais and Cabo da Roca. Cinematic itineraries crafted by locals.",
+      },
+      { property: "og:title", content: "Lumen Lisboa — Cinematic Private Tours of Portugal" },
+      {
+        property: "og:description",
+        content: "From Alfama's azulejo-lined alleys to Sintra's mist-wreathed palaces — a quiet, private way to see Portugal.",
+      },
+      { property: "og:image", content: "/og-portugal.jpg" },
+    ],
+  }),
   component: Index,
 });
 
-const reviews = [
+const quickFacts = [
+  { img: alfamaImg, top: "7 districts", bottom: "across Lisboa" },
+  { img: sintraImg, top: "Pena, Quinta,", bottom: "Monserrate" },
+  { img: belemImg, top: "Pastéis warm", bottom: "from the oven" },
+  { img: cascaisImg, top: "Sunset wine", bottom: "by the Atlantic" },
+  { img: caboImg, top: "Westernmost", bottom: "tip of Europe" },
+];
+
+const itinerary = [
   {
-    name: "Sophia Bernard",
-    origin: "Paris, France",
-    quote:
-      "An afternoon that felt entirely our own — our guide unlocked the Alfama I'd been chasing for years. Discreet, knowledgeable, and effortlessly elegant.",
+    days: "Day 01 — 02",
+    place: "Lisboa & Alfama",
+    body:
+      "Begin in the old Moorish quarter — fado echoing from tavernas, miradouros at golden hour, ginjinha from a chipped ceramic cup. Tram 28, São Jorge castle, the tile museum in Madre de Deus.",
+    imgs: [alfamaImg, belemImg],
   },
   {
-    name: "James Whitaker",
-    origin: "London, UK",
-    quote:
-      "The Sintra day in the V-Class was flawless. They skipped every line, knew exactly where the light would be best, and never once felt like a tourist circuit.",
+    days: "Day 03 — 04",
+    place: "Belém & the River",
+    body:
+      "Jerónimos Monastery before the queues form, custard tarts at the original Pastéis de Belém, the Tower at low tide. A river-side lunch of grilled sardines and vinho verde.",
+    imgs: [belemImg],
   },
   {
-    name: "Mia Tanaka",
-    origin: "Tokyo, Japan",
-    quote:
-      "Cabo da Roca at sunset, sparkling wine in hand. This is how Lisbon should be seen — slowly, privately, and with someone who genuinely loves it.",
+    days: "Day 05 — 06",
+    place: "Sintra & Cabo da Roca",
+    body:
+      "Up through Sintra's misty laurel forest to Pena Palace and the Initiation Well at Quinta da Regaleira. Travesseiros in the village, then west to the very edge of the continent.",
+    imgs: [sintraImg, caboImg],
+  },
+  {
+    days: "Day 07",
+    place: "Cascais Coast",
+    body:
+      "Boca do Inferno at sunrise, Guincho beach for surfers and sea spray, lunch in a fisherman's cantina. End with a private rooftop sundowner overlooking the marina.",
+    imgs: [cascaisImg],
   },
 ];
 
-const faqs = [
-  {
-    q: "Are your tuk-tuks electric?",
-    a: "Yes — our entire tuk-tuk fleet is 100% electric, which means a silent ride through Alfama's narrow streets and zero local emissions.",
-  },
-  {
-    q: "Do you pick up from my hotel?",
-    a: "Every experience includes door-to-door pick-up and drop-off anywhere in central Lisbon. For Sintra and Cascais tours we also reach surrounding suburbs.",
-  },
-  {
-    q: "Can I customise the itinerary?",
-    a: "Absolutely. Most clients book a signature route and then add a stop or two — a vineyard, a private rooftop dinner, a specific viewpoint. Just tell your concierge.",
-  },
-  {
-    q: "What languages do your guides speak?",
-    a: "Native English and Portuguese always. French, Spanish, German and Italian on request — please flag at booking.",
-  },
+const included = [
+  { icon: "🛺", title: "Electric Tuk-Tuks", body: "Silent, zero-emission rides through Alfama's narrow lanes — open-air, sunset-ready." },
+  { icon: "🚐", title: "Mercedes V-Class", body: "Chauffeured executive vans for Sintra & Cascais days. Leather, climate, chilled water." },
+  { icon: "🥂", title: "Tastings Included", body: "Pastéis de nata, vinho do Porto, ginjinha & a vineyard stop on full-day itineraries." },
+  { icon: "🗝️", title: "Local Concierge", body: "A multilingual guide who grew up on these hills — bookings, skip-the-line, reservations." },
 ];
 
 function Index() {
-  const featured = tours.filter((t) => t.featured);
-
   return (
-    <div className="min-h-screen bg-paper text-ink selection:bg-gold/20">
+    <div className="min-h-screen bg-[#0b0b09] text-white selection:bg-gold/20">
       <Nav overlay />
 
-      {/* Hero */}
-      <section className="relative h-[92vh] flex items-center justify-center overflow-hidden bg-ink">
+      {/* HERO with oversized title */}
+      <section className="relative min-h-[100vh] flex flex-col justify-end overflow-hidden bg-black">
         <img
           src={heroImg}
-          alt="Lisbon rooftops at golden hour"
+          alt="Lisbon rooftops at golden hour with the Tagus river"
           width={1920}
           height={1088}
-          className="absolute inset-0 w-full h-full object-cover opacity-65 animate-[scale-in_1.4s_var(--ease-out-expo)]"
+          className="absolute inset-0 w-full h-full object-cover opacity-80 animate-[scale-in_1.6s_var(--ease-out-expo)]"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-ink/30 via-transparent to-ink/40" />
-        <div className="relative z-10 text-center px-4 animate-[fade-up_1s_var(--ease-out-expo)_both]">
-          <p className="text-gold-muted eyebrow mb-6">Lisbon · Sintra · Cascais</p>
-          <h1 className="font-serif text-5xl md:text-7xl lg:text-8xl text-white italic leading-[0.95] mb-12 max-w-4xl mx-auto text-balance">
-            The soul of Portugal,
-            <br />
-            curated for the <span className="text-gold">discerning.</span>
-          </h1>
+        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/85" />
 
-          <div className="mx-auto max-w-3xl bg-white/10 backdrop-blur-md rounded-2xl p-2 border border-white/15 shadow-2xl flex flex-col md:flex-row gap-2">
-            <div className="flex-1 px-6 py-3 flex flex-col items-start text-left">
-              <span className="text-[9px] uppercase tracking-widest text-white/50 mb-1">Destination</span>
-              <span className="text-sm text-white">Sintra Palace Gardens</span>
-            </div>
-            <div className="flex-1 px-6 py-3 flex flex-col items-start text-left md:border-l border-white/10">
-              <span className="text-[9px] uppercase tracking-widest text-white/50 mb-1">When</span>
-              <span className="text-sm text-white">Check availability</span>
+        {/* oversized PORTUGAL wordmark */}
+        <div className="relative z-10 px-4 pt-32 md:pt-40 text-center animate-[fade-up_1s_var(--ease-out-expo)_both]">
+          <p className="eyebrow text-gold-muted mb-4">Lisboa · Sintra · Cascais · Belém</p>
+          <h1
+            className="font-serif italic text-white/95 leading-[0.85] tracking-tight mx-auto"
+            style={{ fontSize: "clamp(72px, 18vw, 280px)" }}
+          >
+            Portugal
+          </h1>
+        </div>
+
+        {/* facts strip + book card */}
+        <div className="relative z-10 px-4 md:px-10 pb-12 md:pb-16 mt-12 md:mt-16">
+          <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-6 items-end">
+            <div className="flex-1 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+              {quickFacts.map((f, i) => (
+                <div
+                  key={i}
+                  className="relative aspect-[3/4] rounded-xl overflow-hidden ring-1 ring-white/15 group cursor-pointer animate-[fade-up_1s_var(--ease-out-expo)_both]"
+                  style={{ animationDelay: `${0.2 + i * 0.08}s` }}
+                >
+                  <img src={f.img} alt={f.top} className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
+                  <div className="absolute bottom-0 left-0 p-3 text-[11px] leading-tight text-white">
+                    <div>{f.top}</div>
+                    <div className="text-white/70">{f.bottom}</div>
+                  </div>
+                </div>
+              ))}
             </div>
             <Link
               to="/tours"
-              className="bg-gold hover:bg-gold-muted text-ink font-medium px-10 py-4 rounded-xl transition-all uppercase text-xs tracking-widest text-center"
+              className="lg:w-64 w-full text-center px-10 py-5 rounded-full border border-gold/60 bg-white/5 backdrop-blur-md text-white eyebrow hover:bg-gold hover:text-ink transition-colors"
             >
-              Inquire Now
+              Book a Journey
             </Link>
           </div>
         </div>
-      </section>
 
-      {/* Featured */}
-      <section className="py-24 md:py-32 px-6 md:px-10 max-w-7xl mx-auto">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 md:mb-20 gap-8">
-          <div className="max-w-xl">
-            <p className="eyebrow text-gold mb-4">Signature Journeys</p>
-            <h2 className="font-serif text-4xl md:text-5xl mb-6">Beyond the standard routes</h2>
-            <p className="text-ink/60 leading-relaxed text-pretty">
-              Quiet access to the corners of Portugal that remain whispered secrets — curated by
-              people who grew up on these hills.
-            </p>
-          </div>
-          <Link
-            to="/tours"
-            className="eyebrow border-b border-gold pb-1 hover:text-gold transition-colors"
-          >
-            View all experiences →
-          </Link>
-        </div>
-
-        <div className="grid md:grid-cols-3 gap-8">
-          {featured.map((t, i) => (
-            <TourCard key={t.slug} tour={t} offset={i === 1} />
+        {/* floating social rail */}
+        <div className="hidden md:flex absolute right-6 top-1/2 -translate-y-1/2 z-10 flex-col gap-3">
+          {["IG", "FB", "TG"].map((s) => (
+            <a
+              key={s}
+              href="#"
+              className="w-10 h-10 rounded-full border border-white/20 grid place-items-center text-[10px] tracking-widest text-white/70 hover:bg-gold hover:text-ink hover:border-gold transition"
+            >
+              {s}
+            </a>
           ))}
         </div>
       </section>
 
-      {/* Philosophy / Fleet */}
-      <section className="bg-ink text-white py-24 md:py-32 mt-20">
-        <div className="max-w-7xl mx-auto px-6 md:px-10 grid md:grid-cols-2 gap-16 md:gap-20 items-center">
+      {/* ABOUT THE TOUR */}
+      <section className="py-24 md:py-32 px-6 md:px-10 bg-[#0b0b09]">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex items-center gap-6 mb-16">
+            <div className="h-px flex-1 bg-white/20" />
+            <h2 className="font-serif text-3xl md:text-5xl tracking-wide text-white/80 uppercase">About the Journey</h2>
+            <div className="h-px flex-1 bg-white/20" />
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-12 md:gap-20 mb-24">
+            <div>
+              <p className="text-white/70 leading-relaxed mb-6 max-w-md">
+                We've shaped a seven-day private itinerary that strings together the
+                soul of Portugal — three iconic regions, a dozen quiet detours.
+                <br /><br />
+                <span className="text-gold">Lisboa, Sintra and the Atlantic coast.</span>
+              </p>
+            </div>
+            <div>
+              <p className="text-white/60 leading-relaxed mb-6 max-w-md">
+                You won't worry about routes, schedules, or queues — everything is
+                arranged. We'll tell you where to wander, what to taste, and where
+                the light falls best, so you can{" "}
+                <span className="text-gold">simply live the days.</span>
+              </p>
+            </div>
+          </div>
+
+          {/* Timeline */}
+          <div className="relative pl-6 md:pl-0">
+            <div className="absolute md:left-1/2 left-2 top-0 bottom-0 w-px bg-white/15" />
+            <div className="space-y-20 md:space-y-32">
+              {itinerary.map((row, i) => (
+                <div key={row.days} className="relative grid md:grid-cols-2 gap-10 items-center">
+                  {/* dot */}
+                  <div className="absolute md:left-1/2 left-2 -translate-x-1/2 w-3 h-3 rounded-full bg-gold ring-4 ring-[#0b0b09]" />
+
+                  <div className={i % 2 === 0 ? "md:pr-16 md:text-right" : "md:order-2 md:pl-16"}>
+                    <p className="font-mono text-xs tracking-widest text-white/40 mb-3">{row.days}</p>
+                    <h3 className="font-serif italic text-3xl md:text-4xl text-white mb-4">{row.place}</h3>
+                    <p className="text-white/60 leading-relaxed max-w-md md:max-w-none md:inline-block">{row.body}</p>
+                  </div>
+
+                  <div className={`flex gap-4 ${i % 2 === 0 ? "md:pl-16" : "md:order-1 md:pr-16 md:justify-end"}`}>
+                    {row.imgs.map((src, j) => (
+                      <img
+                        key={j}
+                        src={src}
+                        alt={row.place}
+                        loading="lazy"
+                        className={`rounded-xl object-cover shadow-2xl ${
+                          j === 0 ? "w-44 md:w-56 aspect-[3/4]" : "w-32 md:w-44 aspect-square mt-12"
+                        }`}
+                      />
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* WHAT'S INCLUDED */}
+      <section className="py-24 md:py-32 px-6 md:px-10 bg-[#0b0b09]">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex items-center gap-6 mb-16">
+            <h2 className="font-serif text-3xl md:text-5xl tracking-wide text-white/80 uppercase">What's Included</h2>
+            <div className="h-px flex-1 bg-white/20" />
+          </div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {included.map((c) => (
+              <div
+                key={c.title}
+                className="rounded-2xl border border-white/15 p-6 bg-white/[0.02] hover:border-gold/60 hover:bg-white/[0.04] transition-colors"
+              >
+                <div className="w-10 h-10 rounded-lg border border-white/15 grid place-items-center mb-5 text-lg">
+                  {c.icon}
+                </div>
+                <h3 className="font-serif text-2xl mb-3 text-white">{c.title}</h3>
+                <p className="text-white/60 text-sm leading-relaxed">{c.body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Form over image */}
+      <section className="relative py-24 md:py-32 px-6 md:px-10 overflow-hidden">
+        <img
+          src={sintraImg}
+          alt="Sintra palace in mist"
+          loading="lazy"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/50 to-transparent" />
+
+        <div className="relative max-w-7xl mx-auto">
+          <div className="max-w-md bg-white/8 backdrop-blur-xl border border-white/15 rounded-3xl p-8 md:p-10">
+            <h2 className="font-serif text-3xl md:text-4xl text-white leading-tight mb-2">
+              Wish to join us,
+            </h2>
+            <p className="font-serif italic text-3xl md:text-4xl text-gold mb-8">but still have questions?</p>
+
+            <p className="eyebrow text-white/60 mb-6">Leave a request</p>
+            <form onSubmit={(e) => e.preventDefault()} className="space-y-5">
+              <input
+                placeholder="Your name"
+                className="w-full bg-transparent border-b border-white/30 py-3 text-white placeholder:text-white/50 focus:outline-none focus:border-gold"
+              />
+              <input
+                placeholder="Phone or email"
+                className="w-full bg-transparent border-b border-white/30 py-3 text-white placeholder:text-white/50 focus:outline-none focus:border-gold"
+              />
+              <textarea
+                placeholder="Tell us about your trip"
+                rows={2}
+                className="w-full bg-transparent border-b border-white/30 py-3 text-white placeholder:text-white/50 focus:outline-none focus:border-gold resize-none"
+              />
+              <button
+                type="submit"
+                className="w-full mt-4 py-4 rounded-full bg-white text-ink eyebrow font-medium hover:bg-gold transition-colors"
+              >
+                Send
+              </button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      {/* Fleet philosophy */}
+      <section className="bg-[#0b0b09] py-24 md:py-32 px-6 md:px-10">
+        <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-16 items-center">
           <div className="relative">
-            <img
-              src={vanImg}
-              alt="Luxury Mercedes V-Class interior"
-              loading="lazy"
-              width={1024}
-              height={1024}
-              className="w-full aspect-square rounded-3xl object-cover"
-            />
-            <div className="absolute -bottom-8 -right-4 md:-bottom-10 md:-right-10 w-48 md:w-64 aspect-square bg-gold p-8 rounded-2xl flex flex-col justify-end shadow-2xl">
-              <span className="text-[40px] font-serif leading-none mb-4">01.</span>
-              <p className="text-xs uppercase tracking-widest font-medium text-ink">The Modern Fleet</p>
+            <img src={vanImg} alt="Mercedes V-Class interior" loading="lazy" className="w-full aspect-square rounded-3xl object-cover" />
+            <div className="absolute -bottom-6 -right-4 md:-bottom-10 md:-right-10 w-44 md:w-60 aspect-square bg-gold p-6 md:p-8 rounded-2xl flex flex-col justify-end shadow-2xl">
+              <span className="text-[40px] font-serif italic leading-none text-ink mb-2">01.</span>
+              <p className="text-[10px] uppercase tracking-widest font-medium text-ink">The Quiet Fleet</p>
             </div>
           </div>
           <div>
-            <h2 className="font-serif text-4xl md:text-5xl mb-8 leading-tight">
-              Luxury is in the
+            <p className="eyebrow text-gold mb-4">Bem-vindo</p>
+            <h2 className="font-serif text-4xl md:text-5xl mb-8 leading-tight text-white">
+              Luxury, the
               <br />
-              <span className="italic">unseen details.</span>
+              <span className="italic text-gold">Portuguese way.</span>
             </h2>
             <p className="text-white/60 mb-10 leading-relaxed">
-              Our fleet pairs the charm of electric open-air tuk-tuks with the refined comfort of
-              executive Mercedes-Benz vehicles. Each journey is private, climate-controlled when
-              needed, and curated with local refreshments.
+              Saudade — that untranslatable Portuguese longing — guides every detail.
+              Quiet electric tuk-tuks for the old cobblestones. Chauffeured Mercedes
+              for the long coastal days. Always private, always paced for the moment.
             </p>
-            <ul className="space-y-6">
+            <ul className="space-y-5">
               {[
-                "Professional multilingual guides",
-                "Bespoke itinerary planning",
-                "Door-to-door concierge pick-up",
-                "100% electric tuk-tuk fleet",
+                "Native Lisboeta guides — English, FR, ES, DE",
+                "Door-to-door pickup, anywhere in Lisboa",
+                "Vineyard, vineyard-cellar & chef extensions",
+                "Skip-the-line at every monument we visit",
               ].map((item) => (
                 <li key={item} className="flex items-center gap-4 group">
-                  <div className="w-8 h-px bg-gold group-hover:w-12 transition-all" />
-                  <span className="eyebrow">{item}</span>
+                  <div className="w-8 h-px bg-gold group-hover:w-14 transition-all" />
+                  <span className="eyebrow text-white/80">{item}</span>
                 </li>
               ))}
             </ul>
           </div>
-        </div>
-      </section>
-
-      {/* Destinations grid */}
-      <section className="py-24 md:py-32 px-6 md:px-10 max-w-7xl mx-auto">
-        <div className="text-center mb-16">
-          <p className="eyebrow text-gold mb-4">Where We Go</p>
-          <h2 className="font-serif text-4xl md:text-5xl">Six destinations, one obsession</h2>
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-          {[
-            { name: "Lisbon", count: "12 tours" },
-            { name: "Sintra", count: "5 tours" },
-            { name: "Belém", count: "4 tours" },
-            { name: "Cascais", count: "3 tours" },
-            { name: "Alfama", count: "6 tours" },
-            { name: "Cabo da Roca", count: "2 tours" },
-          ].map((d) => (
-            <div
-              key={d.name}
-              className="aspect-[4/3] rounded-2xl bg-secondary border border-ink/5 p-6 flex flex-col justify-between hover:bg-ink hover:text-paper transition-colors group cursor-pointer"
-            >
-              <span className="eyebrow text-ink/40 group-hover:text-paper/60">{d.count}</span>
-              <h3 className="font-serif text-3xl md:text-4xl italic">{d.name}</h3>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Reviews */}
-      <section className="bg-secondary py-24 md:py-32 px-6 md:px-10">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
-            <p className="eyebrow text-gold mb-4">Travelers Whisper</p>
-            <h2 className="font-serif text-4xl md:text-5xl">Words from our guests</h2>
-          </div>
-          <div className="grid md:grid-cols-3 gap-8">
-            {reviews.map((r) => (
-              <figure key={r.name} className="bg-paper rounded-2xl p-8 border border-ink/5">
-                <div className="text-gold text-lg mb-4">★★★★★</div>
-                <blockquote className="font-serif italic text-xl leading-snug mb-6">
-                  "{r.quote}"
-                </blockquote>
-                <figcaption>
-                  <p className="font-medium text-sm">{r.name}</p>
-                  <p className="text-xs text-ink/50 mt-1">{r.origin}</p>
-                </figcaption>
-              </figure>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Categories list */}
-      <section className="py-24 md:py-32 px-6 md:px-10 max-w-7xl mx-auto">
-        <div className="grid md:grid-cols-2 gap-16 items-start">
-          <div>
-            <p className="eyebrow text-gold mb-4">Tour Categories</p>
-            <h2 className="font-serif text-4xl md:text-5xl mb-8 leading-tight">
-              Choose your <span className="italic">manner</span> of travel.
-            </h2>
-            <p className="text-ink/60 leading-relaxed mb-8">
-              From open-air tuk-tuks for sun-drenched mornings to chauffeured Mercedes for full-day
-              expeditions — every category is private, every detail considered.
-            </p>
-            <Link
-              to="/contact"
-              className="inline-block px-8 py-4 bg-ink text-paper rounded-full eyebrow font-medium hover:bg-gold hover:text-ink transition-colors"
-            >
-              Design Custom Tour
-            </Link>
-          </div>
-          <ul className="divide-y divide-ink/10 border-y border-ink/10">
-            {categories.map((c, i) => (
-              <li key={c.slug}>
-                <Link
-                  to="/tours"
-                  className="group flex items-center justify-between py-6 hover:text-gold transition-colors"
-                >
-                  <span className="flex items-baseline gap-6">
-                    <span className="font-mono text-xs text-ink/40">0{i + 1}</span>
-                    <span className="font-serif text-2xl md:text-3xl">{c.title}</span>
-                  </span>
-                  <span className="eyebrow opacity-0 group-hover:opacity-100 transition-opacity">
-                    Explore →
-                  </span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-
-      {/* FAQ */}
-      <section className="bg-ink text-white py-24 md:py-32 px-6 md:px-10">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-16">
-            <p className="eyebrow text-gold mb-4">Frequently Asked</p>
-            <h2 className="font-serif text-4xl md:text-5xl">Considered answers</h2>
-          </div>
-          <div className="space-y-4">
-            {faqs.map((f) => (
-              <details
-                key={f.q}
-                className="group border border-white/10 rounded-2xl p-6 open:bg-white/5 transition-colors"
-              >
-                <summary className="flex items-center justify-between cursor-pointer list-none">
-                  <span className="font-serif text-xl md:text-2xl pr-4">{f.q}</span>
-                  <span className="text-gold text-2xl transition-transform group-open:rotate-45">+</span>
-                </summary>
-                <p className="mt-4 text-white/70 leading-relaxed">{f.a}</p>
-              </details>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Newsletter */}
-      <section className="py-24 md:py-32 px-6 md:px-10">
-        <div className="max-w-3xl mx-auto text-center">
-          <p className="eyebrow text-gold mb-4">Stay In Touch</p>
-          <h2 className="font-serif text-4xl md:text-5xl mb-6 leading-tight">
-            Seasonal offers, <span className="italic">never spam.</span>
-          </h2>
-          <p className="text-ink/60 mb-10">
-            A quiet letter once a month — new itineraries, vineyard openings, and Lisbon insider notes.
-          </p>
-          <form
-            onSubmit={(e) => e.preventDefault()}
-            className="flex flex-col sm:flex-row gap-2 max-w-md mx-auto"
-          >
-            <input
-              type="email"
-              required
-              placeholder="your@email.com"
-              className="flex-1 px-5 py-4 rounded-full bg-secondary border border-ink/10 focus:outline-none focus:border-gold transition"
-            />
-            <button
-              type="submit"
-              className="px-8 py-4 bg-ink text-paper rounded-full eyebrow font-medium hover:bg-gold hover:text-ink transition-colors"
-            >
-              Subscribe
-            </button>
-          </form>
         </div>
       </section>
 
