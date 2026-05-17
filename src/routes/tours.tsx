@@ -4,6 +4,8 @@ import { tours, categories } from "@/data/tours";
 import { Nav } from "@/components/site/Nav";
 import { Footer } from "@/components/site/Footer";
 import { WhatsappFab } from "@/components/site/Whatsapp";
+import { BookingModal } from "@/components/site/BookingModal";
+import type { Tour } from "@/data/tours";
 import heroImg from "@/assets/hero-lisbon.jpg";
 
 export const Route = createFileRoute("/tours")({
