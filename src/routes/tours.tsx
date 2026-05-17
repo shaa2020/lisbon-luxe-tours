@@ -175,7 +175,7 @@ function ToursPage() {
         ) : (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filtered.map((t) => (
-              <PremiumTourCard key={t.slug} tour={t} />
+              <PremiumTourCard key={t.slug} tour={t} onBook={() => setBookingTour(t)} />
             ))}
           </div>
         )}
