@@ -72,13 +72,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lusitano — Private Lisbon Tuk-Tuk & Luxury Tours" },
+      { title: "Saudade — Private Lisbon Tuk-Tuk & Luxury Tours" },
       {
         name: "description",
         content:
           "Cinematic private tuk-tuk and luxury SUV tours in Lisbon, Sintra, Belém and Cascais. Bespoke itineraries, multilingual guides, door-to-door concierge.",
       },
-      { property: "og:title", content: "Lusitano — Private Lisbon Tours" },
+      { property: "og:title", content: "Saudade — Private Lisbon Tours" },
       {
         property: "og:description",
         content:

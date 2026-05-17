@@ -11,13 +11,13 @@ import heroImg from "@/assets/hero-lisbon.jpg";
 export const Route = createFileRoute("/tours/")({
   head: () => ({
     meta: [
-      { title: "All Tours — Lusitano Private Tours of Portugal" },
+      { title: "All Tours — Saudade Private Tours of Portugal" },
       {
         name: "description",
         content:
           "Browse the full collection of private tuk-tuk, Sintra, Belém, Cascais and sunset experiences. Filter by category, sort by duration or price.",
       },
-      { property: "og:title", content: "All Tours — Lusitano" },
+      { property: "og:title", content: "All Tours — Saudade" },
       {
         property: "og:description",
         content: "Private experiences across Portugal — never shared, never rushed.",
