@@ -16,7 +16,7 @@ export const Route = createFileRoute("/tours/$slug")({
   head: ({ params, loaderData }) => ({
     meta: loaderData
       ? [
-          { title: `${loaderData.tour.title} — Lusitano Private Tours` },
+          { title: `${loaderData.tour.title} — Saudade Private Tours` },
           { name: "description", content: loaderData.tour.description },
           { property: "og:title", content: loaderData.tour.title },
           { property: "og:description", content: loaderData.tour.description },

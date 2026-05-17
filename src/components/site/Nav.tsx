@@ -1,82 +1,70 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 
+const BRAND = "Saudade";
+const TAGLINE = "Portugal, Privately";
+
 export function Nav({ overlay = false }: { overlay?: boolean }) {
-  const [scrolled, setScrolled] = useState(false);
+  // overlay kept for API compat but ignored — header is always visible & solid
+  void overlay;
   const [mobileOpen, setMobileOpen] = useState(false);
 
+  // Lock body scroll when mobile menu open
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  const transparent = overlay && !scrolled;
+    document.body.style.overflow = mobileOpen ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [mobileOpen]);
 
   const links = [
     { to: "/", label: "Home" },
-    { to: "/tours", label: "Tour" },
-    { to: "/tours", label: "Destination" },
-    { to: "/tours", label: "Travel Styles" },
+    { to: "/tours", label: "Tours" },
+    { to: "/tours", label: "Destinations" },
     { to: "/about", label: "About" },
     { to: "/contact", label: "Contact" },
   ] as const;
 
   return (
-    <header
-      className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${
-        transparent
-          ? "bg-transparent"
-          : "bg-white shadow-[0_2px_20px_rgba(30,58,95,0.08)]"
-      }`}
-    >
-      {/* Top utility strip */}
-      <div
-        className={`hidden md:block transition-colors ${
-          transparent ? "bg-ink/30 backdrop-blur-sm text-white" : "bg-cloud text-ink"
-        }`}
-      >
-        <div className="container-x flex items-center justify-between h-9 text-[12px]">
+    <header className="fixed top-0 inset-x-0 z-50 bg-white/95 backdrop-blur-md border-b border-border shadow-[0_2px_20px_rgba(30,58,95,0.06)]">
+      {/* Top utility strip — desktop only */}
+      <div className="hidden md:block bg-ink text-white">
+        <div className="container-x flex items-center justify-between h-9 text-[11px]">
           <div className="flex items-center gap-6">
-            <span className="flex items-center gap-2">
+            <a href="tel:+351912345678" className="flex items-center gap-2 hover:text-gold transition-colors">
               <PhoneIcon /> +351 912 345 678
-            </span>
-            <span className="flex items-center gap-2">
+            </a>
+            <span className="flex items-center gap-2 text-white/70">
               <PinIcon /> Largo da Graça 12, Lisboa
             </span>
           </div>
           <div className="flex items-center gap-5">
-            <a href="https://facebook.com" aria-label="Facebook" className="hover:text-gold transition-colors"><FbIcon /></a>
             <a href="https://instagram.com" aria-label="Instagram" className="hover:text-gold transition-colors"><IgIcon /></a>
-            <a href="https://twitter.com" aria-label="Twitter" className="hover:text-gold transition-colors"><TwIcon /></a>
+            <a href="https://facebook.com" aria-label="Facebook" className="hover:text-gold transition-colors"><FbIcon /></a>
             <span className="opacity-30">|</span>
-            <button className="hover:text-gold transition-colors font-medium">Sign in</button>
+            <span className="text-white/70">EN · PT · ES</span>
           </div>
         </div>
       </div>
 
       {/* Main nav */}
-      <div className="container-x flex items-center justify-between h-[78px]">
-        <Link to="/" className="flex items-center gap-2 group">
-          <LogoMark color={transparent ? "#ffffff" : "#2bb6f7"} />
-          <span
-            className={`font-display font-bold text-2xl tracking-tight ${
-              transparent ? "text-white" : "text-ink"
-            }`}
-          >
-            Lusitano
+      <div className="container-x flex items-center justify-between h-[68px] md:h-[78px]">
+        <Link to="/" className="flex items-center gap-2.5 group shrink-0" aria-label={`${BRAND} home`}>
+          <LogoMark />
+          <span className="flex flex-col leading-none">
+            <span className="font-display font-bold text-[22px] md:text-[26px] tracking-tight text-ink group-hover:text-gold transition-colors">
+              {BRAND}
+            </span>
+            <span className="hidden sm:block text-[9px] font-semibold uppercase tracking-[0.18em] text-gold/90 mt-1">
+              {TAGLINE}
+            </span>
           </span>
         </Link>
 
-        <nav className="hidden lg:flex items-center gap-9">
-          {links.map((l) => (
+        <nav className="hidden lg:flex items-center gap-8">
+          {links.map((l, i) => (
             <Link
-              key={l.label}
+              key={`${l.label}-${i}`}
               to={l.to}
-              className={`text-[13px] font-semibold uppercase tracking-wider transition-colors ${
-                transparent ? "text-white/90 hover:text-gold" : "text-ink hover:text-gold"
-              }`}
+              className="text-[13px] font-semibold uppercase tracking-wider text-ink hover:text-gold transition-colors"
               activeProps={{ className: "text-gold" }}
               activeOptions={{ exact: l.to === "/" }}
             >
@@ -85,17 +73,18 @@ export function Nav({ overlay = false }: { overlay?: boolean }) {
           ))}
         </nav>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <Link
             to="/contact"
-            className="hidden md:inline-flex items-center px-6 py-3 rounded-full bg-gold text-white text-[12px] font-semibold uppercase tracking-widest shadow-[0_8px_20px_rgba(43,182,247,0.35)] hover:bg-ink hover:shadow-[0_8px_20px_rgba(30,58,95,0.35)] transition-all"
+            className="hidden md:inline-flex items-center px-5 lg:px-6 py-2.5 lg:py-3 rounded-full bg-gold text-white text-[11px] lg:text-[12px] font-semibold uppercase tracking-widest shadow-[0_8px_20px_rgba(43,182,247,0.35)] hover:bg-ink hover:shadow-[0_8px_20px_rgba(30,58,95,0.35)] transition-all"
           >
             Inquiry
           </Link>
           <button
             onClick={() => setMobileOpen((s) => !s)}
-            aria-label="Menu"
-            className={`lg:hidden p-2 rounded-md ${transparent ? "text-white" : "text-ink"}`}
+            aria-label="Toggle menu"
+            aria-expanded={mobileOpen}
+            className="lg:hidden p-2 rounded-md text-ink hover:text-gold transition-colors"
           >
             <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               {mobileOpen ? (
@@ -114,14 +103,14 @@ export function Nav({ overlay = false }: { overlay?: boolean }) {
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div className="lg:hidden bg-white border-t border-border shadow-lg">
-          <div className="container-x py-4 flex flex-col gap-1">
-            {links.map((l) => (
+        <div className="lg:hidden bg-white border-t border-border shadow-lg max-h-[calc(100vh-68px)] overflow-y-auto">
+          <div className="container-x py-5 flex flex-col gap-1">
+            {links.map((l, i) => (
               <Link
-                key={l.label}
+                key={`${l.label}-${i}`}
                 to={l.to}
                 onClick={() => setMobileOpen(false)}
-                className="py-3 text-[14px] font-semibold uppercase tracking-wider text-ink hover:text-gold transition-colors border-b border-border last:border-b-0"
+                className="py-3.5 text-[14px] font-semibold uppercase tracking-wider text-ink hover:text-gold transition-colors border-b border-border last:border-b-0"
               >
                 {l.label}
               </Link>
@@ -129,10 +118,16 @@ export function Nav({ overlay = false }: { overlay?: boolean }) {
             <Link
               to="/contact"
               onClick={() => setMobileOpen(false)}
-              className="mt-3 inline-flex items-center justify-center px-6 py-3 rounded-full bg-gold text-white text-[12px] font-semibold uppercase tracking-widest"
+              className="mt-4 inline-flex items-center justify-center px-6 py-3.5 rounded-full bg-gold text-white text-[12px] font-semibold uppercase tracking-widest shadow-[0_8px_20px_rgba(43,182,247,0.35)]"
             >
-              Inquiry
+              Send Inquiry
             </Link>
+            <a
+              href="tel:+351912345678"
+              className="mt-2 inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full border border-border text-ink text-[12px] font-semibold uppercase tracking-widest"
+            >
+              <PhoneIcon /> +351 912 345 678
+            </a>
           </div>
         </div>
       )}
@@ -140,17 +135,27 @@ export function Nav({ overlay = false }: { overlay?: boolean }) {
   );
 }
 
-function LogoMark({ color }: { color: string }) {
+/* ============ Creative logo ============ */
+/* Stylized azulejo-tile compass — Portuguese tile motif with a compass needle */
+function LogoMark() {
   return (
-    <svg width="34" height="34" viewBox="0 0 40 40" fill="none">
+    <svg width="38" height="38" viewBox="0 0 44 44" fill="none" aria-hidden="true" className="shrink-0">
+      <defs>
+        <linearGradient id="saudadeGrad" x1="0" y1="0" x2="44" y2="44" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stopColor="#2bb6f7" />
+          <stop offset="1" stopColor="#1e3a5f" />
+        </linearGradient>
+      </defs>
+      <rect x="2" y="2" width="40" height="40" rx="10" fill="url(#saudadeGrad)" />
+      {/* tile petals */}
       <path
-        d="M6 28c4-2 8-2 12 0s8 2 12 0M8 22l8-12 6 8 4-4 6 8"
-        stroke={color}
-        strokeWidth="2.2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
+        d="M22 9 L25 18 L34 18 L26.5 23.5 L29.5 32.5 L22 27 L14.5 32.5 L17.5 23.5 L10 18 L19 18 Z"
+        fill="#ffffff"
+        fillOpacity="0.18"
       />
-      <circle cx="32" cy="10" r="2" fill={color} />
+      {/* compass needle */}
+      <path d="M22 8 L25 22 L22 36 L19 22 Z" fill="#ffffff" />
+      <circle cx="22" cy="22" r="2.4" fill="#1e3a5f" stroke="#ffffff" strokeWidth="1.2" />
     </svg>
   );
 }
@@ -171,9 +176,7 @@ function PinIcon() {
   );
 }
 function FbIcon() {
-  return (
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M13 22v-8h3l1-4h-4V7.5C13 6.4 13.3 6 14.5 6H17V2.2C16.5 2.1 15.2 2 13.8 2 10.9 2 9 3.7 9 6.7V10H6v4h3v8h4z"/></svg>
-  );
+  return <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M13 22v-8h3l1-4h-4V7.5C13 6.4 13.3 6 14.5 6H17V2.2C16.5 2.1 15.2 2 13.8 2 10.9 2 9 3.7 9 6.7V10H6v4h3v8h4z"/></svg>;
 }
 function IgIcon() {
   return (
@@ -182,10 +185,5 @@ function IgIcon() {
       <circle cx="12" cy="12" r="4" />
       <circle cx="17.5" cy="6.5" r="0.8" fill="currentColor" />
     </svg>
-  );
-}
-function TwIcon() {
-  return (
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M22 5.8c-.7.3-1.5.6-2.3.7.8-.5 1.5-1.3 1.8-2.2-.8.5-1.7.8-2.6 1A4.1 4.1 0 0 0 11.8 9 11.6 11.6 0 0 1 3.4 4.7a4.1 4.1 0 0 0 1.3 5.5c-.7 0-1.3-.2-1.9-.5v.1c0 2 1.4 3.6 3.3 4-.6.2-1.3.2-2 .1.6 1.7 2.1 2.9 4 2.9A8.3 8.3 0 0 1 2 18.5 11.7 11.7 0 0 0 8.3 20c7.5 0 11.6-6.2 11.6-11.6v-.5c.8-.6 1.5-1.3 2.1-2.1z"/></svg>
   );
 }

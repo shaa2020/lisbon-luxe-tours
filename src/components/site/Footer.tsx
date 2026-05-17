@@ -39,13 +39,13 @@ export function Footer() {
               />
               <circle cx="32" cy="10" r="2" fill="#2bb6f7" />
             </svg>
-            <span className="font-display font-bold text-2xl text-ink">Lusitano</span>
+            <span className="font-display font-bold text-2xl text-ink">Saudade</span>
           </div>
           <p className="text-sm text-body leading-relaxed mb-6 max-w-xs">
             Travels many varieties of changes of lorem ipsum available, but the majority have
             suffered alteration in form by injected humor.
           </p>
-          <p className="eyebrow text-ink/40">Designed by Lusitano · 2026</p>
+          <p className="eyebrow text-ink/40">Designed by Saudade · 2026</p>
         </div>
 
         <div className="md:col-span-2">
@@ -102,7 +102,7 @@ export function Footer() {
       <div className="border-t border-border">
         <div className="container-x py-6 flex flex-col md:flex-row items-center justify-between gap-3">
           <p className="text-[12px] text-body">
-            © {new Date().getFullYear()} Lusitano · All Rights Reserved · RNAAT 1042 · NIF 514 832 109
+            © {new Date().getFullYear()} Saudade · All Rights Reserved · RNAAT 1042 · NIF 514 832 109
           </p>
           <div className="flex gap-6 text-[12px] text-body">
             <a href="#" className="hover:text-gold transition-colors">Privacy</a>

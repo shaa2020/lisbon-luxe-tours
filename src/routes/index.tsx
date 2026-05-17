@@ -17,13 +17,13 @@ import type { Tour } from "@/data/tours";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Lusitano — Discover Portugal · Private Tours of Lisboa, Sintra & the Coast" },
+      { title: "Saudade — Discover Portugal · Private Tours of Lisboa, Sintra & the Coast" },
       {
         name: "description",
         content:
-          "Plan your Portugal trip with Lusitano. Browse popular private tuk-tuk, Sintra, Belém, Cascais and sunset tours. Real local guides, flexible departures, instant inquiry.",
+          "Plan your Portugal trip with Saudade. Browse popular private tuk-tuk, Sintra, Belém, Cascais and sunset tours. Real local guides, flexible departures, instant inquiry.",
       },
-      { property: "og:title", content: "Lusitano — Discover Portugal" },
+      { property: "og:title", content: "Saudade — Discover Portugal" },
       {
         property: "og:description",
         content:
@@ -332,7 +332,7 @@ function WhyTravel() {
       </svg>
 
       <div className="text-center mb-14">
-        <p className="eyebrow text-gold mb-3">Why travel with Lusitano</p>
+        <p className="eyebrow text-gold mb-3">Why travel with Saudade</p>
         <h2 className="font-display text-3xl md:text-4xl font-bold text-ink">
           Slow, private, unforgettable.
         </h2>
