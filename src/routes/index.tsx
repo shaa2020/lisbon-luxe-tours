@@ -39,7 +39,7 @@ export const Route = createFileRoute("/")({
 function Index() {
   const [bookingTour, setBookingTour] = useState<Tour | null>(null);
   return (
-    <div className="min-h-screen bg-paper text-ink">
+    <div className="min-h-screen bg-paper text-ink overflow-x-clip">
       <Nav overlay />
       <Hero />
       <AboutSection />
