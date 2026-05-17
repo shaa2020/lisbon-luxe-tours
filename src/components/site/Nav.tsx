@@ -15,7 +15,7 @@ export function Nav({ overlay = false }: { overlay?: boolean }) {
     <nav
       className={`fixed top-0 inset-x-0 z-50 transition-colors duration-500 ${
         solid
-          ? "bg-paper/85 backdrop-blur-md border-b border-ink/5 text-ink"
+          ? "bg-[#0b0b09]/85 backdrop-blur-md border-b border-white/10 text-white"
           : "text-white"
       }`}
     >
