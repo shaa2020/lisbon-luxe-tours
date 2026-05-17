@@ -584,9 +584,9 @@ function TravelTipsAndSignup() {
                 {t.title}
               </h3>
               <p className="text-body text-sm leading-relaxed mb-5 line-clamp-2">{t.excerpt}</p>
-              <button className="text-[11px] font-semibold uppercase tracking-widest text-gold border-b-2 border-gold pb-1 hover:text-ink hover:border-ink transition">
+              <Link to="/tours" className="inline-block text-[11px] font-semibold uppercase tracking-widest text-gold border-b-2 border-gold pb-1 hover:text-ink hover:border-ink transition">
                 Read more
-              </button>
+              </Link>
             </div>
           </article>
         ))}
