@@ -1,12 +1,12 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { tours } from "@/data/tours";
+import { tours, type Tour } from "@/data/tours";
 import { TourCard } from "@/components/site/TourCard";
 import { Nav } from "@/components/site/Nav";
 import { Footer } from "@/components/site/Footer";
 import { WhatsappFab } from "@/components/site/Whatsapp";
 
 export const Route = createFileRoute("/tours/$slug")({
-  loader: ({ params }) => {
+  loader: ({ params }): { tour: Tour } => {
     const tour = tours.find((t) => t.slug === params.slug);
     if (!tour) throw notFound();
     return { tour };
