@@ -64,31 +64,31 @@ function Index() {
 
 function Hero() {
   return (
-    <section className="relative pt-[120px] pb-0">
-      <div className="relative h-[560px] md:h-[640px] overflow-hidden">
+    <section className="relative pt-[88px] md:pt-[120px] pb-0">
+      <div className="relative h-[520px] sm:h-[560px] md:h-[640px] overflow-hidden">
         <img
           src={heroImg}
           alt="Discover Lisboa, Portugal"
           className="absolute inset-0 w-full h-full object-cover animate-[scale-in_1.6s_var(--ease-out-expo)_both]"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-ink/40 via-ink/20 to-ink/60" />
+        <div className="absolute inset-0 bg-gradient-to-b from-ink/55 via-ink/35 to-ink/75" />
 
         <div className="relative container-x h-full flex flex-col justify-center text-white">
-          <p className="eyebrow text-white/90 mb-4 animate-[fade-up_0.9s_var(--ease-out-expo)_both]">
+          <p className="eyebrow text-white/90 mb-3 md:mb-4 animate-[fade-up_0.9s_var(--ease-out-expo)_both]">
             ◆  Discover
           </p>
           <h1
-            className="font-display font-bold tracking-tight leading-[0.95] mb-6 animate-[fade-up_1s_var(--ease-out-expo)_0.1s_both]"
-            style={{ fontSize: "clamp(56px, 11vw, 160px)" }}
+            className="font-display font-bold tracking-tight leading-[0.95] mb-5 md:mb-6 text-white animate-[fade-up_1s_var(--ease-out-expo)_0.1s_both]"
+            style={{ fontSize: "clamp(44px, 13vw, 160px)" }}
           >
             PORTUGAL
           </h1>
-          <p className="max-w-xl text-white/85 text-base md:text-lg leading-relaxed animate-[fade-up_1s_var(--ease-out-expo)_0.2s_both]">
+          <p className="max-w-xl text-white/90 text-[15px] md:text-lg leading-relaxed animate-[fade-up_1s_var(--ease-out-expo)_0.2s_both]">
             A land of cinnamon-tiled rooftops, Atlantic cliffs and slow afternoons. Explore
             with a private guide — by tuk-tuk, by Mercedes, by foot — entirely your own pace.
           </p>
 
-          <div className="absolute right-6 bottom-16 hidden md:block animate-[fade-in_1.4s_var(--ease-out-expo)_0.4s_both]">
+          <div className="absolute right-6 bottom-16 hidden lg:block animate-[fade-in_1.4s_var(--ease-out-expo)_0.4s_both]">
             <svg width="220" height="120" viewBox="0 0 220 120" fill="none">
               <path
                 d="M10 100 Q 80 10, 200 30"
@@ -110,7 +110,7 @@ function Hero() {
       </div>
 
       {/* Floating search bar */}
-      <div className="relative container-x -mt-12 z-10">
+      <div className="relative container-x -mt-10 md:-mt-12 z-10">
         <SearchBar />
       </div>
     </section>
@@ -119,7 +119,7 @@ function Hero() {
 
 function SearchBar() {
   return (
-    <div className="bg-white rounded-2xl shadow-[0_20px_50px_rgba(30,58,95,0.15)] p-4 md:p-6 grid grid-cols-2 md:grid-cols-6 gap-3 md:gap-2 items-end">
+    <div className="bg-white rounded-2xl shadow-[0_20px_50px_rgba(30,58,95,0.15)] p-4 md:p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 gap-3 md:gap-2 items-end">
       <SearchField label="Destinations" placeholder="City, region, or anywhere">
         <PinIco />
       </SearchField>
@@ -135,7 +135,7 @@ function SearchBar() {
       <SearchField label="Max Budget" placeholder="€1,500" type="number">
         <span className="text-[13px] font-semibold">€</span>
       </SearchField>
-      <button className="col-span-2 md:col-span-1 h-[52px] rounded-full bg-gold text-white font-semibold text-[13px] tracking-widest uppercase shadow-[0_8px_20px_rgba(43,182,247,0.4)] hover:bg-ink hover:shadow-[0_8px_20px_rgba(30,58,95,0.4)] transition-all">
+      <button className="sm:col-span-2 md:col-span-1 h-[52px] rounded-full bg-gold text-white font-semibold text-[13px] tracking-widest uppercase shadow-[0_8px_20px_rgba(43,182,247,0.4)] hover:bg-ink hover:shadow-[0_8px_20px_rgba(30,58,95,0.4)] transition-all">
         Search Tour
       </button>
     </div>
