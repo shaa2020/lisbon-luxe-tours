@@ -56,7 +56,7 @@ export function BookingModal({
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-w-2xl p-0 overflow-hidden bg-white border border-border text-ink">
+      <DialogContent className="max-w-2xl p-0 overflow-y-auto max-h-[92vh] bg-white border border-border text-ink">
         {submitted ? (
           <div className="p-10 md:p-14 text-center">
             <div className="w-16 h-16 rounded-full bg-gold/15 border border-gold grid place-items-center mx-auto mb-6">

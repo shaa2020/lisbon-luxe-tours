@@ -135,9 +135,9 @@ function SearchBar() {
       <SearchField label="Max Budget" placeholder="€1,500" type="number">
         <span className="text-[13px] font-semibold">€</span>
       </SearchField>
-      <button className="sm:col-span-2 md:col-span-1 h-[52px] rounded-full bg-gold text-white font-semibold text-[13px] tracking-widest uppercase shadow-[0_8px_20px_rgba(43,182,247,0.4)] hover:bg-ink hover:shadow-[0_8px_20px_rgba(30,58,95,0.4)] transition-all">
+      <Link to="/tours" className="sm:col-span-2 md:col-span-1 h-[52px] rounded-full bg-gold text-white font-semibold text-[13px] tracking-widest uppercase shadow-[0_8px_20px_rgba(43,182,247,0.4)] hover:bg-ink hover:shadow-[0_8px_20px_rgba(30,58,95,0.4)] transition-all flex items-center justify-center">
         Search Tour
-      </button>
+      </Link>
     </div>
   );
 }
