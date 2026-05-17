@@ -64,7 +64,7 @@ export function Footer() {
             <li><Link to="/tours" className="hover:text-gold transition-colors">Tours</Link></li>
             <li><Link to="/tours" className="hover:text-gold transition-colors">Destinations</Link></li>
             <li><Link to="/about" className="hover:text-gold transition-colors">Privacy Policy</Link></li>
-            <li><Link to="/tours" className="hover:text-gold transition-colors">Latest News</Link></li>
+            <li><Link to="/journal" className="hover:text-gold transition-colors">Latest News</Link></li>
           </ul>
         </div>
 
@@ -73,7 +73,7 @@ export function Footer() {
           <ul className="space-y-3 text-sm text-body">
             <li><Link to="/about" className="hover:text-gold transition-colors">About Us</Link></li>
             <li><Link to="/tours" className="hover:text-gold transition-colors">Shop</Link></li>
-            <li><Link to="/tours" className="hover:text-gold transition-colors">Journal</Link></li>
+            <li><Link to="/journal" className="hover:text-gold transition-colors">Journal</Link></li>
             <li><Link to="/contact" className="hover:text-gold transition-colors">Get in touch</Link></li>
           </ul>
         </div>
