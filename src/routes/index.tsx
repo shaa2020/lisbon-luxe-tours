@@ -584,34 +584,57 @@ function TravelTipsAndSignup() {
                 {t.title}
               </h3>
               <p className="text-body text-sm leading-relaxed mb-5 line-clamp-2">{t.excerpt}</p>
-              <button className="text-[11px] font-semibold uppercase tracking-widest text-gold border-b-2 border-gold pb-1 hover:text-ink hover:border-ink transition">
+              <Link to="/tours" className="inline-block text-[11px] font-semibold uppercase tracking-widest text-gold border-b-2 border-gold pb-1 hover:text-ink hover:border-ink transition">
                 Read more
-              </button>
+              </Link>
             </div>
           </article>
         ))}
 
         {/* Signup card */}
-        <div className="relative rounded-xl bg-gradient-to-br from-ink to-[#0f2945] text-white p-8 overflow-hidden">
-          <div className="absolute -bottom-10 -right-10 w-48 h-48 rounded-full bg-gold/20 blur-2xl" />
-          <p className="eyebrow text-gold mb-3">Sign up</p>
-          <h3 className="font-display text-2xl font-bold leading-tight mb-2">
-            …to get newsletter
-          </h3>
-          <p className="text-white/70 text-sm mb-6">& receive our best offer.</p>
-          <form className="space-y-3 relative">
-            <input
-              type="email"
-              placeholder="E-mail address"
-              className="w-full h-[46px] px-4 rounded-md bg-white text-ink placeholder:text-ink/40 outline-none text-sm border border-transparent focus:border-gold transition"
-            />
-            <button className="w-full h-[46px] rounded-full bg-gold text-white text-[12px] font-semibold uppercase tracking-widest hover:bg-white hover:text-gold transition">
-              Sign up
-            </button>
-          </form>
-        </div>
+        <SignupCard />
       </div>
     </section>
+  );
+}
+
+function SignupCard() {
+  const [email, setEmail] = useState("");
+  const [done, setDone] = useState(false);
+  return (
+    <div className="relative rounded-xl bg-gradient-to-br from-ink to-[#0f2945] text-white p-8 overflow-hidden">
+      <div className="absolute -bottom-10 -right-10 w-48 h-48 rounded-full bg-gold/20 blur-2xl" />
+      <p className="eyebrow text-gold mb-3">Sign up</p>
+      <h3 className="font-display text-2xl font-bold leading-tight mb-2">
+        …to get newsletter
+      </h3>
+      <p className="text-white/70 text-sm mb-6">& receive our best offer.</p>
+      {done ? (
+        <div className="rounded-md bg-white/10 border border-white/20 p-4 text-sm">
+          Thanks — we'll be in touch at <span className="text-gold font-semibold">{email}</span>.
+        </div>
+      ) : (
+        <form
+          className="space-y-3 relative"
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (email) setDone(true);
+          }}
+        >
+          <input
+            type="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="E-mail address"
+            className="w-full h-[46px] px-4 rounded-md bg-white text-ink placeholder:text-ink/40 outline-none text-sm border border-transparent focus:border-gold transition"
+          />
+          <button type="submit" className="w-full h-[46px] rounded-full bg-gold text-white text-[12px] font-semibold uppercase tracking-widest hover:bg-white hover:text-gold transition">
+            Sign up
+          </button>
+        </form>
+      )}
+    </div>
   );
 }
 
