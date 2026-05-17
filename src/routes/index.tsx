@@ -43,7 +43,7 @@ function Index() {
       <Nav overlay />
       <Hero />
       <AboutSection />
-      <FlashDeals onBook={setBookingTour} />
+      <FlashDeals />
       <WhyTravel />
       <PopularTours onBook={setBookingTour} />
       <Destinations />
