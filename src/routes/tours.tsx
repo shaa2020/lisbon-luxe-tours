@@ -67,7 +67,7 @@ function ToursPage() {
       <Nav overlay />
 
       {/* HERO */}
-      <header className="relative pt-44 pb-20 md:pt-56 md:pb-28 px-6 md:px-10 overflow-hidden">
+      <header className="relative pt-32 pb-14 md:pt-56 md:pb-28 px-6 md:px-10 overflow-hidden">
         <img
           src={heroImg}
           alt="Lisboa at golden hour"
