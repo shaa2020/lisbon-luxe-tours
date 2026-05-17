@@ -174,7 +174,7 @@ function SearchField({
 
 function AboutSection() {
   return (
-    <section className="container-x py-24 md:py-32 grid md:grid-cols-2 gap-16 items-center">
+    <section className="container-x py-16 md:py-32 grid md:grid-cols-2 gap-12 md:gap-16 items-center">
       <div>
         <p className="eyebrow text-gold mb-4">About Us</p>
         <h2 className="font-display text-4xl md:text-5xl font-bold text-ink leading-tight mb-6">
