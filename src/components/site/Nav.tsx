@@ -15,7 +15,7 @@ export function Nav({ overlay = false }: { overlay?: boolean }) {
     <nav
       className={`fixed top-0 inset-x-0 z-50 transition-colors duration-500 ${
         solid
-          ? "bg-paper/85 backdrop-blur-md border-b border-ink/5 text-ink"
+          ? "bg-[#0b0b09]/85 backdrop-blur-md border-b border-white/10 text-white"
           : "text-white"
       }`}
     >
@@ -30,11 +30,7 @@ export function Nav({ overlay = false }: { overlay?: boolean }) {
         </div>
         <Link
           to="/tours"
-          className={`px-5 py-2 rounded-full eyebrow font-medium border transition-all ${
-            solid
-              ? "border-ink/20 hover:bg-ink hover:text-paper"
-              : "border-white/30 hover:bg-white hover:text-ink"
-          }`}
+          className="px-5 py-2 rounded-full eyebrow font-medium border border-white/30 hover:bg-gold hover:text-ink hover:border-gold transition-all"
         >
           Book Experience
         </Link>
