@@ -35,6 +35,7 @@ function ToursPage() {
   const [cat, setCat] = useState<string>("all");
   const [q, setQ] = useState("");
   const [sort, setSort] = useState<SortKey>("featured");
+  const [bookingTour, setBookingTour] = useState<Tour | null>(null);
 
   const filtered = useMemo(() => {
     const list = tours.filter((t) => {
