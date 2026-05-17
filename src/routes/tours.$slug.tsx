@@ -1,9 +1,11 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { useState } from "react";
 import { tours, type Tour } from "@/data/tours";
 import { TourCard } from "@/components/site/TourCard";
 import { Nav } from "@/components/site/Nav";
 import { Footer } from "@/components/site/Footer";
 import { WhatsappFab } from "@/components/site/Whatsapp";
+import { BookingModal } from "@/components/site/BookingModal";
 
 export const Route = createFileRoute("/tours/$slug")({
   loader: ({ params }): { tour: Tour } => {
@@ -11,7 +13,7 @@ export const Route = createFileRoute("/tours/$slug")({
     if (!tour) throw notFound();
     return { tour };
   },
-  head: ({ loaderData }) => ({
+  head: ({ params, loaderData }) => ({
     meta: loaderData
       ? [
           { title: `${loaderData.tour.title} — Lusitano Private Tours` },
@@ -19,22 +21,27 @@ export const Route = createFileRoute("/tours/$slug")({
           { property: "og:title", content: loaderData.tour.title },
           { property: "og:description", content: loaderData.tour.description },
           { property: "og:image", content: loaderData.tour.image },
+          { property: "og:url", content: `/tours/${params.slug}` },
+          { property: "og:type", content: "product" },
           { property: "twitter:image", content: loaderData.tour.image },
         ]
       : [],
+    links: loaderData ? [{ rel: "canonical", href: `/tours/${params.slug}` }] : [],
   }),
   notFoundComponent: () => (
     <div className="min-h-screen flex items-center justify-center bg-paper">
       <div className="text-center">
         <p className="eyebrow text-gold mb-4">Not Found</p>
-        <h1 className="font-serif text-4xl mb-6">This tour doesn't exist</h1>
-        <Link to="/tours" className="underline">Back to all tours</Link>
+        <h1 className="font-display text-4xl font-bold mb-6 text-ink">This tour doesn't exist</h1>
+        <Link to="/tours" className="text-gold font-semibold hover:text-ink transition">
+          ← Back to all tours
+        </Link>
       </div>
     </div>
   ),
   errorComponent: ({ error }) => (
     <div className="min-h-screen flex items-center justify-center bg-paper">
-      <p>{error.message}</p>
+      <p className="text-ink">{error.message}</p>
     </div>
   ),
   component: TourPage,
@@ -43,149 +50,158 @@ export const Route = createFileRoute("/tours/$slug")({
 function TourPage() {
   const { tour } = Route.useLoaderData() as { tour: Tour };
   const related = tours.filter((t) => t.slug !== tour.slug).slice(0, 3);
+  const [bookingOpen, setBookingOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-paper text-ink">
-      <Nav />
+      <Nav overlay />
 
       {/* Hero */}
-      <section className="relative h-[75vh] min-h-[500px] overflow-hidden bg-ink">
+      <section className="relative h-[70vh] min-h-[480px] overflow-hidden bg-ink">
         <img
           src={tour.image}
           alt={tour.title}
-          width={1600}
-          height={900}
-          className="absolute inset-0 w-full h-full object-cover opacity-70 animate-[scale-in_1.4s_var(--ease-out-expo)]"
+          className="absolute inset-0 w-full h-full object-cover animate-[scale-in_1.4s_var(--ease-out-expo)]"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-ink/70 via-ink/10 to-ink/40" />
-        <div className="absolute inset-0 flex items-end pb-16 md:pb-24 px-6 md:px-10">
-          <div className="max-w-7xl mx-auto w-full">
-            <p className="eyebrow text-gold-muted mb-4 animate-[fade-up_0.8s_var(--ease-out-expo)_both]">
+        <div className="absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/30 to-ink/40" />
+        <div className="absolute inset-0 flex items-end pb-16 md:pb-20">
+          <div className="container-x w-full text-white">
+            <nav className="flex items-center gap-2 text-[12px] text-white/70 mb-4 animate-[fade-up_0.7s_var(--ease-out-expo)_both]">
+              <Link to="/" className="hover:text-gold">Home</Link>
+              <span>/</span>
+              <Link to="/tours" className="hover:text-gold">Tours</Link>
+              <span>/</span>
+              <span className="text-white">{tour.category}</span>
+            </nav>
+            <p className="eyebrow text-gold mb-3 animate-[fade-up_0.8s_var(--ease-out-expo)_both]">
               {tour.category} · {tour.duration}
             </p>
-            <h1 className="font-serif text-5xl md:text-7xl italic text-white max-w-3xl leading-[0.95] animate-[fade-up_1s_var(--ease-out-expo)_both]">
+            <h1 className="font-display font-bold text-4xl md:text-6xl text-white max-w-3xl leading-[1.05] mb-5 animate-[fade-up_1s_var(--ease-out-expo)_both]">
               {tour.title}
             </h1>
+            <div className="flex flex-wrap items-center gap-5 text-sm text-white/85 animate-[fade-up_1.1s_var(--ease-out-expo)_both]">
+              <span className="flex items-center gap-1.5"><span className="text-gold">★★★★★</span> 4.9 (124 reviews)</span>
+              <span className="flex items-center gap-1.5">📍 {tour.tagline}</span>
+              <span className="flex items-center gap-1.5">⏱ {tour.duration}</span>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Overview + Booking widget */}
-      <section className="px-6 md:px-10 max-w-7xl mx-auto py-16 md:py-24 grid md:grid-cols-3 gap-12">
-        <div className="md:col-span-2 space-y-12">
+      {/* Body */}
+      <section className="container-x py-14 md:py-20 grid lg:grid-cols-3 gap-10 lg:gap-12">
+        <div className="lg:col-span-2 space-y-14">
+          {/* Overview */}
           <div>
-            <p className="eyebrow text-gold mb-4">Overview</p>
-            <p className="text-xl leading-relaxed text-ink/80 text-pretty">{tour.description}</p>
+            <p className="eyebrow text-gold mb-3">Overview</p>
+            <h2 className="font-display text-2xl md:text-3xl font-bold text-ink mb-4">About this experience</h2>
+            <p className="text-body text-lg leading-relaxed">{tour.description}</p>
           </div>
 
-          {/* Itinerary timeline */}
+          {/* Highlights */}
           <div>
-            <p className="eyebrow text-gold mb-4">Itinerary</p>
-            <h2 className="font-serif text-3xl md:text-4xl mb-8">A day, hour by hour</h2>
-            <ol className="border-l border-ink/15 space-y-8 pl-8">
+            <p className="eyebrow text-gold mb-3">Highlights</p>
+            <h2 className="font-display text-2xl md:text-3xl font-bold text-ink mb-6">What makes it special</h2>
+            <div className="grid sm:grid-cols-2 gap-3">
+              {tour.highlights.map((h) => (
+                <div
+                  key={h}
+                  className="flex items-start gap-3 px-5 py-4 bg-cloud/60 rounded-xl border border-border"
+                >
+                  <span className="shrink-0 w-6 h-6 rounded-full bg-gold/15 text-gold flex items-center justify-center text-[12px] font-bold">✓</span>
+                  <span className="text-sm text-ink">{h}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Itinerary */}
+          <div>
+            <p className="eyebrow text-gold mb-3">Itinerary</p>
+            <h2 className="font-display text-2xl md:text-3xl font-bold text-ink mb-8">A day, hour by hour</h2>
+            <ol className="border-l-2 border-gold/30 space-y-8 pl-8">
               {tour.itinerary.map((step, i) => (
                 <li key={i} className="relative">
-                  <span className="absolute -left-[37px] top-1 size-3.5 rounded-full bg-gold ring-4 ring-paper" />
-                  <p className="font-mono text-xs text-gold mb-1">{step.time}</p>
-                  <h3 className="font-serif text-2xl mb-1">{step.title}</h3>
-                  <p className="text-ink/60">{step.detail}</p>
+                  <span className="absolute -left-[41px] top-1 w-5 h-5 rounded-full bg-gold ring-4 ring-paper" />
+                  <p className="text-[11px] font-semibold uppercase tracking-widest text-gold mb-1">{step.time}</p>
+                  <h3 className="font-display text-xl font-semibold text-ink mb-1">{step.title}</h3>
+                  <p className="text-body leading-relaxed">{step.detail}</p>
                 </li>
               ))}
             </ol>
           </div>
 
-          {/* Included */}
-          <div className="grid md:grid-cols-2 gap-8">
+          {/* Included / Not included */}
+          <div className="grid sm:grid-cols-2 gap-8 p-7 bg-cloud/60 rounded-2xl border border-border">
             <div>
-              <p className="eyebrow text-gold mb-4">Included</p>
+              <p className="eyebrow text-gold mb-4">What's Included</p>
               <ul className="space-y-3">
                 {tour.included.map((i) => (
-                  <li key={i} className="flex gap-3 text-ink/80">
-                    <span className="text-gold">✓</span> {i}
+                  <li key={i} className="flex gap-3 text-sm text-ink">
+                    <span className="text-gold font-bold">✓</span> {i}
                   </li>
                 ))}
               </ul>
             </div>
             <div>
-              <p className="eyebrow text-ink/40 mb-4">Not Included</p>
+              <p className="eyebrow text-ink/50 mb-4">Not Included</p>
               <ul className="space-y-3">
                 {tour.notIncluded.map((i) => (
-                  <li key={i} className="flex gap-3 text-ink/60">
-                    <span className="text-ink/30">—</span> {i}
+                  <li key={i} className="flex gap-3 text-sm text-body">
+                    <span className="text-ink/30">✕</span> {i}
                   </li>
                 ))}
               </ul>
-            </div>
-          </div>
-
-          {/* Highlights */}
-          <div>
-            <p className="eyebrow text-gold mb-4">Highlights</p>
-            <div className="grid sm:grid-cols-2 gap-3">
-              {tour.highlights.map((h) => (
-                <div
-                  key={h}
-                  className="px-5 py-4 bg-secondary rounded-xl border border-ink/5 text-sm"
-                >
-                  {h}
-                </div>
-              ))}
             </div>
           </div>
         </div>
 
-        {/* Sticky booking widget */}
-        <aside className="md:sticky md:top-28 h-fit">
-          <div className="bg-ink text-paper p-8 rounded-3xl shadow-2xl">
-            <p className="eyebrow text-gold-muted mb-2">From</p>
-            <p className="font-serif text-5xl mb-1">€{tour.priceFrom}</p>
-            <p className="text-paper/60 text-sm mb-8">per private party · {tour.duration}</p>
-
-            <div className="space-y-3 mb-6">
-              <div className="bg-white/5 rounded-xl p-4 border border-white/10">
-                <p className="text-[9px] uppercase tracking-widest text-paper/50 mb-1">Date</p>
-                <input
-                  type="date"
-                  className="bg-transparent w-full text-sm focus:outline-none [color-scheme:dark]"
-                />
-              </div>
-              <div className="bg-white/5 rounded-xl p-4 border border-white/10">
-                <p className="text-[9px] uppercase tracking-widest text-paper/50 mb-1">Guests</p>
-                <select className="bg-transparent w-full text-sm focus:outline-none">
-                  <option className="bg-ink">2 guests</option>
-                  <option className="bg-ink">3 guests</option>
-                  <option className="bg-ink">4 guests</option>
-                  <option className="bg-ink">5+ guests</option>
-                </select>
-              </div>
+        {/* Sticky booking card */}
+        <aside className="lg:sticky lg:top-28 h-fit">
+          <div className="bg-white rounded-2xl border border-border shadow-[0_20px_50px_rgba(30,58,95,0.10)] p-7">
+            <div className="flex items-baseline justify-between mb-1">
+              <p className="text-[11px] font-semibold uppercase tracking-widest text-body">From</p>
+              <p className="text-[11px] font-semibold uppercase tracking-widest text-body">per group</p>
             </div>
+            <p className="font-display font-bold text-5xl text-gold leading-none mb-2">€{tour.priceFrom}</p>
+            <p className="text-body text-sm mb-6">Private · {tour.duration} · Up to 7 guests</p>
 
-            <button className="w-full bg-gold text-ink py-4 rounded-xl eyebrow font-medium hover:bg-gold-muted transition-colors mb-3">
-              Check Availability
+            <button
+              onClick={() => setBookingOpen(true)}
+              className="w-full bg-gold text-white py-4 rounded-full text-[12px] font-semibold uppercase tracking-widest hover:bg-ink transition shadow-[0_8px_20px_rgba(43,182,247,0.35)] mb-3"
+            >
+              Check Availability →
             </button>
             <a
               href="https://wa.me/351912345678"
-              className="w-full block text-center border border-white/15 py-4 rounded-xl eyebrow hover:bg-white/5 transition-colors"
+              className="w-full block text-center border border-border text-ink py-4 rounded-full text-[12px] font-semibold uppercase tracking-widest hover:border-gold hover:text-gold transition"
             >
               WhatsApp Concierge
             </a>
-            <p className="text-xs text-paper/40 mt-6 text-center">
-              Free cancellation up to 24h before
-            </p>
+
+            <ul className="mt-6 pt-6 border-t border-border space-y-2.5 text-[13px] text-body">
+              <li className="flex gap-2"><span className="text-gold">✓</span> Free cancellation up to 24h</li>
+              <li className="flex gap-2"><span className="text-gold">✓</span> Reserve now, pay later</li>
+              <li className="flex gap-2"><span className="text-gold">✓</span> Hotel pick-up included</li>
+              <li className="flex gap-2"><span className="text-gold">✓</span> Concierge replies in &lt;4h</li>
+            </ul>
           </div>
         </aside>
       </section>
 
       {/* Related */}
-      <section className="bg-secondary py-20 md:py-28 px-6 md:px-10">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex items-end justify-between mb-12">
-            <h2 className="font-serif text-4xl">You may also love</h2>
-            <Link to="/tours" className="eyebrow border-b border-gold pb-1 hover:text-gold">
-              All tours →
+      <section className="bg-cloud/60 py-20 md:py-24">
+        <div className="container-x">
+          <div className="flex items-end justify-between mb-10">
+            <div>
+              <p className="eyebrow text-gold mb-2">More to explore</p>
+              <h2 className="font-display text-3xl md:text-4xl font-bold text-ink">You may also love</h2>
+            </div>
+            <Link to="/tours" className="text-[12px] font-semibold uppercase tracking-widest text-gold hover:text-ink transition">
+              All tours ›
             </Link>
           </div>
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-3 gap-6">
             {related.map((t) => (
               <TourCard key={t.slug} tour={t} />
             ))}
@@ -195,6 +211,12 @@ function TourPage() {
 
       <Footer />
       <WhatsappFab />
+
+      <BookingModal
+        tour={bookingOpen ? tour : null}
+        open={bookingOpen}
+        onOpenChange={setBookingOpen}
+      />
     </div>
   );
 }

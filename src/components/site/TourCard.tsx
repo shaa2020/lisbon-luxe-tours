@@ -1,32 +1,42 @@
 import { Link } from "@tanstack/react-router";
 import type { Tour } from "@/data/tours";
 
-export function TourCard({ tour, offset = false }: { tour: Tour; offset?: boolean }) {
+export function TourCard({ tour }: { tour: Tour; offset?: boolean }) {
   return (
     <Link
       to="/tours/$slug"
       params={{ slug: tour.slug }}
-      className={`group block ${offset ? "md:translate-y-12" : ""}`}
+      className="group block bg-white rounded-xl overflow-hidden shadow-[0_4px_20px_rgba(30,58,95,0.06)] hover:shadow-[0_20px_40px_rgba(30,58,95,0.12)] hover:-translate-y-1 transition-all duration-500"
     >
-      <div className="relative aspect-[3/4] overflow-hidden rounded-2xl mb-6 bg-secondary">
+      <div className="relative aspect-[16/10] overflow-hidden">
         <img
           src={tour.image}
           alt={tour.title}
           loading="lazy"
-          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
         />
-        <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full">
-          <span className="font-mono text-[9px] uppercase tracking-tighter">{tour.duration}</span>
-        </div>
         {tour.featured && (
-          <div className="absolute top-4 right-4 bg-gold text-ink px-3 py-1 rounded-full">
-            <span className="font-mono text-[9px] uppercase tracking-tighter">Signature</span>
-          </div>
+          <span className="absolute top-3 left-3 bg-gold text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-sm">
+            Signature
+          </span>
         )}
+        <span className="absolute top-3 right-3 bg-white/95 text-ink text-[11px] font-semibold px-3 py-1 rounded-full">
+          {tour.duration}
+        </span>
       </div>
-      <h3 className="font-serif text-2xl mb-2">{tour.title}</h3>
-      <p className="text-xs text-ink/50 uppercase tracking-widest mb-3">{tour.tagline}</p>
-      <p className="text-gold font-semibold">From €{tour.priceFrom}</p>
+      <div className="p-5">
+        <p className="text-[11px] font-semibold uppercase tracking-widest text-gold mb-2">{tour.category}</p>
+        <h3 className="font-display font-semibold text-ink text-[16px] leading-snug mb-3 group-hover:text-gold transition-colors">
+          {tour.title}
+        </h3>
+        <div className="flex items-end justify-between pt-3 border-t border-border">
+          <div>
+            <span className="text-[10px] uppercase tracking-widest text-body">From </span>
+            <span className="text-gold font-display font-bold text-xl">€{tour.priceFrom}</span>
+          </div>
+          <span className="text-[11px] font-semibold uppercase tracking-widest text-ink/60 group-hover:text-gold transition">View →</span>
+        </div>
+      </div>
     </Link>
   );
 }
