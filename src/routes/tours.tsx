@@ -203,6 +203,12 @@ function ToursPage() {
 
       <Footer />
       <WhatsappFab />
+
+      <BookingModal
+        tour={bookingTour}
+        open={!!bookingTour}
+        onOpenChange={(v) => !v && setBookingTour(null)}
+      />
     </div>
   );
 }
