@@ -96,7 +96,7 @@ function JournalPostPage() {
           <div className="max-w-3xl mx-auto">
             <p className="text-lg md:text-xl leading-relaxed text-ink/85 mb-8">{post.excerpt}</p>
             <div className="space-y-6 text-base leading-8 text-body">
-              {post.content.map((paragraph) => (
+              {post.content.map((paragraph: string) => (
                 <p key={paragraph}>{paragraph}</p>
               ))}
             </div>
