@@ -355,7 +355,7 @@ function WhyTravel() {
 
 /* ============================== POPULAR TOURS ============================== */
 
-function PopularTours() {
+function PopularTours({ onBook }: { onBook: (t: Tour) => void }) {
   return (
     <section className="bg-cloud/60 py-20 md:py-28">
       <div className="container-x">
@@ -373,7 +373,7 @@ function PopularTours() {
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {tours.slice(0, 6).map((t) => (
-            <PopularCard key={t.slug} tour={t} />
+            <PopularCard key={t.slug} tour={t} onBook={() => onBook(t)} />
           ))}
         </div>
       </div>
@@ -381,7 +381,7 @@ function PopularTours() {
   );
 }
 
-function PopularCard({ tour }: { tour: typeof tours[number] }) {
+function PopularCard({ tour, onBook }: { tour: Tour; onBook: () => void }) {
   return (
     <article className="bg-white rounded-xl overflow-hidden shadow-[0_4px_20px_rgba(30,58,95,0.06)] hover:shadow-[0_20px_40px_rgba(30,58,95,0.12)] transition-all duration-500 group">
       <Link to="/tours/$slug" params={{ slug: tour.slug }} className="relative block aspect-[16/10] overflow-hidden">
@@ -409,12 +409,13 @@ function PopularCard({ tour }: { tour: typeof tours[number] }) {
             <span className="text-[11px] text-body uppercase tracking-widest">From </span>
             <span className="text-gold font-display font-bold text-2xl">€{tour.priceFrom}</span>
           </div>
-          <Link
-            to="/contact"
+          <button
+            type="button"
+            onClick={onBook}
             className="px-5 py-2.5 rounded-full bg-gold text-white text-[11px] font-semibold uppercase tracking-widest hover:bg-ink transition shadow-[0_6px_15px_rgba(43,182,247,0.3)]"
           >
             Book now
-          </Link>
+          </button>
         </div>
       </div>
     </article>
