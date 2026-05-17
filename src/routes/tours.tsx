@@ -221,7 +221,7 @@ function FilterChip({
   return (
     <button
       onClick={onClick}
-      className={`px-4 py-2 rounded-full eyebrow font-medium transition-all border flex items-center gap-2 ${
+      className={`shrink-0 whitespace-nowrap px-4 py-2 rounded-full eyebrow font-medium transition-all border flex items-center gap-2 ${
         active
           ? "bg-gold text-ink border-gold"
           : "bg-white/5 border-white/15 text-white/70 hover:border-gold/50 hover:text-white"
