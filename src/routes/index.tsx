@@ -213,10 +213,10 @@ function AboutSection() {
         </Link>
       </div>
 
-      <div className="relative">
-        <div className="absolute -top-8 -right-8 w-40 h-40 rounded-full bg-gold/10" />
-        <div className="absolute -bottom-6 -left-6 w-24 h-24 rounded-full border-2 border-dashed border-gold/40" />
-        <div className="relative rounded-[40%_60%_50%_50%/40%_50%_60%_50%] overflow-hidden h-[460px] shadow-[0_30px_60px_rgba(30,58,95,0.15)]">
+      <div className="relative mx-2 sm:mx-0">
+        <div className="absolute -top-6 -right-4 sm:-top-8 sm:-right-8 w-28 h-28 sm:w-40 sm:h-40 rounded-full bg-gold/10" />
+        <div className="absolute -bottom-4 -left-4 sm:-bottom-6 sm:-left-6 w-20 h-20 sm:w-24 sm:h-24 rounded-full border-2 border-dashed border-gold/40" />
+        <div className="relative rounded-[40%_60%_50%_50%/40%_50%_60%_50%] overflow-hidden h-[340px] sm:h-[420px] md:h-[460px] shadow-[0_30px_60px_rgba(30,58,95,0.15)]">
           <img src={cascaisImg} alt="Cascais coast" className="w-full h-full object-cover" />
           <button
             aria-label="Play video"
