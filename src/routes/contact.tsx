@@ -60,7 +60,7 @@ function ContactPage() {
   };
 
   return (
-    <div className="min-h-screen bg-paper text-ink">
+    <div className="min-h-screen bg-paper text-ink overflow-x-clip">
       <Nav overlay />
 
       {/* Page header */}
