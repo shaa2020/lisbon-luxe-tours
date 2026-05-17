@@ -91,13 +91,13 @@ function ToursPage() {
       </header>
 
       {/* STICKY FILTER BAR */}
-      <div className="sticky top-20 z-30 bg-[#0b0b09]/90 backdrop-blur-xl border-y border-white/10">
-        <div className="max-w-7xl mx-auto px-6 md:px-10 py-5 flex flex-col gap-4">
+      <div className="sticky top-16 md:top-20 z-30 bg-[#0b0b09]/95 backdrop-blur-xl border-y border-white/10">
+        <div className="max-w-7xl mx-auto px-4 md:px-10 py-3 md:py-5 flex flex-col gap-3 md:gap-4">
           {/* Search + sort row */}
-          <div className="flex flex-col md:flex-row gap-3 md:items-center md:justify-between">
-            <div className="relative flex-1 max-w-md">
+          <div className="flex flex-row gap-2 md:gap-3 items-center md:justify-between">
+            <div className="relative flex-1 md:max-w-md">
               <svg
-                className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40"
+                className="absolute left-3 md:left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40"
                 fill="none" stroke="currentColor" viewBox="0 0 24 24"
               >
                 <circle cx="11" cy="11" r="7" strokeWidth="1.5" />
@@ -106,28 +106,28 @@ function ToursPage() {
               <input
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
-                placeholder="Search Alfama, Sintra, sunset…"
-                className="w-full pl-11 pr-4 py-3 rounded-full bg-white/5 border border-white/15 text-sm text-white placeholder:text-white/40 focus:outline-none focus:border-gold transition-colors"
+                placeholder="Search Alfama, Sintra…"
+                className="w-full pl-10 md:pl-11 pr-3 py-2.5 md:py-3 rounded-full bg-white/5 border border-white/15 text-sm text-white placeholder:text-white/40 focus:outline-none focus:border-gold transition-colors"
               />
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 shrink-0">
               <label className="eyebrow text-white/50 hidden md:block">Sort</label>
               <select
                 value={sort}
                 onChange={(e) => setSort(e.target.value as SortKey)}
-                className="px-4 py-3 rounded-full bg-white/5 border border-white/15 text-sm text-white focus:outline-none focus:border-gold cursor-pointer"
+                className="px-3 md:px-4 py-2.5 md:py-3 rounded-full bg-white/5 border border-white/15 text-sm text-white focus:outline-none focus:border-gold cursor-pointer max-w-[140px] md:max-w-none"
               >
                 <option value="featured" className="bg-[#0b0b09]">Featured</option>
-                <option value="price-asc" className="bg-[#0b0b09]">Price · low to high</option>
-                <option value="price-desc" className="bg-[#0b0b09]">Price · high to low</option>
+                <option value="price-asc" className="bg-[#0b0b09]">Price ↑</option>
+                <option value="price-desc" className="bg-[#0b0b09]">Price ↓</option>
                 <option value="duration" className="bg-[#0b0b09]">Duration</option>
               </select>
             </div>
           </div>
 
-          {/* Category chips */}
-          <div className="flex flex-wrap gap-2">
+          {/* Category chips - horizontal scroll on mobile */}
+          <div className="flex md:flex-wrap gap-2 overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0 md:overflow-visible scrollbar-none">
             <FilterChip active={cat === "all"} onClick={() => setCat("all")} count={counts.all}>
               All
             </FilterChip>
