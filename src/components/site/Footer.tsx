@@ -63,8 +63,8 @@ export function Footer() {
             <li><Link to="/" className="hover:text-gold transition-colors">Home</Link></li>
             <li><Link to="/tours" className="hover:text-gold transition-colors">Tours</Link></li>
             <li><Link to="/tours" className="hover:text-gold transition-colors">Destinations</Link></li>
-            <li><a href="#" className="hover:text-gold transition-colors">Privacy Policy</a></li>
-            <li><a href="#" className="hover:text-gold transition-colors">Latest News</a></li>
+            <li><Link to="/about" className="hover:text-gold transition-colors">Privacy Policy</Link></li>
+            <li><Link to="/tours" className="hover:text-gold transition-colors">Latest News</Link></li>
           </ul>
         </div>
 
@@ -72,8 +72,8 @@ export function Footer() {
           <h4 className="font-display font-semibold text-ink mb-5">Contact</h4>
           <ul className="space-y-3 text-sm text-body">
             <li><Link to="/about" className="hover:text-gold transition-colors">About Us</Link></li>
-            <li><a href="#" className="hover:text-gold transition-colors">Shop</a></li>
-            <li><a href="#" className="hover:text-gold transition-colors">Blog</a></li>
+            <li><Link to="/tours" className="hover:text-gold transition-colors">Shop</Link></li>
+            <li><Link to="/tours" className="hover:text-gold transition-colors">Journal</Link></li>
             <li><Link to="/contact" className="hover:text-gold transition-colors">Get in touch</Link></li>
           </ul>
         </div>
