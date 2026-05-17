@@ -318,13 +318,13 @@ function PremiumTourCard({ tour, onBook }: { tour: typeof tours[number]; onBook:
             >
               Details
             </Link>
-            <Link
-              to="/tours/$slug"
-              params={{ slug: tour.slug }}
+            <button
+              type="button"
+              onClick={onBook}
               className="eyebrow px-5 py-2.5 rounded-full bg-gold text-ink hover:bg-white transition flex items-center gap-1.5"
             >
               Book →
-            </Link>
+            </button>
           </div>
         </div>
       </div>
