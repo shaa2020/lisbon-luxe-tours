@@ -53,7 +53,8 @@ function TourPage() {
   const [bookingOpen, setBookingOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-paper text-ink overflow-x-clip">
+    <div className="min-h-screen bg-paper text-ink overflow-x-clip pb-24 lg:pb-0">
+      <a id="top" />
       <Nav overlay />
 
       {/* Hero */}

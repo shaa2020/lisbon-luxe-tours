@@ -208,7 +208,7 @@ export function BookingModal({
               </div>
 
               {/* Total + submit */}
-              <div className="mt-2 pt-5 border-t border-border flex items-end justify-between">
+              <div className="mt-2 pt-5 border-t border-border flex flex-col sm:flex-row gap-4 sm:items-end sm:justify-between">
                 <div>
                   <p className="text-[10px] uppercase tracking-widest text-body">Est. total</p>
                   <p className="font-display font-bold text-3xl text-gold leading-none">€{total}</p>
@@ -216,7 +216,7 @@ export function BookingModal({
                 <button
                   type="submit"
                   disabled={!date || !time || !name || !contact}
-                  className="px-7 py-3.5 rounded-full bg-gold text-white text-[12px] font-semibold uppercase tracking-widest hover:bg-ink transition disabled:opacity-40 disabled:cursor-not-allowed shadow-[0_6px_15px_rgba(43,182,247,0.3)]"
+                  className="w-full sm:w-auto px-7 py-3.5 rounded-full bg-gold text-white text-[12px] font-semibold uppercase tracking-widest hover:bg-ink transition disabled:opacity-40 disabled:cursor-not-allowed shadow-[0_6px_15px_rgba(43,182,247,0.3)]"
                 >
                   Request to Book →
                 </button>
