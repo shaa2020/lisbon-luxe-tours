@@ -8,7 +8,7 @@ import { BookingModal } from "@/components/site/BookingModal";
 import type { Tour } from "@/data/tours";
 import heroImg from "@/assets/hero-lisbon.jpg";
 
-export const Route = createFileRoute("/tours")({
+export const Route = createFileRoute("/tours/")({
   head: () => ({
     meta: [
       { title: "All Tours — Lusitano Private Tours of Portugal" },
@@ -64,11 +64,11 @@ function ToursPage() {
 
   return (
     <div className="min-h-screen bg-paper text-ink">
-      <Nav overlay />
+      <Nav />
 
       {/* PAGE HEADER */}
-      <header className="relative pt-[120px] pb-12">
-        <div className="relative h-[320px] md:h-[380px] overflow-hidden">
+      <header className="relative pt-[78px] pb-12">
+        <div className="relative h-[320px] md:h-[380px] overflow-hidden rounded-none">
           <img src={heroImg} alt="" className="absolute inset-0 w-full h-full object-cover" />
           <div className="absolute inset-0 bg-ink/55" />
           <div className="container-x relative h-full flex flex-col justify-center text-white">
