@@ -4,6 +4,8 @@ import { tours, categories } from "@/data/tours";
 import { Nav } from "@/components/site/Nav";
 import { Footer } from "@/components/site/Footer";
 import { WhatsappFab } from "@/components/site/Whatsapp";
+import { BookingModal } from "@/components/site/BookingModal";
+import type { Tour } from "@/data/tours";
 import heroImg from "@/assets/hero-lisbon.jpg";
 
 export const Route = createFileRoute("/tours")({
@@ -33,6 +35,7 @@ function ToursPage() {
   const [cat, setCat] = useState<string>("all");
   const [q, setQ] = useState("");
   const [sort, setSort] = useState<SortKey>("featured");
+  const [bookingTour, setBookingTour] = useState<Tour | null>(null);
 
   const filtered = useMemo(() => {
     const list = tours.filter((t) => {
@@ -172,7 +175,7 @@ function ToursPage() {
         ) : (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filtered.map((t) => (
-              <PremiumTourCard key={t.slug} tour={t} />
+              <PremiumTourCard key={t.slug} tour={t} onBook={() => setBookingTour(t)} />
             ))}
           </div>
         )}
@@ -200,6 +203,12 @@ function ToursPage() {
 
       <Footer />
       <WhatsappFab />
+
+      <BookingModal
+        tour={bookingTour}
+        open={!!bookingTour}
+        onOpenChange={(v) => !v && setBookingTour(null)}
+      />
     </div>
   );
 }
@@ -228,7 +237,7 @@ function FilterChip({
   );
 }
 
-function PremiumTourCard({ tour }: { tour: typeof tours[number] }) {
+function PremiumTourCard({ tour, onBook }: { tour: typeof tours[number]; onBook: () => void }) {
   return (
     <article className="group relative flex flex-col rounded-2xl overflow-hidden bg-white/[0.03] border border-white/10 hover:border-gold/40 transition-all duration-500 hover:-translate-y-1">
       {/* Image */}
@@ -309,13 +318,13 @@ function PremiumTourCard({ tour }: { tour: typeof tours[number] }) {
             >
               Details
             </Link>
-            <Link
-              to="/tours/$slug"
-              params={{ slug: tour.slug }}
+            <button
+              type="button"
+              onClick={onBook}
               className="eyebrow px-5 py-2.5 rounded-full bg-gold text-ink hover:bg-white transition flex items-center gap-1.5"
             >
               Book →
-            </Link>
+            </button>
           </div>
         </div>
       </div>
