@@ -8,7 +8,7 @@ import { BookingModal } from "@/components/site/BookingModal";
 import type { Tour } from "@/data/tours";
 import heroImg from "@/assets/hero-lisbon.jpg";
 
-export const Route = createFileRoute("/tours")({
+export const Route = createFileRoute("/tours/")({
   head: () => ({
     meta: [
       { title: "All Tours — Lusitano Private Tours of Portugal" },
