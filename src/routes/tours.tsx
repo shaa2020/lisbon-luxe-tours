@@ -237,7 +237,7 @@ function FilterChip({
   );
 }
 
-function PremiumTourCard({ tour }: { tour: typeof tours[number] }) {
+function PremiumTourCard({ tour, onBook }: { tour: typeof tours[number]; onBook: () => void }) {
   return (
     <article className="group relative flex flex-col rounded-2xl overflow-hidden bg-white/[0.03] border border-white/10 hover:border-gold/40 transition-all duration-500 hover:-translate-y-1">
       {/* Image */}
