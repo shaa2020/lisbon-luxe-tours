@@ -100,16 +100,23 @@
 
 @layer base {
   * { border-color: var(--color-border); }
-  html { scroll-behavior: smooth; }
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    overflow-x: hidden;
+  }
   body {
     background-color: var(--color-paper);
     color: var(--body);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+    overflow-x: hidden;
   }
+  img, svg, video { max-width: 100%; height: auto; }
   ::selection { background: color-mix(in srgb, var(--gold) 30%, transparent); color: var(--ink); }
-  h1, h2, h3, h4, h5 {
+  /* :where() keeps specificity at 0 so Tailwind text-* utilities can override */
+  :where(h1, h2, h3, h4, h5) {
     font-family: var(--font-display);
     color: var(--ink);
     font-weight: 600;
