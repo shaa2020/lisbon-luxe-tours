@@ -11,16 +11,16 @@ import heroImg from "@/assets/hero-lisbon.jpg";
 export const Route = createFileRoute("/tours")({
   head: () => ({
     meta: [
-      { title: "The Collection — Private Tours of Lisboa, Sintra & Cascais" },
+      { title: "All Tours — Lusitano Private Tours of Portugal" },
       {
         name: "description",
         content:
-          "Browse our full collection of private tuk-tuk, Sintra, Belém, Cascais and sunset experiences. Filter by category, sort by duration or price.",
+          "Browse the full collection of private tuk-tuk, Sintra, Belém, Cascais and sunset experiences. Filter by category, sort by duration or price.",
       },
-      { property: "og:title", content: "The Collection — Lusitano Private Tours" },
+      { property: "og:title", content: "All Tours — Lusitano" },
       {
         property: "og:description",
-        content: "Curated private experiences across Portugal — never shared, never rushed.",
+        content: "Private experiences across Portugal — never shared, never rushed.",
       },
       { property: "og:url", content: "/tours" },
     ],
@@ -63,71 +63,59 @@ function ToursPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#0b0b09] text-white selection:bg-gold/30">
+    <div className="min-h-screen bg-paper text-ink">
       <Nav overlay />
 
-      {/* HERO */}
-      <header className="relative pt-32 pb-14 md:pt-56 md:pb-28 px-6 md:px-10 overflow-hidden">
-        <img
-          src={heroImg}
-          alt="Lisboa at golden hour"
-          className="absolute inset-0 w-full h-full object-cover opacity-35"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-[#0b0b09]" />
-
-        <div className="relative max-w-7xl mx-auto">
-          <p className="eyebrow text-gold mb-5 animate-[fade-up_0.9s_var(--ease-out-expo)_both]">The Collection · {tours.length} experiences</p>
-          <h1
-            className="font-serif italic leading-[0.88] tracking-[-0.03em] text-white mb-6 max-w-5xl animate-[fade-up_1s_var(--ease-out-expo)_0.1s_both]"
-            style={{ fontSize: "clamp(48px, 9vw, 140px)" }}
-          >
-            Every tour, <span className="text-gold">privately yours.</span>
-          </h1>
-          <p className="max-w-2xl text-white/65 leading-relaxed text-lg animate-[fade-up_1s_var(--ease-out-expo)_0.2s_both]">
-            Each experience is operated for one party at a time — never shared, never rushed.
-            Filter by region, sort by price, or simply scroll until something stirs you.
-          </p>
+      {/* PAGE HEADER */}
+      <header className="relative pt-[120px] pb-12">
+        <div className="relative h-[320px] md:h-[380px] overflow-hidden">
+          <img src={heroImg} alt="" className="absolute inset-0 w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-ink/55" />
+          <div className="container-x relative h-full flex flex-col justify-center text-white">
+            <p className="eyebrow text-white/80 mb-3">◆  The Collection</p>
+            <h1 className="font-display font-bold text-5xl md:text-6xl mb-3">All Tours</h1>
+            <p className="text-white/85 max-w-xl">
+              {tours.length} private experiences across Lisboa, Sintra, Belém, Cascais and beyond.
+            </p>
+          </div>
         </div>
       </header>
 
       {/* STICKY FILTER BAR */}
-      <div className="sticky top-16 md:top-20 z-30 bg-[#0b0b09]/95 backdrop-blur-xl border-y border-white/10">
-        <div className="max-w-7xl mx-auto px-4 md:px-10 py-3 md:py-5 flex flex-col gap-3 md:gap-4">
-          {/* Search + sort row */}
-          <div className="flex flex-row gap-2 md:gap-3 items-center md:justify-between">
+      <div className="sticky top-[78px] z-30 bg-white border-b border-border shadow-[0_4px_15px_rgba(30,58,95,0.05)]">
+        <div className="container-x py-4 flex flex-col gap-3">
+          <div className="flex flex-row gap-2 items-center md:justify-between">
             <div className="relative flex-1 md:max-w-md">
               <svg
-                className="absolute left-3 md:left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40"
-                fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink/40"
+                fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2"
               >
-                <circle cx="11" cy="11" r="7" strokeWidth="1.5" />
-                <path d="m20 20-3-3" strokeWidth="1.5" strokeLinecap="round" />
+                <circle cx="11" cy="11" r="7" />
+                <path d="m20 20-3-3" strokeLinecap="round" />
               </svg>
               <input
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
                 placeholder="Search Alfama, Sintra…"
-                className="w-full pl-10 md:pl-11 pr-3 py-2.5 md:py-3 rounded-full bg-white/5 border border-white/15 text-sm text-white placeholder:text-white/40 focus:outline-none focus:border-gold transition-colors"
+                className="w-full pl-10 pr-3 py-2.5 rounded-full bg-cloud border border-border text-sm text-ink placeholder:text-ink/40 focus:outline-none focus:border-gold transition-colors"
               />
             </div>
 
             <div className="flex items-center gap-3 shrink-0">
-              <label className="eyebrow text-white/50 hidden md:block">Sort</label>
               <select
                 value={sort}
                 onChange={(e) => setSort(e.target.value as SortKey)}
-                className="px-3 md:px-4 py-2.5 md:py-3 rounded-full bg-white/5 border border-white/15 text-sm text-white focus:outline-none focus:border-gold cursor-pointer max-w-[140px] md:max-w-none"
+                className="px-4 py-2.5 rounded-full bg-cloud border border-border text-sm text-ink focus:outline-none focus:border-gold cursor-pointer"
               >
-                <option value="featured" className="bg-[#0b0b09]">Featured</option>
-                <option value="price-asc" className="bg-[#0b0b09]">Price ↑</option>
-                <option value="price-desc" className="bg-[#0b0b09]">Price ↓</option>
-                <option value="duration" className="bg-[#0b0b09]">Duration</option>
+                <option value="featured">Featured</option>
+                <option value="price-asc">Price ↑</option>
+                <option value="price-desc">Price ↓</option>
+                <option value="duration">Duration</option>
               </select>
             </div>
           </div>
 
-          {/* Category chips - horizontal scroll on mobile */}
-          <div className="flex md:flex-wrap gap-2 overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0 md:overflow-visible scrollbar-none">
+          <div className="flex md:flex-wrap gap-2 overflow-x-auto -mx-5 px-5 md:mx-0 md:px-0 md:overflow-visible scrollbar-none">
             <FilterChip active={cat === "all"} onClick={() => setCat("all")} count={counts.all}>
               All
             </FilterChip>
@@ -146,15 +134,15 @@ function ToursPage() {
       </div>
 
       {/* RESULTS */}
-      <section className="px-6 md:px-10 max-w-7xl mx-auto py-14 md:py-20">
-        <div className="flex items-baseline justify-between mb-10">
-          <p className="eyebrow text-white/50">
-            Showing <span className="text-gold">{filtered.length}</span> of {tours.length}
+      <section className="container-x py-12 md:py-16">
+        <div className="flex items-baseline justify-between mb-8">
+          <p className="text-sm text-body">
+            Showing <span className="text-ink font-semibold">{filtered.length}</span> of {tours.length}
           </p>
           {(cat !== "all" || q) && (
             <button
               onClick={() => { setCat("all"); setQ(""); }}
-              className="eyebrow text-white/60 hover:text-gold transition-colors"
+              className="text-[12px] font-semibold uppercase tracking-widest text-gold hover:text-ink transition"
             >
               Clear filters ×
             </button>
@@ -162,12 +150,12 @@ function ToursPage() {
         </div>
 
         {filtered.length === 0 ? (
-          <div className="text-center py-32 border border-dashed border-white/15 rounded-2xl">
-            <p className="font-serif italic text-3xl text-white/70 mb-3">Nothing here yet.</p>
-            <p className="text-white/50 text-sm mb-6">Try clearing the filters or searching differently.</p>
+          <div className="text-center py-24 border border-dashed border-border rounded-2xl bg-cloud/40">
+            <p className="font-display text-2xl text-ink mb-3">Nothing here yet.</p>
+            <p className="text-body text-sm mb-6">Try clearing the filters or searching differently.</p>
             <button
               onClick={() => { setCat("all"); setQ(""); }}
-              className="eyebrow px-6 py-3 rounded-full border border-white/20 hover:bg-gold hover:text-ink hover:border-gold transition"
+              className="px-6 py-3 rounded-full bg-gold text-white text-[12px] font-semibold uppercase tracking-widest hover:bg-ink transition"
             >
               Reset
             </button>
@@ -175,26 +163,26 @@ function ToursPage() {
         ) : (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filtered.map((t) => (
-              <PremiumTourCard key={t.slug} tour={t} onBook={() => setBookingTour(t)} />
+              <TourGridCard key={t.slug} tour={t} onBook={() => setBookingTour(t)} />
             ))}
           </div>
         )}
       </section>
 
-      {/* CTA strip */}
-      <section className="px-6 md:px-10 py-20 md:py-28 border-t border-white/10 bg-black/40">
-        <div className="max-w-5xl mx-auto text-center">
-          <p className="eyebrow text-gold mb-5">Don't see your perfect day?</p>
-          <h2 className="font-serif text-4xl md:text-6xl italic text-white leading-[0.95] mb-6">
+      {/* CTA */}
+      <section className="bg-cloud/60 py-20 md:py-24">
+        <div className="container-x text-center max-w-3xl">
+          <p className="eyebrow text-gold mb-3">Don't see your perfect day?</p>
+          <h2 className="font-display text-3xl md:text-4xl font-bold text-ink mb-4">
             We build private itineraries from scratch.
           </h2>
-          <p className="text-white/60 max-w-xl mx-auto mb-10">
-            Tell us your dates, your appetites, your pace — your concierge will design
-            a day no two other guests have ever had.
+          <p className="text-body mb-8">
+            Tell us your dates, your appetites, your pace — your concierge will design a day
+            no two other guests have ever had.
           </p>
           <Link
             to="/contact"
-            className="inline-block px-10 py-5 rounded-full bg-gold text-ink eyebrow font-medium hover:bg-white transition-colors"
+            className="inline-flex items-center px-8 py-4 rounded-full bg-gold text-white text-[12px] font-semibold uppercase tracking-widest shadow-[0_8px_20px_rgba(43,182,247,0.35)] hover:bg-ink hover:shadow-[0_8px_20px_rgba(30,58,95,0.35)] transition-all"
           >
             Design a Custom Tour →
           </Link>
@@ -221,15 +209,15 @@ function FilterChip({
   return (
     <button
       onClick={onClick}
-      className={`shrink-0 whitespace-nowrap px-4 py-2 rounded-full eyebrow font-medium transition-all border flex items-center gap-2 ${
+      className={`shrink-0 whitespace-nowrap px-4 py-2 rounded-full text-[11px] font-semibold uppercase tracking-widest transition-all border flex items-center gap-2 ${
         active
-          ? "bg-gold text-ink border-gold"
-          : "bg-white/5 border-white/15 text-white/70 hover:border-gold/50 hover:text-white"
+          ? "bg-gold text-white border-gold shadow-[0_6px_15px_rgba(43,182,247,0.3)]"
+          : "bg-white border-border text-ink hover:border-gold hover:text-gold"
       }`}
     >
       <span>{children}</span>
       {typeof count === "number" && (
-        <span className={`text-[9px] tracking-normal ${active ? "text-ink/60" : "text-white/40"}`}>
+        <span className={`text-[10px] ${active ? "text-white/70" : "text-ink/40"}`}>
           {count}
         </span>
       )}
@@ -237,91 +225,57 @@ function FilterChip({
   );
 }
 
-function PremiumTourCard({ tour, onBook }: { tour: typeof tours[number]; onBook: () => void }) {
+function TourGridCard({ tour, onBook }: { tour: Tour; onBook: () => void }) {
   return (
-    <article className="group relative flex flex-col rounded-2xl overflow-hidden bg-white/[0.03] border border-white/10 hover:border-gold/40 transition-all duration-500 hover:-translate-y-1">
-      {/* Image */}
-      <Link
-        to="/tours/$slug"
-        params={{ slug: tour.slug }}
-        className="relative block aspect-[4/3] overflow-hidden"
-      >
+    <article className="group bg-white rounded-xl overflow-hidden shadow-[0_4px_20px_rgba(30,58,95,0.06)] hover:shadow-[0_20px_40px_rgba(30,58,95,0.12)] hover:-translate-y-1 transition-all duration-500 flex flex-col">
+      <Link to="/tours/$slug" params={{ slug: tour.slug }} className="relative block aspect-[16/10] overflow-hidden">
         <img
           src={tour.image}
           alt={tour.title}
           loading="lazy"
-          className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-[1.2s]"
+          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
-
-        {/* Top tags */}
-        <div className="absolute top-4 left-4 right-4 flex justify-between items-start">
-          <span className="eyebrow bg-black/60 backdrop-blur-md text-white px-3 py-1.5 rounded-full border border-white/15">
-            {tour.tagline}
+        {tour.featured && (
+          <span className="absolute top-3 left-3 bg-gold text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-sm">
+            Signature
           </span>
-          {tour.featured && (
-            <span className="eyebrow bg-gold text-ink px-3 py-1.5 rounded-full">
-              Signature
-            </span>
-          )}
-        </div>
-
-        {/* Bottom meta */}
-        <div className="absolute bottom-4 left-4 right-4 flex justify-between items-end text-white text-[11px]">
-          <span className="flex items-center gap-1.5 bg-black/50 backdrop-blur-sm px-3 py-1.5 rounded-full">
-            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <circle cx="12" cy="12" r="9" strokeWidth="1.5"/>
-              <path d="M12 7v5l3 2" strokeWidth="1.5" strokeLinecap="round"/>
-            </svg>
-            {tour.duration}
-          </span>
-          <span className="flex items-center gap-1 bg-black/50 backdrop-blur-sm px-3 py-1.5 rounded-full">
-            <span className="text-gold">★</span> 4.9
-          </span>
-        </div>
+        )}
+        <span className="absolute top-3 right-3 bg-white/95 text-ink text-[11px] font-semibold px-3 py-1 rounded-full flex items-center gap-1">
+          <span className="text-gold">★</span> 4.9
+        </span>
       </Link>
 
-      {/* Body */}
-      <div className="flex flex-col flex-1 p-6">
-        <p className="eyebrow text-gold/80 mb-3">{tour.category}</p>
-        <h3 className="font-serif text-2xl md:text-[26px] italic text-white leading-tight mb-3">
-          {tour.title}
+      <div className="p-6 flex-1 flex flex-col">
+        <p className="text-[11px] font-semibold uppercase tracking-widest text-gold mb-2">{tour.category}</p>
+        <h3 className="font-display font-semibold text-ink text-lg leading-snug mb-2 group-hover:text-gold transition-colors">
+          <Link to="/tours/$slug" params={{ slug: tour.slug }}>{tour.title}</Link>
         </h3>
-        <p className="text-sm text-white/55 leading-relaxed mb-5 line-clamp-2 flex-1">
+        <p className="text-sm text-body leading-relaxed mb-4 line-clamp-2 flex-1">
           {tour.description}
         </p>
 
-        {/* Highlight tags */}
-        <div className="flex flex-wrap gap-1.5 mb-6">
-          {tour.highlights.slice(0, 3).map((h) => (
-            <span
-              key={h}
-              className="text-[10px] tracking-wide text-white/55 border border-white/10 rounded-full px-2.5 py-1"
-            >
-              {h}
-            </span>
-          ))}
+        <div className="flex items-center gap-4 text-[11px] text-body mb-5 pb-5 border-b border-border">
+          <span>⏱ {tour.duration}</span>
+          <span>Private group</span>
         </div>
 
-        {/* Price + actions */}
-        <div className="flex items-end justify-between pt-5 border-t border-white/10">
+        <div className="flex items-end justify-between">
           <div>
-            <p className="text-[10px] uppercase tracking-widest text-white/40 mb-1">From</p>
-            <p className="font-serif text-3xl text-gold leading-none">€{tour.priceFrom}</p>
-            <p className="text-[10px] text-white/40 mt-1">per group · private</p>
+            <p className="text-[10px] uppercase tracking-widest text-body mb-1">From</p>
+            <p className="font-display font-bold text-2xl text-gold leading-none">€{tour.priceFrom}</p>
           </div>
           <div className="flex gap-2">
             <Link
               to="/tours/$slug"
               params={{ slug: tour.slug }}
-              className="eyebrow px-4 py-2.5 rounded-full border border-white/20 text-white/80 hover:border-white/50 transition"
+              className="px-4 py-2.5 rounded-full border border-border text-ink text-[11px] font-semibold uppercase tracking-widest hover:border-gold hover:text-gold transition"
             >
               Details
             </Link>
             <button
               type="button"
               onClick={onBook}
-              className="eyebrow px-5 py-2.5 rounded-full bg-gold text-ink hover:bg-white transition flex items-center gap-1.5"
+              className="px-5 py-2.5 rounded-full bg-gold text-white text-[11px] font-semibold uppercase tracking-widest hover:bg-ink transition shadow-[0_6px_15px_rgba(43,182,247,0.3)]"
             >
               Book →
             </button>
