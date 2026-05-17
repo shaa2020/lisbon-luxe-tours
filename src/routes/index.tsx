@@ -13,6 +13,7 @@ import { Footer } from "@/components/site/Footer";
 import { WhatsappFab } from "@/components/site/Whatsapp";
 import { BookingModal } from "@/components/site/BookingModal";
 import type { Tour } from "@/data/tours";
+import { blogPosts } from "@/data/blog";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -534,26 +535,7 @@ function Gallery() {
 /* ============================== TRAVEL TIPS + SIGNUP ============================== */
 
 function TravelTipsAndSignup() {
-  const tips = [
-    {
-      date: "11/22/2024",
-      comments: 2,
-      shares: 5,
-      title: "Skogafoss",
-      excerpt:
-        "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium…",
-      img: sintraImg,
-    },
-    {
-      date: "11/15/2024",
-      comments: 2,
-      shares: 3,
-      title: "A weekend in Sintra: hidden palaces & pine forests",
-      excerpt:
-        "A practical guide to spending two slow days in Portugal's most romantic hilltop town — from breakfast to nightfall.",
-      img: caboImg,
-    },
-  ];
+  const tips = blogPosts.slice(0, 2);
   return (
     <section className="container-x py-20 md:py-28">
       <div className="flex items-end justify-between mb-12">
@@ -563,17 +545,17 @@ function TravelTipsAndSignup() {
           </h2>
           <p className="text-body text-sm">Stories, guides and seasonal advice from our concierge.</p>
         </div>
-        <Link to="/tours" className="text-[12px] font-semibold uppercase tracking-widest text-gold hover:text-ink transition">
+        <Link to="/journal" className="text-[12px] font-semibold uppercase tracking-widest text-gold hover:text-ink transition">
           View All ›
         </Link>
       </div>
 
       <div className="grid md:grid-cols-3 gap-6">
         {tips.map((t) => (
-          <article key={t.title} className="bg-white rounded-xl overflow-hidden shadow-[0_4px_20px_rgba(30,58,95,0.06)] hover:shadow-[0_20px_40px_rgba(30,58,95,0.12)] transition-shadow group">
-            <div className="aspect-[16/10] overflow-hidden">
-              <img src={t.img} alt={t.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-            </div>
+          <article key={t.slug} className="bg-white rounded-xl overflow-hidden shadow-[0_4px_20px_rgba(30,58,95,0.06)] hover:shadow-[0_20px_40px_rgba(30,58,95,0.12)] transition-shadow group">
+            <Link to="/journal/$slug" params={{ slug: t.slug }} className="block aspect-[16/10] overflow-hidden">
+              <img src={t.image} alt={t.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+            </Link>
             <div className="p-6">
               <div className="flex gap-4 text-[11px] text-body mb-3">
                 <span className="flex items-center gap-1.5"><CalIco /> {t.date}</span>
@@ -581,10 +563,12 @@ function TravelTipsAndSignup() {
                 <span className="flex items-center gap-1.5"><ShareIco /> {t.shares} Shares</span>
               </div>
               <h3 className="font-display font-semibold text-ink text-lg leading-snug mb-3 hover:text-gold transition-colors">
-                {t.title}
+                <Link to="/journal/$slug" params={{ slug: t.slug }}>
+                  {t.title}
+                </Link>
               </h3>
               <p className="text-body text-sm leading-relaxed mb-5 line-clamp-2">{t.excerpt}</p>
-              <Link to="/tours" className="inline-block text-[11px] font-semibold uppercase tracking-widest text-gold border-b-2 border-gold pb-1 hover:text-ink hover:border-ink transition">
+              <Link to="/journal/$slug" params={{ slug: t.slug }} className="inline-block text-[11px] font-semibold uppercase tracking-widest text-gold border-b-2 border-gold pb-1 hover:text-ink hover:border-ink transition">
                 Read more
               </Link>
             </div>
