@@ -14,16 +14,234 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      blog_posts: {
+        Row: {
+          category: string
+          comments: number
+          content: Json
+          created_at: string
+          excerpt: string
+          id: string
+          image_url: string | null
+          published: boolean
+          published_at: string
+          read_time: string
+          shares: number
+          slug: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string
+          comments?: number
+          content?: Json
+          created_at?: string
+          excerpt?: string
+          id?: string
+          image_url?: string | null
+          published?: boolean
+          published_at?: string
+          read_time?: string
+          shares?: number
+          slug: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          comments?: number
+          content?: Json
+          created_at?: string
+          excerpt?: string
+          id?: string
+          image_url?: string | null
+          published?: boolean
+          published_at?: string
+          read_time?: string
+          shares?: number
+          slug?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      bookings: {
+        Row: {
+          created_at: string
+          customer_name: string
+          email: string
+          guests: number
+          id: string
+          notes: string | null
+          phone: string | null
+          status: string
+          total_estimate: number | null
+          tour_slug: string | null
+          tour_title: string | null
+          travel_date: string | null
+        }
+        Insert: {
+          created_at?: string
+          customer_name: string
+          email: string
+          guests?: number
+          id?: string
+          notes?: string | null
+          phone?: string | null
+          status?: string
+          total_estimate?: number | null
+          tour_slug?: string | null
+          tour_title?: string | null
+          travel_date?: string | null
+        }
+        Update: {
+          created_at?: string
+          customer_name?: string
+          email?: string
+          guests?: number
+          id?: string
+          notes?: string | null
+          phone?: string | null
+          status?: string
+          total_estimate?: number | null
+          tour_slug?: string | null
+          tour_title?: string | null
+          travel_date?: string | null
+        }
+        Relationships: []
+      }
+      contact_messages: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          message: string
+          name: string
+          status: string
+          subject: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          message: string
+          name: string
+          status?: string
+          subject?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          message?: string
+          name?: string
+          status?: string
+          subject?: string | null
+        }
+        Relationships: []
+      }
+      tours: {
+        Row: {
+          category: string
+          category_slug: string
+          created_at: string
+          description: string
+          duration: string
+          featured: boolean
+          highlights: Json
+          id: string
+          image_url: string | null
+          included: Json
+          itinerary: Json
+          not_included: Json
+          price_from: number
+          published: boolean
+          slug: string
+          sort_order: number
+          tagline: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          category_slug: string
+          created_at?: string
+          description?: string
+          duration: string
+          featured?: boolean
+          highlights?: Json
+          id?: string
+          image_url?: string | null
+          included?: Json
+          itinerary?: Json
+          not_included?: Json
+          price_from?: number
+          published?: boolean
+          slug: string
+          sort_order?: number
+          tagline?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          category_slug?: string
+          created_at?: string
+          description?: string
+          duration?: string
+          featured?: boolean
+          highlights?: Json
+          id?: string
+          image_url?: string | null
+          included?: Json
+          itinerary?: Json
+          not_included?: Json
+          price_from?: number
+          published?: boolean
+          slug?: string
+          sort_order?: number
+          tagline?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +368,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin"],
+    },
   },
 } as const
