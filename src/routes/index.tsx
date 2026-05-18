@@ -12,7 +12,7 @@ import { Nav } from "@/components/site/Nav";
 import { Footer } from "@/components/site/Footer";
 import { WhatsappFab } from "@/components/site/Whatsapp";
 import { BookingModal } from "@/components/site/BookingModal";
-import type { Tour } from "@/data/tours";
+import type { Tour } from "@/lib/cms";
 import { blogPosts } from "@/data/blog";
 
 export const Route = createFileRoute("/")({

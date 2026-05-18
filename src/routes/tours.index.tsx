@@ -1,11 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { tours, categories } from "@/data/tours";
 import { Nav } from "@/components/site/Nav";
 import { Footer } from "@/components/site/Footer";
 import { WhatsappFab } from "@/components/site/Whatsapp";
 import { BookingModal } from "@/components/site/BookingModal";
-import type { Tour } from "@/data/tours";
+import { useTours, tourCategories, type Tour } from "@/lib/cms";
 import heroImg from "@/assets/hero-lisbon.jpg";
 
 export const Route = createFileRoute("/tours/")({
@@ -32,6 +31,7 @@ export const Route = createFileRoute("/tours/")({
 type SortKey = "featured" | "price-asc" | "price-desc" | "duration";
 
 function ToursPage() {
+  const { data: tours = [], isLoading } = useTours();
   const [cat, setCat] = useState<string>("all");
   const [q, setQ] = useState("");
   const [sort, setSort] = useState<SortKey>("featured");
@@ -54,13 +54,13 @@ function ToursPage() {
     else if (sort === "duration") sorted.sort((a, b) => a.duration.localeCompare(b.duration));
     else sorted.sort((a, b) => Number(!!b.featured) - Number(!!a.featured));
     return sorted;
-  }, [cat, q, sort]);
+  }, [tours, cat, q, sort]);
 
   const counts = useMemo(() => {
     const map: Record<string, number> = { all: tours.length };
-    for (const c of categories) map[c.slug] = tours.filter((t) => t.categorySlug === c.slug).length;
+    for (const c of tourCategories) map[c.slug] = tours.filter((t) => t.categorySlug === c.slug).length;
     return map;
-  }, []);
+  }, [tours]);
 
   return (
     <div className="min-h-screen bg-paper text-ink overflow-x-clip">
@@ -119,7 +119,7 @@ function ToursPage() {
             <FilterChip active={cat === "all"} onClick={() => setCat("all")} count={counts.all}>
               All
             </FilterChip>
-            {categories.map((c) => (
+            {tourCategories.map((c) => (
               <FilterChip
                 key={c.slug}
                 active={cat === c.slug}
@@ -149,7 +149,20 @@ function ToursPage() {
           )}
         </div>
 
-        {filtered.length === 0 ? (
+        {isLoading ? (
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="bg-white rounded-xl overflow-hidden border border-border animate-pulse">
+                <div className="aspect-[16/10] bg-cloud" />
+                <div className="p-6 space-y-3">
+                  <div className="h-3 w-24 bg-cloud rounded" />
+                  <div className="h-5 w-3/4 bg-cloud rounded" />
+                  <div className="h-3 w-full bg-cloud rounded" />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : filtered.length === 0 ? (
           <div className="text-center py-24 border border-dashed border-border rounded-2xl bg-cloud/40">
             <p className="font-display text-2xl text-ink mb-3">Nothing here yet.</p>
             <p className="text-body text-sm mb-6">Try clearing the filters or searching differently.</p>

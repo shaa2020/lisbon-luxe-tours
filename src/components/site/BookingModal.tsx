@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { format } from "date-fns";
 import { CalendarIcon, Users, Clock, MapPin, Check } from "lucide-react";
-import type { Tour } from "@/data/tours";
+import type { Tour } from "@/lib/cms";
 import {
   Dialog,
   DialogContent,

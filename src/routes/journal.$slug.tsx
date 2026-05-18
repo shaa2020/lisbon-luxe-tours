@@ -1,59 +1,69 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { Nav } from "@/components/site/Nav";
 import { Footer } from "@/components/site/Footer";
 import { WhatsappFab } from "@/components/site/Whatsapp";
-import { blogPosts, type BlogPost } from "@/data/blog";
+import { useBlogPost, useBlogPosts } from "@/lib/cms";
 
 export const Route = createFileRoute("/journal/$slug")({
-  loader: ({ params }): { post: BlogPost } => {
-    const post = blogPosts.find((entry) => entry.slug === params.slug);
-    if (!post) throw notFound();
-    return { post };
-  },
-  head: ({ params, loaderData }) => ({
-    meta: loaderData
-      ? [
-          { title: `${loaderData.post.title} — Saudade Journal` },
-          { name: "description", content: loaderData.post.excerpt },
-          { property: "og:title", content: loaderData.post.title },
-          { property: "og:description", content: loaderData.post.excerpt },
-          { property: "og:image", content: loaderData.post.image },
-          { property: "og:url", content: `/journal/${params.slug}` },
-        ]
-      : [],
-    links: loaderData ? [{ rel: "canonical", href: `/journal/${params.slug}` }] : [],
+  head: ({ params }) => ({
+    meta: [
+      { title: `Journal — Saudade` },
+      { property: "og:url", content: `/journal/${params.slug}` },
+    ],
+    links: [{ rel: "canonical", href: `/journal/${params.slug}` }],
   }),
-  notFoundComponent: () => (
-    <div className="min-h-screen flex items-center justify-center bg-paper px-4">
-      <div className="text-center max-w-md">
-        <p className="eyebrow text-gold mb-4">Journal</p>
-        <h1 className="font-display text-4xl font-bold text-ink mb-4">Post not found</h1>
-        <p className="text-body mb-6">This story may have moved or is no longer available.</p>
-        <Link to="/journal" className="text-gold font-semibold hover:text-ink transition-colors">
-          ← Back to all stories
-        </Link>
-      </div>
-    </div>
-  ),
-  errorComponent: ({ error, reset }) => (
-    <div className="min-h-screen flex items-center justify-center bg-paper px-4">
-      <div className="text-center max-w-md">
-        <h1 className="font-display text-3xl font-bold text-ink mb-3">This post didn’t load</h1>
-        <p className="text-body mb-6">{error.message}</p>
-        <button
-          onClick={reset}
-          className="inline-flex items-center justify-center rounded-full bg-gold px-5 py-3 text-[12px] font-semibold uppercase tracking-widest text-white hover:bg-ink transition-colors"
-        >
-          Try again
-        </button>
-      </div>
-    </div>
-  ),
   component: JournalPostPage,
 });
 
 function JournalPostPage() {
-  const { post } = Route.useLoaderData();
+  const { slug } = Route.useParams();
+  const { data: post, isLoading, isError, error } = useBlogPost(slug);
+  const { data: blogPosts = [] } = useBlogPosts();
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-paper text-ink">
+        <Nav />
+        <div className="container-x pt-[120px] pb-24 animate-pulse space-y-6">
+          <div className="h-8 w-2/3 bg-cloud rounded" />
+          <div className="h-[360px] bg-cloud rounded-xl" />
+          <div className="h-4 w-full bg-cloud rounded" />
+          <div className="h-4 w-5/6 bg-cloud rounded" />
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-paper px-4">
+        <div className="text-center max-w-md">
+          <h1 className="font-display text-3xl font-bold text-ink mb-3">This post didn’t load</h1>
+          <p className="text-body mb-6">{(error as Error)?.message ?? "Unknown error."}</p>
+          <Link to="/journal" className="text-gold font-semibold hover:text-ink transition">
+            ← Back to all stories
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  if (!post) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-paper px-4">
+        <div className="text-center max-w-md">
+          <p className="eyebrow text-gold mb-4">Journal</p>
+          <h1 className="font-display text-4xl font-bold text-ink mb-4">Post not found</h1>
+          <p className="text-body mb-6">This story may have moved or is no longer available.</p>
+          <Link to="/journal" className="text-gold font-semibold hover:text-ink transition-colors">
+            ← Back to all stories
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   const related = blogPosts.filter((entry) => entry.slug !== post.slug).slice(0, 2);
 
   return (
@@ -96,48 +106,50 @@ function JournalPostPage() {
           <div className="max-w-3xl mx-auto">
             <p className="text-lg md:text-xl leading-relaxed text-ink/85 mb-8">{post.excerpt}</p>
             <div className="space-y-6 text-base leading-8 text-body">
-              {post.content.map((paragraph: string) => (
-                <p key={paragraph}>{paragraph}</p>
+              {post.content.map((paragraph: string, i: number) => (
+                <p key={i}>{paragraph}</p>
               ))}
             </div>
           </div>
         </section>
 
-        <section className="bg-cloud/60 py-16 md:py-20">
-          <div className="container-x">
-            <div className="flex items-end justify-between gap-4 mb-8">
-              <div>
-                <p className="eyebrow text-gold mb-2">Continue reading</p>
-                <h2 className="font-display text-3xl md:text-4xl font-bold text-ink">More journal stories</h2>
+        {related.length > 0 && (
+          <section className="bg-cloud/60 py-16 md:py-20">
+            <div className="container-x">
+              <div className="flex items-end justify-between gap-4 mb-8">
+                <div>
+                  <p className="eyebrow text-gold mb-2">Continue reading</p>
+                  <h2 className="font-display text-3xl md:text-4xl font-bold text-ink">More journal stories</h2>
+                </div>
+                <Link to="/journal" className="text-[12px] font-semibold uppercase tracking-widest text-gold hover:text-ink transition-colors">
+                  All stories ›
+                </Link>
               </div>
-              <Link to="/journal" className="text-[12px] font-semibold uppercase tracking-widest text-gold hover:text-ink transition-colors">
-                All stories ›
-              </Link>
-            </div>
 
-            <div className="grid md:grid-cols-2 gap-6">
-              {related.map((entry) => (
-                <article
-                  key={entry.slug}
-                  className="bg-white rounded-xl overflow-hidden border border-border shadow-[0_4px_20px_rgba(30,58,95,0.06)]"
-                >
-                  <Link to="/journal/$slug" params={{ slug: entry.slug }} className="block aspect-[16/10] overflow-hidden">
-                    <img src={entry.image} alt={entry.title} className="w-full h-full object-cover" />
-                  </Link>
-                  <div className="p-6">
-                    <p className="text-[11px] uppercase tracking-widest text-gold mb-2">{entry.category}</p>
-                    <h3 className="font-display text-2xl font-semibold text-ink leading-snug mb-3">
-                      <Link to="/journal/$slug" params={{ slug: entry.slug }} className="hover:text-gold transition-colors">
-                        {entry.title}
-                      </Link>
-                    </h3>
-                    <p className="text-sm text-body leading-relaxed">{entry.excerpt}</p>
-                  </div>
-                </article>
-              ))}
+              <div className="grid md:grid-cols-2 gap-6">
+                {related.map((entry) => (
+                  <article
+                    key={entry.slug}
+                    className="bg-white rounded-xl overflow-hidden border border-border shadow-[0_4px_20px_rgba(30,58,95,0.06)]"
+                  >
+                    <Link to="/journal/$slug" params={{ slug: entry.slug }} className="block aspect-[16/10] overflow-hidden">
+                      <img src={entry.image} alt={entry.title} className="w-full h-full object-cover" />
+                    </Link>
+                    <div className="p-6">
+                      <p className="text-[11px] uppercase tracking-widest text-gold mb-2">{entry.category}</p>
+                      <h3 className="font-display text-2xl font-semibold text-ink leading-snug mb-3">
+                        <Link to="/journal/$slug" params={{ slug: entry.slug }} className="hover:text-gold transition-colors">
+                          {entry.title}
+                        </Link>
+                      </h3>
+                      <p className="text-sm text-body leading-relaxed">{entry.excerpt}</p>
+                    </div>
+                  </article>
+                ))}
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        )}
       </article>
 
       <Footer />

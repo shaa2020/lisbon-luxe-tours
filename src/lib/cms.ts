@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { tourImage, blogImage } from "./fallback-images";
 
 export type Tour = {
-  id: string;
+  id?: string;
   slug: string;
   title: string;
   category: string;
@@ -11,16 +11,16 @@ export type Tour = {
   duration: string;
   priceFrom: number;
   image: string;
-  image_url: string | null;
+  image_url?: string | null;
   tagline: string;
   description: string;
   highlights: string[];
   itinerary: { time: string; title: string; detail: string }[];
   included: string[];
   notIncluded: string[];
-  featured: boolean;
-  published: boolean;
-  sort_order: number;
+  featured?: boolean;
+  published?: boolean;
+  sort_order?: number;
 };
 
 export type BlogPost = {
