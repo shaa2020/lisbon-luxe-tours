@@ -20,6 +20,7 @@ import { Route as ToursSlugRouteImport } from './routes/tours.$slug'
 import { Route as JournalSlugRouteImport } from './routes/journal.$slug'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AdminToursIndexRouteImport } from './routes/admin.tours.index'
+import { Route as AdminToursIdRouteImport } from './routes/admin.tours.$id'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
@@ -76,6 +77,11 @@ const AdminToursIndexRoute = AdminToursIndexRouteImport.update({
   path: '/admin/tours/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminToursIdRoute = AdminToursIdRouteImport.update({
+  id: '/admin/tours/$id',
+  path: '/admin/tours/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -88,6 +94,7 @@ export interface FileRoutesByFullPath {
   '/admin/': typeof AdminIndexRoute
   '/journal/': typeof JournalIndexRoute
   '/tours/': typeof ToursIndexRoute
+  '/admin/tours/$id': typeof AdminToursIdRoute
   '/admin/tours/': typeof AdminToursIndexRoute
 }
 export interface FileRoutesByTo {
@@ -101,6 +108,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminIndexRoute
   '/journal': typeof JournalIndexRoute
   '/tours': typeof ToursIndexRoute
+  '/admin/tours/$id': typeof AdminToursIdRoute
   '/admin/tours': typeof AdminToursIndexRoute
 }
 export interface FileRoutesById {
@@ -115,6 +123,7 @@ export interface FileRoutesById {
   '/admin/': typeof AdminIndexRoute
   '/journal/': typeof JournalIndexRoute
   '/tours/': typeof ToursIndexRoute
+  '/admin/tours/$id': typeof AdminToursIdRoute
   '/admin/tours/': typeof AdminToursIndexRoute
 }
 export interface FileRouteTypes {
@@ -130,6 +139,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/journal/'
     | '/tours/'
+    | '/admin/tours/$id'
     | '/admin/tours/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -143,6 +153,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/journal'
     | '/tours'
+    | '/admin/tours/$id'
     | '/admin/tours'
   id:
     | '__root__'
@@ -156,6 +167,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/journal/'
     | '/tours/'
+    | '/admin/tours/$id'
     | '/admin/tours/'
   fileRoutesById: FileRoutesById
 }
@@ -170,6 +182,7 @@ export interface RootRouteChildren {
   AdminIndexRoute: typeof AdminIndexRoute
   JournalIndexRoute: typeof JournalIndexRoute
   ToursIndexRoute: typeof ToursIndexRoute
+  AdminToursIdRoute: typeof AdminToursIdRoute
   AdminToursIndexRoute: typeof AdminToursIndexRoute
 }
 
@@ -252,6 +265,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminToursIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/tours/$id': {
+      id: '/admin/tours/$id'
+      path: '/admin/tours/$id'
+      fullPath: '/admin/tours/$id'
+      preLoaderRoute: typeof AdminToursIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -266,6 +286,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminIndexRoute: AdminIndexRoute,
   JournalIndexRoute: JournalIndexRoute,
   ToursIndexRoute: ToursIndexRoute,
+  AdminToursIdRoute: AdminToursIdRoute,
   AdminToursIndexRoute: AdminToursIndexRoute,
 }
 export const routeTree = rootRouteImport
