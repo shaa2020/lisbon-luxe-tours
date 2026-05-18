@@ -1,13 +1,13 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-
-const BRAND = "Saudade";
-const TAGLINE = "Portugal, Privately";
+import { BrandLogo } from "@/components/site/BrandLogo";
+import { useSiteBrand } from "@/lib/brand";
 
 export function Nav({ overlay = false }: { overlay?: boolean }) {
   // overlay kept for API compat but ignored — header is always visible & solid
   void overlay;
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { brandName } = useSiteBrand();
 
   // Lock body scroll when mobile menu open
   useEffect(() => {
@@ -47,16 +47,12 @@ export function Nav({ overlay = false }: { overlay?: boolean }) {
 
       {/* Main nav */}
       <div className="container-x flex items-center justify-between h-[68px] md:h-[78px]">
-        <Link to="/" className="flex items-center gap-2.5 group shrink-0" aria-label={`${BRAND} home`}>
-          <LogoMark />
-          <span className="flex flex-col leading-none">
-            <span className="font-display font-bold text-[22px] md:text-[26px] tracking-tight text-ink group-hover:text-gold transition-colors">
-              {BRAND}
-            </span>
-            <span className="hidden sm:block text-[9px] font-semibold uppercase tracking-[0.18em] text-gold/90 mt-1">
-              {TAGLINE}
-            </span>
-          </span>
+        <Link to="/" className="group shrink-0" aria-label={`${brandName} home`}>
+          <BrandLogo
+            showTagline
+            className="pointer-events-none"
+            wordmarkClassName="text-[22px] md:text-[26px] text-ink group-hover:text-gold transition-colors"
+          />
         </Link>
 
         <nav className="hidden lg:flex items-center gap-8">
@@ -132,31 +128,6 @@ export function Nav({ overlay = false }: { overlay?: boolean }) {
         </div>
       )}
     </header>
-  );
-}
-
-/* ============ Creative logo ============ */
-/* Stylized azulejo-tile compass — Portuguese tile motif with a compass needle */
-function LogoMark() {
-  return (
-    <svg width="38" height="38" viewBox="0 0 44 44" fill="none" aria-hidden="true" className="shrink-0">
-      <defs>
-        <linearGradient id="saudadeGrad" x1="0" y1="0" x2="44" y2="44" gradientUnits="userSpaceOnUse">
-          <stop offset="0" stopColor="#2bb6f7" />
-          <stop offset="1" stopColor="#1e3a5f" />
-        </linearGradient>
-      </defs>
-      <rect x="2" y="2" width="40" height="40" rx="10" fill="url(#saudadeGrad)" />
-      {/* tile petals */}
-      <path
-        d="M22 9 L25 18 L34 18 L26.5 23.5 L29.5 32.5 L22 27 L14.5 32.5 L17.5 23.5 L10 18 L19 18 Z"
-        fill="#ffffff"
-        fillOpacity="0.18"
-      />
-      {/* compass needle */}
-      <path d="M22 8 L25 22 L22 36 L19 22 Z" fill="#ffffff" />
-      <circle cx="22" cy="22" r="2.4" fill="#1e3a5f" stroke="#ffffff" strokeWidth="1.2" />
-    </svg>
   );
 }
 

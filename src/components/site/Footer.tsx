@@ -1,6 +1,10 @@
 import { Link } from "@tanstack/react-router";
+import { BrandLogo } from "@/components/site/BrandLogo";
+import { useSiteBrand } from "@/lib/brand";
 
 export function Footer() {
+  const { brandName } = useSiteBrand();
+
   return (
     <footer className="bg-white border-t border-border">
       {/* Newsletter strip */}
@@ -31,21 +35,14 @@ export function Footer() {
 
       <div className="container-x py-16 grid md:grid-cols-12 gap-10">
         <div className="md:col-span-4">
-          <div className="flex items-center gap-2 mb-5">
-            <svg width="32" height="32" viewBox="0 0 40 40" fill="none">
-              <path
-                d="M6 28c4-2 8-2 12 0s8 2 12 0M8 22l8-12 6 8 4-4 6 8"
-                stroke="#2bb6f7" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"
-              />
-              <circle cx="32" cy="10" r="2" fill="#2bb6f7" />
-            </svg>
-            <span className="font-display font-bold text-2xl text-ink">Saudade</span>
+          <div className="mb-5">
+            <BrandLogo wordmarkClassName="text-2xl text-ink" />
           </div>
           <p className="text-sm text-body leading-relaxed mb-6 max-w-xs">
             Travels many varieties of changes of lorem ipsum available, but the majority have
             suffered alteration in form by injected humor.
           </p>
-          <p className="eyebrow text-ink/40">Designed by Saudade · 2026</p>
+          <p className="eyebrow text-ink/40">Designed by {brandName} · 2026</p>
         </div>
 
         <div className="md:col-span-2">
@@ -102,7 +99,7 @@ export function Footer() {
       <div className="border-t border-border">
         <div className="container-x py-6 flex flex-col md:flex-row items-center justify-between gap-3">
           <p className="text-[12px] text-body">
-            © {new Date().getFullYear()} Saudade · All Rights Reserved · RNAAT 1042 · NIF 514 832 109
+            © {new Date().getFullYear()} {brandName} · All Rights Reserved · RNAAT 1042 · NIF 514 832 109
           </p>
           <div className="flex gap-6 text-[12px] text-body">
             <a href="#" className="hover:text-gold transition-colors">Privacy</a>
