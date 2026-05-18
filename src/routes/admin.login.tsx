@@ -9,10 +9,9 @@ export const Route = createFileRoute("/admin/login")({
 });
 
 function AdminLoginPage() {
-  const { user, isAdmin, loading, signIn, signUp } = useAuth();
+  const { user, isAdmin, loading, signIn } = useAuth();
   const navigate = useNavigate();
   const { redirect } = Route.useSearch();
-  const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
@@ -26,12 +25,9 @@ function AdminLoginPage() {
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setBusy(true);
-    const fn = mode === "signin" ? signIn : signUp;
-    const { error } = await fn(email, password);
+    const { error } = await signIn(email, password);
     setBusy(false);
     if (error) toast.error(error);
-    else if (mode === "signup")
-      toast.success("Account created. You're being signed in…");
   };
 
   return (
@@ -44,9 +40,7 @@ function AdminLoginPage() {
           Saudade Admin
         </h1>
         <p className="text-sm text-muted-foreground mb-6">
-          {mode === "signin"
-            ? "Sign in to manage tours and stories."
-            : "Create the first admin account."}
+          Sign in to manage tours and stories.
         </p>
 
         {user && !isAdmin && (
@@ -73,7 +67,7 @@ function AdminLoginPage() {
               type="password"
               required
               minLength={6}
-              autoComplete={mode === "signin" ? "current-password" : "new-password"}
+              autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
@@ -84,19 +78,9 @@ function AdminLoginPage() {
             disabled={busy}
             className="w-full rounded-md bg-primary text-primary-foreground px-4 py-2.5 text-sm font-semibold hover:bg-primary/90 disabled:opacity-50"
           >
-            {busy ? "Please wait…" : mode === "signin" ? "Sign in" : "Create admin"}
+            {busy ? "Please wait…" : "Sign in"}
           </button>
         </form>
-
-        <button
-          type="button"
-          onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
-          className="mt-4 text-xs text-muted-foreground hover:text-foreground w-full text-center"
-        >
-          {mode === "signin"
-            ? "First time? Create the admin account →"
-            : "Have an account? Sign in →"}
-        </button>
       </div>
     </div>
   );
