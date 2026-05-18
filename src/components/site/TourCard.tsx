@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import type { Tour } from "@/data/tours";
+import type { Tour } from "@/lib/cms";
 
 export function TourCard({ tour }: { tour: Tour; offset?: boolean }) {
   return (
