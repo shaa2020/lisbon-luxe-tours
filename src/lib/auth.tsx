@@ -20,36 +20,58 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   const refreshRole = async (uid: string | undefined) => {
-    if (!uid) {
-      setIsAdmin(false);
-      return;
+    try {
+      if (!uid) {
+        setIsAdmin(false);
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", uid)
+        .eq("role", "admin")
+        .maybeSingle();
+
+      if (error) {
+        console.error("Failed to fetch admin role", error);
+        setIsAdmin(false);
+        return;
+      }
+
+      setIsAdmin(!!data);
+    } finally {
+      setLoading(false);
     }
-    const { data } = await supabase
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", uid)
-      .eq("role", "admin")
-      .maybeSingle();
-    setIsAdmin(!!data);
   };
 
   useEffect(() => {
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => {
-      setSession(s);
-      // Defer DB lookup to avoid deadlock inside the callback
-      setTimeout(() => {
-        refreshRole(s?.user.id);
+    const syncSession = (nextSession: Session | null) => {
+      setLoading(true);
+      setSession(nextSession);
+
+      window.setTimeout(() => {
+        void refreshRole(nextSession?.user.id);
       }, 0);
+    };
+
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => {
+      syncSession(s);
     });
+
     supabase.auth.getSession().then(({ data }) => {
-      setSession(data.session);
-      refreshRole(data.session?.user.id).finally(() => setLoading(false));
+      syncSession(data.session);
     });
+
     return () => sub.subscription.unsubscribe();
   }, []);
 
   const signIn: AuthState["signIn"] = async (email, password) => {
+    setLoading(true);
     const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) {
+      setLoading(false);
+    }
     return error ? { error: error.message } : {};
   };
 
@@ -80,8 +102,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signOut = async () => {
+    setLoading(true);
     await supabase.auth.signOut();
+    setSession(null);
     setIsAdmin(false);
+    setLoading(false);
   };
 
   return (
