@@ -7,24 +7,22 @@ import belemImg from "@/assets/dest-belem.jpg";
 import cascaisImg from "@/assets/dest-cascais.jpg";
 import caboImg from "@/assets/tour-caboroca.jpg";
 import vanImg from "@/assets/fleet-van.jpg";
-import { tours } from "@/data/tours";
 import { Nav } from "@/components/site/Nav";
 import { Footer } from "@/components/site/Footer";
 import { WhatsappFab } from "@/components/site/Whatsapp";
 import { BookingModal } from "@/components/site/BookingModal";
-import type { Tour } from "@/lib/cms";
-import { blogPosts } from "@/data/blog";
+import { useBlogPosts, useTours, type Tour } from "@/lib/cms";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Saudade — Discover Portugal · Private Tours of Lisboa, Sintra & the Coast" },
+      { title: "Luz de — Discover Portugal · Private Tours of Lisboa, Sintra & the Coast" },
       {
         name: "description",
         content:
-          "Plan your Portugal trip with Saudade. Browse popular private tuk-tuk, Sintra, Belém, Cascais and sunset tours. Real local guides, flexible departures, instant inquiry.",
+          "Plan your Portugal trip with Luz de. Browse popular private tuk-tuk, Sintra, Belém, Cascais and sunset tours. Real local guides, flexible departures, instant inquiry.",
       },
-      { property: "og:title", content: "Saudade — Discover Portugal" },
+      { property: "og:title", content: "Luz de — Discover Portugal" },
       {
         property: "og:description",
         content:
@@ -236,6 +234,7 @@ function AboutSection() {
 /* ============================== FLASH DEALS ============================== */
 
 function FlashDeals() {
+  const { data: tours = [] } = useTours();
   const deals = tours.slice(0, 4);
   return (
     <section className="bg-cloud/60 py-20 md:py-24">
@@ -333,7 +332,7 @@ function WhyTravel() {
       </svg>
 
       <div className="text-center mb-14">
-        <p className="eyebrow text-gold mb-3">Why travel with Saudade</p>
+        <p className="eyebrow text-gold mb-3">Why travel with Luz de</p>
         <h2 className="font-display text-3xl md:text-4xl font-bold text-ink">
           Slow, private, unforgettable.
         </h2>
@@ -357,6 +356,8 @@ function WhyTravel() {
 /* ============================== POPULAR TOURS ============================== */
 
 function PopularTours({ onBook }: { onBook: (t: Tour) => void }) {
+  const { data: tours = [] } = useTours();
+
   return (
     <section className="bg-cloud/60 py-20 md:py-28">
       <div className="container-x">
@@ -535,6 +536,7 @@ function Gallery() {
 /* ============================== TRAVEL TIPS + SIGNUP ============================== */
 
 function TravelTipsAndSignup() {
+  const { data: blogPosts = [] } = useBlogPosts();
   const tips = blogPosts.slice(0, 2);
   return (
     <section className="container-x py-20 md:py-28">

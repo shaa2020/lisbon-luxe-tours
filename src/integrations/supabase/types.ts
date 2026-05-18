@@ -140,6 +140,30 @@ export type Database = {
         }
         Relationships: []
       }
+      site_settings: {
+        Row: {
+          brand_name: string
+          created_at: string
+          id: boolean
+          logo_url: string | null
+          updated_at: string
+        }
+        Insert: {
+          brand_name?: string
+          created_at?: string
+          id?: boolean
+          logo_url?: string | null
+          updated_at?: string
+        }
+        Update: {
+          brand_name?: string
+          created_at?: string
+          id?: boolean
+          logo_url?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       tours: {
         Row: {
           category: string

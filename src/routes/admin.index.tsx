@@ -1,7 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { AdminShell } from "@/components/admin/AdminShell";
+import { BrandLogo } from "@/components/site/BrandLogo";
+import { uploadMediaFile } from "@/lib/admin-helpers";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/admin/")({
   component: AdminDashboard,
@@ -21,10 +25,63 @@ function useCount(table: "tours" | "blog_posts" | "bookings" | "contact_messages
 }
 
 function AdminDashboard() {
+  const qc = useQueryClient();
   const tours = useCount("tours");
   const posts = useCount("blog_posts");
   const bookings = useCount("bookings");
   const messages = useCount("contact_messages");
+
+  const brand = useQuery({
+    queryKey: ["site-brand-admin"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("site_settings")
+        .select("brand_name, logo_url")
+        .eq("id", true)
+        .single();
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const [brandName, setBrandName] = useState("Luz de");
+  const [logoUrl, setLogoUrl] = useState<string | null>(null);
+  const [savingBrand, setSavingBrand] = useState(false);
+  const [uploadingLogo, setUploadingLogo] = useState(false);
+
+  useEffect(() => {
+    if (brand.data) {
+      setBrandName(brand.data.brand_name || "Luz de");
+      setLogoUrl(brand.data.logo_url ?? null);
+    }
+  }, [brand.data]);
+
+  const saveBrand = async () => {
+    setSavingBrand(true);
+    const { error } = await supabase.from("site_settings").upsert({
+      id: true,
+      brand_name: brandName.trim() || "Luz de",
+      logo_url: logoUrl,
+    });
+    setSavingBrand(false);
+    if (error) return toast.error(error.message);
+    toast.success("Brand updated");
+    qc.invalidateQueries({ queryKey: ["site-brand"] });
+    qc.invalidateQueries({ queryKey: ["site-brand-admin"] });
+  };
+
+  const onBrandLogo = async (file: File) => {
+    setUploadingLogo(true);
+    try {
+      const url = await uploadMediaFile("brand", "luz-de-logo", file);
+      setLogoUrl(url);
+      toast.success("Logo uploaded");
+    } catch (error) {
+      toast.error((error as Error).message);
+    } finally {
+      setUploadingLogo(false);
+    }
+  };
 
   const cards: { to: string; label: string; count: number | undefined; desc: string }[] = [
     { to: "/admin/tours", label: "Tours", count: tours.data, desc: "Create, edit and publish tour pages." },
@@ -36,7 +93,8 @@ function AdminDashboard() {
   return (
     <AdminShell>
       <h1 className="text-2xl font-display font-bold mb-6">Dashboard</h1>
-      <div className="grid sm:grid-cols-2 gap-4">
+      <div className="grid lg:grid-cols-[1.2fr_0.8fr] gap-6">
+        <div className="grid sm:grid-cols-2 gap-4">
         {cards.map((c) => (
           <Link
             key={c.label}
@@ -52,6 +110,57 @@ function AdminDashboard() {
             <p className="text-xs text-muted-foreground">{c.desc}</p>
           </Link>
         ))}
+        </div>
+
+        <section className="rounded-xl border border-border bg-card p-5 space-y-4">
+          <div>
+            <p className="text-sm font-semibold text-foreground">Brand settings</p>
+            <p className="text-xs text-muted-foreground">Update the public company name and logo.</p>
+          </div>
+
+          <div className="rounded-lg border border-border bg-background p-4">
+            <BrandLogo brandName={brandName} logoUrl={logoUrl} showTagline />
+          </div>
+
+          <label className="block space-y-2">
+            <span className="text-xs font-medium text-foreground">Company name</span>
+            <input
+              value={brandName}
+              onChange={(e) => setBrandName(e.target.value)}
+              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary"
+            />
+          </label>
+
+          <div className="space-y-2">
+            <span className="text-xs font-medium text-foreground">Logo image</span>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => e.target.files?.[0] && onBrandLogo(e.target.files[0])}
+              className="block w-full text-xs text-muted-foreground"
+            />
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={saveBrand}
+                disabled={savingBrand || uploadingLogo}
+                className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground disabled:opacity-50"
+              >
+                {savingBrand ? "Saving…" : "Save brand"}
+              </button>
+              {logoUrl && (
+                <button
+                  type="button"
+                  onClick={() => setLogoUrl(null)}
+                  className="rounded-md border border-border px-4 py-2 text-sm font-medium text-foreground"
+                >
+                  Use built-in logo
+                </button>
+              )}
+            </div>
+            {(uploadingLogo || brand.isLoading) && <p className="text-xs text-muted-foreground">Updating…</p>}
+          </div>
+        </section>
       </div>
     </AdminShell>
   );

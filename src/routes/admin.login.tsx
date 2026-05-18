@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/auth";
+import { useSiteBrand } from "@/lib/brand";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/admin/login")({
@@ -10,6 +11,7 @@ export const Route = createFileRoute("/admin/login")({
 
 function AdminLoginPage() {
   const { user, isAdmin, loading, signIn } = useAuth();
+  const { brandName } = useSiteBrand();
   const navigate = useNavigate();
   const { redirect } = Route.useSearch();
   const [email, setEmail] = useState("");
@@ -37,7 +39,7 @@ function AdminLoginPage() {
           ← Back to site
         </Link>
         <h1 className="font-display text-2xl font-bold text-foreground mt-4 mb-1">
-          Saudade Admin
+{brandName} Admin
         </h1>
         <p className="text-sm text-muted-foreground mb-6">
           Sign in to manage tours and stories.

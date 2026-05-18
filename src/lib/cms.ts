@@ -1,6 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { useServerFn } from "@tanstack/react-start";
 import { tourImage, blogImage } from "./fallback-images";
+import {
+  getPublishedBlogPostBySlug,
+  getPublishedBlogPosts,
+  getPublishedTourBySlug,
+  getPublishedTours,
+} from "./cms.functions";
 
 export type Tour = {
   id?: string;
@@ -131,60 +137,48 @@ export function mapPost(row: BlogRow): BlogPost {
 }
 
 export function useTours() {
+  const fetchTours = useServerFn(getPublishedTours);
+
   return useQuery({
     queryKey: ["tours", "public"],
     queryFn: async (): Promise<Tour[]> => {
-      const { data, error } = await supabase
-        .from("tours")
-        .select("*")
-        .eq("published", true)
-        .order("sort_order", { ascending: true });
-      if (error) throw error;
+      const data = await fetchTours();
       return (data ?? []).map((r) => mapTour(r as TourRow));
     },
   });
 }
 
 export function useTour(slug: string) {
+  const fetchTour = useServerFn(getPublishedTourBySlug);
+
   return useQuery({
     queryKey: ["tour", slug],
     queryFn: async (): Promise<Tour | null> => {
-      const { data, error } = await supabase
-        .from("tours")
-        .select("*")
-        .eq("slug", slug)
-        .maybeSingle();
-      if (error) throw error;
+      const data = await fetchTour({ data: { slug } });
       return data ? mapTour(data as TourRow) : null;
     },
   });
 }
 
 export function useBlogPosts() {
+  const fetchBlogPosts = useServerFn(getPublishedBlogPosts);
+
   return useQuery({
     queryKey: ["blog", "public"],
     queryFn: async (): Promise<BlogPost[]> => {
-      const { data, error } = await supabase
-        .from("blog_posts")
-        .select("*")
-        .eq("published", true)
-        .order("published_at", { ascending: false });
-      if (error) throw error;
+      const data = await fetchBlogPosts();
       return (data ?? []).map((r) => mapPost(r as BlogRow));
     },
   });
 }
 
 export function useBlogPost(slug: string) {
+  const fetchBlogPost = useServerFn(getPublishedBlogPostBySlug);
+
   return useQuery({
     queryKey: ["post", slug],
     queryFn: async (): Promise<BlogPost | null> => {
-      const { data, error } = await supabase
-        .from("blog_posts")
-        .select("*")
-        .eq("slug", slug)
-        .maybeSingle();
-      if (error) throw error;
+      const data = await fetchBlogPost({ data: { slug } });
       return data ? mapPost(data as BlogRow) : null;
     },
   });
