@@ -187,7 +187,7 @@ function TourPage() {
               Check Availability →
             </button>
             <a
-              href="https://wa.me/351912345678"
+              href="https://wa.me/351922024690"
               className="w-full block text-center border border-border text-ink py-4 rounded-full text-[12px] font-semibold uppercase tracking-widest hover:border-gold hover:text-gold transition"
             >
               WhatsApp Concierge

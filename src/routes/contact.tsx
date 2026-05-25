@@ -91,14 +91,14 @@ function ContactPage() {
             <ContactRow
               icon={<WhatsappIco />}
               label="WhatsApp · fastest"
-              value="+351 912 345 678"
-              href="https://wa.me/351912345678"
+              value="+351 922 024 690"
+              href="https://wa.me/351922024690"
             />
             <ContactRow
               icon={<MailIco />}
               label="Email"
-              value="concierge@lusitano.pt"
-              href="mailto:concierge@lusitano.pt"
+              value="hello@luzde.pt"
+              href="mailto:hello@luzde.pt"
             />
             <ContactRow
               icon={<PinIco />}
