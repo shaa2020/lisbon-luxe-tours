@@ -107,9 +107,9 @@ function ContactPage() {
             />
             <ContactRow
               icon={<PhoneIco />}
-              label="Emergency · 24h"
-              value="+351 912 999 000"
-              href="tel:+351912999000"
+              label="Phone · Direct"
+              value="+351 922 024 690"
+              href="tel:+351922024690"
             />
           </div>
 
