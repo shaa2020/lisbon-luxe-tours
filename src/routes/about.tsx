@@ -10,13 +10,13 @@ import { WhatsappFab } from "@/components/site/Whatsapp";
 export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
-      { title: "About — Luz de Private Tours of Portugal" },
+      { title: "About — Tuk Tuk 24 Private Tours of Portugal" },
       {
         name: "description",
         content:
           "Founded in Lisboa in 2012. A boutique fleet of electric tuk-tuks and Mercedes vans, operated by a small team of multilingual local guides.",
       },
-      { property: "og:title", content: "About Luz de" },
+      { property: "og:title", content: "About Tuk Tuk 24" },
       {
         property: "og:description",
         content: "The philosophy, the people, and the fleet behind our private Portugal experiences.",
@@ -44,7 +44,7 @@ function AboutPage() {
               Travel slow.<br />Travel local.
             </h1>
             <p className="text-white/85 max-w-xl">
-              Luz de is a boutique travel house founded in Lisboa in 2012 — built around
+              Tuk Tuk 24 is a boutique travel house founded in Lisboa in 2012 — built around
               private guides, quiet vehicles, and itineraries with breathing room.
             </p>
           </div>
@@ -138,7 +138,7 @@ function AboutPage() {
       <section className="bg-cloud/60 py-20 md:py-24">
         <div className="container-x grid md:grid-cols-2 gap-14 items-center">
           <div>
-            <p className="eyebrow text-gold mb-3">Why Luz de</p>
+            <p className="eyebrow text-gold mb-3">Why Tuk Tuk 24</p>
             <h2 className="font-display text-3xl md:text-4xl font-bold text-ink mb-6 leading-tight">
               The small print that actually matters.
             </h2>

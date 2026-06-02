@@ -49,7 +49,7 @@ export function Footer() {
           <h4 className="font-display font-semibold text-ink mb-5">Address</h4>
           <address className="not-italic text-sm text-body leading-relaxed space-y-2">
             <div>Largo da Graça 12<br />1100-265 Lisboa, Portugal</div>
-            <div><a href="mailto:hello@luzde.pt" className="hover:text-gold transition-colors">hello@luzde.pt</a></div>
+            <div><a href="mailto:hello@tuktuk24.pt" className="hover:text-gold transition-colors">hello@tuktuk24.pt</a></div>
             <div><a href="tel:+351922024690" className="hover:text-gold transition-colors">+351 922 024 690</a></div>
           </address>
         </div>

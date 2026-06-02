@@ -74,13 +74,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Luz de — Private Lisbon Tuk-Tuk & Luxury Tours" },
+      { title: "Tuk Tuk 24 — Private Lisbon Tuk-Tuk & Luxury Tours" },
       {
         name: "description",
         content:
           "Cinematic private tuk-tuk and luxury SUV tours in Lisbon, Sintra, Belém and Cascais. Bespoke itineraries, multilingual guides, door-to-door concierge.",
       },
-      { property: "og:title", content: "Luz de — Private Lisbon Tuk-Tuk & Luxury Tours" },
+      { property: "og:title", content: "Tuk Tuk 24 — Private Lisbon Tuk-Tuk & Luxury Tours" },
       {
         property: "og:description",
         content:
@@ -88,10 +88,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Luz de — Private Lisbon Tuk-Tuk & Luxury Tours" },
-      { name: "description", content: "Luz de offers a premium booking platform for luxury tours in Lisbon and surrounding areas." },
-      { property: "og:description", content: "Luz de offers a premium booking platform for luxury tours in Lisbon and surrounding areas." },
-      { name: "twitter:description", content: "Luz de offers a premium booking platform for luxury tours in Lisbon and surrounding areas." },
+      { name: "twitter:title", content: "Tuk Tuk 24 — Private Lisbon Tuk-Tuk & Luxury Tours" },
+      { name: "description", content: "Tuk Tuk 24 offers a premium booking platform for luxury tours in Lisbon and surrounding areas." },
+      { property: "og:description", content: "Tuk Tuk 24 offers a premium booking platform for luxury tours in Lisbon and surrounding areas." },
+      { name: "twitter:description", content: "Tuk Tuk 24 offers a premium booking platform for luxury tours in Lisbon and surrounding areas." },
       { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/72de5d68-2515-42e0-ab57-64d8e7335177/id-preview-74090f52--3d285bca-d152-4b64-a8eb-198a16edfec3.lovable.app-1779067109092.png" },
       { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/72de5d68-2515-42e0-ab57-64d8e7335177/id-preview-74090f52--3d285bca-d152-4b64-a8eb-198a16edfec3.lovable.app-1779067109092.png" },
     ],
