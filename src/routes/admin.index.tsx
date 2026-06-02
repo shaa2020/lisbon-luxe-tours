@@ -44,14 +44,14 @@ function AdminDashboard() {
     },
   });
 
-  const [brandName, setBrandName] = useState("Luz de");
+  const [brandName, setBrandName] = useState("Tuk Tuk 24");
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
   const [savingBrand, setSavingBrand] = useState(false);
   const [uploadingLogo, setUploadingLogo] = useState(false);
 
   useEffect(() => {
     if (brand.data) {
-      setBrandName(brand.data.brand_name || "Luz de");
+      setBrandName(brand.data.brand_name || "Tuk Tuk 24");
       setLogoUrl(brand.data.logo_url ?? null);
     }
   }, [brand.data]);
@@ -60,7 +60,7 @@ function AdminDashboard() {
     setSavingBrand(true);
     const { error } = await supabase.from("site_settings").upsert({
       id: true,
-      brand_name: brandName.trim() || "Luz de",
+      brand_name: brandName.trim() || "Tuk Tuk 24",
       logo_url: logoUrl,
     });
     setSavingBrand(false);

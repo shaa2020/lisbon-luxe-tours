@@ -7,13 +7,13 @@ import { useBlogPosts } from "@/lib/cms";
 export const Route = createFileRoute("/journal/")({
   head: () => ({
     meta: [
-      { title: "Journal — Luz de Travel Stories & Portugal Guides" },
+      { title: "Journal — Tuk Tuk 24 Travel Stories & Portugal Guides" },
       {
         name: "description",
         content:
-          "Read Luz de's Portugal journal with practical guides, Lisbon tips, Sintra weekend ideas and coastal travel advice.",
+          "Read Tuk Tuk 24's Portugal journal with practical guides, Lisbon tips, Sintra weekend ideas and coastal travel advice.",
       },
-      { property: "og:title", content: "Journal — Luz de" },
+      { property: "og:title", content: "Journal — Tuk Tuk 24" },
       {
         property: "og:description",
         content: "Travel stories, local planning advice and Portugal itineraries from our concierge team.",
@@ -36,7 +36,7 @@ function JournalPage() {
 
       <section className="pt-[94px] md:pt-[118px] pb-10 md:pb-14 bg-cloud/45">
         <div className="container-x">
-          <p className="eyebrow text-gold mb-3">Luz de Journal</p>
+          <p className="eyebrow text-gold mb-3">Tuk Tuk 24 Journal</p>
           <h1 className="font-display text-4xl sm:text-5xl md:text-6xl font-bold text-ink max-w-3xl leading-[1.02]">
             Portugal stories, planning notes and local travel advice.
           </h1>

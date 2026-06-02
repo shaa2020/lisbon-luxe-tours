@@ -8,13 +8,13 @@ import { WhatsappFab } from "@/components/site/Whatsapp";
 export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
-      { title: "Contact & Concierge — Luz de" },
+      { title: "Contact & Concierge — Tuk Tuk 24" },
       {
         name: "description",
         content:
           "Plan a private tour or custom Portugal itinerary. Reach our Lisboa concierge by form, email, or WhatsApp — we reply within a few hours.",
       },
-      { property: "og:title", content: "Contact Luz de" },
+      { property: "og:title", content: "Contact Tuk Tuk 24" },
       { property: "og:description", content: "Speak with a Lisboa concierge." },
       { property: "og:url", content: "/contact" },
     ],
@@ -97,8 +97,8 @@ function ContactPage() {
             <ContactRow
               icon={<MailIco />}
               label="Email"
-              value="hello@luzde.pt"
-              href="mailto:hello@luzde.pt"
+              value="hello@tuktuk24.pt"
+              href="mailto:hello@tuktuk24.pt"
             />
             <ContactRow
               icon={<PinIco />}
@@ -115,7 +115,7 @@ function ContactPage() {
 
           <div className="rounded-2xl overflow-hidden border border-border h-[280px]">
             <iframe
-              title="Luz de office on map"
+              title="Tuk Tuk 24 office on map"
               src="https://www.openstreetmap.org/export/embed.html?bbox=-9.142%2C38.712%2C-9.122%2C38.722&layer=mapnik"
               className="w-full h-full"
               loading="lazy"

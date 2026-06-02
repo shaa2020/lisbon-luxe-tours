@@ -7,7 +7,7 @@ import { useBlogPost, useBlogPosts } from "@/lib/cms";
 export const Route = createFileRoute("/journal/$slug")({
   head: ({ params }) => ({
     meta: [
-      { title: `Journal — Luz de` },
+      { title: `Journal — Tuk Tuk 24` },
       { property: "og:url", content: `/journal/${params.slug}` },
     ],
     links: [{ rel: "canonical", href: `/journal/${params.slug}` }],

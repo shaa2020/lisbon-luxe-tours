@@ -16,13 +16,13 @@ import { useBlogPosts, useTours, type Tour } from "@/lib/cms";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Luz de — Discover Portugal · Private Tours of Lisboa, Sintra & the Coast" },
+      { title: "Tuk Tuk 24 — Discover Portugal · Private Tours of Lisboa, Sintra & the Coast" },
       {
         name: "description",
         content:
-          "Plan your Portugal trip with Luz de. Browse popular private tuk-tuk, Sintra, Belém, Cascais and sunset tours. Real local guides, flexible departures, instant inquiry.",
+          "Plan your Portugal trip with Tuk Tuk 24. Browse popular private tuk-tuk, Sintra, Belém, Cascais and sunset tours. Real local guides, flexible departures, instant inquiry.",
       },
-      { property: "og:title", content: "Luz de — Discover Portugal" },
+      { property: "og:title", content: "Tuk Tuk 24 — Discover Portugal" },
       {
         property: "og:description",
         content:
@@ -332,7 +332,7 @@ function WhyTravel() {
       </svg>
 
       <div className="text-center mb-14">
-        <p className="eyebrow text-gold mb-3">Why travel with Luz de</p>
+        <p className="eyebrow text-gold mb-3">Why travel with Tuk Tuk 24</p>
         <h2 className="font-display text-3xl md:text-4xl font-bold text-ink">
           Slow, private, unforgettable.
         </h2>

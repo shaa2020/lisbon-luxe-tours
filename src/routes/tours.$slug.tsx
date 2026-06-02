@@ -10,7 +10,7 @@ import { useTour, useTours } from "@/lib/cms";
 export const Route = createFileRoute("/tours/$slug")({
   head: ({ params }) => ({
     meta: [
-      { title: `Tour — Luz de Private Tours` },
+      { title: `Tour — Tuk Tuk 24 Private Tours` },
       { property: "og:url", content: `/tours/${params.slug}` },
       { property: "og:type", content: "product" },
     ],

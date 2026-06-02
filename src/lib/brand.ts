@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getPublicSiteSettings } from "./cms.functions";
 
-export const DEFAULT_BRAND_NAME = "Luz de";
+export const DEFAULT_BRAND_NAME = "Tuk Tuk 24";
 export const DEFAULT_BRAND_TAGLINE = "Portugal, Privately";
 
 export type SiteBrand = {
