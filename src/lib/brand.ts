@@ -22,18 +22,18 @@ export function useSiteBrand() {
       const data = await fetchBrand();
       return {
         brandName: data?.brand_name || DEFAULT_BRAND_NAME,
-        logoUrl: data?.logo_url ?? null,
+        logoUrl: data?.logo_url ?? DEFAULT_BRAND_LOGO,
       };
     },
     initialData: {
       brandName: DEFAULT_BRAND_NAME,
-      logoUrl: null,
+      logoUrl: DEFAULT_BRAND_LOGO,
     },
   });
 
   return {
     ...query,
     brandName: query.data?.brandName ?? DEFAULT_BRAND_NAME,
-    logoUrl: query.data?.logoUrl ?? null,
+    logoUrl: query.data?.logoUrl ?? DEFAULT_BRAND_LOGO,
   };
 }
