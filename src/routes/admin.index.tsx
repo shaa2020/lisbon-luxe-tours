@@ -201,6 +201,46 @@ function AdminDashboard() {
           </div>
         </section>
       </div>
+
+      <section className="mt-8 rounded-xl border border-border bg-card p-5 space-y-4">
+        <div>
+          <p className="text-sm font-semibold text-foreground">Business information</p>
+          <p className="text-xs text-muted-foreground">Email, phone, address and social links shown across the website.</p>
+        </div>
+        <div className="grid sm:grid-cols-2 gap-3">
+          {[
+            { k: "contact_email", label: "Contact email" },
+            { k: "contact_phone", label: "Phone (displayed)" },
+            { k: "whatsapp_phone", label: "WhatsApp number (digits only ok)" },
+            { k: "address_line1", label: "Address line 1" },
+            { k: "address_line2", label: "Address line 2 / Postal & city" },
+            { k: "city", label: "City" },
+            { k: "country", label: "Country" },
+            { k: "instagram_url", label: "Instagram URL" },
+            { k: "facebook_url", label: "Facebook URL" },
+            { k: "twitter_url", label: "Twitter / X URL" },
+            { k: "footer_legal", label: "Footer legal line (RNAAT / NIF)" },
+          ].map((f) => (
+            <label key={f.k} className="block space-y-1">
+              <span className="text-xs font-medium text-foreground">{f.label}</span>
+              <input
+                value={(biz as any)[f.k] ?? ""}
+                onChange={(e) => setBiz((b) => ({ ...b, [f.k]: e.target.value }))}
+                className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary"
+              />
+            </label>
+          ))}
+        </div>
+        <button
+          type="button"
+          onClick={saveBiz}
+          disabled={savingBiz}
+          className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground disabled:opacity-50"
+        >
+          {savingBiz ? "Saving…" : "Save business info"}
+        </button>
+      </section>
+
     </AdminShell>
   );
 }
