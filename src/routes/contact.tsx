@@ -33,6 +33,9 @@ const contactSchema = z.object({
 });
 
 function ContactPage() {
+  const { business } = useSiteBrand();
+  const waHref = `https://wa.me/${(business.whatsappPhone || "").replace(/[^\d]/g, "")}`;
+  const telHref = `tel:${business.contactPhone.replace(/\s+/g, "")}`;
   const [sent, setSent] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
