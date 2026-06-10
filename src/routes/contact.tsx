@@ -95,27 +95,28 @@ function ContactPage() {
             <ContactRow
               icon={<WhatsappIco />}
               label="WhatsApp · fastest"
-              value="+351 922 024 690"
-              href="https://wa.me/351922024690"
+              value={business.contactPhone}
+              href={waHref}
             />
             <ContactRow
               icon={<MailIco />}
               label="Email"
-              value="hello@tuktuk24.pt"
-              href="mailto:hello@tuktuk24.pt"
+              value={business.contactEmail}
+              href={`mailto:${business.contactEmail}`}
             />
             <ContactRow
               icon={<PinIco />}
               label="Office"
-              value="Largo da Graça 12, 1100-265 Lisboa"
+              value={`${business.addressLine1}, ${business.addressLine2}`}
             />
             <ContactRow
               icon={<PhoneIco />}
               label="Phone · Direct"
-              value="+351 922 024 690"
-              href="tel:+351922024690"
+              value={business.contactPhone}
+              href={telHref}
             />
           </div>
+
 
           <div className="rounded-2xl overflow-hidden border border-border h-[280px]">
             <iframe
