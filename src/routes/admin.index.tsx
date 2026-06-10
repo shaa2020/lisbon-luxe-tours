@@ -49,10 +49,39 @@ function AdminDashboard() {
   const [savingBrand, setSavingBrand] = useState(false);
   const [uploadingLogo, setUploadingLogo] = useState(false);
 
+  const [biz, setBiz] = useState({
+    contact_email: "",
+    contact_phone: "",
+    whatsapp_phone: "",
+    address_line1: "",
+    address_line2: "",
+    city: "",
+    country: "",
+    instagram_url: "",
+    facebook_url: "",
+    twitter_url: "",
+    footer_legal: "",
+  });
+  const [savingBiz, setSavingBiz] = useState(false);
+
   useEffect(() => {
     if (brand.data) {
-      setBrandName(brand.data.brand_name || "Tuk Tuk 24");
-      setLogoUrl(brand.data.logo_url ?? null);
+      const d: any = brand.data;
+      setBrandName(d.brand_name || "Tuk Tuk 24");
+      setLogoUrl(d.logo_url ?? null);
+      setBiz({
+        contact_email: d.contact_email ?? "",
+        contact_phone: d.contact_phone ?? "",
+        whatsapp_phone: d.whatsapp_phone ?? "",
+        address_line1: d.address_line1 ?? "",
+        address_line2: d.address_line2 ?? "",
+        city: d.city ?? "",
+        country: d.country ?? "",
+        instagram_url: d.instagram_url ?? "",
+        facebook_url: d.facebook_url ?? "",
+        twitter_url: d.twitter_url ?? "",
+        footer_legal: d.footer_legal ?? "",
+      });
     }
   }, [brand.data]);
 
@@ -66,6 +95,16 @@ function AdminDashboard() {
     setSavingBrand(false);
     if (error) return toast.error(error.message);
     toast.success("Brand updated");
+    qc.invalidateQueries({ queryKey: ["site-brand"] });
+    qc.invalidateQueries({ queryKey: ["site-brand-admin"] });
+  };
+
+  const saveBiz = async () => {
+    setSavingBiz(true);
+    const { error } = await supabase.from("site_settings").upsert({ id: true, ...biz } as any);
+    setSavingBiz(false);
+    if (error) return toast.error(error.message);
+    toast.success("Business info updated");
     qc.invalidateQueries({ queryKey: ["site-brand"] });
     qc.invalidateQueries({ queryKey: ["site-brand-admin"] });
   };
