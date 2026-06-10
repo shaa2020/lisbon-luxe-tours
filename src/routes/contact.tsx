@@ -4,6 +4,7 @@ import { z } from "zod";
 import { Nav } from "@/components/site/Nav";
 import { Footer } from "@/components/site/Footer";
 import { WhatsappFab } from "@/components/site/Whatsapp";
+import { useSiteBrand } from "@/lib/brand";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
