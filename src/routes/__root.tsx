@@ -92,8 +92,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "description", content: "Tuk Tuk 24 offers a premium booking platform for luxury tours in Lisbon and surrounding areas." },
       { property: "og:description", content: "Tuk Tuk 24 offers a premium booking platform for luxury tours in Lisbon and surrounding areas." },
       { name: "twitter:description", content: "Tuk Tuk 24 offers a premium booking platform for luxury tours in Lisbon and surrounding areas." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/72de5d68-2515-42e0-ab57-64d8e7335177/id-preview-74090f52--3d285bca-d152-4b64-a8eb-198a16edfec3.lovable.app-1779067109092.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/72de5d68-2515-42e0-ab57-64d8e7335177/id-preview-74090f52--3d285bca-d152-4b64-a8eb-198a16edfec3.lovable.app-1779067109092.png" },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/76264757-16b0-4de3-8741-88f13d8b4088" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/76264757-16b0-4de3-8741-88f13d8b4088" },
     ],
     links: [
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
