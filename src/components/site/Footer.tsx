@@ -80,10 +80,10 @@ export function Footer() {
           <h4 className="font-display font-semibold text-ink mb-5">Follow Us</h4>
           <div className="flex gap-3">
             {[
-              { label: "Fb", href: "https://facebook.com" },
-              { label: "Ig", href: "https://instagram.com" },
-              { label: "Tw", href: "https://twitter.com" },
-              { label: "Wa", href: "https://wa.me/351922024690" },
+              { label: "Fb", href: business.facebookUrl },
+              { label: "Ig", href: business.instagramUrl },
+              { label: "Tw", href: business.twitterUrl },
+              { label: "Wa", href: waHref },
             ].map((s) => (
               <a
                 key={s.label}
