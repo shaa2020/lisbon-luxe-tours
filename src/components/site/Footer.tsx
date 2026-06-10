@@ -3,7 +3,8 @@ import { BrandLogo } from "@/components/site/BrandLogo";
 import { useSiteBrand } from "@/lib/brand";
 
 export function Footer() {
-  const { brandName } = useSiteBrand();
+  const { brandName, business } = useSiteBrand();
+  const waHref = `https://wa.me/${(business.whatsappPhone || "").replace(/[^\d]/g, "")}`;
 
   return (
     <footer className="bg-white border-t border-border">
