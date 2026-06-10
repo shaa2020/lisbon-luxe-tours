@@ -100,7 +100,7 @@ export function Footer() {
       <div className="border-t border-border">
         <div className="container-x py-6 flex flex-col md:flex-row items-center justify-between gap-3">
           <p className="text-[12px] text-body">
-            © {new Date().getFullYear()} {brandName} · All Rights Reserved · RNAAT 1042 · NIF 514 832 109
+            © {new Date().getFullYear()} {brandName} · All Rights Reserved{business.footerLegal ? ` · ${business.footerLegal}` : ""}
           </p>
           <div className="flex gap-6 text-[12px] text-body">
             <a href="#" className="hover:text-gold transition-colors">Privacy</a>
