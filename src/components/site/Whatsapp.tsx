@@ -1,7 +1,11 @@
+import { useSiteBrand } from "@/lib/brand";
+
 export function WhatsappFab() {
+  const { business } = useSiteBrand();
+  const href = `https://wa.me/${(business.whatsappPhone || "").replace(/[^\d]/g, "")}`;
   return (
     <a
-      href="https://wa.me/351922024690"
+      href={href}
       target="_blank"
       rel="noreferrer"
       aria-label="Chat on WhatsApp"
