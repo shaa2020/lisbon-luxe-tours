@@ -84,7 +84,7 @@ export async function fetchPublishedBlogPostBySlug(slug: string) {
 export async function fetchSiteSettings() {
   const { data, error } = await supabaseAdmin
     .from("site_settings")
-    .select("brand_name, logo_url")
+    .select("*")
     .eq("id", true)
     .maybeSingle();
 

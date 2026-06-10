@@ -3,7 +3,8 @@ import { BrandLogo } from "@/components/site/BrandLogo";
 import { useSiteBrand } from "@/lib/brand";
 
 export function Footer() {
-  const { brandName } = useSiteBrand();
+  const { brandName, business } = useSiteBrand();
+  const waHref = `https://wa.me/${(business.whatsappPhone || "").replace(/[^\d]/g, "")}`;
 
   return (
     <footer className="bg-white border-t border-border">
@@ -48,9 +49,9 @@ export function Footer() {
         <div className="md:col-span-2">
           <h4 className="font-display font-semibold text-ink mb-5">Address</h4>
           <address className="not-italic text-sm text-body leading-relaxed space-y-2">
-            <div>Largo da Graça 12<br />1100-265 Lisboa, Portugal</div>
-            <div><a href="mailto:hello@tuktuk24.pt" className="hover:text-gold transition-colors">hello@tuktuk24.pt</a></div>
-            <div><a href="tel:+351922024690" className="hover:text-gold transition-colors">+351 922 024 690</a></div>
+            <div>{business.addressLine1}<br />{business.addressLine2}</div>
+            <div><a href={`mailto:${business.contactEmail}`} className="hover:text-gold transition-colors">{business.contactEmail}</a></div>
+            <div><a href={`tel:${business.contactPhone.replace(/\s+/g, "")}`} className="hover:text-gold transition-colors">{business.contactPhone}</a></div>
           </address>
         </div>
 
@@ -79,10 +80,10 @@ export function Footer() {
           <h4 className="font-display font-semibold text-ink mb-5">Follow Us</h4>
           <div className="flex gap-3">
             {[
-              { label: "Fb", href: "https://facebook.com" },
-              { label: "Ig", href: "https://instagram.com" },
-              { label: "Tw", href: "https://twitter.com" },
-              { label: "Wa", href: "https://wa.me/351922024690" },
+              { label: "Fb", href: business.facebookUrl },
+              { label: "Ig", href: business.instagramUrl },
+              { label: "Tw", href: business.twitterUrl },
+              { label: "Wa", href: waHref },
             ].map((s) => (
               <a
                 key={s.label}
@@ -99,7 +100,7 @@ export function Footer() {
       <div className="border-t border-border">
         <div className="container-x py-6 flex flex-col md:flex-row items-center justify-between gap-3">
           <p className="text-[12px] text-body">
-            © {new Date().getFullYear()} {brandName} · All Rights Reserved · RNAAT 1042 · NIF 514 832 109
+            © {new Date().getFullYear()} {brandName} · All Rights Reserved{business.footerLegal ? ` · ${business.footerLegal}` : ""}
           </p>
           <div className="flex gap-6 text-[12px] text-body">
             <a href="#" className="hover:text-gold transition-colors">Privacy</a>

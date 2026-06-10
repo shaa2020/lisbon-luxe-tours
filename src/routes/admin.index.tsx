@@ -36,11 +36,11 @@ function AdminDashboard() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("site_settings")
-        .select("brand_name, logo_url")
+        .select("*")
         .eq("id", true)
         .single();
       if (error) throw error;
-      return data;
+      return data as any;
     },
   });
 
@@ -49,10 +49,39 @@ function AdminDashboard() {
   const [savingBrand, setSavingBrand] = useState(false);
   const [uploadingLogo, setUploadingLogo] = useState(false);
 
+  const [biz, setBiz] = useState({
+    contact_email: "",
+    contact_phone: "",
+    whatsapp_phone: "",
+    address_line1: "",
+    address_line2: "",
+    city: "",
+    country: "",
+    instagram_url: "",
+    facebook_url: "",
+    twitter_url: "",
+    footer_legal: "",
+  });
+  const [savingBiz, setSavingBiz] = useState(false);
+
   useEffect(() => {
     if (brand.data) {
-      setBrandName(brand.data.brand_name || "Tuk Tuk 24");
-      setLogoUrl(brand.data.logo_url ?? null);
+      const d: any = brand.data;
+      setBrandName(d.brand_name || "Tuk Tuk 24");
+      setLogoUrl(d.logo_url ?? null);
+      setBiz({
+        contact_email: d.contact_email ?? "",
+        contact_phone: d.contact_phone ?? "",
+        whatsapp_phone: d.whatsapp_phone ?? "",
+        address_line1: d.address_line1 ?? "",
+        address_line2: d.address_line2 ?? "",
+        city: d.city ?? "",
+        country: d.country ?? "",
+        instagram_url: d.instagram_url ?? "",
+        facebook_url: d.facebook_url ?? "",
+        twitter_url: d.twitter_url ?? "",
+        footer_legal: d.footer_legal ?? "",
+      });
     }
   }, [brand.data]);
 
@@ -66,6 +95,16 @@ function AdminDashboard() {
     setSavingBrand(false);
     if (error) return toast.error(error.message);
     toast.success("Brand updated");
+    qc.invalidateQueries({ queryKey: ["site-brand"] });
+    qc.invalidateQueries({ queryKey: ["site-brand-admin"] });
+  };
+
+  const saveBiz = async () => {
+    setSavingBiz(true);
+    const { error } = await supabase.from("site_settings").upsert({ id: true, ...biz } as any);
+    setSavingBiz(false);
+    if (error) return toast.error(error.message);
+    toast.success("Business info updated");
     qc.invalidateQueries({ queryKey: ["site-brand"] });
     qc.invalidateQueries({ queryKey: ["site-brand-admin"] });
   };
@@ -162,6 +201,46 @@ function AdminDashboard() {
           </div>
         </section>
       </div>
+
+      <section className="mt-8 rounded-xl border border-border bg-card p-5 space-y-4">
+        <div>
+          <p className="text-sm font-semibold text-foreground">Business information</p>
+          <p className="text-xs text-muted-foreground">Email, phone, address and social links shown across the website.</p>
+        </div>
+        <div className="grid sm:grid-cols-2 gap-3">
+          {[
+            { k: "contact_email", label: "Contact email" },
+            { k: "contact_phone", label: "Phone (displayed)" },
+            { k: "whatsapp_phone", label: "WhatsApp number (digits only ok)" },
+            { k: "address_line1", label: "Address line 1" },
+            { k: "address_line2", label: "Address line 2 / Postal & city" },
+            { k: "city", label: "City" },
+            { k: "country", label: "Country" },
+            { k: "instagram_url", label: "Instagram URL" },
+            { k: "facebook_url", label: "Facebook URL" },
+            { k: "twitter_url", label: "Twitter / X URL" },
+            { k: "footer_legal", label: "Footer legal line (RNAAT / NIF)" },
+          ].map((f) => (
+            <label key={f.k} className="block space-y-1">
+              <span className="text-xs font-medium text-foreground">{f.label}</span>
+              <input
+                value={(biz as any)[f.k] ?? ""}
+                onChange={(e) => setBiz((b) => ({ ...b, [f.k]: e.target.value }))}
+                className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary"
+              />
+            </label>
+          ))}
+        </div>
+        <button
+          type="button"
+          onClick={saveBiz}
+          disabled={savingBiz}
+          className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground disabled:opacity-50"
+        >
+          {savingBiz ? "Saving…" : "Save business info"}
+        </button>
+      </section>
+
     </AdminShell>
   );
 }
