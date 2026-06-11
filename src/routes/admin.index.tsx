@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Map, BookOpen, CalendarCheck, Mail } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { BrandLogo } from "@/components/site/BrandLogo";
@@ -122,30 +123,37 @@ function AdminDashboard() {
     }
   };
 
-  const cards: { to: string; label: string; count: number | undefined; desc: string }[] = [
-    { to: "/admin/tours", label: "Tours", count: tours.data, desc: "Create, edit and publish tour pages." },
-    { to: "/admin/blog", label: "Journal", count: posts.data, desc: "Write and publish stories." },
-    { to: "/admin", label: "Bookings", count: bookings.data, desc: "Booking requests inbox (coming soon)." },
-    { to: "/admin", label: "Messages", count: messages.data, desc: "Contact messages inbox (coming soon)." },
-  ];
+  const cards = [
+    { to: "/admin/tours", label: "Tours", count: tours.data, desc: "Create, edit and publish tour pages.", Icon: Map },
+    { to: "/admin/blog", label: "Journal", count: posts.data, desc: "Write and publish stories.", Icon: BookOpen },
+    { to: "/admin", label: "Bookings", count: bookings.data, desc: "Booking requests inbox (coming soon).", Icon: CalendarCheck },
+    { to: "/admin", label: "Messages", count: messages.data, desc: "Contact messages inbox (coming soon).", Icon: Mail },
+  ] as const;
 
   return (
     <AdminShell>
-      <h1 className="text-2xl font-display font-bold mb-6">Dashboard</h1>
+      <div className="mb-8">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary mb-2">Overview</p>
+        <h1 className="text-3xl font-display font-bold">Dashboard</h1>
+        <p className="text-sm text-muted-foreground mt-1">A quick look at what's happening on the site.</p>
+      </div>
       <div className="grid lg:grid-cols-[1.2fr_0.8fr] gap-6">
         <div className="grid sm:grid-cols-2 gap-4">
         {cards.map((c) => (
           <Link
             key={c.label}
             to={c.to}
-            className="block rounded-xl border border-border bg-card p-5 hover:border-primary transition"
+            className="group block rounded-xl border border-border bg-card p-5 hover:border-primary hover:shadow-[0_10px_30px_rgba(30,58,95,0.08)] transition-all"
           >
-            <div className="flex items-baseline justify-between mb-2">
-              <p className="text-sm font-semibold text-foreground">{c.label}</p>
-              <p className="font-display text-3xl font-bold text-primary">
+            <div className="flex items-start justify-between mb-4">
+              <div className="w-10 h-10 rounded-lg bg-primary/10 text-primary grid place-items-center group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                <c.Icon className="w-5 h-5" />
+              </div>
+              <p className="font-display text-3xl font-bold text-primary tabular-nums">
                 {c.count ?? "—"}
               </p>
             </div>
+            <p className="text-sm font-semibold text-foreground mb-1">{c.label}</p>
             <p className="text-xs text-muted-foreground">{c.desc}</p>
           </Link>
         ))}
