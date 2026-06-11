@@ -16,6 +16,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+import { useSiteBrand } from "@/lib/brand";
 
 const TIME_SLOTS = ["09:00", "10:30", "13:00", "15:00", "17:00", "18:30"];
 
@@ -28,6 +29,7 @@ export function BookingModal({
   open: boolean;
   onOpenChange: (v: boolean) => void;
 }) {
+  const { business } = useSiteBrand();
   const [date, setDate] = useState<Date | undefined>();
   const [time, setTime] = useState<string>("");
   const [guests, setGuests] = useState(2);
@@ -51,6 +53,21 @@ export function BookingModal({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const waNumber = (business.whatsappPhone || "").replace(/[^\d]/g, "");
+    const lines = [
+      `Hello Tuk Tuk 24! I'd like to book a tour.`,
+      ``,
+      `Tour: ${tour.title}`,
+      date ? `Date: ${format(date, "EEEE, d MMM yyyy")}` : null,
+      time ? `Time: ${time}` : null,
+      `Guests: ${guests}`,
+      `Estimated total: €${total}`,
+      ``,
+      `Name: ${name}`,
+      `Contact: ${contact}`,
+    ].filter(Boolean).join("\n");
+    const url = `https://wa.me/${waNumber}?text=${encodeURIComponent(lines)}`;
+    window.open(url, "_blank", "noopener,noreferrer");
     setSubmitted(true);
   };
 
@@ -64,10 +81,10 @@ export function BookingModal({
             </div>
             <DialogHeader>
               <DialogTitle className="font-display text-3xl md:text-4xl text-ink">
-                Request received.
+                Opening WhatsApp…
               </DialogTitle>
               <DialogDescription className="text-body mt-3">
-                Your concierge will confirm availability within 4 hours.
+                Send the prefilled message and we'll confirm within minutes.
               </DialogDescription>
             </DialogHeader>
             <div className="mt-8 inline-flex flex-col gap-2 text-sm text-body text-left border border-border rounded-xl p-5 bg-cloud/40">
@@ -216,9 +233,9 @@ export function BookingModal({
                 <button
                   type="submit"
                   disabled={!date || !time || !name || !contact}
-                  className="w-full sm:w-auto px-7 py-3.5 rounded-full bg-gold text-white text-[12px] font-semibold uppercase tracking-widest hover:bg-ink transition disabled:opacity-40 disabled:cursor-not-allowed shadow-[0_6px_15px_rgba(43,182,247,0.3)]"
+                  className="w-full sm:w-auto px-7 py-3.5 rounded-full bg-[#25D366] text-white text-[12px] font-semibold uppercase tracking-widest hover:bg-ink transition disabled:opacity-40 disabled:cursor-not-allowed shadow-[0_6px_15px_rgba(37,211,102,0.35)]"
                 >
-                  Request to Book →
+                  Book via WhatsApp →
                 </button>
               </div>
             </form>
