@@ -63,7 +63,7 @@ function Index() {
 
 function Hero() {
   return (
-    <section className="relative pt-[88px] md:pt-[120px] pb-0">
+    <section className="relative pt-[68px] md:pt-[120px] pb-0">
       <div className="relative h-[520px] sm:h-[560px] md:h-[640px] overflow-hidden">
         <img
           src={heroImg}
