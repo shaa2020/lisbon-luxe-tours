@@ -40,10 +40,10 @@ export function Footer() {
             <BrandLogo wordmarkClassName="text-2xl text-ink" />
           </div>
           <p className="text-sm text-body leading-relaxed mb-6 max-w-xs">
-            Travels many varieties of changes of lorem ipsum available, but the majority have
-            suffered alteration in form by injected humor.
+            Boutique private tours of Lisboa, Sintra and the Atlantic coast — built day by day,
+            guest by guest, by a small team that lives here.
           </p>
-          <p className="eyebrow text-ink/40">Designed by {brandName} · 2026</p>
+          <p className="eyebrow text-ink/40">© {new Date().getFullYear()} {brandName} · Lisboa, Portugal</p>
         </div>
 
         <div className="md:col-span-2">
