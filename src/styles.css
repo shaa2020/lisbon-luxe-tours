@@ -36,9 +36,9 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
 
-  --font-serif: "Poppins", ui-sans-serif, system-ui, sans-serif;
-  --font-sans: "Open Sans", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Poppins", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "DM Serif Display", ui-serif, Georgia, serif;
+  --font-sans: "Fira Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "DM Serif Display", ui-serif, Georgia, serif;
   --font-mono: "Poppins", ui-sans-serif, system-ui, sans-serif;
 
   --radius-sm: 0.25rem;
