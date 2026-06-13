@@ -126,8 +126,8 @@ function AdminDashboard() {
   const cards = [
     { to: "/admin/tours", label: "Tours", count: tours.data, desc: "Create, edit and publish tour pages.", Icon: Map },
     { to: "/admin/blog", label: "Journal", count: posts.data, desc: "Write and publish stories.", Icon: BookOpen },
-    { to: "/admin", label: "Bookings", count: bookings.data, desc: "Booking requests inbox (coming soon).", Icon: CalendarCheck },
-    { to: "/admin", label: "Messages", count: messages.data, desc: "Contact messages inbox (coming soon).", Icon: Mail },
+    { to: "/admin/bookings", label: "Bookings", count: bookings.data, desc: "Reply to booking requests on WhatsApp.", Icon: CalendarCheck },
+    { to: "/admin/messages", label: "Messages", count: messages.data, desc: "Contact form messages inbox.", Icon: Mail },
   ] as const;
 
   return (
