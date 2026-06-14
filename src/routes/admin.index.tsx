@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Map, BookOpen, CalendarCheck, Mail } from "lucide-react";
+import { Map, BookOpen, CalendarCheck, Mail, CreditCard } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { BrandLogo } from "@/components/site/BrandLogo";
@@ -12,7 +12,7 @@ export const Route = createFileRoute("/admin/")({
   component: AdminDashboard,
 });
 
-function useCount(table: "tours" | "blog_posts" | "bookings" | "contact_messages") {
+function useCount(table: "tours" | "blog_posts" | "bookings" | "contact_messages" | "orders") {
   return useQuery({
     queryKey: ["admin-count", table],
     queryFn: async () => {
@@ -31,6 +31,7 @@ function AdminDashboard() {
   const posts = useCount("blog_posts");
   const bookings = useCount("bookings");
   const messages = useCount("contact_messages");
+  const orders = useCount("orders");
 
   const brand = useQuery({
     queryKey: ["site-brand-admin"],
@@ -127,6 +128,7 @@ function AdminDashboard() {
     { to: "/admin/tours", label: "Tours", count: tours.data, desc: "Create, edit and publish tour pages.", Icon: Map },
     { to: "/admin/blog", label: "Journal", count: posts.data, desc: "Write and publish stories.", Icon: BookOpen },
     { to: "/admin/bookings", label: "Bookings", count: bookings.data, desc: "Reply to booking requests on WhatsApp.", Icon: CalendarCheck },
+    { to: "/admin/orders", label: "Orders", count: orders.data, desc: "Card payments and revenue.", Icon: CreditCard },
     { to: "/admin/messages", label: "Messages", count: messages.data, desc: "Contact form messages inbox.", Icon: Mail },
   ] as const;
 
