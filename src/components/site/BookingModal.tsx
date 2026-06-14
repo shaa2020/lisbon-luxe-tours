@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { format } from "date-fns";
-import { CalendarIcon, Users, Clock, MapPin, Check } from "lucide-react";
+import { CalendarIcon, Users, Clock, MapPin, Check, CreditCard, Loader2 } from "lucide-react";
 import type { Tour } from "@/lib/cms";
 import {
   Dialog,
@@ -17,6 +17,9 @@ import {
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { useSiteBrand } from "@/lib/brand";
+import { useServerFn } from "@tanstack/react-start";
+import { createCheckoutSession } from "@/lib/checkout.functions";
+import { toast } from "sonner";
 
 const TIME_SLOTS = ["09:00", "10:30", "13:00", "15:00", "17:00", "18:30"];
 
@@ -30,12 +33,14 @@ export function BookingModal({
   onOpenChange: (v: boolean) => void;
 }) {
   const { business } = useSiteBrand();
+  const checkoutFn = useServerFn(createCheckoutSession);
   const [date, setDate] = useState<Date | undefined>();
   const [time, setTime] = useState<string>("");
   const [guests, setGuests] = useState(2);
   const [name, setName] = useState("");
   const [contact, setContact] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [paying, setPaying] = useState(false);
 
   if (!tour) return null;
 

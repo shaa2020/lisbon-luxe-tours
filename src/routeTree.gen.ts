@@ -18,6 +18,9 @@ import { Route as JournalIndexRouteImport } from './routes/journal.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as ToursSlugRouteImport } from './routes/tours.$slug'
 import { Route as JournalSlugRouteImport } from './routes/journal.$slug'
+import { Route as BookingSuccessRouteImport } from './routes/booking.success'
+import { Route as BookingCancelledRouteImport } from './routes/booking.cancelled'
+import { Route as AdminOrdersRouteImport } from './routes/admin.orders'
 import { Route as AdminMessagesRouteImport } from './routes/admin.messages'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AdminBookingsRouteImport } from './routes/admin.bookings'
@@ -25,6 +28,7 @@ import { Route as AdminToursIndexRouteImport } from './routes/admin.tours.index'
 import { Route as AdminBlogIndexRouteImport } from './routes/admin.blog.index'
 import { Route as AdminToursIdRouteImport } from './routes/admin.tours.$id'
 import { Route as AdminBlogIdRouteImport } from './routes/admin.blog.$id'
+import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
@@ -71,6 +75,21 @@ const JournalSlugRoute = JournalSlugRouteImport.update({
   path: '/journal/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BookingSuccessRoute = BookingSuccessRouteImport.update({
+  id: '/booking/success',
+  path: '/booking/success',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BookingCancelledRoute = BookingCancelledRouteImport.update({
+  id: '/booking/cancelled',
+  path: '/booking/cancelled',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminOrdersRoute = AdminOrdersRouteImport.update({
+  id: '/admin/orders',
+  path: '/admin/orders',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminMessagesRoute = AdminMessagesRouteImport.update({
   id: '/admin/messages',
   path: '/admin/messages',
@@ -106,6 +125,12 @@ const AdminBlogIdRoute = AdminBlogIdRouteImport.update({
   path: '/admin/blog/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicPaymentsWebhookRoute =
+  ApiPublicPaymentsWebhookRouteImport.update({
+    id: '/api/public/payments/webhook',
+    path: '/api/public/payments/webhook',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -115,6 +140,9 @@ export interface FileRoutesByFullPath {
   '/admin/bookings': typeof AdminBookingsRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/messages': typeof AdminMessagesRoute
+  '/admin/orders': typeof AdminOrdersRoute
+  '/booking/cancelled': typeof BookingCancelledRoute
+  '/booking/success': typeof BookingSuccessRoute
   '/journal/$slug': typeof JournalSlugRoute
   '/tours/$slug': typeof ToursSlugRoute
   '/admin/': typeof AdminIndexRoute
@@ -124,6 +152,7 @@ export interface FileRoutesByFullPath {
   '/admin/tours/$id': typeof AdminToursIdRoute
   '/admin/blog/': typeof AdminBlogIndexRoute
   '/admin/tours/': typeof AdminToursIndexRoute
+  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -133,6 +162,9 @@ export interface FileRoutesByTo {
   '/admin/bookings': typeof AdminBookingsRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/messages': typeof AdminMessagesRoute
+  '/admin/orders': typeof AdminOrdersRoute
+  '/booking/cancelled': typeof BookingCancelledRoute
+  '/booking/success': typeof BookingSuccessRoute
   '/journal/$slug': typeof JournalSlugRoute
   '/tours/$slug': typeof ToursSlugRoute
   '/admin': typeof AdminIndexRoute
@@ -142,6 +174,7 @@ export interface FileRoutesByTo {
   '/admin/tours/$id': typeof AdminToursIdRoute
   '/admin/blog': typeof AdminBlogIndexRoute
   '/admin/tours': typeof AdminToursIndexRoute
+  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -152,6 +185,9 @@ export interface FileRoutesById {
   '/admin/bookings': typeof AdminBookingsRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/messages': typeof AdminMessagesRoute
+  '/admin/orders': typeof AdminOrdersRoute
+  '/booking/cancelled': typeof BookingCancelledRoute
+  '/booking/success': typeof BookingSuccessRoute
   '/journal/$slug': typeof JournalSlugRoute
   '/tours/$slug': typeof ToursSlugRoute
   '/admin/': typeof AdminIndexRoute
@@ -161,6 +197,7 @@ export interface FileRoutesById {
   '/admin/tours/$id': typeof AdminToursIdRoute
   '/admin/blog/': typeof AdminBlogIndexRoute
   '/admin/tours/': typeof AdminToursIndexRoute
+  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -172,6 +209,9 @@ export interface FileRouteTypes {
     | '/admin/bookings'
     | '/admin/login'
     | '/admin/messages'
+    | '/admin/orders'
+    | '/booking/cancelled'
+    | '/booking/success'
     | '/journal/$slug'
     | '/tours/$slug'
     | '/admin/'
@@ -181,6 +221,7 @@ export interface FileRouteTypes {
     | '/admin/tours/$id'
     | '/admin/blog/'
     | '/admin/tours/'
+    | '/api/public/payments/webhook'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -190,6 +231,9 @@ export interface FileRouteTypes {
     | '/admin/bookings'
     | '/admin/login'
     | '/admin/messages'
+    | '/admin/orders'
+    | '/booking/cancelled'
+    | '/booking/success'
     | '/journal/$slug'
     | '/tours/$slug'
     | '/admin'
@@ -199,6 +243,7 @@ export interface FileRouteTypes {
     | '/admin/tours/$id'
     | '/admin/blog'
     | '/admin/tours'
+    | '/api/public/payments/webhook'
   id:
     | '__root__'
     | '/'
@@ -208,6 +253,9 @@ export interface FileRouteTypes {
     | '/admin/bookings'
     | '/admin/login'
     | '/admin/messages'
+    | '/admin/orders'
+    | '/booking/cancelled'
+    | '/booking/success'
     | '/journal/$slug'
     | '/tours/$slug'
     | '/admin/'
@@ -217,6 +265,7 @@ export interface FileRouteTypes {
     | '/admin/tours/$id'
     | '/admin/blog/'
     | '/admin/tours/'
+    | '/api/public/payments/webhook'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -227,6 +276,9 @@ export interface RootRouteChildren {
   AdminBookingsRoute: typeof AdminBookingsRoute
   AdminLoginRoute: typeof AdminLoginRoute
   AdminMessagesRoute: typeof AdminMessagesRoute
+  AdminOrdersRoute: typeof AdminOrdersRoute
+  BookingCancelledRoute: typeof BookingCancelledRoute
+  BookingSuccessRoute: typeof BookingSuccessRoute
   JournalSlugRoute: typeof JournalSlugRoute
   ToursSlugRoute: typeof ToursSlugRoute
   AdminIndexRoute: typeof AdminIndexRoute
@@ -236,6 +288,7 @@ export interface RootRouteChildren {
   AdminToursIdRoute: typeof AdminToursIdRoute
   AdminBlogIndexRoute: typeof AdminBlogIndexRoute
   AdminToursIndexRoute: typeof AdminToursIndexRoute
+  ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -303,6 +356,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof JournalSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/booking/success': {
+      id: '/booking/success'
+      path: '/booking/success'
+      fullPath: '/booking/success'
+      preLoaderRoute: typeof BookingSuccessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/booking/cancelled': {
+      id: '/booking/cancelled'
+      path: '/booking/cancelled'
+      fullPath: '/booking/cancelled'
+      preLoaderRoute: typeof BookingCancelledRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/orders': {
+      id: '/admin/orders'
+      path: '/admin/orders'
+      fullPath: '/admin/orders'
+      preLoaderRoute: typeof AdminOrdersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/messages': {
       id: '/admin/messages'
       path: '/admin/messages'
@@ -352,6 +426,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminBlogIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/payments/webhook': {
+      id: '/api/public/payments/webhook'
+      path: '/api/public/payments/webhook'
+      fullPath: '/api/public/payments/webhook'
+      preLoaderRoute: typeof ApiPublicPaymentsWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -363,6 +444,9 @@ const rootRouteChildren: RootRouteChildren = {
   AdminBookingsRoute: AdminBookingsRoute,
   AdminLoginRoute: AdminLoginRoute,
   AdminMessagesRoute: AdminMessagesRoute,
+  AdminOrdersRoute: AdminOrdersRoute,
+  BookingCancelledRoute: BookingCancelledRoute,
+  BookingSuccessRoute: BookingSuccessRoute,
   JournalSlugRoute: JournalSlugRoute,
   ToursSlugRoute: ToursSlugRoute,
   AdminIndexRoute: AdminIndexRoute,
@@ -372,6 +456,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminToursIdRoute: AdminToursIdRoute,
   AdminBlogIndexRoute: AdminBlogIndexRoute,
   AdminToursIndexRoute: AdminToursIndexRoute,
+  ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
