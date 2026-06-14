@@ -48,13 +48,15 @@ export function BookingModal({
 
   const reset = () => {
     setDate(undefined); setTime(""); setGuests(2);
-    setName(""); setContact(""); setSubmitted(false);
+    setName(""); setContact(""); setSubmitted(false); setPaying(false);
   };
 
   const handleClose = (v: boolean) => {
     if (!v) setTimeout(reset, 300);
     onOpenChange(v);
   };
+
+  const isEmail = (s: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -74,6 +76,37 @@ export function BookingModal({
     const url = `https://wa.me/${waNumber}?text=${encodeURIComponent(lines)}`;
     window.open(url, "_blank", "noopener,noreferrer");
     setSubmitted(true);
+  };
+
+  const handlePay = async () => {
+    if (!date || !time || !name || !contact) {
+      toast.error("Please complete date, time, name and email.");
+      return;
+    }
+    if (!isEmail(contact)) {
+      toast.error("Enter a valid email address to pay by card.");
+      return;
+    }
+    setPaying(true);
+    try {
+      const res = await checkoutFn({
+        data: {
+          tour_slug: tour.slug,
+          tour_title: tour.title,
+          customer_name: name,
+          email: contact,
+          travel_date: date ? format(date, "yyyy-MM-dd") : null,
+          time,
+          guests,
+          amount: total * 100,
+          image_url: tour.image?.startsWith("http") ? tour.image : null,
+        },
+      });
+      window.location.href = res.url;
+    } catch (err) {
+      setPaying(false);
+      toast.error((err as Error).message || "Could not start checkout.");
+    }
   };
 
   return (
