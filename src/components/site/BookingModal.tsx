@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { format } from "date-fns";
-import { CalendarIcon, Users, Clock, MapPin, Check } from "lucide-react";
+import { CalendarIcon, Users, Clock, MapPin, Check, CreditCard, Loader2 } from "lucide-react";
 import type { Tour } from "@/lib/cms";
 import {
   Dialog,
@@ -17,6 +17,9 @@ import {
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { useSiteBrand } from "@/lib/brand";
+import { useServerFn } from "@tanstack/react-start";
+import { createCheckoutSession } from "@/lib/checkout.functions";
+import { toast } from "sonner";
 
 const TIME_SLOTS = ["09:00", "10:30", "13:00", "15:00", "17:00", "18:30"];
 
@@ -30,12 +33,14 @@ export function BookingModal({
   onOpenChange: (v: boolean) => void;
 }) {
   const { business } = useSiteBrand();
+  const checkoutFn = useServerFn(createCheckoutSession);
   const [date, setDate] = useState<Date | undefined>();
   const [time, setTime] = useState<string>("");
   const [guests, setGuests] = useState(2);
   const [name, setName] = useState("");
   const [contact, setContact] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [paying, setPaying] = useState(false);
 
   if (!tour) return null;
 
@@ -43,13 +48,15 @@ export function BookingModal({
 
   const reset = () => {
     setDate(undefined); setTime(""); setGuests(2);
-    setName(""); setContact(""); setSubmitted(false);
+    setName(""); setContact(""); setSubmitted(false); setPaying(false);
   };
 
   const handleClose = (v: boolean) => {
     if (!v) setTimeout(reset, 300);
     onOpenChange(v);
   };
+
+  const isEmail = (s: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -69,6 +76,37 @@ export function BookingModal({
     const url = `https://wa.me/${waNumber}?text=${encodeURIComponent(lines)}`;
     window.open(url, "_blank", "noopener,noreferrer");
     setSubmitted(true);
+  };
+
+  const handlePay = async () => {
+    if (!date || !time || !name || !contact) {
+      toast.error("Please complete date, time, name and email.");
+      return;
+    }
+    if (!isEmail(contact)) {
+      toast.error("Enter a valid email address to pay by card.");
+      return;
+    }
+    setPaying(true);
+    try {
+      const res = await checkoutFn({
+        data: {
+          tour_slug: tour.slug,
+          tour_title: tour.title,
+          customer_name: name,
+          email: contact,
+          travel_date: date ? format(date, "yyyy-MM-dd") : null,
+          time,
+          guests,
+          amount: total * 100,
+          image_url: tour.image?.startsWith("http") ? tour.image : null,
+        },
+      });
+      window.location.href = res.url;
+    } catch (err) {
+      setPaying(false);
+      toast.error((err as Error).message || "Could not start checkout.");
+    }
   };
 
   return (
@@ -219,24 +257,43 @@ export function BookingModal({
                   required
                   value={contact}
                   onChange={(e) => setContact(e.target.value)}
-                  placeholder="Email or WhatsApp"
+                  placeholder="Email (required for card payment)"
                   className="px-4 py-3 rounded-lg bg-cloud/40 border border-border text-sm text-ink placeholder:text-ink/40 focus:outline-none focus:border-gold"
                 />
               </div>
 
               {/* Total + submit */}
-              <div className="mt-2 pt-5 border-t border-border flex flex-col sm:flex-row gap-4 sm:items-end sm:justify-between">
-                <div>
-                  <p className="text-[10px] uppercase tracking-widest text-body">Est. total</p>
-                  <p className="font-display font-bold text-3xl text-gold leading-none">€{total}</p>
+              <div className="mt-2 pt-5 border-t border-border flex flex-col gap-3">
+                <div className="flex items-end justify-between">
+                  <div>
+                    <p className="text-[10px] uppercase tracking-widest text-body">Est. total</p>
+                    <p className="font-display font-bold text-3xl text-gold leading-none">€{total}</p>
+                  </div>
+                  <p className="text-[10px] text-body text-right max-w-[160px]">
+                    Pay securely with card, or reserve via WhatsApp and pay later.
+                  </p>
                 </div>
-                <button
-                  type="submit"
-                  disabled={!date || !time || !name || !contact}
-                  className="w-full sm:w-auto px-7 py-3.5 rounded-full bg-[#25D366] text-white text-[12px] font-semibold uppercase tracking-widest hover:bg-ink transition disabled:opacity-40 disabled:cursor-not-allowed shadow-[0_6px_15px_rgba(37,211,102,0.35)]"
-                >
-                  Book via WhatsApp →
-                </button>
+                <div className="grid sm:grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={handlePay}
+                    disabled={paying || !date || !time || !name || !contact}
+                    className="w-full px-5 py-3.5 rounded-full bg-ink text-white text-[12px] font-semibold uppercase tracking-widest hover:bg-gold transition disabled:opacity-40 disabled:cursor-not-allowed shadow-[0_6px_15px_rgba(30,58,95,0.25)] inline-flex items-center justify-center gap-2"
+                  >
+                    {paying ? (
+                      <><Loader2 className="w-4 h-4 animate-spin" /> Redirecting…</>
+                    ) : (
+                      <><CreditCard className="w-4 h-4" /> Pay with card</>
+                    )}
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={paying || !date || !time || !name || !contact}
+                    className="w-full px-5 py-3.5 rounded-full bg-[#25D366] text-white text-[12px] font-semibold uppercase tracking-widest hover:bg-ink transition disabled:opacity-40 disabled:cursor-not-allowed shadow-[0_6px_15px_rgba(37,211,102,0.35)]"
+                  >
+                    Reserve via WhatsApp
+                  </button>
+                </div>
               </div>
             </form>
           </div>

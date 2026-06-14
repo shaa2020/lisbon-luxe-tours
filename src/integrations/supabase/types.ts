@@ -67,12 +67,14 @@ export type Database = {
       }
       bookings: {
         Row: {
+          amount_total: number | null
           created_at: string
           customer_name: string
           email: string
           guests: number
           id: string
           notes: string | null
+          payment_status: string
           phone: string | null
           status: string
           total_estimate: number | null
@@ -81,12 +83,14 @@ export type Database = {
           travel_date: string | null
         }
         Insert: {
+          amount_total?: number | null
           created_at?: string
           customer_name: string
           email: string
           guests?: number
           id?: string
           notes?: string | null
+          payment_status?: string
           phone?: string | null
           status?: string
           total_estimate?: number | null
@@ -95,12 +99,14 @@ export type Database = {
           travel_date?: string | null
         }
         Update: {
+          amount_total?: number | null
           created_at?: string
           customer_name?: string
           email?: string
           guests?: number
           id?: string
           notes?: string | null
+          payment_status?: string
           phone?: string | null
           status?: string
           total_estimate?: number | null
@@ -139,6 +145,71 @@ export type Database = {
           subject?: string | null
         }
         Relationships: []
+      }
+      orders: {
+        Row: {
+          amount_total: number
+          booking_id: string | null
+          created_at: string
+          currency: string
+          customer_email: string | null
+          customer_name: string | null
+          guests: number | null
+          id: string
+          payment_status: string
+          raw: Json | null
+          stripe_payment_intent_id: string | null
+          stripe_session_id: string | null
+          tour_slug: string | null
+          tour_title: string | null
+          travel_date: string | null
+          updated_at: string
+        }
+        Insert: {
+          amount_total?: number
+          booking_id?: string | null
+          created_at?: string
+          currency?: string
+          customer_email?: string | null
+          customer_name?: string | null
+          guests?: number | null
+          id?: string
+          payment_status?: string
+          raw?: Json | null
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
+          tour_slug?: string | null
+          tour_title?: string | null
+          travel_date?: string | null
+          updated_at?: string
+        }
+        Update: {
+          amount_total?: number
+          booking_id?: string | null
+          created_at?: string
+          currency?: string
+          customer_email?: string | null
+          customer_name?: string | null
+          guests?: number | null
+          id?: string
+          payment_status?: string
+          raw?: Json | null
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
+          tour_slug?: string | null
+          tour_title?: string | null
+          travel_date?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       site_settings: {
         Row: {
