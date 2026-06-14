@@ -257,24 +257,43 @@ export function BookingModal({
                   required
                   value={contact}
                   onChange={(e) => setContact(e.target.value)}
-                  placeholder="Email or WhatsApp"
+                  placeholder="Email (required for card payment)"
                   className="px-4 py-3 rounded-lg bg-cloud/40 border border-border text-sm text-ink placeholder:text-ink/40 focus:outline-none focus:border-gold"
                 />
               </div>
 
               {/* Total + submit */}
-              <div className="mt-2 pt-5 border-t border-border flex flex-col sm:flex-row gap-4 sm:items-end sm:justify-between">
-                <div>
-                  <p className="text-[10px] uppercase tracking-widest text-body">Est. total</p>
-                  <p className="font-display font-bold text-3xl text-gold leading-none">€{total}</p>
+              <div className="mt-2 pt-5 border-t border-border flex flex-col gap-3">
+                <div className="flex items-end justify-between">
+                  <div>
+                    <p className="text-[10px] uppercase tracking-widest text-body">Est. total</p>
+                    <p className="font-display font-bold text-3xl text-gold leading-none">€{total}</p>
+                  </div>
+                  <p className="text-[10px] text-body text-right max-w-[160px]">
+                    Pay securely with card, or reserve via WhatsApp and pay later.
+                  </p>
                 </div>
-                <button
-                  type="submit"
-                  disabled={!date || !time || !name || !contact}
-                  className="w-full sm:w-auto px-7 py-3.5 rounded-full bg-[#25D366] text-white text-[12px] font-semibold uppercase tracking-widest hover:bg-ink transition disabled:opacity-40 disabled:cursor-not-allowed shadow-[0_6px_15px_rgba(37,211,102,0.35)]"
-                >
-                  Book via WhatsApp →
-                </button>
+                <div className="grid sm:grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={handlePay}
+                    disabled={paying || !date || !time || !name || !contact}
+                    className="w-full px-5 py-3.5 rounded-full bg-ink text-white text-[12px] font-semibold uppercase tracking-widest hover:bg-gold transition disabled:opacity-40 disabled:cursor-not-allowed shadow-[0_6px_15px_rgba(30,58,95,0.25)] inline-flex items-center justify-center gap-2"
+                  >
+                    {paying ? (
+                      <><Loader2 className="w-4 h-4 animate-spin" /> Redirecting…</>
+                    ) : (
+                      <><CreditCard className="w-4 h-4" /> Pay with card</>
+                    )}
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={paying || !date || !time || !name || !contact}
+                    className="w-full px-5 py-3.5 rounded-full bg-[#25D366] text-white text-[12px] font-semibold uppercase tracking-widest hover:bg-ink transition disabled:opacity-40 disabled:cursor-not-allowed shadow-[0_6px_15px_rgba(37,211,102,0.35)]"
+                  >
+                    Reserve via WhatsApp
+                  </button>
+                </div>
               </div>
             </form>
           </div>
