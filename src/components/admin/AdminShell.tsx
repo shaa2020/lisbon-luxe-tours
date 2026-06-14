@@ -28,6 +28,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
     { to: "/admin/tours", label: "Tours" },
     { to: "/admin/blog", label: "Journal" },
     { to: "/admin/bookings", label: "Bookings" },
+    { to: "/admin/orders", label: "Orders" },
     { to: "/admin/messages", label: "Messages" },
   ];
 
