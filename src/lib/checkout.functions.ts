@@ -22,7 +22,7 @@ function getLovableKey(): string {
 
 async function stripeFetch(path: string, init?: RequestInit & { form?: Record<string, string> }) {
   const headers: Record<string, string> = {
-    Authorization: `Bearer ${getLovableKey()}`,
+    "Lovable-API-Key": getLovableKey(),
     "X-Connection-Api-Key": getStripeKey(),
   };
   let body: BodyInit | undefined = init?.body as BodyInit | undefined;
