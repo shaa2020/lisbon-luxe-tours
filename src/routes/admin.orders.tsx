@@ -28,14 +28,14 @@ type Order = {
   created_at: string;
 };
 
-const STATUSES = ["paid", "pending", "failed", "refunded"] as const;
+const STATUSES = ["paid", "pending", "failed", "rescheduled"] as const;
 
 function statusBadge(s: string) {
   const map: Record<string, string> = {
     paid: "bg-emerald-500/10 text-emerald-700 border-emerald-500/30",
     pending: "bg-amber-500/10 text-amber-700 border-amber-500/30",
     failed: "bg-red-500/10 text-red-700 border-red-500/30",
-    refunded: "bg-muted text-muted-foreground border-border",
+    rescheduled: "bg-sky-500/10 text-sky-700 border-sky-500/30",
   };
   return map[s] || map.pending;
 }
