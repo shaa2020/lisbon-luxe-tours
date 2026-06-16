@@ -14,6 +14,9 @@ import { WhatsappFab } from "@/components/site/Whatsapp";
 import { BookingModal } from "@/components/site/BookingModal";
 import { useBlogPosts, useTours, tourPricing, type Tour } from "@/lib/cms";
 
+const lockedHeroImg = `${heroImg}?v=locked-20260616`;
+const lockedAboutImg = `${aboutImg}?v=locked-20260616`;
+
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
@@ -67,7 +70,7 @@ function Hero() {
     <section className="relative pt-[68px] md:pt-[120px] pb-0">
       <div className="relative h-[520px] sm:h-[560px] md:h-[640px] overflow-hidden">
         <img
-          src={heroImg}
+          src={lockedHeroImg}
           alt="Discover Lisboa, Portugal"
           className="absolute inset-0 w-full h-full object-cover animate-[scale-in_1.6s_var(--ease-out-expo)_both]"
         />
@@ -218,7 +221,7 @@ function AboutSection() {
         <div className="absolute -bottom-4 -left-4 sm:-bottom-6 sm:-left-6 w-20 h-20 sm:w-24 sm:h-24 rounded-full border-2 border-dashed border-gold/40" />
         <div className="relative rounded-3xl overflow-hidden h-[340px] sm:h-[420px] md:h-[460px] shadow-[0_30px_60px_rgba(30,58,95,0.18)]">
           <img
-            src={aboutImg}
+            src={lockedAboutImg}
             alt="Local tuk-tuk guide welcoming travelers in Lisbon"
             className="w-full h-full object-cover"
             loading="lazy"
