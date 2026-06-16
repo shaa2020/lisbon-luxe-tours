@@ -6,7 +6,7 @@ import { AdminShell } from "@/components/admin/AdminShell";
 
 import { toast } from "sonner";
 import { Mail, MessageCircle, Calendar, Users, Trash2, CreditCard, FileText, Download } from "lucide-react";
-import { useSiteBrand } from "@/lib/brand";
+import { useSiteBrand, DEFAULT_BUSINESS, DEFAULT_BRAND_NAME, DEFAULT_BRAND_LOGO, type BusinessInfo } from "@/lib/brand";
 import { downloadInvoice, buildInvoiceMailto, buildInvoicePdf } from "@/lib/invoice";
 
 export const Route = createFileRoute("/admin/orders")({
