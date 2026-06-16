@@ -93,6 +93,7 @@ function TourEditPage() {
         category_slug: data.category_slug,
         duration: data.duration,
         price_from: data.price_from,
+        sale_price: data.sale_price ?? null,
         image_url: data.image_url,
         tagline: data.tagline ?? "",
         description: data.description ?? "",
