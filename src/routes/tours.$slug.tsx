@@ -7,18 +7,55 @@ import { WhatsappFab } from "@/components/site/Whatsapp";
 import { BookingModal } from "@/components/site/BookingModal";
 import { ReviewsSection } from "@/components/site/ReviewsSection";
 import { StarRating } from "@/components/site/StarRating";
-import { useTour, useTours, tourPricing } from "@/lib/cms";
+import { useTour, useTours, tourPricing, mapTour } from "@/lib/cms";
+import { getPublishedTourBySlug } from "@/lib/cms.functions";
 import { aggregateReviews, useTourReviews } from "@/lib/reviews";
 
 export const Route = createFileRoute("/tours/$slug")({
-  head: ({ params }) => ({
-    meta: [
-      { title: `Tour — Tuk Tuk 24 Private Tours` },
-      { property: "og:url", content: `/tours/${params.slug}` },
-      { property: "og:type", content: "product" },
-    ],
-    links: [{ rel: "canonical", href: `/tours/${params.slug}` }],
-  }),
+  loader: async ({ params }) => {
+    const row = await getPublishedTourBySlug({ data: { slug: params.slug } });
+    return { tour: row ? mapTour(row as Parameters<typeof mapTour>[0]) : null };
+  },
+  head: ({ params, loaderData }) => {
+    const tour = loaderData?.tour;
+    const url = `https://tuktuk24.xyz/tours/${params.slug}`;
+    const title = tour ? `${tour.title} — Private Tour | Tuk Tuk 24` : `Private Tour — Tuk Tuk 24`;
+    const description = tour?.description?.slice(0, 158) ?? "Private tuk-tuk and luxury tours across Lisbon and Portugal.";
+    return {
+      meta: [
+        { title },
+        { name: "description", content: description },
+        { property: "og:title", content: title },
+        { property: "og:description", content: description },
+        { property: "og:type", content: "product" },
+        { property: "og:url", content: url },
+        ...(tour?.image ? [{ property: "og:image", content: tour.image }, { name: "twitter:image", content: tour.image }] : []),
+      ],
+      links: [{ rel: "canonical", href: url }],
+      scripts: tour
+        ? [
+            {
+              type: "application/ld+json",
+              children: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "Product",
+                name: tour.title,
+                description: tour.description,
+                image: tour.image,
+                brand: { "@type": "Brand", name: "Tuk Tuk 24" },
+                offers: {
+                  "@type": "Offer",
+                  price: tour.salePrice ?? tour.priceFrom,
+                  priceCurrency: "EUR",
+                  availability: "https://schema.org/InStock",
+                  url,
+                },
+              }),
+            },
+          ]
+        : [],
+    };
+  },
   component: TourPage,
 });
 
