@@ -89,7 +89,7 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
 
     const form: Record<string, string> = {
       mode: "payment",
-      "payment_method_types[0]": "card",
+      "automatic_payment_methods[enabled]": "true",
       "line_items[0][quantity]": "1",
       "line_items[0][price_data][currency]": "eur",
       "line_items[0][price_data][unit_amount]": String(data.amount),
