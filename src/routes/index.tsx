@@ -421,7 +421,10 @@ function PopularCard({ tour, onBook }: { tour: Tour; onBook: () => void }) {
         <div className="flex items-center justify-between">
           <div>
             <span className="text-[11px] text-body uppercase tracking-widest">From </span>
-            <span className="text-gold font-display font-bold text-2xl">€{tour.priceFrom}</span>
+            <span className="text-gold font-display font-bold text-2xl">€{pricing.current}</span>
+            {pricing.onSale && (
+              <span className="ml-2 text-sm text-body/60 line-through">€{pricing.original}</span>
+            )}
           </div>
           <button
             type="button"
