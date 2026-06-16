@@ -190,7 +190,15 @@ function TourPage() {
               <p className="text-[11px] font-semibold uppercase tracking-widest text-body">From</p>
               <p className="text-[11px] font-semibold uppercase tracking-widest text-body">per group</p>
             </div>
-            <p className="font-display font-bold text-5xl text-gold leading-none mb-2">€{tour.priceFrom}</p>
+            <div className="flex items-baseline gap-3 mb-2 flex-wrap">
+              <p className="font-display font-bold text-5xl text-gold leading-none">€{pricing.current}</p>
+              {pricing.onSale && (
+                <>
+                  <span className="font-display text-2xl text-body/50 line-through leading-none">€{pricing.original}</span>
+                  <span className="bg-red-600 text-white text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-sm">−{pricing.discountPct}%</span>
+                </>
+              )}
+            </div>
             <p className="text-body text-sm mb-6">Private · {tour.duration} · Up to 7 guests</p>
 
             <button
