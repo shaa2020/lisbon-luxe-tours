@@ -44,8 +44,23 @@ function statusBadge(s: string) {
 
 function OrdersPage() {
   const qc = useQueryClient();
-  
+  const { brandName, business, logoUrl } = useSiteBrand();
   const [filter, setFilter] = useState<string>("all");
+
+  const handleInvoiceDownload = (o: Order) => {
+    const number = downloadInvoice(o as any, { brandName, business, logoUrl });
+    toast.success(`Invoice ${number} downloaded`);
+  };
+
+  const handleInvoiceEmail = (o: Order) => {
+    if (!o.customer_email) return toast.error("No customer email on file");
+    const { doc, number } = buildInvoicePdf(o as any, { brandName, business, logoUrl });
+    doc.save(`${number}.pdf`);
+    const url = buildInvoiceMailto(o as any, number, brandName);
+    window.location.href = url;
+    toast.success(`Invoice ${number} ready — attach the downloaded PDF to the email`);
+  };
+
 
   const { data: orders = [], isLoading } = useQuery({
     queryKey: ["admin-orders"],
