@@ -20,6 +20,7 @@ import { Route as ToursSlugRouteImport } from './routes/tours.$slug'
 import { Route as JournalSlugRouteImport } from './routes/journal.$slug'
 import { Route as BookingSuccessRouteImport } from './routes/booking.success'
 import { Route as BookingCancelledRouteImport } from './routes/booking.cancelled'
+import { Route as AdminReviewsRouteImport } from './routes/admin.reviews'
 import { Route as AdminOrdersRouteImport } from './routes/admin.orders'
 import { Route as AdminMessagesRouteImport } from './routes/admin.messages'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
@@ -85,6 +86,11 @@ const BookingCancelledRoute = BookingCancelledRouteImport.update({
   path: '/booking/cancelled',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminReviewsRoute = AdminReviewsRouteImport.update({
+  id: '/admin/reviews',
+  path: '/admin/reviews',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminOrdersRoute = AdminOrdersRouteImport.update({
   id: '/admin/orders',
   path: '/admin/orders',
@@ -141,6 +147,7 @@ export interface FileRoutesByFullPath {
   '/admin/login': typeof AdminLoginRoute
   '/admin/messages': typeof AdminMessagesRoute
   '/admin/orders': typeof AdminOrdersRoute
+  '/admin/reviews': typeof AdminReviewsRoute
   '/booking/cancelled': typeof BookingCancelledRoute
   '/booking/success': typeof BookingSuccessRoute
   '/journal/$slug': typeof JournalSlugRoute
@@ -163,6 +170,7 @@ export interface FileRoutesByTo {
   '/admin/login': typeof AdminLoginRoute
   '/admin/messages': typeof AdminMessagesRoute
   '/admin/orders': typeof AdminOrdersRoute
+  '/admin/reviews': typeof AdminReviewsRoute
   '/booking/cancelled': typeof BookingCancelledRoute
   '/booking/success': typeof BookingSuccessRoute
   '/journal/$slug': typeof JournalSlugRoute
@@ -186,6 +194,7 @@ export interface FileRoutesById {
   '/admin/login': typeof AdminLoginRoute
   '/admin/messages': typeof AdminMessagesRoute
   '/admin/orders': typeof AdminOrdersRoute
+  '/admin/reviews': typeof AdminReviewsRoute
   '/booking/cancelled': typeof BookingCancelledRoute
   '/booking/success': typeof BookingSuccessRoute
   '/journal/$slug': typeof JournalSlugRoute
@@ -210,6 +219,7 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/admin/messages'
     | '/admin/orders'
+    | '/admin/reviews'
     | '/booking/cancelled'
     | '/booking/success'
     | '/journal/$slug'
@@ -232,6 +242,7 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/admin/messages'
     | '/admin/orders'
+    | '/admin/reviews'
     | '/booking/cancelled'
     | '/booking/success'
     | '/journal/$slug'
@@ -254,6 +265,7 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/admin/messages'
     | '/admin/orders'
+    | '/admin/reviews'
     | '/booking/cancelled'
     | '/booking/success'
     | '/journal/$slug'
@@ -277,6 +289,7 @@ export interface RootRouteChildren {
   AdminLoginRoute: typeof AdminLoginRoute
   AdminMessagesRoute: typeof AdminMessagesRoute
   AdminOrdersRoute: typeof AdminOrdersRoute
+  AdminReviewsRoute: typeof AdminReviewsRoute
   BookingCancelledRoute: typeof BookingCancelledRoute
   BookingSuccessRoute: typeof BookingSuccessRoute
   JournalSlugRoute: typeof JournalSlugRoute
@@ -370,6 +383,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BookingCancelledRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/reviews': {
+      id: '/admin/reviews'
+      path: '/admin/reviews'
+      fullPath: '/admin/reviews'
+      preLoaderRoute: typeof AdminReviewsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/orders': {
       id: '/admin/orders'
       path: '/admin/orders'
@@ -445,6 +465,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminLoginRoute: AdminLoginRoute,
   AdminMessagesRoute: AdminMessagesRoute,
   AdminOrdersRoute: AdminOrdersRoute,
+  AdminReviewsRoute: AdminReviewsRoute,
   BookingCancelledRoute: BookingCancelledRoute,
   BookingSuccessRoute: BookingSuccessRoute,
   JournalSlugRoute: JournalSlugRoute,

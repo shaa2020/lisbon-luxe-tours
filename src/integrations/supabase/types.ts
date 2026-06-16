@@ -211,6 +211,62 @@ export type Database = {
           },
         ]
       }
+      reviews: {
+        Row: {
+          author_email: string | null
+          author_name: string
+          body: string
+          created_at: string
+          featured: boolean
+          id: string
+          rating: number
+          status: string
+          title: string | null
+          tour_id: string | null
+          tour_slug: string | null
+          travel_date: string | null
+          updated_at: string
+        }
+        Insert: {
+          author_email?: string | null
+          author_name: string
+          body: string
+          created_at?: string
+          featured?: boolean
+          id?: string
+          rating: number
+          status?: string
+          title?: string | null
+          tour_id?: string | null
+          tour_slug?: string | null
+          travel_date?: string | null
+          updated_at?: string
+        }
+        Update: {
+          author_email?: string | null
+          author_name?: string
+          body?: string
+          created_at?: string
+          featured?: boolean
+          id?: string
+          rating?: number
+          status?: string
+          title?: string | null
+          tour_id?: string | null
+          tour_slug?: string | null
+          travel_date?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reviews_tour_id_fkey"
+            columns: ["tour_id"]
+            isOneToOne: false
+            referencedRelation: "tours"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       site_settings: {
         Row: {
           address_line1: string | null

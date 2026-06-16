@@ -53,9 +53,10 @@ function MessagesInbox() {
     { all: messages.length } as Record<string, number>,
   );
 
-  const updateStatus = async (id: string, status: string) => {
+  const updateStatus = async (id: string, status: string, silent = false) => {
     const { error } = await supabase.from("contact_messages").update({ status }).eq("id", id);
     if (error) return toast.error(error.message);
+    if (!silent) toast.success("Status updated");
     qc.invalidateQueries({ queryKey: ["admin-messages"] });
     qc.invalidateQueries({ queryKey: ["admin-count", "contact_messages"] });
   };
@@ -114,7 +115,7 @@ function MessagesInbox() {
             <article
               key={m.id}
               className="rounded-xl border border-border bg-card p-5"
-              onMouseEnter={() => m.status === "new" && updateStatus(m.id, "read")}
+              onMouseEnter={() => m.status === "new" && updateStatus(m.id, "read", true)}
             >
               <div className="flex flex-wrap items-start justify-between gap-3 mb-2">
                 <div>
