@@ -5,7 +5,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { AdminShell } from "@/components/admin/AdminShell";
 
 import { toast } from "sonner";
-import { Mail, MessageCircle, Calendar, Users, Trash2, CreditCard } from "lucide-react";
+import { Mail, MessageCircle, Calendar, Users, Trash2, CreditCard, FileText, Download } from "lucide-react";
+import { useSiteBrand } from "@/lib/brand";
+import { downloadInvoice, buildInvoiceMailto, buildInvoicePdf } from "@/lib/invoice";
 
 export const Route = createFileRoute("/admin/orders")({
   component: OrdersPage,
