@@ -2,16 +2,49 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Nav } from "@/components/site/Nav";
 import { Footer } from "@/components/site/Footer";
 import { WhatsappFab } from "@/components/site/Whatsapp";
-import { useBlogPost, useBlogPosts } from "@/lib/cms";
+import { useBlogPost, useBlogPosts, mapPost } from "@/lib/cms";
+import { getPublishedBlogPostBySlug } from "@/lib/cms.functions";
 
 export const Route = createFileRoute("/journal/$slug")({
-  head: ({ params }) => ({
-    meta: [
-      { title: `Journal — Tuk Tuk 24` },
-      { property: "og:url", content: `/journal/${params.slug}` },
-    ],
-    links: [{ rel: "canonical", href: `/journal/${params.slug}` }],
-  }),
+  loader: async ({ params }) => {
+    const row = await getPublishedBlogPostBySlug({ data: { slug: params.slug } });
+    return { post: row ? mapPost(row as Parameters<typeof mapPost>[0]) : null };
+  },
+  head: ({ params, loaderData }) => {
+    const post = loaderData?.post;
+    const url = `https://tuktuk24.xyz/journal/${params.slug}`;
+    const title = post ? `${post.title} — Journal | Tuk Tuk 24` : `Journal — Tuk Tuk 24`;
+    const description = post?.excerpt?.slice(0, 158) ?? "Stories and travel guides from Tuk Tuk 24 in Lisbon, Portugal.";
+    return {
+      meta: [
+        { title },
+        { name: "description", content: description },
+        { property: "og:title", content: title },
+        { property: "og:description", content: description },
+        { property: "og:type", content: "article" },
+        { property: "og:url", content: url },
+        ...(post?.image ? [{ property: "og:image", content: post.image }, { name: "twitter:image", content: post.image }] : []),
+      ],
+      links: [{ rel: "canonical", href: url }],
+      scripts: post
+        ? [
+            {
+              type: "application/ld+json",
+              children: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "Article",
+                headline: post.title,
+                description: post.excerpt,
+                image: post.image,
+                datePublished: post.date,
+                author: { "@type": "Organization", name: "Tuk Tuk 24" },
+                mainEntityOfPage: url,
+              }),
+            },
+          ]
+        : [],
+    };
+  },
   component: JournalPostPage,
 });
 
