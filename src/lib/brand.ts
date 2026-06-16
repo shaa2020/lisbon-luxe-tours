@@ -1,11 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getPublicSiteSettings } from "./cms.functions";
-import defaultLogo from "@/assets/tuktuk24-logo.png";
+import defaultLogoAsset from "@/assets/tuktuk24-logo-new.png.asset.json";
 
 export const DEFAULT_BRAND_NAME = "Tuk Tuk 24";
 export const DEFAULT_BRAND_TAGLINE = "Lisbon Tours";
-export const DEFAULT_BRAND_LOGO = defaultLogo as string;
+export const DEFAULT_BRAND_LOGO = defaultLogoAsset.url;
 
 export const DEFAULT_BUSINESS = {
   contactEmail: "hello@tuktuk24.pt",
