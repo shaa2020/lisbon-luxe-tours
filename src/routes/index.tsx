@@ -5,6 +5,7 @@ import alfamaImg from "@/assets/tour-alfama.jpg";
 import sintraImg from "@/assets/tour-sintra.jpg";
 import belemImg from "@/assets/dest-belem.jpg";
 import cascaisImg from "@/assets/dest-cascais.jpg";
+import aboutImg from "@/assets/about-tuktuk.jpg";
 import caboImg from "@/assets/tour-caboroca.jpg";
 import vanImg from "@/assets/fleet-van.jpg";
 import { Nav } from "@/components/site/Nav";
@@ -215,16 +216,13 @@ function AboutSection() {
       <div className="relative mx-2 sm:mx-0">
         <div className="absolute -top-6 -right-4 sm:-top-8 sm:-right-8 w-28 h-28 sm:w-40 sm:h-40 rounded-full bg-gold/10" />
         <div className="absolute -bottom-4 -left-4 sm:-bottom-6 sm:-left-6 w-20 h-20 sm:w-24 sm:h-24 rounded-full border-2 border-dashed border-gold/40" />
-        <div className="relative rounded-[40%_60%_50%_50%/40%_50%_60%_50%] overflow-hidden h-[340px] sm:h-[420px] md:h-[460px] shadow-[0_30px_60px_rgba(30,58,95,0.15)]">
-          <img src={cascaisImg} alt="Cascais coast" className="w-full h-full object-cover" />
-          <button
-            aria-label="Play video"
-            className="absolute inset-0 m-auto w-16 h-16 rounded-full bg-white/90 flex items-center justify-center hover:bg-white transition group"
-          >
-            <svg width="18" height="20" viewBox="0 0 18 20" fill="currentColor" className="text-gold ml-1">
-              <path d="M0 0v20l18-10L0 0z" />
-            </svg>
-          </button>
+        <div className="relative rounded-3xl overflow-hidden h-[340px] sm:h-[420px] md:h-[460px] shadow-[0_30px_60px_rgba(30,58,95,0.18)]">
+          <img
+            src={aboutImg}
+            alt="Local tuk-tuk guide welcoming travelers in Lisbon"
+            className="w-full h-full object-cover"
+            loading="lazy"
+          />
         </div>
       </div>
     </section>
