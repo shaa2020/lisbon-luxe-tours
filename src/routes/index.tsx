@@ -262,6 +262,7 @@ function FlashDeals() {
 }
 
 function FlashCard({ tour }: { tour: Tour }) {
+  const pricing = tourPricing(tour);
   return (
     <Link
       to="/tours/$slug"
@@ -275,8 +276,13 @@ function FlashCard({ tour }: { tour: Tour }) {
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
         />
         <span className="absolute top-3 left-3 bg-gold text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-sm shadow">
-          €{tour.priceFrom}
+          €{pricing.current}
         </span>
+        {pricing.onSale && (
+          <span className="absolute top-3 right-3 bg-red-600 text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-sm shadow">
+            −{pricing.discountPct}%
+          </span>
+        )}
       </div>
       <div className="p-5">
         <h3 className="font-display font-semibold text-ink text-[15px] leading-snug mb-2 group-hover:text-gold transition-colors">
