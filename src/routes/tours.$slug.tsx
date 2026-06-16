@@ -70,6 +70,7 @@ function TourPage() {
   }
 
   const related = allTours.filter((t) => t.slug !== tour.slug).slice(0, 3);
+  const pricing = tourPricing(tour);
 
   return (
     <div className="min-h-screen bg-paper text-ink overflow-x-clip pb-24 lg:pb-0">
