@@ -231,13 +231,30 @@ function OrdersPage() {
               </div>
 
               <div className="flex flex-wrap items-center gap-2">
+                <button
+                  onClick={() => handleInvoiceEmail(o)}
+                  disabled={!o.customer_email}
+                  className="inline-flex items-center gap-1.5 rounded-md bg-primary text-primary-foreground px-3 py-2 text-sm font-semibold hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
+                  title="Download invoice PDF and open email to customer"
+                >
+                  <FileText className="w-4 h-4" />
+                  Send invoice
+                </button>
+                <button
+                  onClick={() => handleInvoiceDownload(o)}
+                  className="inline-flex items-center gap-1.5 rounded-md border border-border bg-card px-3 py-2 text-sm font-medium hover:border-primary"
+                  title="Download invoice PDF"
+                >
+                  <Download className="w-4 h-4" />
+                  PDF
+                </button>
                 {o.customer_email && (
                   <a
                     href={mailto(o)}
-                    className="inline-flex items-center gap-1.5 rounded-md bg-primary text-primary-foreground px-3 py-2 text-sm font-semibold hover:bg-primary/90"
+                    className="inline-flex items-center gap-1.5 rounded-md border border-border bg-card px-3 py-2 text-sm font-medium hover:border-primary"
                   >
                     <MessageCircle className="w-4 h-4" />
-                    Email customer
+                    Email
                   </a>
                 )}
                 <select
