@@ -14,7 +14,8 @@ import { WhatsappFab } from "@/components/site/Whatsapp";
 import { BookingModal } from "@/components/site/BookingModal";
 import { useBlogPosts, useTours, tourPricing, type Tour } from "@/lib/cms";
 
-const lockedHeroImg = `${heroImg}?v=locked-20260616`;
+// Hero now uses the tuk-tuk/flowers image (per user request 2026-06-16)
+const lockedHeroImg = `${aboutImg}?v=locked-20260616-hero`;
 const lockedAboutImg = `${aboutImg}?v=locked-20260616`;
 
 export const Route = createFileRoute("/")({
