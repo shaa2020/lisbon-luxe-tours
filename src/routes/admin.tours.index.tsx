@@ -28,7 +28,7 @@ function AdminToursPage() {
     queryFn: async (): Promise<Row[]> => {
       const { data, error } = await supabase
         .from("tours")
-        .select("id, slug, title, category, price_from, published, featured, image_url, sort_order")
+        .select("id, slug, title, category, price_from, sale_price, published, featured, image_url, sort_order")
         .order("sort_order", { ascending: true });
       if (error) throw error;
       return data as Row[];
