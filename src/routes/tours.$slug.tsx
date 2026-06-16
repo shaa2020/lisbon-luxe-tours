@@ -178,6 +178,8 @@ function TourPage() {
               </div>
             </div>
           )}
+
+          <ReviewsSection tourId={tour.id ?? null} tourSlug={tour.slug} tourTitle={tour.title} />
         </div>
 
         {/* Sticky booking card */}
