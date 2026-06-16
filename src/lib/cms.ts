@@ -196,3 +196,14 @@ export const tourCategories = [
   { slug: "airport", title: "Airport Transfers" },
   { slug: "custom", title: "Custom Tours" },
 ];
+
+export function tourPricing(tour: Pick<Tour, "priceFrom" | "salePrice">) {
+  const original = tour.priceFrom;
+  const sale =
+    typeof tour.salePrice === "number" && tour.salePrice > 0 && tour.salePrice < original
+      ? tour.salePrice
+      : null;
+  const current = sale ?? original;
+  const discountPct = sale ? Math.round(((original - sale) / original) * 100) : 0;
+  return { original, sale, current, onSale: sale !== null, discountPct };
+}
