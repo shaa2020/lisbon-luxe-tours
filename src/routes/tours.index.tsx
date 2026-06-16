@@ -254,6 +254,11 @@ function TourGridCard({ tour, onBook }: { tour: Tour; onBook: () => void }) {
             Signature
           </span>
         )}
+        {pricing.onSale && (
+          <span className={`absolute left-3 ${tour.featured ? "top-10" : "top-3"} bg-red-600 text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-sm shadow-md`}>
+            −{pricing.discountPct}% Sale
+          </span>
+        )}
         <span className="absolute top-3 right-3 bg-white/95 text-ink text-[11px] font-semibold px-3 py-1 rounded-full flex items-center gap-1">
           <span className="text-gold">★</span> 4.9
         </span>
