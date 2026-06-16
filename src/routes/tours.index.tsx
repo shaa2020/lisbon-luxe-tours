@@ -239,6 +239,7 @@ function FilterChip({
 }
 
 function TourGridCard({ tour, onBook }: { tour: Tour; onBook: () => void }) {
+  const pricing = tourPricing(tour);
   return (
     <article className="group bg-white rounded-xl overflow-hidden shadow-[0_4px_20px_rgba(30,58,95,0.06)] hover:shadow-[0_20px_40px_rgba(30,58,95,0.12)] hover:-translate-y-1 transition-all duration-500 flex flex-col">
       <Link to="/tours/$slug" params={{ slug: tour.slug }} className="relative block aspect-[16/10] overflow-hidden">
