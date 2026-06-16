@@ -343,6 +343,7 @@ export type Database = {
           not_included: Json
           price_from: number
           published: boolean
+          sale_price: number | null
           slug: string
           sort_order: number
           tagline: string | null
@@ -364,6 +365,7 @@ export type Database = {
           not_included?: Json
           price_from?: number
           published?: boolean
+          sale_price?: number | null
           slug: string
           sort_order?: number
           tagline?: string | null
@@ -385,6 +387,7 @@ export type Database = {
           not_included?: Json
           price_from?: number
           published?: boolean
+          sale_price?: number | null
           slug?: string
           sort_order?: number
           tagline?: string | null
