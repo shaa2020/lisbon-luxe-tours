@@ -188,7 +188,14 @@ function AdminDashboard() {
                 {c.count ?? "—"}
               </p>
             </div>
-            <p className="text-sm font-semibold text-foreground mb-1">{c.label}</p>
+            <div className="flex items-center gap-2 mb-1 flex-wrap">
+              <p className="text-sm font-semibold text-foreground">{c.label}</p>
+              {c.badge && (
+                <span className="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-700 border border-amber-500/30">
+                  {c.badge}
+                </span>
+              )}
+            </div>
             <p className="text-xs text-muted-foreground">{c.desc}</p>
           </Link>
         ))}
