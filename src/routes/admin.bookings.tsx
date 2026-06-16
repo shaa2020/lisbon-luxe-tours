@@ -79,11 +79,23 @@ function BookingsInbox() {
   };
 
   const waLink = (b: Booking) => {
-    const num = (b.phone || business.whatsappPhone).replace(/[^\d]/g, "");
+    // Only build a WhatsApp link when the CUSTOMER provided a phone number.
+    // Falling back to business.whatsappPhone would open a chat with ourselves.
+    if (!b.phone) return null;
+    const num = b.phone.replace(/[^\d]/g, "");
+    if (!num) return null;
     const msg = `Hi ${b.customer_name}, thanks for your booking request${
       b.tour_title ? ` for "${b.tour_title}"` : ""
     }${b.travel_date ? ` on ${b.travel_date}` : ""}. We'd love to confirm the details with you.`;
     return `https://wa.me/${num}?text=${encodeURIComponent(msg)}`;
+  };
+
+  const mailto = (b: Booking) => {
+    const subject = `Your booking${b.tour_title ? ` — ${b.tour_title}` : ""}`;
+    const body = `Hi ${b.customer_name},\n\nThanks for your booking request${
+      b.tour_title ? ` for "${b.tour_title}"` : ""
+    }${b.travel_date ? ` on ${b.travel_date}` : ""}.\n\nWe'd love to confirm the details with you.\n\nBest,\nThe team`;
+    return `mailto:${b.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   };
 
   return (
@@ -189,14 +201,23 @@ function BookingsInbox() {
               )}
 
               <div className="flex flex-wrap items-center gap-2">
+                {waLink(b) && (
+                  <a
+                    href={waLink(b)!}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-1.5 rounded-md bg-[#25D366] text-white px-3 py-2 text-sm font-semibold hover:opacity-90"
+                  >
+                    <MessageCircle className="w-4 h-4" />
+                    WhatsApp customer
+                  </a>
+                )}
                 <a
-                  href={waLink(b)}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center gap-1.5 rounded-md bg-[#25D366] text-white px-3 py-2 text-sm font-semibold hover:opacity-90"
+                  href={mailto(b)}
+                  className="inline-flex items-center gap-1.5 rounded-md bg-primary text-primary-foreground px-3 py-2 text-sm font-semibold hover:bg-primary/90"
                 >
-                  <MessageCircle className="w-4 h-4" />
-                  Reply on WhatsApp
+                  <Mail className="w-4 h-4" />
+                  Email customer
                 </a>
                 <select
                   value={b.status}

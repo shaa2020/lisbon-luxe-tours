@@ -81,14 +81,17 @@ function OrdersPage() {
     if (error) return toast.error(error.message);
     toast.success("Deleted");
     qc.invalidateQueries({ queryKey: ["admin-orders"] });
+    qc.invalidateQueries({ queryKey: ["admin-count", "orders"] });
   };
 
-  const waLink = (o: Order) => {
-    const num = (business.whatsappPhone || "").replace(/[^\d]/g, "");
-    const msg = `Hi ${o.customer_name || "there"}, thanks for your payment${
+  const mailto = (o: Order) => {
+    const subject = o.tour_title
+      ? `Your booking — ${o.tour_title}`
+      : "Your booking";
+    const body = `Hi ${o.customer_name || "there"},\n\nThank you for your payment${
       o.tour_title ? ` for "${o.tour_title}"` : ""
-    }${o.travel_date ? ` on ${o.travel_date}` : ""}. We're confirming the details now.`;
-    return `https://wa.me/${num}?text=${encodeURIComponent(msg)}`;
+    }${o.travel_date ? ` on ${o.travel_date}` : ""}.\n\nWe're confirming the details now.\n\nBest,\nThe team`;
+    return `mailto:${o.customer_email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   };
 
   return (
@@ -211,15 +214,13 @@ function OrdersPage() {
               </div>
 
               <div className="flex flex-wrap items-center gap-2">
-                {business.whatsappPhone && (
+                {o.customer_email && (
                   <a
-                    href={waLink(o)}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center gap-1.5 rounded-md bg-[#25D366] text-white px-3 py-2 text-sm font-semibold hover:opacity-90"
+                    href={mailto(o)}
+                    className="inline-flex items-center gap-1.5 rounded-md bg-primary text-primary-foreground px-3 py-2 text-sm font-semibold hover:bg-primary/90"
                   >
                     <MessageCircle className="w-4 h-4" />
-                    WhatsApp customer
+                    Email customer
                   </a>
                 )}
                 <select
