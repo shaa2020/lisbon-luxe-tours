@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Map, BookOpen, CalendarCheck, Mail, CreditCard } from "lucide-react";
+import { Map, BookOpen, CalendarCheck, Mail, CreditCard, Star } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { BrandLogo } from "@/components/site/BrandLogo";
@@ -12,13 +12,29 @@ export const Route = createFileRoute("/admin/")({
   component: AdminDashboard,
 });
 
-function useCount(table: "tours" | "blog_posts" | "bookings" | "contact_messages" | "orders") {
+function useCount(
+  table: "tours" | "blog_posts" | "bookings" | "contact_messages" | "orders" | "reviews",
+) {
   return useQuery({
     queryKey: ["admin-count", table],
     queryFn: async () => {
       const { count, error } = await supabase
-        .from(table)
+        .from(table as never)
         .select("*", { count: "exact", head: true });
+      if (error) throw error;
+      return count ?? 0;
+    },
+  });
+}
+
+function usePendingReviewCount() {
+  return useQuery({
+    queryKey: ["admin-count", "reviews", "pending"],
+    queryFn: async () => {
+      const { count, error } = await supabase
+        .from("reviews" as never)
+        .select("*", { count: "exact", head: true })
+        .eq("status", "pending");
       if (error) throw error;
       return count ?? 0;
     },
@@ -32,6 +48,8 @@ function AdminDashboard() {
   const bookings = useCount("bookings");
   const messages = useCount("contact_messages");
   const orders = useCount("orders");
+  const reviews = useCount("reviews");
+  const pendingReviews = usePendingReviewCount();
 
   const brand = useQuery({
     queryKey: ["site-brand-admin"],
@@ -114,9 +132,16 @@ function AdminDashboard() {
   const onBrandLogo = async (file: File) => {
     setUploadingLogo(true);
     try {
-      const url = await uploadMediaFile("brand", "luz-de-logo", file);
+      const url = await uploadMediaFile("brand", "logo", file);
       setLogoUrl(url);
-      toast.success("Logo uploaded");
+      // Auto-persist so users don't have to click "Save brand" separately.
+      const { error } = await supabase
+        .from("site_settings")
+        .upsert({ id: true, logo_url: url });
+      if (error) throw error;
+      qc.invalidateQueries({ queryKey: ["site-brand"] });
+      qc.invalidateQueries({ queryKey: ["site-brand-admin"] });
+      toast.success("Logo uploaded & saved");
     } catch (error) {
       toast.error((error as Error).message);
     } finally {
@@ -125,11 +150,19 @@ function AdminDashboard() {
   };
 
   const cards = [
-    { to: "/admin/tours", label: "Tours", count: tours.data, desc: "Create, edit and publish tour pages.", Icon: Map },
-    { to: "/admin/blog", label: "Journal", count: posts.data, desc: "Write and publish stories.", Icon: BookOpen },
-    { to: "/admin/bookings", label: "Bookings", count: bookings.data, desc: "Reply to booking requests on WhatsApp.", Icon: CalendarCheck },
-    { to: "/admin/orders", label: "Orders", count: orders.data, desc: "Card payments and revenue.", Icon: CreditCard },
-    { to: "/admin/messages", label: "Messages", count: messages.data, desc: "Contact form messages inbox.", Icon: Mail },
+    { to: "/admin/tours", label: "Tours", count: tours.data, desc: "Create, edit and publish tour pages.", Icon: Map, badge: null },
+    { to: "/admin/blog", label: "Journal", count: posts.data, desc: "Write and publish stories.", Icon: BookOpen, badge: null },
+    {
+      to: "/admin/reviews",
+      label: "Reviews",
+      count: reviews.data,
+      desc: "Approve, hide and feature guest reviews.",
+      Icon: Star,
+      badge: pendingReviews.data ? `${pendingReviews.data} pending` : null,
+    },
+    { to: "/admin/bookings", label: "Bookings", count: bookings.data, desc: "Reply to booking requests on WhatsApp.", Icon: CalendarCheck, badge: null },
+    { to: "/admin/orders", label: "Orders", count: orders.data, desc: "Card payments and revenue.", Icon: CreditCard, badge: null },
+    { to: "/admin/messages", label: "Messages", count: messages.data, desc: "Contact form messages inbox.", Icon: Mail, badge: null },
   ] as const;
 
   return (
