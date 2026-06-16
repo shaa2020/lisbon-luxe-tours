@@ -44,7 +44,8 @@ export function BookingModal({
 
   if (!tour) return null;
 
-  const total = tour.priceFrom + Math.max(0, guests - 2) * 35;
+  const pricing = tourPricing(tour);
+  const total = pricing.current + Math.max(0, guests - 2) * 35;
 
   const reset = () => {
     setDate(undefined); setTime(""); setGuests(2);
