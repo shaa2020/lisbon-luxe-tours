@@ -14,7 +14,8 @@ import { WhatsappFab } from "@/components/site/Whatsapp";
 import { BookingModal } from "@/components/site/BookingModal";
 import { useBlogPosts, useTours, tourPricing, type Tour } from "@/lib/cms";
 
-const lockedHeroImg = `${heroImg}?v=locked-20260616`;
+// Hero now uses the tuk-tuk/flowers image (per user request 2026-06-16)
+const lockedHeroImg = `${aboutImg}?v=locked-20260616-hero`;
 const lockedAboutImg = `${aboutImg}?v=locked-20260616`;
 
 export const Route = createFileRoute("/")({
@@ -67,8 +68,8 @@ function Index() {
 
 function Hero() {
   return (
-    <section className="relative pt-[68px] md:pt-[120px] pb-0">
-      <div className="relative h-[520px] sm:h-[560px] md:h-[640px] overflow-hidden">
+    <section className="relative pt-[68px] md:pt-[110px] pb-0">
+      <div className="relative h-[420px] sm:h-[460px] md:h-[500px] overflow-hidden">
         <img
           src={lockedHeroImg}
           alt="Discover Lisboa, Portugal"
