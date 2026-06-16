@@ -36,7 +36,7 @@ function AboutPage() {
       {/* Page header */}
       <header className="relative pt-[120px] pb-12">
         <div className="relative h-[320px] md:h-[380px] overflow-hidden">
-          <img src={vanImg} alt="" className="absolute inset-0 w-full h-full object-cover" />
+          <img src={vanImg} alt="Tuk Tuk 24 Mercedes V-Class fleet on a Lisbon street" className="absolute inset-0 w-full h-full object-cover" />
           <div className="absolute inset-0 bg-ink/55" />
           <div className="container-x relative h-full flex flex-col justify-center text-white">
             <p className="eyebrow text-white/80 mb-3">◆  Our Philosophy</p>
@@ -160,10 +160,10 @@ function AboutPage() {
             </ul>
           </div>
           <div className="grid grid-cols-2 gap-4">
-            <img src={sintraImg} alt="" className="rounded-2xl object-cover h-64 w-full" />
-            <img src={caboImg} alt="" className="rounded-2xl object-cover h-64 w-full mt-10" />
-            <img src={alfamaImg} alt="" className="rounded-2xl object-cover h-64 w-full -mt-6" />
-            <img src={vanImg} alt="" className="rounded-2xl object-cover h-64 w-full" />
+            <img src={sintraImg} alt="Sintra romantic palace surrounded by pine forests" className="rounded-2xl object-cover h-64 w-full" />
+            <img src={caboImg} alt="Cabo da Roca sunset over the Atlantic Ocean" className="rounded-2xl object-cover h-64 w-full mt-10" />
+            <img src={alfamaImg} alt="Alfama neighborhood with terracotta rooftops" className="rounded-2xl object-cover h-64 w-full -mt-6" />
+            <img src={vanImg} alt="Tuk Tuk 24 luxury van ready for a private Portugal tour" className="rounded-2xl object-cover h-64 w-full" />
           </div>
         </div>
       </section>

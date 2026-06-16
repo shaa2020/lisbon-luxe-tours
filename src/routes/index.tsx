@@ -82,10 +82,10 @@ function Hero() {
             ◆  Discover
           </p>
           <h1
-            className="font-display font-bold tracking-tight leading-[0.95] mb-5 md:mb-6 text-white animate-[fade-up_1s_var(--ease-out-expo)_0.1s_both]"
-            style={{ fontSize: "clamp(44px, 13vw, 160px)" }}
+            className="font-display font-bold tracking-tight leading-[1.02] mb-5 md:mb-6 text-white animate-[fade-up_1s_var(--ease-out-expo)_0.1s_both] max-w-4xl"
+            style={{ fontSize: "clamp(40px, 7vw, 92px)" }}
           >
-            PORTUGAL
+            Private Tuk Tuk Tours in Portugal
           </h1>
           <p className="max-w-xl text-white/90 text-[15px] md:text-lg leading-relaxed animate-[fade-up_1s_var(--ease-out-expo)_0.2s_both]">
             A land of cinnamon-tiled rooftops, Atlantic cliffs and slow afternoons. Explore
@@ -213,7 +213,7 @@ function AboutSection() {
           to="/about"
           className="inline-flex items-center px-8 py-4 rounded-full bg-gold text-white text-[12px] font-semibold uppercase tracking-widest shadow-[0_8px_20px_rgba(43,182,247,0.35)] hover:bg-ink hover:shadow-[0_8px_20px_rgba(30,58,95,0.35)] transition-all"
         >
-          Learn More
+          Learn about our Portugal tours
         </Link>
       </div>
 
@@ -588,7 +588,7 @@ function TravelTipsAndSignup() {
               </h3>
               <p className="text-body text-sm leading-relaxed mb-5 line-clamp-2">{t.excerpt}</p>
               <Link to="/journal/$slug" params={{ slug: t.slug }} className="inline-block text-[11px] font-semibold uppercase tracking-widest text-gold border-b-2 border-gold pb-1 hover:text-ink hover:border-ink transition">
-                Read more
+                Read the full story
               </Link>
             </div>
           </article>
