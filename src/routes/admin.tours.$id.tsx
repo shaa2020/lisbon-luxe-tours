@@ -268,6 +268,38 @@ function TourEditPage() {
             </Field>
           </div>
 
+          <Field label="Sale price (€) — leave empty for no sale">
+            <input
+              type="number"
+              min={0}
+              value={form.sale_price ?? ""}
+              onChange={(e) =>
+                update("sale_price", e.target.value === "" ? null : Number(e.target.value))
+              }
+              placeholder="e.g. 79"
+              className={input}
+            />
+            {form.sale_price !== null &&
+              form.sale_price !== undefined &&
+              form.sale_price > 0 &&
+              form.sale_price < form.price_from && (
+                <p className="text-xs text-green-600 mt-1">
+                  On sale — was €{form.price_from}, now €{form.sale_price} (
+                  {Math.round(
+                    ((form.price_from - form.sale_price) / form.price_from) * 100,
+                  )}
+                  % off)
+                </p>
+              )}
+            {form.sale_price !== null &&
+              form.sale_price !== undefined &&
+              form.sale_price >= form.price_from && (
+                <p className="text-xs text-amber-600 mt-1">
+                  Sale price must be lower than the regular price to display a discount.
+                </p>
+              )}
+          </Field>
+
           <Field label="Tagline">
             <input
               value={form.tagline}
