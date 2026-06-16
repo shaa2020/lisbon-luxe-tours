@@ -14,6 +14,7 @@ type Row = {
   title: string;
   category: string;
   price_from: number;
+  sale_price: number | null;
   published: boolean;
   featured: boolean;
   image_url: string | null;
