@@ -175,9 +175,31 @@ export function ReviewsSection({
       {isLoading ? (
         <p className="text-sm text-body">Loading reviews…</p>
       ) : reviews.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-border bg-cloud/40 p-10 text-center">
-          <MessageSquare className="w-8 h-8 text-gold mx-auto mb-3" />
-          <p className="text-body text-sm">No reviews yet — your story could be the first.</p>
+        <div className="relative overflow-hidden rounded-3xl border border-border bg-gradient-to-br from-cloud/60 via-white to-cloud/40 p-10 md:p-14 text-center">
+          <div className="absolute inset-0 pointer-events-none opacity-[0.04] bg-[radial-gradient(circle_at_30%_20%,theme(colors.gold)_0,transparent_50%),radial-gradient(circle_at_70%_80%,theme(colors.ink)_0,transparent_50%)]" />
+          <div className="relative">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gold/10 border border-gold/30 mb-5">
+              <StarRating value={5} readOnly size={14} />
+              <span className="text-[11px] uppercase tracking-widest text-ink font-semibold">Trusted across platforms</span>
+            </div>
+            <h3 className="font-display text-xl md:text-2xl font-bold text-ink mb-3">
+              Loved by travellers from around the world
+            </h3>
+            <p className="text-body text-sm md:text-base max-w-xl mx-auto mb-6 leading-relaxed">
+              Our guests rate us 5★ on TripAdvisor, Google and GetYourGuide. We're collecting reviews here too — be among the first to share your experience of this tour.
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-xs uppercase tracking-widest text-ink/60 font-semibold">
+              <span className="inline-flex items-center gap-1.5"><span className="text-gold text-base">★★★★★</span> TripAdvisor</span>
+              <span className="inline-flex items-center gap-1.5"><span className="text-gold text-base">★★★★★</span> Google</span>
+              <span className="inline-flex items-center gap-1.5"><span className="text-gold text-base">★★★★★</span> GetYourGuide</span>
+            </div>
+            <button
+              onClick={() => setOpen(true)}
+              className="mt-8 inline-flex items-center gap-2 px-6 py-3 rounded-full bg-ink text-white text-[12px] font-semibold uppercase tracking-widest hover:bg-gold transition"
+            >
+              <MessageSquare className="w-4 h-4" /> Be the first to review
+            </button>
+          </div>
         </div>
       ) : (
         <div className="grid md:grid-cols-2 gap-5">
