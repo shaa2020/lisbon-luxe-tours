@@ -49,8 +49,8 @@ function ToursPage() {
     });
 
     const sorted = [...list];
-    if (sort === "price-asc") sorted.sort((a, b) => a.priceFrom - b.priceFrom);
-    else if (sort === "price-desc") sorted.sort((a, b) => b.priceFrom - a.priceFrom);
+    if (sort === "price-asc") sorted.sort((a, b) => tourPricing(a).current - tourPricing(b).current);
+    else if (sort === "price-desc") sorted.sort((a, b) => tourPricing(b).current - tourPricing(a).current);
     else if (sort === "duration") sorted.sort((a, b) => a.duration.localeCompare(b.duration));
     else sorted.sort((a, b) => Number(!!b.featured) - Number(!!a.featured));
     return sorted;
