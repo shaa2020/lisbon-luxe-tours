@@ -48,13 +48,12 @@ export function useTourReviews(slug: string | undefined) {
     enabled: !!slug,
     queryFn: async (): Promise<Review[]> => {
       const { data, error } = await supabase
-        .from("reviews" as never)
+        .from("reviews_public" as never)
         .select("*")
         .eq("tour_slug", slug!)
-        .eq("status", "approved")
         .order("created_at", { ascending: false });
       if (error) throw error;
-      return (data ?? []) as unknown as Review[];
+      return ((data ?? []) as unknown as Review[]).map((r) => ({ ...r, author_email: null }));
     },
   });
 }
@@ -64,27 +63,23 @@ export function useFeaturedReviews(limit = 6) {
     queryKey: ["reviews", "featured", limit],
     queryFn: async (): Promise<Review[]> => {
       const { data, error } = await supabase
-        .from("reviews" as never)
+        .from("reviews_public" as never)
         .select("*")
-        .eq("status", "approved")
         .eq("featured", true)
         .order("created_at", { ascending: false })
         .limit(limit);
       if (error) throw error;
-      return (data ?? []) as unknown as Review[];
+      return ((data ?? []) as unknown as Review[]).map((r) => ({ ...r, author_email: null }));
     },
   });
 }
 
 export function useAllReviewsAdmin() {
+  const fetchAll = useServerFn(listAllReviewsAdmin);
   return useQuery({
     queryKey: ["admin-reviews"],
     queryFn: async (): Promise<Review[]> => {
-      const { data, error } = await supabase
-        .from("reviews" as never)
-        .select("*")
-        .order("created_at", { ascending: false });
-      if (error) throw error;
+      const data = await fetchAll();
       return (data ?? []) as unknown as Review[];
     },
   });
