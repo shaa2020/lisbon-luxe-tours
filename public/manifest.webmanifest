@@ -1,12 +1,12 @@
 {
-  "name": "Tuk Tuk 24 Admin",
-  "short_name": "TT24 Admin",
-  "description": "Manage bookings, messages, tours and journal for Tuk Tuk 24.",
-  "start_url": "/admin",
+  "name": "Tuk Tuk 24 — Lisbon Tours",
+  "short_name": "Tuk Tuk 24",
+  "description": "Private tuk-tuk tours through Alfama, Belém and historic Lisbon.",
+  "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#1e3a5f",
+  "background_color": "#ffffff",
   "theme_color": "#1e3a5f",
   "icons": [
     {
