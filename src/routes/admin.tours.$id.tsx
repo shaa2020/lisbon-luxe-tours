@@ -150,6 +150,10 @@ function TourEditPage() {
       category_slug: form.category_slug,
       duration: form.duration,
       price_from: Number(form.price_from) || 0,
+      sale_price:
+        form.sale_price === null || form.sale_price === undefined || Number(form.sale_price) <= 0
+          ? null
+          : Number(form.sale_price),
       image_url: form.image_url,
       tagline: form.tagline,
       description: form.description,
