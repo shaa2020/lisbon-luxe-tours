@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { AdminShell } from "@/components/admin/AdminShell";
-import { useSiteBrand } from "@/lib/brand";
+
 import { toast } from "sonner";
 import { Mail, MessageCircle, Calendar, Users, Trash2, CreditCard } from "lucide-react";
 
@@ -42,7 +42,7 @@ function statusBadge(s: string) {
 
 function OrdersPage() {
   const qc = useQueryClient();
-  const { business } = useSiteBrand();
+  
   const [filter, setFilter] = useState<string>("all");
 
   const { data: orders = [], isLoading } = useQuery({
