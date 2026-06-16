@@ -40,7 +40,7 @@ function statusBadge(s: string) {
 
 function BookingsInbox() {
   const qc = useQueryClient();
-  const { business } = useSiteBrand();
+  useSiteBrand();
   const [filter, setFilter] = useState<string>("all");
 
   const { data: bookings = [], isLoading } = useQuery({
