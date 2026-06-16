@@ -114,7 +114,7 @@ function JournalPage() {
                       params={{ slug: post.slug }}
                       className="inline-block text-[11px] font-semibold uppercase tracking-widest text-gold border-b-2 border-gold pb-1 hover:text-ink hover:border-ink transition"
                     >
-                      Read more
+                      Read the full story
                     </Link>
                   </div>
                 </article>
