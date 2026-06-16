@@ -397,7 +397,7 @@ function PopularCard({ tour, onBook }: { tour: Tour; onBook: () => void }) {
         <img src={tour.image} alt={tour.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
         {tour.featured && (
           <span className="absolute top-3 left-3 bg-gold text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-sm">
-            High Rate
+            Top Rated
           </span>
         )}
         {pricing.onSale && (
