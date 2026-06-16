@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://tuktuk24.xyz/sitemap.xml
+Sitemap: https://tuktuk24lisbon.com/sitemap.xml
