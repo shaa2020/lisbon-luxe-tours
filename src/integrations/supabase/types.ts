@@ -419,7 +419,59 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      reviews_public: {
+        Row: {
+          author_name: string | null
+          body: string | null
+          created_at: string | null
+          featured: boolean | null
+          id: string | null
+          rating: number | null
+          status: string | null
+          title: string | null
+          tour_id: string | null
+          tour_slug: string | null
+          travel_date: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          author_name?: string | null
+          body?: string | null
+          created_at?: string | null
+          featured?: boolean | null
+          id?: string | null
+          rating?: number | null
+          status?: string | null
+          title?: string | null
+          tour_id?: string | null
+          tour_slug?: string | null
+          travel_date?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          author_name?: string | null
+          body?: string | null
+          created_at?: string | null
+          featured?: boolean | null
+          id?: string | null
+          rating?: number | null
+          status?: string | null
+          title?: string | null
+          tour_id?: string | null
+          tour_slug?: string | null
+          travel_date?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reviews_tour_id_fkey"
+            columns: ["tour_id"]
+            isOneToOne: false
+            referencedRelation: "tours"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       [_ in never]: never
