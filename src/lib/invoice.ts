@@ -165,7 +165,7 @@ export function buildInvoicePdf(order: InvoiceOrder, brand: { brandName: string;
   doc.setFont("helvetica", "bold");
   doc.setFontSize(14);
   doc.setTextColor(...PRIMARY);
-  doc.text("Total paid", W - M - 140, y);
+  doc.text("Total paid", W - M - 200, y);
   doc.setTextColor(...GOLD);
   doc.text(`€${amountEur} ${currency}`, W - M - 12, y, { align: "right" });
 
