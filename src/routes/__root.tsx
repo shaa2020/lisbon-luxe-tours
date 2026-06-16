@@ -96,7 +96,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "apple-mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
       { name: "apple-mobile-web-app-title", content: "TT24 Admin" },
-      { name: "google-site-verification", content: "Jm6on1rimUAXQejlUIIh2Kd2I39py6ix8H5p2Ad-weM" },
+      { name: "google-site-verification", content: "4JQk2KhK0pEZsoCDlJR4Edx0b9W5O2eLIh6Eq4Qvzzk" },
     ],
     links: [
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
