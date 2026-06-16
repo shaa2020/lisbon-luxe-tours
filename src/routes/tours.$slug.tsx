@@ -7,7 +7,7 @@ import { WhatsappFab } from "@/components/site/Whatsapp";
 import { BookingModal } from "@/components/site/BookingModal";
 import { ReviewsSection } from "@/components/site/ReviewsSection";
 import { StarRating } from "@/components/site/StarRating";
-import { useTour, useTours } from "@/lib/cms";
+import { useTour, useTours, tourPricing } from "@/lib/cms";
 import { aggregateReviews, useTourReviews } from "@/lib/reviews";
 
 export const Route = createFileRoute("/tours/$slug")({
