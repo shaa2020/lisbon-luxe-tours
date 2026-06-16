@@ -66,6 +66,7 @@ type TourRow = {
   category_slug: string;
   duration: string;
   price_from: number;
+  sale_price: number | null;
   image_url: string | null;
   tagline: string | null;
   description: string;
