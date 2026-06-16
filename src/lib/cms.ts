@@ -16,6 +16,7 @@ export type Tour = {
   categorySlug: string;
   duration: string;
   priceFrom: number;
+  salePrice?: number | null;
   image: string;
   image_url?: string | null;
   tagline: string;
