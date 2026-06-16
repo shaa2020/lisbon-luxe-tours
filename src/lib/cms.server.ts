@@ -8,6 +8,7 @@ const TOUR_SELECT = `
   category_slug,
   duration,
   price_from,
+  sale_price,
   image_url,
   tagline,
   description,
