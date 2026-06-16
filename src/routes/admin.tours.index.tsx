@@ -103,7 +103,16 @@ function AdminToursPage() {
                     </div>
                   </td>
                   <td className="p-3 hidden md:table-cell text-muted-foreground">{t.category}</td>
-                  <td className="p-3 hidden sm:table-cell">€{t.price_from}</td>
+                  <td className="p-3 hidden sm:table-cell">
+                    {t.sale_price && t.sale_price > 0 && t.sale_price < t.price_from ? (
+                      <span className="inline-flex items-baseline gap-1.5">
+                        <span className="font-semibold text-red-600">€{t.sale_price}</span>
+                        <span className="text-xs text-muted-foreground line-through">€{t.price_from}</span>
+                      </span>
+                    ) : (
+                      <>€{t.price_from}</>
+                    )}
+                  </td>
                   <td className="p-3">
                     <button
                       onClick={() => togglePublish(t.id, !t.published)}
