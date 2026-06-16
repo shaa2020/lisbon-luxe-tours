@@ -5,6 +5,7 @@ import alfamaImg from "@/assets/tour-alfama.jpg";
 import sintraImg from "@/assets/tour-sintra.jpg";
 import belemImg from "@/assets/dest-belem.jpg";
 import cascaisImg from "@/assets/dest-cascais.jpg";
+import aboutImg from "@/assets/about-tuktuk.jpg";
 import caboImg from "@/assets/tour-caboroca.jpg";
 import vanImg from "@/assets/fleet-van.jpg";
 import { Nav } from "@/components/site/Nav";
