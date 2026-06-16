@@ -38,6 +38,7 @@ const empty: TourForm = {
   category_slug: "tuk-tuk",
   duration: "",
   price_from: 0,
+  sale_price: null,
   image_url: null,
   tagline: "",
   description: "",
