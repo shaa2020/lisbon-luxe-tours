@@ -47,16 +47,45 @@ function OrdersPage() {
   const { brandName, business, logoUrl } = useSiteBrand();
   const [filter, setFilter] = useState<string>("all");
 
-  const handleInvoiceDownload = (o: Order) => {
-    const number = downloadInvoice(o as any, { brandName, business, logoUrl });
+  // Always fetch the latest business info from the DB at the moment of generating
+  // an invoice, so any edits in Settings (email, phone, address, legal line) are
+  // immediately reflected — never use a stale cached copy.
+  const fetchFreshBrand = async () => {
+    const { data } = await supabase.from("site_settings").select("*").eq("id", true as any).maybeSingle();
+    const d: any = data || {};
+    const business: BusinessInfo = {
+      contactEmail: d.contact_email || DEFAULT_BUSINESS.contactEmail,
+      contactPhone: d.contact_phone || DEFAULT_BUSINESS.contactPhone,
+      whatsappPhone: d.whatsapp_phone || DEFAULT_BUSINESS.whatsappPhone,
+      addressLine1: d.address_line1 || DEFAULT_BUSINESS.addressLine1,
+      addressLine2: d.address_line2 || DEFAULT_BUSINESS.addressLine2,
+      city: d.city || DEFAULT_BUSINESS.city,
+      country: d.country || DEFAULT_BUSINESS.country,
+      instagramUrl: d.instagram_url || DEFAULT_BUSINESS.instagramUrl,
+      facebookUrl: d.facebook_url || DEFAULT_BUSINESS.facebookUrl,
+      twitterUrl: d.twitter_url || DEFAULT_BUSINESS.twitterUrl,
+      footerTagline: d.footer_tagline || DEFAULT_BUSINESS.footerTagline,
+      footerLegal: d.footer_legal || DEFAULT_BUSINESS.footerLegal,
+    };
+    return {
+      brandName: d.brand_name || brandName || DEFAULT_BRAND_NAME,
+      logoUrl: d.logo_url ?? logoUrl ?? DEFAULT_BRAND_LOGO,
+      business,
+    };
+  };
+
+  const handleInvoiceDownload = async (o: Order) => {
+    const brand = await fetchFreshBrand();
+    const number = downloadInvoice(o as any, brand);
     toast.success(`Invoice ${number} downloaded`);
   };
 
-  const handleInvoiceEmail = (o: Order) => {
+  const handleInvoiceEmail = async (o: Order) => {
     if (!o.customer_email) return toast.error("No customer email on file");
-    const { doc, number } = buildInvoicePdf(o as any, { brandName, business, logoUrl });
+    const brand = await fetchFreshBrand();
+    const { doc, number } = buildInvoicePdf(o as any, brand);
     doc.save(`${number}.pdf`);
-    const url = buildInvoiceMailto(o as any, number, brandName);
+    const url = buildInvoiceMailto(o as any, number, brand.brandName);
     window.location.href = url;
     toast.success(`Invoice ${number} ready — attach the downloaded PDF to the email`);
   };
