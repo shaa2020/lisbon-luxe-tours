@@ -12,7 +12,7 @@ export const Route = createFileRoute("/journal/$slug")({
   },
   head: ({ params, loaderData }) => {
     const post = loaderData?.post;
-    const url = `https://tuktuk24.xyz/journal/${params.slug}`;
+    const url = `https://tuktuk24lisbon.com/journal/${params.slug}`;
     const title = post ? `${post.title} — Journal | Tuk Tuk 24` : `Journal — Tuk Tuk 24`;
     const description = post?.excerpt?.slice(0, 158) ?? "Stories and travel guides from Tuk Tuk 24 in Lisbon, Portugal.";
     return {

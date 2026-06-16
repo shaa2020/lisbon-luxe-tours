@@ -18,7 +18,7 @@ export const Route = createFileRoute("/tours/$slug")({
   },
   head: ({ params, loaderData }) => {
     const tour = loaderData?.tour;
-    const url = `https://tuktuk24.xyz/tours/${params.slug}`;
+    const url = `https://tuktuk24lisbon.com/tours/${params.slug}`;
     const title = tour ? `${tour.title} — Private Tour | Tuk Tuk 24` : `Private Tour — Tuk Tuk 24`;
     const description = tour?.description?.slice(0, 158) ?? "Private tuk-tuk and luxury tours across Lisbon and Portugal.";
     return {
