@@ -253,7 +253,12 @@ function TourPage() {
       <div className="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-white border-t border-border shadow-[0_-8px_20px_rgba(30,58,95,0.08)] px-4 py-3 flex items-center justify-between gap-3">
         <div>
           <p className="text-[10px] uppercase tracking-widest text-body leading-none mb-1">From</p>
-          <p className="font-display font-bold text-2xl text-gold leading-none">€{tour.priceFrom}</p>
+          <div className="flex items-baseline gap-2">
+            <p className="font-display font-bold text-2xl text-gold leading-none">€{pricing.current}</p>
+            {pricing.onSale && (
+              <p className="text-sm text-body/60 line-through leading-none">€{pricing.original}</p>
+            )}
+          </div>
         </div>
         <button
           onClick={() => setBookingOpen(true)}
