@@ -281,7 +281,12 @@ function TourGridCard({ tour, onBook }: { tour: Tour; onBook: () => void }) {
         <div className="flex items-end justify-between">
           <div>
             <p className="text-[10px] uppercase tracking-widest text-body mb-1">From</p>
-            <p className="font-display font-bold text-2xl text-gold leading-none">€{tour.priceFrom}</p>
+            <div className="flex items-baseline gap-2 flex-wrap">
+              <p className="font-display font-bold text-2xl text-gold leading-none">€{pricing.current}</p>
+              {pricing.onSale && (
+                <p className="text-sm text-body/60 line-through leading-none">€{pricing.original}</p>
+              )}
+            </div>
           </div>
           <div className="flex gap-2">
             <Link
