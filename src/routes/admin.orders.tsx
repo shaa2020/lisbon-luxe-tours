@@ -5,7 +5,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { AdminShell } from "@/components/admin/AdminShell";
 
 import { toast } from "sonner";
-import { Mail, MessageCircle, Calendar, Users, Trash2, CreditCard } from "lucide-react";
+import { Mail, MessageCircle, Calendar, Users, Trash2, CreditCard, FileText, Download } from "lucide-react";
+import { useSiteBrand } from "@/lib/brand";
+import { downloadInvoice, buildInvoiceMailto, buildInvoicePdf } from "@/lib/invoice";
 
 export const Route = createFileRoute("/admin/orders")({
   component: OrdersPage,
@@ -42,8 +44,23 @@ function statusBadge(s: string) {
 
 function OrdersPage() {
   const qc = useQueryClient();
-  
+  const { brandName, business, logoUrl } = useSiteBrand();
   const [filter, setFilter] = useState<string>("all");
+
+  const handleInvoiceDownload = (o: Order) => {
+    const number = downloadInvoice(o as any, { brandName, business, logoUrl });
+    toast.success(`Invoice ${number} downloaded`);
+  };
+
+  const handleInvoiceEmail = (o: Order) => {
+    if (!o.customer_email) return toast.error("No customer email on file");
+    const { doc, number } = buildInvoicePdf(o as any, { brandName, business, logoUrl });
+    doc.save(`${number}.pdf`);
+    const url = buildInvoiceMailto(o as any, number, brandName);
+    window.location.href = url;
+    toast.success(`Invoice ${number} ready — attach the downloaded PDF to the email`);
+  };
+
 
   const { data: orders = [], isLoading } = useQuery({
     queryKey: ["admin-orders"],
@@ -214,13 +231,30 @@ function OrdersPage() {
               </div>
 
               <div className="flex flex-wrap items-center gap-2">
+                <button
+                  onClick={() => handleInvoiceEmail(o)}
+                  disabled={!o.customer_email}
+                  className="inline-flex items-center gap-1.5 rounded-md bg-primary text-primary-foreground px-3 py-2 text-sm font-semibold hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
+                  title="Download invoice PDF and open email to customer"
+                >
+                  <FileText className="w-4 h-4" />
+                  Send invoice
+                </button>
+                <button
+                  onClick={() => handleInvoiceDownload(o)}
+                  className="inline-flex items-center gap-1.5 rounded-md border border-border bg-card px-3 py-2 text-sm font-medium hover:border-primary"
+                  title="Download invoice PDF"
+                >
+                  <Download className="w-4 h-4" />
+                  PDF
+                </button>
                 {o.customer_email && (
                   <a
                     href={mailto(o)}
-                    className="inline-flex items-center gap-1.5 rounded-md bg-primary text-primary-foreground px-3 py-2 text-sm font-semibold hover:bg-primary/90"
+                    className="inline-flex items-center gap-1.5 rounded-md border border-border bg-card px-3 py-2 text-sm font-medium hover:border-primary"
                   >
                     <MessageCircle className="w-4 h-4" />
-                    Email customer
+                    Email
                   </a>
                 )}
                 <select
