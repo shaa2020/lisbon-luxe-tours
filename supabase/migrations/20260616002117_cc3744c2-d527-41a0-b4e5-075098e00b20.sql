@@ -1,0 +1,1 @@
+REVOKE EXECUTE ON FUNCTION public.reviews_sanitize_public_insert() FROM PUBLIC, anon, authenticated;
