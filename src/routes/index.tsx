@@ -11,7 +11,7 @@ import { Nav } from "@/components/site/Nav";
 import { Footer } from "@/components/site/Footer";
 import { WhatsappFab } from "@/components/site/Whatsapp";
 import { BookingModal } from "@/components/site/BookingModal";
-import { useBlogPosts, useTours, type Tour } from "@/lib/cms";
+import { useBlogPosts, useTours, tourPricing, type Tour } from "@/lib/cms";
 
 export const Route = createFileRoute("/")({
   head: () => ({
