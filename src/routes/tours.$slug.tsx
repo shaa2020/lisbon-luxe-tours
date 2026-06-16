@@ -5,7 +5,10 @@ import { Nav } from "@/components/site/Nav";
 import { Footer } from "@/components/site/Footer";
 import { WhatsappFab } from "@/components/site/Whatsapp";
 import { BookingModal } from "@/components/site/BookingModal";
+import { ReviewsSection } from "@/components/site/ReviewsSection";
+import { StarRating } from "@/components/site/StarRating";
 import { useTour, useTours } from "@/lib/cms";
+import { aggregateReviews, useTourReviews } from "@/lib/reviews";
 
 export const Route = createFileRoute("/tours/$slug")({
   head: ({ params }) => ({
@@ -23,6 +26,8 @@ function TourPage() {
   const { slug } = Route.useParams();
   const { data: tour, isLoading, isError, error } = useTour(slug);
   const { data: allTours = [] } = useTours();
+  const { data: reviews = [] } = useTourReviews(slug);
+  const reviewStats = aggregateReviews(reviews);
   const [bookingOpen, setBookingOpen] = useState(false);
 
   if (isLoading) {
@@ -95,7 +100,12 @@ function TourPage() {
               {tour.title}
             </h1>
             <div className="flex flex-wrap items-center gap-5 text-sm text-white/85 animate-[fade-up_1.1s_var(--ease-out-expo)_both]">
-              <span className="flex items-center gap-1.5"><span className="text-gold">★★★★★</span> 4.9 (124 reviews)</span>
+              <span className="flex items-center gap-1.5">
+                <StarRating value={reviewStats.count ? reviewStats.average : 5} readOnly size={14} />
+                {reviewStats.count > 0
+                  ? <>{reviewStats.average.toFixed(1)} ({reviewStats.count} review{reviewStats.count === 1 ? "" : "s"})</>
+                  : <>New tour · be the first to review</>}
+              </span>
               {tour.tagline && <span className="flex items-center gap-1.5">📍 {tour.tagline}</span>}
               <span className="flex items-center gap-1.5">⏱ {tour.duration}</span>
             </div>
