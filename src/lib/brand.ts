@@ -61,7 +61,7 @@ export function useSiteBrand() {
         business: mapBusiness(data),
       };
     },
-    initialData: {
+    placeholderData: {
       brandName: DEFAULT_BRAND_NAME,
       logoUrl: DEFAULT_BRAND_LOGO,
       business: DEFAULT_BUSINESS,
