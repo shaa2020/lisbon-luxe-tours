@@ -7,7 +7,7 @@ import { WhatsappFab } from "@/components/site/Whatsapp";
 import { BookingModal } from "@/components/site/BookingModal";
 import { ReviewsSection } from "@/components/site/ReviewsSection";
 import { StarRating } from "@/components/site/StarRating";
-import { useTour, useTours } from "@/lib/cms";
+import { useTour, useTours, tourPricing } from "@/lib/cms";
 import { aggregateReviews, useTourReviews } from "@/lib/reviews";
 
 export const Route = createFileRoute("/tours/$slug")({
@@ -70,6 +70,7 @@ function TourPage() {
   }
 
   const related = allTours.filter((t) => t.slug !== tour.slug).slice(0, 3);
+  const pricing = tourPricing(tour);
 
   return (
     <div className="min-h-screen bg-paper text-ink overflow-x-clip pb-24 lg:pb-0">
@@ -189,7 +190,15 @@ function TourPage() {
               <p className="text-[11px] font-semibold uppercase tracking-widest text-body">From</p>
               <p className="text-[11px] font-semibold uppercase tracking-widest text-body">per group</p>
             </div>
-            <p className="font-display font-bold text-5xl text-gold leading-none mb-2">€{tour.priceFrom}</p>
+            <div className="flex items-baseline gap-3 mb-2 flex-wrap">
+              <p className="font-display font-bold text-5xl text-gold leading-none">€{pricing.current}</p>
+              {pricing.onSale && (
+                <>
+                  <span className="font-display text-2xl text-body/50 line-through leading-none">€{pricing.original}</span>
+                  <span className="bg-red-600 text-white text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-sm">−{pricing.discountPct}%</span>
+                </>
+              )}
+            </div>
             <p className="text-body text-sm mb-6">Private · {tour.duration} · Up to 7 guests</p>
 
             <button
@@ -244,7 +253,12 @@ function TourPage() {
       <div className="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-white border-t border-border shadow-[0_-8px_20px_rgba(30,58,95,0.08)] px-4 py-3 flex items-center justify-between gap-3">
         <div>
           <p className="text-[10px] uppercase tracking-widest text-body leading-none mb-1">From</p>
-          <p className="font-display font-bold text-2xl text-gold leading-none">€{tour.priceFrom}</p>
+          <div className="flex items-baseline gap-2">
+            <p className="font-display font-bold text-2xl text-gold leading-none">€{pricing.current}</p>
+            {pricing.onSale && (
+              <p className="text-sm text-body/60 line-through leading-none">€{pricing.original}</p>
+            )}
+          </div>
         </div>
         <button
           onClick={() => setBookingOpen(true)}

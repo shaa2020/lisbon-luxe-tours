@@ -18,6 +18,7 @@ type TourForm = {
   category_slug: string;
   duration: string;
   price_from: number;
+  sale_price: number | null;
   image_url: string | null;
   tagline: string;
   description: string;
@@ -37,6 +38,7 @@ const empty: TourForm = {
   category_slug: "tuk-tuk",
   duration: "",
   price_from: 0,
+  sale_price: null,
   image_url: null,
   tagline: "",
   description: "",
@@ -91,6 +93,7 @@ function TourEditPage() {
         category_slug: data.category_slug,
         duration: data.duration,
         price_from: data.price_from,
+        sale_price: data.sale_price ?? null,
         image_url: data.image_url,
         tagline: data.tagline ?? "",
         description: data.description ?? "",
@@ -147,6 +150,10 @@ function TourEditPage() {
       category_slug: form.category_slug,
       duration: form.duration,
       price_from: Number(form.price_from) || 0,
+      sale_price:
+        form.sale_price === null || form.sale_price === undefined || Number(form.sale_price) <= 0
+          ? null
+          : Number(form.sale_price),
       image_url: form.image_url,
       tagline: form.tagline,
       description: form.description,
@@ -260,6 +267,38 @@ function TourEditPage() {
               />
             </Field>
           </div>
+
+          <Field label="Sale price (€) — leave empty for no sale">
+            <input
+              type="number"
+              min={0}
+              value={form.sale_price ?? ""}
+              onChange={(e) =>
+                update("sale_price", e.target.value === "" ? null : Number(e.target.value))
+              }
+              placeholder="e.g. 79"
+              className={input}
+            />
+            {form.sale_price !== null &&
+              form.sale_price !== undefined &&
+              form.sale_price > 0 &&
+              form.sale_price < form.price_from && (
+                <p className="text-xs text-green-600 mt-1">
+                  On sale — was €{form.price_from}, now €{form.sale_price} (
+                  {Math.round(
+                    ((form.price_from - form.sale_price) / form.price_from) * 100,
+                  )}
+                  % off)
+                </p>
+              )}
+            {form.sale_price !== null &&
+              form.sale_price !== undefined &&
+              form.sale_price >= form.price_from && (
+                <p className="text-xs text-amber-600 mt-1">
+                  Sale price must be lower than the regular price to display a discount.
+                </p>
+              )}
+          </Field>
 
           <Field label="Tagline">
             <input

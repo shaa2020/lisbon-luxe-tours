@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { format } from "date-fns";
 import { CalendarIcon, Users, Clock, MapPin, Check, CreditCard, Loader2 } from "lucide-react";
-import type { Tour } from "@/lib/cms";
+import { type Tour, tourPricing } from "@/lib/cms";
 import {
   Dialog,
   DialogContent,
@@ -44,7 +44,8 @@ export function BookingModal({
 
   if (!tour) return null;
 
-  const total = tour.priceFrom + Math.max(0, guests - 2) * 35;
+  const pricing = tourPricing(tour);
+  const total = pricing.current + Math.max(0, guests - 2) * 35;
 
   const reset = () => {
     setDate(undefined); setTime(""); setGuests(2);

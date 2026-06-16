@@ -16,6 +16,7 @@ export type Tour = {
   categorySlug: string;
   duration: string;
   priceFrom: number;
+  salePrice?: number | null;
   image: string;
   image_url?: string | null;
   tagline: string;
@@ -65,6 +66,7 @@ type TourRow = {
   category_slug: string;
   duration: string;
   price_from: number;
+  sale_price: number | null;
   image_url: string | null;
   tagline: string | null;
   description: string;
@@ -101,6 +103,7 @@ export function mapTour(row: TourRow): Tour {
     categorySlug: row.category_slug,
     duration: row.duration,
     priceFrom: row.price_from,
+    salePrice: row.sale_price,
     image_url: row.image_url,
     image: tourImage(row.slug, row.image_url),
     tagline: row.tagline ?? "",
@@ -193,3 +196,14 @@ export const tourCategories = [
   { slug: "airport", title: "Airport Transfers" },
   { slug: "custom", title: "Custom Tours" },
 ];
+
+export function tourPricing(tour: Pick<Tour, "priceFrom" | "salePrice">) {
+  const original = tour.priceFrom;
+  const sale =
+    typeof tour.salePrice === "number" && tour.salePrice > 0 && tour.salePrice < original
+      ? tour.salePrice
+      : null;
+  const current = sale ?? original;
+  const discountPct = sale ? Math.round(((original - sale) / original) * 100) : 0;
+  return { original, sale, current, onSale: sale !== null, discountPct };
+}

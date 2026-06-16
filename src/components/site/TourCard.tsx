@@ -1,7 +1,9 @@
 import { Link } from "@tanstack/react-router";
 import type { Tour } from "@/lib/cms";
+import { tourPricing } from "@/lib/cms";
 
 export function TourCard({ tour }: { tour: Tour; offset?: boolean }) {
+  const pricing = tourPricing(tour);
   return (
     <Link
       to="/tours/$slug"
@@ -20,6 +22,11 @@ export function TourCard({ tour }: { tour: Tour; offset?: boolean }) {
             Signature
           </span>
         )}
+        {pricing.onSale && (
+          <span className="absolute top-3 left-3 mt-7 bg-red-600 text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-sm shadow-md">
+            −{pricing.discountPct}% Sale
+          </span>
+        )}
         <span className="absolute top-3 right-3 bg-white/95 text-ink text-[11px] font-semibold px-3 py-1 rounded-full">
           {tour.duration}
         </span>
@@ -32,7 +39,14 @@ export function TourCard({ tour }: { tour: Tour; offset?: boolean }) {
         <div className="flex items-end justify-between pt-3 border-t border-border">
           <div>
             <span className="text-[10px] uppercase tracking-widest text-body">From </span>
-            <span className="text-gold font-display font-bold text-xl">€{tour.priceFrom}</span>
+            {pricing.onSale ? (
+              <span className="inline-flex items-baseline gap-2">
+                <span className="text-gold font-display font-bold text-xl">€{pricing.current}</span>
+                <span className="text-body/60 text-sm line-through">€{pricing.original}</span>
+              </span>
+            ) : (
+              <span className="text-gold font-display font-bold text-xl">€{pricing.current}</span>
+            )}
           </div>
           <span className="text-[11px] font-semibold uppercase tracking-widest text-ink/60 group-hover:text-gold transition">View →</span>
         </div>

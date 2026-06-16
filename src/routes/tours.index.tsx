@@ -4,7 +4,7 @@ import { Nav } from "@/components/site/Nav";
 import { Footer } from "@/components/site/Footer";
 import { WhatsappFab } from "@/components/site/Whatsapp";
 import { BookingModal } from "@/components/site/BookingModal";
-import { useTours, tourCategories, type Tour } from "@/lib/cms";
+import { useTours, tourCategories, tourPricing, type Tour } from "@/lib/cms";
 import heroImg from "@/assets/hero-lisbon.jpg";
 
 export const Route = createFileRoute("/tours/")({
@@ -49,8 +49,8 @@ function ToursPage() {
     });
 
     const sorted = [...list];
-    if (sort === "price-asc") sorted.sort((a, b) => a.priceFrom - b.priceFrom);
-    else if (sort === "price-desc") sorted.sort((a, b) => b.priceFrom - a.priceFrom);
+    if (sort === "price-asc") sorted.sort((a, b) => tourPricing(a).current - tourPricing(b).current);
+    else if (sort === "price-desc") sorted.sort((a, b) => tourPricing(b).current - tourPricing(a).current);
     else if (sort === "duration") sorted.sort((a, b) => a.duration.localeCompare(b.duration));
     else sorted.sort((a, b) => Number(!!b.featured) - Number(!!a.featured));
     return sorted;
@@ -239,6 +239,7 @@ function FilterChip({
 }
 
 function TourGridCard({ tour, onBook }: { tour: Tour; onBook: () => void }) {
+  const pricing = tourPricing(tour);
   return (
     <article className="group bg-white rounded-xl overflow-hidden shadow-[0_4px_20px_rgba(30,58,95,0.06)] hover:shadow-[0_20px_40px_rgba(30,58,95,0.12)] hover:-translate-y-1 transition-all duration-500 flex flex-col">
       <Link to="/tours/$slug" params={{ slug: tour.slug }} className="relative block aspect-[16/10] overflow-hidden">
@@ -251,6 +252,11 @@ function TourGridCard({ tour, onBook }: { tour: Tour; onBook: () => void }) {
         {tour.featured && (
           <span className="absolute top-3 left-3 bg-gold text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-sm">
             Signature
+          </span>
+        )}
+        {pricing.onSale && (
+          <span className={`absolute left-3 ${tour.featured ? "top-10" : "top-3"} bg-red-600 text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-sm shadow-md`}>
+            −{pricing.discountPct}% Sale
           </span>
         )}
         <span className="absolute top-3 right-3 bg-white/95 text-ink text-[11px] font-semibold px-3 py-1 rounded-full flex items-center gap-1">
@@ -275,7 +281,12 @@ function TourGridCard({ tour, onBook }: { tour: Tour; onBook: () => void }) {
         <div className="flex items-end justify-between">
           <div>
             <p className="text-[10px] uppercase tracking-widest text-body mb-1">From</p>
-            <p className="font-display font-bold text-2xl text-gold leading-none">€{tour.priceFrom}</p>
+            <div className="flex items-baseline gap-2 flex-wrap">
+              <p className="font-display font-bold text-2xl text-gold leading-none">€{pricing.current}</p>
+              {pricing.onSale && (
+                <p className="text-sm text-body/60 line-through leading-none">€{pricing.original}</p>
+              )}
+            </div>
           </div>
           <div className="flex gap-2">
             <Link

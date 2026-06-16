@@ -14,6 +14,7 @@ type Row = {
   title: string;
   category: string;
   price_from: number;
+  sale_price: number | null;
   published: boolean;
   featured: boolean;
   image_url: string | null;
@@ -27,7 +28,7 @@ function AdminToursPage() {
     queryFn: async (): Promise<Row[]> => {
       const { data, error } = await supabase
         .from("tours")
-        .select("id, slug, title, category, price_from, published, featured, image_url, sort_order")
+        .select("id, slug, title, category, price_from, sale_price, published, featured, image_url, sort_order")
         .order("sort_order", { ascending: true });
       if (error) throw error;
       return data as Row[];
@@ -102,7 +103,16 @@ function AdminToursPage() {
                     </div>
                   </td>
                   <td className="p-3 hidden md:table-cell text-muted-foreground">{t.category}</td>
-                  <td className="p-3 hidden sm:table-cell">€{t.price_from}</td>
+                  <td className="p-3 hidden sm:table-cell">
+                    {t.sale_price && t.sale_price > 0 && t.sale_price < t.price_from ? (
+                      <span className="inline-flex items-baseline gap-1.5">
+                        <span className="font-semibold text-red-600">€{t.sale_price}</span>
+                        <span className="text-xs text-muted-foreground line-through">€{t.price_from}</span>
+                      </span>
+                    ) : (
+                      <>€{t.price_from}</>
+                    )}
+                  </td>
                   <td className="p-3">
                     <button
                       onClick={() => togglePublish(t.id, !t.published)}
