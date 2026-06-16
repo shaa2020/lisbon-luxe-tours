@@ -390,6 +390,7 @@ function PopularTours({ onBook }: { onBook: (t: Tour) => void }) {
 }
 
 function PopularCard({ tour, onBook }: { tour: Tour; onBook: () => void }) {
+  const pricing = tourPricing(tour);
   return (
     <article className="bg-white rounded-xl overflow-hidden shadow-[0_4px_20px_rgba(30,58,95,0.06)] hover:shadow-[0_20px_40px_rgba(30,58,95,0.12)] transition-all duration-500 group">
       <Link to="/tours/$slug" params={{ slug: tour.slug }} className="relative block aspect-[16/10] overflow-hidden">
@@ -397,6 +398,11 @@ function PopularCard({ tour, onBook }: { tour: Tour; onBook: () => void }) {
         {tour.featured && (
           <span className="absolute top-3 left-3 bg-gold text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-sm">
             High Rate
+          </span>
+        )}
+        {pricing.onSale && (
+          <span className="absolute top-3 right-3 bg-red-600 text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-sm shadow-md">
+            −{pricing.discountPct}% Sale
           </span>
         )}
       </Link>
