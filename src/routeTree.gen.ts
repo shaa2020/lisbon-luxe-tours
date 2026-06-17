@@ -16,6 +16,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ToursIndexRouteImport } from './routes/tours.index'
 import { Route as JournalIndexRouteImport } from './routes/journal.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as ToursCustomRouteImport } from './routes/tours.custom'
 import { Route as ToursSlugRouteImport } from './routes/tours.$slug'
 import { Route as JournalSlugRouteImport } from './routes/journal.$slug'
 import { Route as BookingSuccessRouteImport } from './routes/booking.success'
@@ -64,6 +65,11 @@ const JournalIndexRoute = JournalIndexRouteImport.update({
 const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/admin/',
   path: '/admin/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ToursCustomRoute = ToursCustomRouteImport.update({
+  id: '/tours/custom',
+  path: '/tours/custom',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ToursSlugRoute = ToursSlugRouteImport.update({
@@ -152,6 +158,7 @@ export interface FileRoutesByFullPath {
   '/booking/success': typeof BookingSuccessRoute
   '/journal/$slug': typeof JournalSlugRoute
   '/tours/$slug': typeof ToursSlugRoute
+  '/tours/custom': typeof ToursCustomRoute
   '/admin/': typeof AdminIndexRoute
   '/journal/': typeof JournalIndexRoute
   '/tours/': typeof ToursIndexRoute
@@ -175,6 +182,7 @@ export interface FileRoutesByTo {
   '/booking/success': typeof BookingSuccessRoute
   '/journal/$slug': typeof JournalSlugRoute
   '/tours/$slug': typeof ToursSlugRoute
+  '/tours/custom': typeof ToursCustomRoute
   '/admin': typeof AdminIndexRoute
   '/journal': typeof JournalIndexRoute
   '/tours': typeof ToursIndexRoute
@@ -199,6 +207,7 @@ export interface FileRoutesById {
   '/booking/success': typeof BookingSuccessRoute
   '/journal/$slug': typeof JournalSlugRoute
   '/tours/$slug': typeof ToursSlugRoute
+  '/tours/custom': typeof ToursCustomRoute
   '/admin/': typeof AdminIndexRoute
   '/journal/': typeof JournalIndexRoute
   '/tours/': typeof ToursIndexRoute
@@ -224,6 +233,7 @@ export interface FileRouteTypes {
     | '/booking/success'
     | '/journal/$slug'
     | '/tours/$slug'
+    | '/tours/custom'
     | '/admin/'
     | '/journal/'
     | '/tours/'
@@ -247,6 +257,7 @@ export interface FileRouteTypes {
     | '/booking/success'
     | '/journal/$slug'
     | '/tours/$slug'
+    | '/tours/custom'
     | '/admin'
     | '/journal'
     | '/tours'
@@ -270,6 +281,7 @@ export interface FileRouteTypes {
     | '/booking/success'
     | '/journal/$slug'
     | '/tours/$slug'
+    | '/tours/custom'
     | '/admin/'
     | '/journal/'
     | '/tours/'
@@ -294,6 +306,7 @@ export interface RootRouteChildren {
   BookingSuccessRoute: typeof BookingSuccessRoute
   JournalSlugRoute: typeof JournalSlugRoute
   ToursSlugRoute: typeof ToursSlugRoute
+  ToursCustomRoute: typeof ToursCustomRoute
   AdminIndexRoute: typeof AdminIndexRoute
   JournalIndexRoute: typeof JournalIndexRoute
   ToursIndexRoute: typeof ToursIndexRoute
@@ -353,6 +366,13 @@ declare module '@tanstack/react-router' {
       path: '/admin'
       fullPath: '/admin/'
       preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tours/custom': {
+      id: '/tours/custom'
+      path: '/tours/custom'
+      fullPath: '/tours/custom'
+      preLoaderRoute: typeof ToursCustomRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/tours/$slug': {
@@ -470,6 +490,7 @@ const rootRouteChildren: RootRouteChildren = {
   BookingSuccessRoute: BookingSuccessRoute,
   JournalSlugRoute: JournalSlugRoute,
   ToursSlugRoute: ToursSlugRoute,
+  ToursCustomRoute: ToursCustomRoute,
   AdminIndexRoute: AdminIndexRoute,
   JournalIndexRoute: JournalIndexRoute,
   ToursIndexRoute: ToursIndexRoute,
