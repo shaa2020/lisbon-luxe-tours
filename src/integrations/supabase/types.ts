@@ -349,6 +349,9 @@ export type Database = {
           contact_phone: string | null
           country: string | null
           created_at: string
+          custom_tour_eyebrow: string | null
+          custom_tour_subtitle: string | null
+          custom_tour_title: string | null
           facebook_url: string | null
           footer_legal: string | null
           footer_tagline: string | null
@@ -368,6 +371,9 @@ export type Database = {
           contact_phone?: string | null
           country?: string | null
           created_at?: string
+          custom_tour_eyebrow?: string | null
+          custom_tour_subtitle?: string | null
+          custom_tour_title?: string | null
           facebook_url?: string | null
           footer_legal?: string | null
           footer_tagline?: string | null
@@ -387,6 +393,9 @@ export type Database = {
           contact_phone?: string | null
           country?: string | null
           created_at?: string
+          custom_tour_eyebrow?: string | null
+          custom_tour_subtitle?: string | null
+          custom_tour_title?: string | null
           facebook_url?: string | null
           footer_legal?: string | null
           footer_tagline?: string | null
