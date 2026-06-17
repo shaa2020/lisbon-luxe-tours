@@ -44,6 +44,7 @@ const CAT_META = {
 const ORDER: (keyof typeof CAT_META)[] = ["vehicle", "duration", "destination", "addon"];
 
 function CustomBuilderPage() {
+  const { customTour } = useSiteBrand();
   const fetcher = useServerFn(getCustomTourComponents);
   const submit = useServerFn(submitCustomTour);
   const { data: components = [], isLoading } = useQuery({
