@@ -177,7 +177,7 @@ const upsertInput = z.object({
   name: z.string().min(1).max(200),
   description: z.string().max(1000).optional().nullable(),
   price_cents: z.number().int().min(0).max(1_000_000),
-  image_url: z.string().url().optional().nullable(),
+  image_url: z.string().trim().max(2000).url().optional().nullable().or(z.literal("")),
   sort_order: z.number().int().min(0).max(9999),
   active: z.boolean(),
 });
