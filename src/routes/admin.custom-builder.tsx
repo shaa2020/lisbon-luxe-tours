@@ -283,3 +283,108 @@ function AdminCustomBuilder() {
     </AdminShell>
   );
 }
+
+function HeroEditor() {
+  const qc = useQueryClient();
+  const { data, isLoading } = useQuery({
+    queryKey: ["admin", "custom-tour-hero"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("site_settings")
+        .select("custom_tour_eyebrow, custom_tour_title, custom_tour_subtitle")
+        .eq("id", true as any)
+        .maybeSingle();
+      if (error) throw error;
+      return (data as any) || {};
+    },
+  });
+
+  const [form, setForm] = useState({ eyebrow: "", title: "", subtitle: "" });
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    if (data && !loaded) {
+      setForm({
+        eyebrow: data.custom_tour_eyebrow ?? "",
+        title: data.custom_tour_title ?? "",
+        subtitle: data.custom_tour_subtitle ?? "",
+      });
+      setLoaded(true);
+    }
+  }, [data, loaded]);
+
+  const save = useMutation({
+    mutationFn: async () => {
+      const { error } = await supabase.from("site_settings").upsert({
+        id: true,
+        custom_tour_eyebrow: form.eyebrow.trim() || null,
+        custom_tour_title: form.title.trim() || null,
+        custom_tour_subtitle: form.subtitle.trim() || null,
+      } as any);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Hero saved");
+      qc.invalidateQueries({ queryKey: ["admin", "custom-tour-hero"] });
+      qc.invalidateQueries({ queryKey: ["site-brand"] });
+    },
+    onError: (e) => toast.error((e as Error).message),
+  });
+
+  return (
+    <section className="rounded-2xl border border-border bg-card p-5 mb-8">
+      <div className="mb-3">
+        <h2 className="font-display text-lg font-bold">Custom Tour page hero</h2>
+        <p className="text-xs text-muted-foreground">
+          Edit the text shown at the top of <code>/tours/custom</code>. Leave blank to use the
+          defaults.
+        </p>
+      </div>
+      {isLoading ? (
+        <p className="text-sm text-muted-foreground">Loading…</p>
+      ) : (
+        <div className="grid gap-3">
+          <div>
+            <label className="text-xs font-medium text-muted-foreground">
+              Eyebrow (small caps line)
+            </label>
+            <input
+              value={form.eyebrow}
+              onChange={(e) => setForm((f) => ({ ...f, eyebrow: e.target.value }))}
+              placeholder="Build your own"
+              className="w-full mt-1 px-3 py-2 rounded-lg border border-border bg-background text-sm"
+            />
+          </div>
+          <div>
+            <label className="text-xs font-medium text-muted-foreground">Headline</label>
+            <input
+              value={form.title}
+              onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
+              placeholder="Design Your Private Lisbon Tour"
+              className="w-full mt-1 px-3 py-2 rounded-lg border border-border bg-background text-sm font-semibold"
+            />
+          </div>
+          <div>
+            <label className="text-xs font-medium text-muted-foreground">Subtitle</label>
+            <textarea
+              value={form.subtitle}
+              onChange={(e) => setForm((f) => ({ ...f, subtitle: e.target.value }))}
+              rows={2}
+              placeholder="Pick your vehicle, destinations, and extras…"
+              className="w-full mt-1 px-3 py-2 rounded-lg border border-border bg-background text-sm resize-y"
+            />
+          </div>
+          <div className="flex justify-end">
+            <button
+              onClick={() => save.mutate()}
+              disabled={save.isPending}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-semibold disabled:opacity-50"
+            >
+              <Save className="w-4 h-4" /> Save hero
+            </button>
+          </div>
+        </div>
+      )}
+    </section>
+  );
+}
