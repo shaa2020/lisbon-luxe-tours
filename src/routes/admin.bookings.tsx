@@ -243,6 +243,40 @@ function BookingsInbox() {
                 </p>
               </div>
 
+              {b.tour_slug === "custom" && Array.isArray(b.custom_selections) && b.custom_selections.length > 0 && (
+                <div className="rounded-md border border-primary/20 bg-primary/5 p-3 mb-4">
+                  <p className="text-[10px] uppercase tracking-wider text-primary font-semibold mb-2">
+                    Custom tour selections
+                    {b.payment_status && (
+                      <span className="ml-2 normal-case tracking-normal text-muted-foreground font-normal">
+                        · {b.payment_status === "request" ? "Quote request" : `Payment: ${b.payment_status}`}
+                      </span>
+                    )}
+                  </p>
+                  <div className="grid sm:grid-cols-2 gap-x-4 gap-y-1 text-sm">
+                    {CAT_ORDER.flatMap((cat) => {
+                      const items = b.custom_selections!.filter((s) => s.category === cat);
+                      if (items.length === 0) return [];
+                      return [
+                        <div key={cat} className="col-span-full mt-1 first:mt-0">
+                          <p className="text-[11px] uppercase tracking-wider text-muted-foreground">
+                            {CAT_LABEL[cat] ?? cat}
+                          </p>
+                        </div>,
+                        ...items.map((s) => (
+                          <div key={s.id} className="flex justify-between gap-3 pl-1">
+                            <span className="text-foreground">{s.name}</span>
+                            <span className="text-muted-foreground tabular-nums">
+                              {s.price_cents === 0 ? "—" : `€${(s.price_cents / 100).toFixed(0)}`}
+                            </span>
+                          </div>
+                        )),
+                      ];
+                    })}
+                  </div>
+                </div>
+              )}
+
               {b.notes && (
                 <div className="rounded-md bg-muted/40 border border-border p-3 text-sm text-foreground mb-4 whitespace-pre-wrap">
                   {b.notes}
