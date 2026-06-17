@@ -66,6 +66,7 @@ function AdminCustomBuilder() {
           name: d.name,
           description: d.description || null,
           price_cents: Math.round(Number(d.price_cents) || 0),
+          extra_per_guest_cents: Math.round(Number(d.extra_per_guest_cents) || 0),
           image_url: d.image_url || null,
           sort_order: Math.round(Number(d.sort_order) || 0),
           active: d.active,
