@@ -137,7 +137,7 @@ function AdminCustomBuilder() {
                           <th className="text-left px-3 py-2 w-14">Image</th>
                           <th className="text-left px-3 py-2">Name</th>
                           <th className="text-right px-3 py-2">Base €</th>
-                          <th className="text-right px-3 py-2 hidden sm:table-cell">+ / extra guest</th>
+                          <th className="text-right px-3 py-2">+ guest €</th>
                           <th className="text-center px-3 py-2 hidden md:table-cell">Order</th>
                           <th className="text-center px-3 py-2">Active</th>
                           <th className="px-3 py-2"></th>
@@ -171,7 +171,7 @@ function AdminCustomBuilder() {
                             <td className="px-3 py-2 text-right tabular-nums">
                               {(r.price_cents / 100).toFixed(0)}
                             </td>
-                            <td className="px-3 py-2 text-right tabular-nums hidden sm:table-cell text-muted-foreground">
+                            <td className="px-3 py-2 text-right tabular-nums text-muted-foreground">
                               {((r.extra_per_guest_cents || 0) / 100).toFixed(0)}
                             </td>
                             <td className="px-3 py-2 text-center hidden md:table-cell">
