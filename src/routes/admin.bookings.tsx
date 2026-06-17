@@ -11,6 +11,13 @@ export const Route = createFileRoute("/admin/bookings")({
   component: BookingsInbox,
 });
 
+type CustomSelection = {
+  id: string;
+  category: "vehicle" | "duration" | "destination" | "addon" | string;
+  name: string;
+  price_cents: number;
+};
+
 type Booking = {
   id: string;
   tour_slug: string | null;
@@ -23,8 +30,18 @@ type Booking = {
   notes: string | null;
   total_estimate: number | null;
   status: string;
+  payment_status: string | null;
+  custom_selections: CustomSelection[] | null;
   created_at: string;
 };
+
+const CAT_LABEL: Record<string, string> = {
+  vehicle: "Vehicle",
+  duration: "Duration",
+  destination: "Destinations",
+  addon: "Add-ons",
+};
+const CAT_ORDER = ["vehicle", "duration", "destination", "addon"];
 
 const STATUSES = ["new", "quoted", "confirmed", "done", "archived"] as const;
 
