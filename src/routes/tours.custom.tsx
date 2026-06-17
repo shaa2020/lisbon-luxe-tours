@@ -29,6 +29,7 @@ type Component = {
   name: string;
   description: string | null;
   price_cents: number;
+  extra_per_guest_cents: number;
   image_url: string | null;
   sort_order: number;
   active: boolean;
@@ -97,9 +98,11 @@ function CustomBuilderPage() {
     () => (components as Component[]).filter((c) => selected.has(c.id)),
     [components, selected],
   );
-  const perPerson = selectedComponents.reduce((s, c) => s + c.price_cents, 0);
+  const baseTotal = selectedComponents.reduce((s, c) => s + c.price_cents, 0);
+  const extraPerGuest = selectedComponents.reduce((s, c) => s + (c.extra_per_guest_cents || 0), 0);
   const guestsNum = Math.max(1, Number(form.guests) || 1);
-  const total = perPerson * guestsNum;
+  const extraGuests = Math.max(0, guestsNum - 2);
+  const total = baseTotal + extraPerGuest * extraGuests;
 
   const hasVehicle = grouped.vehicle?.some((c) => selected.has(c.id));
   const hasDuration = grouped.duration?.some((c) => selected.has(c.id));
@@ -270,7 +273,7 @@ function CustomBuilderPage() {
                       <li key={c.id} className="flex justify-between gap-3">
                         <span className="text-foreground">{c.name}</span>
                         <span className="font-medium text-muted-foreground">
-                          {c.price_cents === 0 ? "—" : `€${(c.price_cents / 100).toFixed(0)} pp`}
+                          {c.price_cents === 0 ? "—" : `€${(c.price_cents / 100).toFixed(0)}`}
                         </span>
                       </li>
                     ))}
@@ -279,16 +282,20 @@ function CustomBuilderPage() {
 
                 <div className="border-t border-border pt-3 mb-5 space-y-1">
                   <div className="flex justify-between text-xs text-muted-foreground">
-                    <span>Per person</span>
-                    <span>€{(perPerson / 100).toFixed(0)}</span>
+                    <span>Base (up to 2 guests)</span>
+                    <span>€{(baseTotal / 100).toFixed(0)}</span>
                   </div>
-                  <div className="flex justify-between text-xs text-muted-foreground">
-                    <span>Guests</span>
-                    <span>× {guestsNum}</span>
-                  </div>
+                  {extraGuests > 0 && (
+                    <div className="flex justify-between text-xs text-muted-foreground">
+                      <span>
+                        Extra guests ({extraGuests} × €{(extraPerGuest / 100).toFixed(0)})
+                      </span>
+                      <span>€{((extraPerGuest * extraGuests) / 100).toFixed(0)}</span>
+                    </div>
+                  )}
                   <div className="flex justify-between items-baseline pt-1">
                     <span className="text-[11px] uppercase tracking-wider text-muted-foreground">
-                      Estimated total
+                      Estimated total ({guestsNum} guest{guestsNum === 1 ? "" : "s"})
                     </span>
                     <span className="font-display text-2xl font-bold text-gold">
                       €{(total / 100).toFixed(0)}

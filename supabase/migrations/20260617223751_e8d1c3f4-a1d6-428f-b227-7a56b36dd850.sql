@@ -1,0 +1,1 @@
+ALTER TABLE public.custom_tour_components ADD COLUMN IF NOT EXISTS extra_per_guest_cents integer NOT NULL DEFAULT 0;

@@ -23,6 +23,7 @@ type Row = {
   name: string;
   description: string | null;
   price_cents: number;
+  extra_per_guest_cents: number;
   image_url: string | null;
   sort_order: number;
   active: boolean;
@@ -37,6 +38,7 @@ const EMPTY: Draft = {
   name: "",
   description: "",
   price_cents: 0,
+  extra_per_guest_cents: 0,
   image_url: "",
   sort_order: 0,
   active: true,
@@ -64,6 +66,7 @@ function AdminCustomBuilder() {
           name: d.name,
           description: d.description || null,
           price_cents: Math.round(Number(d.price_cents) || 0),
+          extra_per_guest_cents: Math.round(Number(d.extra_per_guest_cents) || 0),
           image_url: d.image_url || null,
           sort_order: Math.round(Number(d.sort_order) || 0),
           active: d.active,
@@ -133,7 +136,8 @@ function AdminCustomBuilder() {
                         <tr>
                           <th className="text-left px-3 py-2 w-14">Image</th>
                           <th className="text-left px-3 py-2">Name</th>
-                          <th className="text-right px-3 py-2">Price (€)</th>
+                          <th className="text-right px-3 py-2">Base €</th>
+                          <th className="text-right px-3 py-2 hidden sm:table-cell">+ / extra guest</th>
                           <th className="text-center px-3 py-2 hidden md:table-cell">Order</th>
                           <th className="text-center px-3 py-2">Active</th>
                           <th className="px-3 py-2"></th>
@@ -166,6 +170,9 @@ function AdminCustomBuilder() {
                             </td>
                             <td className="px-3 py-2 text-right tabular-nums">
                               {(r.price_cents / 100).toFixed(0)}
+                            </td>
+                            <td className="px-3 py-2 text-right tabular-nums hidden sm:table-cell text-muted-foreground">
+                              {((r.extra_per_guest_cents || 0) / 100).toFixed(0)}
                             </td>
                             <td className="px-3 py-2 text-center hidden md:table-cell">
                               {r.sort_order}
@@ -294,7 +301,7 @@ function EditModal({
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-xs font-medium text-muted-foreground">Price (€)</label>
+              <label className="text-xs font-medium text-muted-foreground">Base price (€)</label>
               <input
                 type="number"
                 min={0}
@@ -307,8 +314,25 @@ function EditModal({
                 }
                 className="w-full mt-1 px-3 py-2 rounded-lg border border-border bg-background text-sm"
               />
+              <p className="text-[10px] text-muted-foreground mt-1">Covers up to 2 guests</p>
             </div>
             <div>
+              <label className="text-xs font-medium text-muted-foreground">Extra per guest (€)</label>
+              <input
+                type="number"
+                min={0}
+                value={((editing.extra_per_guest_cents || 0) / 100).toString()}
+                onChange={(e) =>
+                  onChange({
+                    ...editing,
+                    extra_per_guest_cents: Math.round((Number(e.target.value) || 0) * 100),
+                  })
+                }
+                className="w-full mt-1 px-3 py-2 rounded-lg border border-border bg-background text-sm"
+              />
+              <p className="text-[10px] text-muted-foreground mt-1">Added per guest above 2</p>
+            </div>
+            <div className="col-span-2">
               <label className="text-xs font-medium text-muted-foreground">Sort order</label>
               <input
                 type="number"
