@@ -97,13 +97,18 @@ function CustomBuilderPage() {
   );
   const total = selectedComponents.reduce((s, c) => s + c.price_cents, 0);
 
+  const hasVehicle = grouped.vehicle?.some((c) => selected.has(c.id));
+  const hasDuration = grouped.duration?.some((c) => selected.has(c.id));
+  const hasDestination = grouped.destination?.some((c) => selected.has(c.id));
+  const requirementsMet = hasVehicle && hasDuration && hasDestination;
+
   function validate(): string | null {
     if (!form.customer_name.trim()) return "Please enter your name";
     if (!form.email.trim()) return "Please enter your email";
-    if (!grouped.vehicle.some((c) => selected.has(c.id))) return "Pick a vehicle";
-    if (!grouped.duration.some((c) => selected.has(c.id))) return "Pick a duration";
-    if (!grouped.destination.some((c) => selected.has(c.id)))
-      return "Pick at least one destination";
+    if (!hasVehicle) return "Pick a vehicle";
+    if (!hasDuration)
+      return "Pick a preferred duration — it sets the base price of your tour";
+    if (!hasDestination) return "Pick at least one destination";
     return null;
   }
 
