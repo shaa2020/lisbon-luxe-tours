@@ -176,10 +176,6 @@ const upsertInput = z.object({
 
 
 
-
-
-void assertAdmin;
-
 export const adminListComponents = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
