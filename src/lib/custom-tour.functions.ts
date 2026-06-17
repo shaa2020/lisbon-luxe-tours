@@ -13,19 +13,22 @@ function getStripeKey(): string {
     "";
   if (!key) throw new Error("Stripe key not configured");
   return key;
-
+}
 function getLovableKey(): string {
   const key = process.env.LOVABLE_API_KEY || "";
   if (!key) throw new Error("LOVABLE_API_KEY not configured");
   return key;
+}
 
-
-async function stripeFetch(path: string, init?: RequestInit & { form?: Record<string, string> }) {
+async function stripeFetch(
+  path: string,
+  init?: { method?: string; form?: Record<string, string> },
+) {
   const headers: Record<string, string> = {
     "Lovable-API-Key": getLovableKey(),
     "X-Connection-Api-Key": getStripeKey(),
   };
-  let body: BodyInit | undefined = init?.body as BodyInit | undefined;
+  let body: BodyInit | undefined;
   if (init?.form) {
     headers["Content-Type"] = "application/x-www-form-urlencoded";
     body = new URLSearchParams(init.form).toString();
@@ -39,9 +42,6 @@ async function stripeFetch(path: string, init?: RequestInit & { form?: Record<st
   if (!res.ok) throw new Error(`Stripe ${path} ${res.status}: ${text.slice(0, 300)}`);
   return text ? JSON.parse(text) : {};
 }
-
-
-
 
 export const getCustomTourComponents = createServerFn({ method: "GET" }).handler(async () => {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -67,26 +67,19 @@ const selectionInput = z.object({
   mode: z.enum(["pay", "request"]),
 });
 
-async function loadComponents(ids: string[]) {
-  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-  const { data, error } = await supabaseAdmin
-    .from("custom_tour_components")
-    .select("id, category, name, price_cents, active")
-    .in("id", ids);
-  if (error) throw new Error(error.message);
-  const rows = (data ?? []).filter((r) => r.active);
-  if (rows.length === 0) throw new Error("No valid components selected");
-  return rows;
-}
-
-
-
-
 export const submitCustomTour = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => selectionInput.parse(d))
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const components = await loadComponents(data.component_ids);
+
+    const { data: rows, error: cErr } = await supabaseAdmin
+      .from("custom_tour_components")
+      .select("id, category, name, price_cents, active")
+      .in("id", data.component_ids);
+    if (cErr) throw new Error(cErr.message);
+    const components = (rows ?? []).filter((r) => r.active);
+    if (components.length === 0) throw new Error("No valid components selected");
+
     const total = components.reduce((s, c) => s + (c.price_cents || 0), 0);
     const selections = components.map((c) => ({
       id: c.id,
@@ -94,7 +87,9 @@ export const submitCustomTour = createServerFn({ method: "POST" })
       name: c.name,
       price_cents: c.price_cents,
     }));
-    const summary = components.map((c) => `• ${c.name} — €${(c.price_cents / 100).toFixed(0)}`).join("\n");
+    const summary = components
+      .map((c) => `- ${c.name} (EUR ${(c.price_cents / 100).toFixed(0)})`)
+      .join("\n");
 
     const { data: booking, error: bErr } = await supabaseAdmin
       .from("bookings")
@@ -116,7 +111,7 @@ export const submitCustomTour = createServerFn({ method: "POST" })
           .join("\n"),
         total_estimate: Math.round(total / 100),
         amount_total: total,
-        status: data.mode === "request" ? "new" : "new",
+        status: "new",
         payment_status: data.mode === "request" ? "request" : "pending",
         custom_selections: selections,
       })
@@ -128,7 +123,7 @@ export const submitCustomTour = createServerFn({ method: "POST" })
       return { mode: "request" as const, booking_id: booking.id, total };
     }
 
-    if (total < 100) throw new Error("Total must be at least €1 to checkout");
+    if (total < 100) throw new Error("Total must be at least 1 EUR to checkout");
 
     const host = getRequestHost();
     const proto = host.includes("localhost") ? "http" : "https";
@@ -139,7 +134,8 @@ export const submitCustomTour = createServerFn({ method: "POST" })
       "line_items[0][quantity]": "1",
       "line_items[0][price_data][currency]": "eur",
       "line_items[0][price_data][unit_amount]": String(total),
-      "line_items[0][price_data][product_data][name]": `Custom Tour · ${data.guests} guest${data.guests === 1 ? "" : "s"}`,
+      "line_items[0][price_data][product_data][name]":
+        `Custom Tour - ${data.guests} guest${data.guests === 1 ? "" : "s"}`,
       "line_items[0][price_data][product_data][description]": summary.slice(0, 500),
       customer_email: data.email,
       success_url: `${origin}/booking/success?session_id={CHECKOUT_SESSION_ID}`,
@@ -174,22 +170,24 @@ const upsertInput = z.object({
   category: z.enum(["vehicle", "destination", "addon", "duration"]),
   name: z.string().min(1).max(200),
   description: z.string().max(1000).optional().nullable(),
-  price_cents: z.number().int().min(0).max(10_000_00),
+  price_cents: z.number().int().min(0).max(1_000_000),
   image_url: z.string().url().optional().nullable(),
   sort_order: z.number().int().min(0).max(9999),
   active: z.boolean(),
 });
 
-
+async function assertAdmin(context: { supabase: any; userId: string }) {
+  const { data: isAdmin } = await context.supabase.rpc("has_role" as never, {
+    _user_id: context.userId,
+    _role: "admin",
+  } as never);
+  if (!isAdmin) throw new Error("Forbidden");
+}
 
 export const adminListComponents = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    const { data: isAdmin } = await context.supabase.rpc("has_role" as never, {
-      _user_id: context.userId,
-      _role: "admin",
-    } as never);
-    if (!isAdmin) throw new Error("Forbidden");
+    await assertAdmin(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data, error } = await supabaseAdmin
       .from("custom_tour_components")
@@ -204,11 +202,7 @@ export const adminUpsertComponent = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => upsertInput.parse(d))
   .handler(async ({ data, context }) => {
-    const { data: isAdmin } = await context.supabase.rpc("has_role" as never, {
-      _user_id: context.userId,
-      _role: "admin",
-    } as never);
-    if (!isAdmin) throw new Error("Forbidden");
+    await assertAdmin(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const payload = {
       category: data.category,
@@ -226,26 +220,21 @@ export const adminUpsertComponent = createServerFn({ method: "POST" })
         .eq("id", data.id);
       if (error) throw new Error(error.message);
       return { id: data.id };
-    } else {
-      const { data: row, error } = await supabaseAdmin
-        .from("custom_tour_components")
-        .insert(payload)
-        .select("id")
-        .single();
-      if (error) throw new Error(error.message);
-      return { id: row.id };
     }
+    const { data: row, error } = await supabaseAdmin
+      .from("custom_tour_components")
+      .insert(payload)
+      .select("id")
+      .single();
+    if (error) throw new Error(error.message);
+    return { id: row.id };
   });
 
 export const adminDeleteComponent = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
-    const { data: isAdmin } = await context.supabase.rpc("has_role" as never, {
-      _user_id: context.userId,
-      _role: "admin",
-    } as never);
-    if (!isAdmin) throw new Error("Forbidden");
+    await assertAdmin(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { error } = await supabaseAdmin
       .from("custom_tour_components")
