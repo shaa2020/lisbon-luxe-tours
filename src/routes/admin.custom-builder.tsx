@@ -114,65 +114,90 @@ function AdminCustomBuilder() {
           const items = (rows as Row[]).filter((r) => r.category === cat);
           return (
             <div key={cat}>
-              <h2 className="font-display text-lg font-bold capitalize mb-3">{cat}s</h2>
+              <div className="flex items-center justify-between mb-3 gap-2">
+                <h2 className="font-display text-lg font-bold capitalize">{cat}s</h2>
+                <button
+                  onClick={() => setEditing({ ...EMPTY, category: cat })}
+                  className="inline-flex items-center gap-1 text-xs px-2.5 py-1.5 rounded-full border border-border hover:bg-accent"
+                >
+                  <Plus className="w-3.5 h-3.5" /> Add {cat}
+                </button>
+              </div>
               {items.length === 0 ? (
                 <p className="text-xs text-muted-foreground">No items yet.</p>
               ) : (
                 <div className="rounded-xl border border-border overflow-hidden bg-card">
-                  <table className="w-full text-sm">
-                    <thead className="bg-muted/40 text-xs uppercase text-muted-foreground">
-                      <tr>
-                        <th className="text-left px-3 py-2">Name</th>
-                        <th className="text-right px-3 py-2">Price (€)</th>
-                        <th className="text-center px-3 py-2 hidden md:table-cell">Order</th>
-                        <th className="text-center px-3 py-2">Active</th>
-                        <th className="px-3 py-2"></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {items.map((r) => (
-                        <tr key={r.id} className="border-t border-border">
-                          <td className="px-3 py-2">
-                            <div className="font-medium">{r.name}</div>
-                            {r.description && (
-                              <div className="text-xs text-muted-foreground truncate max-w-[260px]">
-                                {r.description}
-                              </div>
-                            )}
-                          </td>
-                          <td className="px-3 py-2 text-right tabular-nums">
-                            {(r.price_cents / 100).toFixed(0)}
-                          </td>
-                          <td className="px-3 py-2 text-center hidden md:table-cell">
-                            {r.sort_order}
-                          </td>
-                          <td className="px-3 py-2 text-center">
-                            <span
-                              className={`inline-block w-2 h-2 rounded-full ${
-                                r.active ? "bg-emerald-500" : "bg-muted-foreground/40"
-                              }`}
-                            />
-                          </td>
-                          <td className="px-3 py-2 text-right">
-                            <button
-                              onClick={() => setEditing({ ...r, description: r.description ?? "", image_url: r.image_url ?? "" })}
-                              className="text-xs px-2 py-1 rounded hover:bg-accent"
-                            >
-                              Edit
-                            </button>
-                            <button
-                              onClick={() => {
-                                if (confirm(`Delete "${r.name}"?`)) remove.mutate(r.id);
-                              }}
-                              className="text-xs px-2 py-1 rounded hover:bg-destructive/10 text-destructive"
-                            >
-                              <Trash2 className="w-3.5 h-3.5 inline" />
-                            </button>
-                          </td>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm min-w-[520px]">
+                      <thead className="bg-muted/40 text-xs uppercase text-muted-foreground">
+                        <tr>
+                          <th className="text-left px-3 py-2 w-14">Image</th>
+                          <th className="text-left px-3 py-2">Name</th>
+                          <th className="text-right px-3 py-2">Price (€)</th>
+                          <th className="text-center px-3 py-2 hidden md:table-cell">Order</th>
+                          <th className="text-center px-3 py-2">Active</th>
+                          <th className="px-3 py-2"></th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody>
+                        {items.map((r) => (
+                          <tr key={r.id} className="border-t border-border">
+                            <td className="px-3 py-2">
+                              {r.image_url ? (
+                                <img
+                                  src={r.image_url}
+                                  alt=""
+                                  className="w-10 h-10 rounded-md object-cover bg-muted"
+                                  loading="lazy"
+                                />
+                              ) : (
+                                <div className="w-10 h-10 rounded-md bg-muted grid place-items-center text-muted-foreground">
+                                  <ImageIcon className="w-4 h-4" />
+                                </div>
+                              )}
+                            </td>
+                            <td className="px-3 py-2">
+                              <div className="font-medium">{r.name}</div>
+                              {r.description && (
+                                <div className="text-xs text-muted-foreground truncate max-w-[260px]">
+                                  {r.description}
+                                </div>
+                              )}
+                            </td>
+                            <td className="px-3 py-2 text-right tabular-nums">
+                              {(r.price_cents / 100).toFixed(0)}
+                            </td>
+                            <td className="px-3 py-2 text-center hidden md:table-cell">
+                              {r.sort_order}
+                            </td>
+                            <td className="px-3 py-2 text-center">
+                              <span
+                                className={`inline-block w-2 h-2 rounded-full ${
+                                  r.active ? "bg-emerald-500" : "bg-muted-foreground/40"
+                                }`}
+                              />
+                            </td>
+                            <td className="px-3 py-2 text-right whitespace-nowrap">
+                              <button
+                                onClick={() => setEditing({ ...r, description: r.description ?? "", image_url: r.image_url ?? "" })}
+                                className="text-xs px-2 py-1 rounded hover:bg-accent"
+                              >
+                                Edit
+                              </button>
+                              <button
+                                onClick={() => {
+                                  if (confirm(`Delete "${r.name}"?`)) remove.mutate(r.id);
+                                }}
+                                className="text-xs px-2 py-1 rounded hover:bg-destructive/10 text-destructive"
+                              >
+                                <Trash2 className="w-3.5 h-3.5 inline" />
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               )}
             </div>
