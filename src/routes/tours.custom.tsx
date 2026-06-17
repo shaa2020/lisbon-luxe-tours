@@ -273,7 +273,7 @@ function CustomBuilderPage() {
                       <li key={c.id} className="flex justify-between gap-3">
                         <span className="text-foreground">{c.name}</span>
                         <span className="font-medium text-muted-foreground">
-                          {c.price_cents === 0 ? "—" : `€${(c.price_cents / 100).toFixed(0)} pp`}
+                          {c.price_cents === 0 ? "—" : `€${(c.price_cents / 100).toFixed(0)}`}
                         </span>
                       </li>
                     ))}
