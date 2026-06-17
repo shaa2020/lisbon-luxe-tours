@@ -52,6 +52,18 @@ export const Route = createFileRoute("/tours/$slug")({
                 },
               }),
             },
+            {
+              type: "application/ld+json",
+              children: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "BreadcrumbList",
+                itemListElement: [
+                  { "@type": "ListItem", position: 1, name: "Home", item: "https://tuktuk24lisbon.com/" },
+                  { "@type": "ListItem", position: 2, name: "Tours", item: "https://tuktuk24lisbon.com/tours" },
+                  { "@type": "ListItem", position: 3, name: tour.title, item: url },
+                ],
+              }),
+            },
           ]
         : [],
     };
