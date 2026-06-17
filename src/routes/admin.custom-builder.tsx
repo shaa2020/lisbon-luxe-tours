@@ -171,6 +171,9 @@ function AdminCustomBuilder() {
                             <td className="px-3 py-2 text-right tabular-nums">
                               {(r.price_cents / 100).toFixed(0)}
                             </td>
+                            <td className="px-3 py-2 text-right tabular-nums hidden sm:table-cell text-muted-foreground">
+                              {((r.extra_per_guest_cents || 0) / 100).toFixed(0)}
+                            </td>
                             <td className="px-3 py-2 text-center hidden md:table-cell">
                               {r.sort_order}
                             </td>
