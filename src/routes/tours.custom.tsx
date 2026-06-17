@@ -5,6 +5,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { Nav } from "@/components/site/Nav";
 import { Footer } from "@/components/site/Footer";
+import { useSiteBrand } from "@/lib/brand";
 import { getCustomTourComponents, submitCustomTour } from "@/lib/custom-tour.functions";
 import { Check, MapPin, Car, Clock, Sparkles, Loader2 } from "lucide-react";
 
