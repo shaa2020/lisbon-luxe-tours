@@ -13,12 +13,12 @@ function getStripeKey(): string {
     "";
   if (!key) throw new Error("Stripe key not configured");
   return key;
-}
+
 function getLovableKey(): string {
   const key = process.env.LOVABLE_API_KEY || "";
   if (!key) throw new Error("LOVABLE_API_KEY not configured");
   return key;
-}
+
 
 async function stripeFetch(path: string, init?: RequestInit & { form?: Record<string, string> }) {
   const headers: Record<string, string> = {
@@ -38,7 +38,7 @@ async function stripeFetch(path: string, init?: RequestInit & { form?: Record<st
   const text = await res.text();
   if (!res.ok) throw new Error(`Stripe ${path} ${res.status}: ${text.slice(0, 300)}`);
   return text ? JSON.parse(text) : {};
-}
+
 
 export const getCustomTourComponents = createServerFn({ method: "GET" }).handler(async () => {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -74,7 +74,7 @@ async function loadComponents(ids: string[]) {
   const rows = (data ?? []).filter((r) => r.active);
   if (rows.length === 0) throw new Error("No valid components selected");
   return rows;
-}
+
 
 export const submitCustomTour = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => selectionInput.parse(d))
@@ -174,14 +174,14 @@ const upsertInput = z.object({
   active: z.boolean(),
 });
 
-async function assertAdmin() {
-  const { requireSupabaseAuth } = await import("@/integrations/supabase/auth-middleware");
-  return requireSupabaseAuth;
-}
+
+
+
+
 void assertAdmin;
 
 export const adminListComponents = createServerFn({ method: "GET" })
-  .middleware([(await import("@/integrations/supabase/auth-middleware")).requireSupabaseAuth])
+  .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     const { data: isAdmin } = await context.supabase.rpc("has_role" as never, {
       _user_id: context.userId,
@@ -199,7 +199,7 @@ export const adminListComponents = createServerFn({ method: "GET" })
   });
 
 export const adminUpsertComponent = createServerFn({ method: "POST" })
-  .middleware([(await import("@/integrations/supabase/auth-middleware")).requireSupabaseAuth])
+  .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => upsertInput.parse(d))
   .handler(async ({ data, context }) => {
     const { data: isAdmin } = await context.supabase.rpc("has_role" as never, {
@@ -236,7 +236,7 @@ export const adminUpsertComponent = createServerFn({ method: "POST" })
   });
 
 export const adminDeleteComponent = createServerFn({ method: "POST" })
-  .middleware([(await import("@/integrations/supabase/auth-middleware")).requireSupabaseAuth])
+  .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
     const { data: isAdmin } = await context.supabase.rpc("has_role" as never, {
