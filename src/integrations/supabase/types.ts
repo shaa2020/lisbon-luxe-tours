@@ -69,6 +69,7 @@ export type Database = {
         Row: {
           amount_total: number | null
           created_at: string
+          custom_selections: Json | null
           customer_name: string
           email: string
           guests: number
@@ -85,6 +86,7 @@ export type Database = {
         Insert: {
           amount_total?: number | null
           created_at?: string
+          custom_selections?: Json | null
           customer_name: string
           email: string
           guests?: number
@@ -101,6 +103,7 @@ export type Database = {
         Update: {
           amount_total?: number | null
           created_at?: string
+          custom_selections?: Json | null
           customer_name?: string
           email?: string
           guests?: number
@@ -143,6 +146,45 @@ export type Database = {
           name?: string
           status?: string
           subject?: string | null
+        }
+        Relationships: []
+      }
+      custom_tour_components: {
+        Row: {
+          active: boolean
+          category: string
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string | null
+          name: string
+          price_cents: number
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          category: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          name: string
+          price_cents?: number
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          category?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          name?: string
+          price_cents?: number
+          sort_order?: number
+          updated_at?: string
         }
         Relationships: []
       }

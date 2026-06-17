@@ -16,6 +16,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ToursIndexRouteImport } from './routes/tours.index'
 import { Route as JournalIndexRouteImport } from './routes/journal.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as ToursCustomRouteImport } from './routes/tours.custom'
 import { Route as ToursSlugRouteImport } from './routes/tours.$slug'
 import { Route as JournalSlugRouteImport } from './routes/journal.$slug'
 import { Route as BookingSuccessRouteImport } from './routes/booking.success'
@@ -24,6 +25,7 @@ import { Route as AdminReviewsRouteImport } from './routes/admin.reviews'
 import { Route as AdminOrdersRouteImport } from './routes/admin.orders'
 import { Route as AdminMessagesRouteImport } from './routes/admin.messages'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
+import { Route as AdminCustomBuilderRouteImport } from './routes/admin.custom-builder'
 import { Route as AdminBookingsRouteImport } from './routes/admin.bookings'
 import { Route as AdminToursIndexRouteImport } from './routes/admin.tours.index'
 import { Route as AdminBlogIndexRouteImport } from './routes/admin.blog.index'
@@ -66,6 +68,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   path: '/admin/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ToursCustomRoute = ToursCustomRouteImport.update({
+  id: '/tours/custom',
+  path: '/tours/custom',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ToursSlugRoute = ToursSlugRouteImport.update({
   id: '/tours/$slug',
   path: '/tours/$slug',
@@ -106,6 +113,11 @@ const AdminLoginRoute = AdminLoginRouteImport.update({
   path: '/admin/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminCustomBuilderRoute = AdminCustomBuilderRouteImport.update({
+  id: '/admin/custom-builder',
+  path: '/admin/custom-builder',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminBookingsRoute = AdminBookingsRouteImport.update({
   id: '/admin/bookings',
   path: '/admin/bookings',
@@ -144,6 +156,7 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/bookings': typeof AdminBookingsRoute
+  '/admin/custom-builder': typeof AdminCustomBuilderRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/messages': typeof AdminMessagesRoute
   '/admin/orders': typeof AdminOrdersRoute
@@ -152,6 +165,7 @@ export interface FileRoutesByFullPath {
   '/booking/success': typeof BookingSuccessRoute
   '/journal/$slug': typeof JournalSlugRoute
   '/tours/$slug': typeof ToursSlugRoute
+  '/tours/custom': typeof ToursCustomRoute
   '/admin/': typeof AdminIndexRoute
   '/journal/': typeof JournalIndexRoute
   '/tours/': typeof ToursIndexRoute
@@ -167,6 +181,7 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/bookings': typeof AdminBookingsRoute
+  '/admin/custom-builder': typeof AdminCustomBuilderRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/messages': typeof AdminMessagesRoute
   '/admin/orders': typeof AdminOrdersRoute
@@ -175,6 +190,7 @@ export interface FileRoutesByTo {
   '/booking/success': typeof BookingSuccessRoute
   '/journal/$slug': typeof JournalSlugRoute
   '/tours/$slug': typeof ToursSlugRoute
+  '/tours/custom': typeof ToursCustomRoute
   '/admin': typeof AdminIndexRoute
   '/journal': typeof JournalIndexRoute
   '/tours': typeof ToursIndexRoute
@@ -191,6 +207,7 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/bookings': typeof AdminBookingsRoute
+  '/admin/custom-builder': typeof AdminCustomBuilderRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/messages': typeof AdminMessagesRoute
   '/admin/orders': typeof AdminOrdersRoute
@@ -199,6 +216,7 @@ export interface FileRoutesById {
   '/booking/success': typeof BookingSuccessRoute
   '/journal/$slug': typeof JournalSlugRoute
   '/tours/$slug': typeof ToursSlugRoute
+  '/tours/custom': typeof ToursCustomRoute
   '/admin/': typeof AdminIndexRoute
   '/journal/': typeof JournalIndexRoute
   '/tours/': typeof ToursIndexRoute
@@ -216,6 +234,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/sitemap.xml'
     | '/admin/bookings'
+    | '/admin/custom-builder'
     | '/admin/login'
     | '/admin/messages'
     | '/admin/orders'
@@ -224,6 +243,7 @@ export interface FileRouteTypes {
     | '/booking/success'
     | '/journal/$slug'
     | '/tours/$slug'
+    | '/tours/custom'
     | '/admin/'
     | '/journal/'
     | '/tours/'
@@ -239,6 +259,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/sitemap.xml'
     | '/admin/bookings'
+    | '/admin/custom-builder'
     | '/admin/login'
     | '/admin/messages'
     | '/admin/orders'
@@ -247,6 +268,7 @@ export interface FileRouteTypes {
     | '/booking/success'
     | '/journal/$slug'
     | '/tours/$slug'
+    | '/tours/custom'
     | '/admin'
     | '/journal'
     | '/tours'
@@ -262,6 +284,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/sitemap.xml'
     | '/admin/bookings'
+    | '/admin/custom-builder'
     | '/admin/login'
     | '/admin/messages'
     | '/admin/orders'
@@ -270,6 +293,7 @@ export interface FileRouteTypes {
     | '/booking/success'
     | '/journal/$slug'
     | '/tours/$slug'
+    | '/tours/custom'
     | '/admin/'
     | '/journal/'
     | '/tours/'
@@ -286,6 +310,7 @@ export interface RootRouteChildren {
   ContactRoute: typeof ContactRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   AdminBookingsRoute: typeof AdminBookingsRoute
+  AdminCustomBuilderRoute: typeof AdminCustomBuilderRoute
   AdminLoginRoute: typeof AdminLoginRoute
   AdminMessagesRoute: typeof AdminMessagesRoute
   AdminOrdersRoute: typeof AdminOrdersRoute
@@ -294,6 +319,7 @@ export interface RootRouteChildren {
   BookingSuccessRoute: typeof BookingSuccessRoute
   JournalSlugRoute: typeof JournalSlugRoute
   ToursSlugRoute: typeof ToursSlugRoute
+  ToursCustomRoute: typeof ToursCustomRoute
   AdminIndexRoute: typeof AdminIndexRoute
   JournalIndexRoute: typeof JournalIndexRoute
   ToursIndexRoute: typeof ToursIndexRoute
@@ -355,6 +381,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/tours/custom': {
+      id: '/tours/custom'
+      path: '/tours/custom'
+      fullPath: '/tours/custom'
+      preLoaderRoute: typeof ToursCustomRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/tours/$slug': {
       id: '/tours/$slug'
       path: '/tours/$slug'
@@ -411,6 +444,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/custom-builder': {
+      id: '/admin/custom-builder'
+      path: '/admin/custom-builder'
+      fullPath: '/admin/custom-builder'
+      preLoaderRoute: typeof AdminCustomBuilderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/bookings': {
       id: '/admin/bookings'
       path: '/admin/bookings'
@@ -462,6 +502,7 @@ const rootRouteChildren: RootRouteChildren = {
   ContactRoute: ContactRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   AdminBookingsRoute: AdminBookingsRoute,
+  AdminCustomBuilderRoute: AdminCustomBuilderRoute,
   AdminLoginRoute: AdminLoginRoute,
   AdminMessagesRoute: AdminMessagesRoute,
   AdminOrdersRoute: AdminOrdersRoute,
@@ -470,6 +511,7 @@ const rootRouteChildren: RootRouteChildren = {
   BookingSuccessRoute: BookingSuccessRoute,
   JournalSlugRoute: JournalSlugRoute,
   ToursSlugRoute: ToursSlugRoute,
+  ToursCustomRoute: ToursCustomRoute,
   AdminIndexRoute: AdminIndexRoute,
   JournalIndexRoute: JournalIndexRoute,
   ToursIndexRoute: ToursIndexRoute,
@@ -482,13 +524,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
