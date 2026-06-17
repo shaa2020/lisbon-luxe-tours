@@ -277,13 +277,23 @@ function CustomBuilderPage() {
                   </ul>
                 )}
 
-                <div className="border-t border-border pt-3 mb-5 flex justify-between items-baseline">
-                  <span className="text-[11px] uppercase tracking-wider text-muted-foreground">
-                    Estimated total
-                  </span>
-                  <span className="font-display text-2xl font-bold text-gold">
-                    €{(total / 100).toFixed(0)}
-                  </span>
+                <div className="border-t border-border pt-3 mb-5 space-y-1">
+                  <div className="flex justify-between text-xs text-muted-foreground">
+                    <span>Per person</span>
+                    <span>€{(perPerson / 100).toFixed(0)}</span>
+                  </div>
+                  <div className="flex justify-between text-xs text-muted-foreground">
+                    <span>Guests</span>
+                    <span>× {guestsNum}</span>
+                  </div>
+                  <div className="flex justify-between items-baseline pt-1">
+                    <span className="text-[11px] uppercase tracking-wider text-muted-foreground">
+                      Estimated total
+                    </span>
+                    <span className="font-display text-2xl font-bold text-gold">
+                      €{(total / 100).toFixed(0)}
+                    </span>
+                  </div>
                 </div>
 
                 <div className="space-y-3">
