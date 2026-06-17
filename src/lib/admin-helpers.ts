@@ -1,7 +1,7 @@
 import { supabase } from "@/integrations/supabase/client";
 
 export async function uploadMediaFile(
-  folder: "tours" | "blog" | "brand",
+  folder: "tours" | "blog" | "brand" | "custom",
   slug: string,
   file: File,
 ): Promise<string> {
