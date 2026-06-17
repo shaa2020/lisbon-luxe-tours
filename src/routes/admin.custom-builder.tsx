@@ -301,7 +301,7 @@ function EditModal({
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-xs font-medium text-muted-foreground">Price (€)</label>
+              <label className="text-xs font-medium text-muted-foreground">Base price (€)</label>
               <input
                 type="number"
                 min={0}
@@ -314,8 +314,25 @@ function EditModal({
                 }
                 className="w-full mt-1 px-3 py-2 rounded-lg border border-border bg-background text-sm"
               />
+              <p className="text-[10px] text-muted-foreground mt-1">Covers up to 2 guests</p>
             </div>
             <div>
+              <label className="text-xs font-medium text-muted-foreground">Extra per guest (€)</label>
+              <input
+                type="number"
+                min={0}
+                value={((editing.extra_per_guest_cents || 0) / 100).toString()}
+                onChange={(e) =>
+                  onChange({
+                    ...editing,
+                    extra_per_guest_cents: Math.round((Number(e.target.value) || 0) * 100),
+                  })
+                }
+                className="w-full mt-1 px-3 py-2 rounded-lg border border-border bg-background text-sm"
+              />
+              <p className="text-[10px] text-muted-foreground mt-1">Added per guest above 2</p>
+            </div>
+            <div className="col-span-2">
               <label className="text-xs font-medium text-muted-foreground">Sort order</label>
               <input
                 type="number"
