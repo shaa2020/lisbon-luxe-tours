@@ -89,6 +89,8 @@ function AdminCustomBuilder() {
 
   return (
     <AdminShell>
+      <HeroEditor />
+
       <div className="flex items-center justify-between gap-3 mb-6 flex-wrap">
         <div>
           <h1 className="font-display text-2xl font-bold">Custom Tour Builder</h1>
