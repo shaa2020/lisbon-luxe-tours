@@ -97,7 +97,9 @@ function CustomBuilderPage() {
     () => (components as Component[]).filter((c) => selected.has(c.id)),
     [components, selected],
   );
-  const total = selectedComponents.reduce((s, c) => s + c.price_cents, 0);
+  const perPerson = selectedComponents.reduce((s, c) => s + c.price_cents, 0);
+  const guestsNum = Math.max(1, Number(form.guests) || 1);
+  const total = perPerson * guestsNum;
 
   const hasVehicle = grouped.vehicle?.some((c) => selected.has(c.id));
   const hasDuration = grouped.duration?.some((c) => selected.has(c.id));
