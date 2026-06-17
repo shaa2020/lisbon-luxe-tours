@@ -86,16 +86,20 @@ export const submitCustomTour = createServerFn({ method: "POST" })
       throw new Error("Please pick a preferred duration — it sets the base tour price");
     if (!hasCat("destination")) throw new Error("Please pick at least one destination");
 
-    const total = components.reduce((s, c) => s + (c.price_cents || 0), 0);
+    const perPerson = components.reduce((s, c) => s + (c.price_cents || 0), 0);
+    const total = perPerson * data.guests;
     const selections = components.map((c) => ({
       id: c.id,
       category: c.category,
       name: c.name,
       price_cents: c.price_cents,
     }));
-    const summary = components
-      .map((c) => `- ${c.name} (EUR ${(c.price_cents / 100).toFixed(0)})`)
-      .join("\n");
+    const summary = [
+      ...components.map((c) => `- ${c.name} (EUR ${(c.price_cents / 100).toFixed(0)} pp)`),
+      `Guests: ${data.guests}`,
+      `Per person: EUR ${(perPerson / 100).toFixed(0)}`,
+      `Total: EUR ${(total / 100).toFixed(0)}`,
+    ].join("\n");
 
     const { data: booking, error: bErr } = await supabaseAdmin
       .from("bookings")
