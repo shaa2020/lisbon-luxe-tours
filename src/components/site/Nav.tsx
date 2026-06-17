@@ -18,7 +18,7 @@ export function Nav({ overlay = false }: { overlay?: boolean }) {
   const links = [
     { to: "/", label: "Home" },
     { to: "/tours", label: "Tours" },
-    { to: "/tours", label: "Destinations" },
+    { to: "/tours/custom", label: "Build Your Tour" },
     { to: "/about", label: "About" },
     { to: "/contact", label: "Contact" },
   ] as const;
