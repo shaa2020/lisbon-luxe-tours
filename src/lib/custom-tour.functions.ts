@@ -74,7 +74,7 @@ export const submitCustomTour = createServerFn({ method: "POST" })
 
     const { data: rows, error: cErr } = await supabaseAdmin
       .from("custom_tour_components")
-      .select("id, category, name, price_cents, active")
+      .select("id, category, name, price_cents, extra_per_guest_cents, active")
       .in("id", data.component_ids);
     if (cErr) throw new Error(cErr.message);
     const components = (rows ?? []).filter((r) => r.active);
@@ -86,18 +86,22 @@ export const submitCustomTour = createServerFn({ method: "POST" })
       throw new Error("Please pick a preferred duration — it sets the base tour price");
     if (!hasCat("destination")) throw new Error("Please pick at least one destination");
 
-    const perPerson = components.reduce((s, c) => s + (c.price_cents || 0), 0);
-    const total = perPerson * data.guests;
-    const selections = components.map((c) => ({
+    const baseTotal = components.reduce((s, c) => s + (c.price_cents || 0), 0);
+    const extraPerGuest = components.reduce((s, c: any) => s + (c.extra_per_guest_cents || 0), 0);
+    const extraGuests = Math.max(0, data.guests - 2);
+    const total = baseTotal + extraPerGuest * extraGuests;
+    const selections = components.map((c: any) => ({
       id: c.id,
       category: c.category,
       name: c.name,
       price_cents: c.price_cents,
+      extra_per_guest_cents: c.extra_per_guest_cents || 0,
     }));
     const summary = [
-      ...components.map((c) => `- ${c.name} (EUR ${(c.price_cents / 100).toFixed(0)} pp)`),
+      ...components.map((c) => `- ${c.name} (EUR ${(c.price_cents / 100).toFixed(0)} base)`),
+      `Base price (up to 2 guests): EUR ${(baseTotal / 100).toFixed(0)}`,
+      `Extra guests: ${extraGuests} × EUR ${(extraPerGuest / 100).toFixed(0)} = EUR ${((extraPerGuest * extraGuests) / 100).toFixed(0)}`,
       `Guests: ${data.guests}`,
-      `Per person: EUR ${(perPerson / 100).toFixed(0)}`,
       `Total: EUR ${(total / 100).toFixed(0)}`,
     ].join("\n");
 
