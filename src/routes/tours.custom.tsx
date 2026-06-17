@@ -97,13 +97,18 @@ function CustomBuilderPage() {
   );
   const total = selectedComponents.reduce((s, c) => s + c.price_cents, 0);
 
+  const hasVehicle = grouped.vehicle?.some((c) => selected.has(c.id));
+  const hasDuration = grouped.duration?.some((c) => selected.has(c.id));
+  const hasDestination = grouped.destination?.some((c) => selected.has(c.id));
+  const requirementsMet = hasVehicle && hasDuration && hasDestination;
+
   function validate(): string | null {
     if (!form.customer_name.trim()) return "Please enter your name";
     if (!form.email.trim()) return "Please enter your email";
-    if (!grouped.vehicle.some((c) => selected.has(c.id))) return "Pick a vehicle";
-    if (!grouped.duration.some((c) => selected.has(c.id))) return "Pick a duration";
-    if (!grouped.destination.some((c) => selected.has(c.id)))
-      return "Pick at least one destination";
+    if (!hasVehicle) return "Pick a vehicle";
+    if (!hasDuration)
+      return "Pick a preferred duration — it sets the base price of your tour";
+    if (!hasDestination) return "Pick at least one destination";
     return null;
   }
 
@@ -184,16 +189,25 @@ function CustomBuilderPage() {
                   const Icon = meta.icon;
                   const items = grouped[cat] || [];
                   if (items.length === 0) return null;
+                  const needsAttention =
+                    meta.required && !items.some((c) => selected.has(c.id));
                   return (
                     <div key={cat}>
                       <div className="flex items-baseline gap-3 mb-4">
                         <Icon className="w-5 h-5 text-gold" />
                         <h2 className="font-display text-2xl font-bold">{meta.title}</h2>
-                        <span className="text-[11px] uppercase tracking-wider text-muted-foreground">
+                        <span
+                          className={`text-[11px] uppercase tracking-wider ${needsAttention ? "text-gold font-semibold" : "text-muted-foreground"}`}
+                        >
                           {meta.single ? "Pick one" : "Pick any"}
                           {meta.required ? " · required" : ""}
                         </span>
                       </div>
+                      {cat === "duration" && needsAttention && (
+                        <p className="text-xs text-gold/90 mb-3">
+                          Duration sets the base price of your tour — please pick one.
+                        </p>
+                      )}
                       <div className="grid sm:grid-cols-2 gap-3">
                         {items.map((c) => {
                           const isSel = selected.has(c.id);
@@ -323,9 +337,18 @@ function CustomBuilderPage() {
                 </div>
 
                 <div className="mt-5 space-y-2">
+                  {!requirementsMet && (
+                    <p className="text-[11px] text-gold text-center mb-1">
+                      {!hasVehicle
+                        ? "Pick a vehicle to continue"
+                        : !hasDuration
+                          ? "Pick a duration — it sets the base price"
+                          : "Pick at least one destination"}
+                    </p>
+                  )}
                   <button
                     onClick={() => handleSubmit("pay")}
-                    disabled={!!busy || total < 100}
+                    disabled={!!busy || !requirementsMet || total < 100}
                     className="w-full py-3 rounded-full bg-gold text-white text-[12px] font-semibold uppercase tracking-widest shadow-[0_8px_20px_rgba(43,182,247,0.35)] hover:bg-ink transition-all disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
                   >
                     {busy === "pay" && <Loader2 className="w-4 h-4 animate-spin" />}
@@ -333,7 +356,7 @@ function CustomBuilderPage() {
                   </button>
                   <button
                     onClick={() => handleSubmit("request")}
-                    disabled={!!busy}
+                    disabled={!!busy || !requirementsMet}
                     className="w-full py-3 rounded-full border border-border text-ink text-[12px] font-semibold uppercase tracking-widest hover:bg-accent transition-all disabled:opacity-50 inline-flex items-center justify-center gap-2"
                   >
                     {busy === "request" && <Loader2 className="w-4 h-4 animate-spin" />}

@@ -80,6 +80,12 @@ export const submitCustomTour = createServerFn({ method: "POST" })
     const components = (rows ?? []).filter((r) => r.active);
     if (components.length === 0) throw new Error("No valid components selected");
 
+    const hasCat = (cat: string) => components.some((c) => c.category === cat);
+    if (!hasCat("vehicle")) throw new Error("Please pick a vehicle");
+    if (!hasCat("duration"))
+      throw new Error("Please pick a preferred duration — it sets the base tour price");
+    if (!hasCat("destination")) throw new Error("Please pick at least one destination");
+
     const total = components.reduce((s, c) => s + (c.price_cents || 0), 0);
     const selections = components.map((c) => ({
       id: c.id,
