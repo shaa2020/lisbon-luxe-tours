@@ -337,9 +337,18 @@ function CustomBuilderPage() {
                 </div>
 
                 <div className="mt-5 space-y-2">
+                  {!requirementsMet && (
+                    <p className="text-[11px] text-gold text-center mb-1">
+                      {!hasVehicle
+                        ? "Pick a vehicle to continue"
+                        : !hasDuration
+                          ? "Pick a duration — it sets the base price"
+                          : "Pick at least one destination"}
+                    </p>
+                  )}
                   <button
                     onClick={() => handleSubmit("pay")}
-                    disabled={!!busy || total < 100}
+                    disabled={!!busy || !requirementsMet || total < 100}
                     className="w-full py-3 rounded-full bg-gold text-white text-[12px] font-semibold uppercase tracking-widest shadow-[0_8px_20px_rgba(43,182,247,0.35)] hover:bg-ink transition-all disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
                   >
                     {busy === "pay" && <Loader2 className="w-4 h-4 animate-spin" />}
@@ -347,7 +356,7 @@ function CustomBuilderPage() {
                   </button>
                   <button
                     onClick={() => handleSubmit("request")}
-                    disabled={!!busy}
+                    disabled={!!busy || !requirementsMet}
                     className="w-full py-3 rounded-full border border-border text-ink text-[12px] font-semibold uppercase tracking-widest hover:bg-accent transition-all disabled:opacity-50 inline-flex items-center justify-center gap-2"
                   >
                     {busy === "request" && <Loader2 className="w-4 h-4 animate-spin" />}
