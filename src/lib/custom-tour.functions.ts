@@ -47,7 +47,7 @@ export const getCustomTourComponents = createServerFn({ method: "GET" }).handler
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { data, error } = await supabaseAdmin
     .from("custom_tour_components")
-    .select("id, category, name, description, price_cents, image_url, sort_order, active")
+    .select("id, category, name, description, price_cents, extra_per_guest_cents, image_url, sort_order, active")
     .eq("active", true)
     .order("category", { ascending: true })
     .order("sort_order", { ascending: true });
