@@ -183,11 +183,14 @@ const upsertInput = z.object({
 });
 
 async function assertAdmin(context: { supabase: any; userId: string }) {
-  const { data: isAdmin } = await context.supabase.rpc("has_role" as never, {
-    _user_id: context.userId,
-    _role: "admin",
-  } as never);
-  if (!isAdmin) throw new Error("Forbidden");
+  const { data, error } = await context.supabase
+    .from("user_roles")
+    .select("role")
+    .eq("user_id", context.userId)
+    .eq("role", "admin")
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  if (!data) throw new Error("Forbidden");
 }
 
 export const adminListComponents = createServerFn({ method: "GET" })
