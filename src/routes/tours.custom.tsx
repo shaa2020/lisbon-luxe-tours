@@ -189,16 +189,25 @@ function CustomBuilderPage() {
                   const Icon = meta.icon;
                   const items = grouped[cat] || [];
                   if (items.length === 0) return null;
+                  const needsAttention =
+                    meta.required && !items.some((c) => selected.has(c.id));
                   return (
                     <div key={cat}>
                       <div className="flex items-baseline gap-3 mb-4">
                         <Icon className="w-5 h-5 text-gold" />
                         <h2 className="font-display text-2xl font-bold">{meta.title}</h2>
-                        <span className="text-[11px] uppercase tracking-wider text-muted-foreground">
+                        <span
+                          className={`text-[11px] uppercase tracking-wider ${needsAttention ? "text-gold font-semibold" : "text-muted-foreground"}`}
+                        >
                           {meta.single ? "Pick one" : "Pick any"}
                           {meta.required ? " · required" : ""}
                         </span>
                       </div>
+                      {cat === "duration" && needsAttention && (
+                        <p className="text-xs text-gold/90 mb-3">
+                          Duration sets the base price of your tour — please pick one.
+                        </p>
+                      )}
                       <div className="grid sm:grid-cols-2 gap-3">
                         {items.map((c) => {
                           const isSel = selected.has(c.id);
