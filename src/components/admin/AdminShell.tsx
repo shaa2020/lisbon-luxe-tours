@@ -15,6 +15,7 @@ import {
   ExternalLink,
   ChevronLeft,
   X,
+  Sparkles,
 } from "lucide-react";
 
 type NavItem = {
