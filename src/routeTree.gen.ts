@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as FaqRouteImport } from './routes/faq'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
@@ -36,6 +37,11 @@ import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/publi
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FaqRoute = FaqRouteImport.update({
+  id: '/faq',
+  path: '/faq',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContactRoute = ContactRouteImport.update({
@@ -154,6 +160,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
+  '/faq': typeof FaqRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/bookings': typeof AdminBookingsRoute
   '/admin/custom-builder': typeof AdminCustomBuilderRoute
@@ -179,6 +186,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
+  '/faq': typeof FaqRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/bookings': typeof AdminBookingsRoute
   '/admin/custom-builder': typeof AdminCustomBuilderRoute
@@ -205,6 +213,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
+  '/faq': typeof FaqRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/bookings': typeof AdminBookingsRoute
   '/admin/custom-builder': typeof AdminCustomBuilderRoute
@@ -232,6 +241,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/contact'
+    | '/faq'
     | '/sitemap.xml'
     | '/admin/bookings'
     | '/admin/custom-builder'
@@ -257,6 +267,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/contact'
+    | '/faq'
     | '/sitemap.xml'
     | '/admin/bookings'
     | '/admin/custom-builder'
@@ -282,6 +293,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/contact'
+    | '/faq'
     | '/sitemap.xml'
     | '/admin/bookings'
     | '/admin/custom-builder'
@@ -308,6 +320,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   ContactRoute: typeof ContactRoute
+  FaqRoute: typeof FaqRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   AdminBookingsRoute: typeof AdminBookingsRoute
   AdminCustomBuilderRoute: typeof AdminCustomBuilderRoute
@@ -337,6 +350,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/faq': {
+      id: '/faq'
+      path: '/faq'
+      fullPath: '/faq'
+      preLoaderRoute: typeof FaqRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contact': {
@@ -500,6 +520,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   ContactRoute: ContactRoute,
+  FaqRoute: FaqRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   AdminBookingsRoute: AdminBookingsRoute,
   AdminCustomBuilderRoute: AdminCustomBuilderRoute,
