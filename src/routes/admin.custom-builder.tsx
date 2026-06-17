@@ -1,16 +1,17 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { supabase } from "@/integrations/supabase/client";
+import { uploadMediaFile, slugify } from "@/lib/admin-helpers";
 import {
   adminListComponents,
   adminUpsertComponent,
   adminDeleteComponent,
 } from "@/lib/custom-tour.functions";
-import { Plus, Trash2, Save, X } from "lucide-react";
+import { Plus, Trash2, Save, X, Upload, ImageIcon } from "lucide-react";
 
 export const Route = createFileRoute("/admin/custom-builder")({
   component: AdminCustomBuilder,
