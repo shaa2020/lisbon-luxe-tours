@@ -16,6 +16,7 @@ import {
   ChevronLeft,
   X,
   Sparkles,
+  HelpCircle,
 } from "lucide-react";
 
 type NavItem = {
@@ -33,6 +34,7 @@ const PRIMARY: NavItem[] = [
 
 const MORE: NavItem[] = [
   { to: "/admin/custom-builder", label: "Custom Builder", icon: Sparkles },
+  { to: "/admin/faqs", label: "FAQs", icon: HelpCircle },
   { to: "/admin/blog", label: "Journal", icon: BookOpen },
   { to: "/admin/reviews", label: "Reviews", icon: Star },
   { to: "/admin/messages", label: "Messages", icon: MessageSquare },

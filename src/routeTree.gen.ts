@@ -26,6 +26,7 @@ import { Route as AdminReviewsRouteImport } from './routes/admin.reviews'
 import { Route as AdminOrdersRouteImport } from './routes/admin.orders'
 import { Route as AdminMessagesRouteImport } from './routes/admin.messages'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
+import { Route as AdminFaqsRouteImport } from './routes/admin.faqs'
 import { Route as AdminCustomBuilderRouteImport } from './routes/admin.custom-builder'
 import { Route as AdminBookingsRouteImport } from './routes/admin.bookings'
 import { Route as AdminToursIndexRouteImport } from './routes/admin.tours.index'
@@ -119,6 +120,11 @@ const AdminLoginRoute = AdminLoginRouteImport.update({
   path: '/admin/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminFaqsRoute = AdminFaqsRouteImport.update({
+  id: '/admin/faqs',
+  path: '/admin/faqs',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminCustomBuilderRoute = AdminCustomBuilderRouteImport.update({
   id: '/admin/custom-builder',
   path: '/admin/custom-builder',
@@ -164,6 +170,7 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/bookings': typeof AdminBookingsRoute
   '/admin/custom-builder': typeof AdminCustomBuilderRoute
+  '/admin/faqs': typeof AdminFaqsRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/messages': typeof AdminMessagesRoute
   '/admin/orders': typeof AdminOrdersRoute
@@ -190,6 +197,7 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/bookings': typeof AdminBookingsRoute
   '/admin/custom-builder': typeof AdminCustomBuilderRoute
+  '/admin/faqs': typeof AdminFaqsRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/messages': typeof AdminMessagesRoute
   '/admin/orders': typeof AdminOrdersRoute
@@ -217,6 +225,7 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/bookings': typeof AdminBookingsRoute
   '/admin/custom-builder': typeof AdminCustomBuilderRoute
+  '/admin/faqs': typeof AdminFaqsRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/messages': typeof AdminMessagesRoute
   '/admin/orders': typeof AdminOrdersRoute
@@ -245,6 +254,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/admin/bookings'
     | '/admin/custom-builder'
+    | '/admin/faqs'
     | '/admin/login'
     | '/admin/messages'
     | '/admin/orders'
@@ -271,6 +281,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/admin/bookings'
     | '/admin/custom-builder'
+    | '/admin/faqs'
     | '/admin/login'
     | '/admin/messages'
     | '/admin/orders'
@@ -297,6 +308,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/admin/bookings'
     | '/admin/custom-builder'
+    | '/admin/faqs'
     | '/admin/login'
     | '/admin/messages'
     | '/admin/orders'
@@ -324,6 +336,7 @@ export interface RootRouteChildren {
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   AdminBookingsRoute: typeof AdminBookingsRoute
   AdminCustomBuilderRoute: typeof AdminCustomBuilderRoute
+  AdminFaqsRoute: typeof AdminFaqsRoute
   AdminLoginRoute: typeof AdminLoginRoute
   AdminMessagesRoute: typeof AdminMessagesRoute
   AdminOrdersRoute: typeof AdminOrdersRoute
@@ -464,6 +477,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/faqs': {
+      id: '/admin/faqs'
+      path: '/admin/faqs'
+      fullPath: '/admin/faqs'
+      preLoaderRoute: typeof AdminFaqsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/custom-builder': {
       id: '/admin/custom-builder'
       path: '/admin/custom-builder'
@@ -524,6 +544,7 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   AdminBookingsRoute: AdminBookingsRoute,
   AdminCustomBuilderRoute: AdminCustomBuilderRoute,
+  AdminFaqsRoute: AdminFaqsRoute,
   AdminLoginRoute: AdminLoginRoute,
   AdminMessagesRoute: AdminMessagesRoute,
   AdminOrdersRoute: AdminOrdersRoute,
