@@ -136,7 +136,8 @@ function AdminCustomBuilder() {
                         <tr>
                           <th className="text-left px-3 py-2 w-14">Image</th>
                           <th className="text-left px-3 py-2">Name</th>
-                          <th className="text-right px-3 py-2">Price (€)</th>
+                          <th className="text-right px-3 py-2">Base €</th>
+                          <th className="text-right px-3 py-2 hidden sm:table-cell">+ / extra guest</th>
                           <th className="text-center px-3 py-2 hidden md:table-cell">Order</th>
                           <th className="text-center px-3 py-2">Active</th>
                           <th className="px-3 py-2"></th>
