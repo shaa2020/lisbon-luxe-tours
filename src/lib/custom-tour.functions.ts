@@ -215,7 +215,7 @@ export const adminUpsertComponent = createServerFn({ method: "POST" })
       name: data.name,
       description: data.description ?? null,
       price_cents: data.price_cents,
-      image_url: data.image_url ?? null,
+      image_url: data.image_url ? data.image_url : null,
       sort_order: data.sort_order,
       active: data.active,
     };
