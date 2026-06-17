@@ -22,12 +22,21 @@ export const DEFAULT_BUSINESS = {
   footerLegal: "RNAAT 1042 · NIF 514 832 109",
 };
 
+export const DEFAULT_CUSTOM_TOUR = {
+  eyebrow: "Build your own",
+  title: "Design Your Private Lisbon Tour",
+  subtitle:
+    "Pick your vehicle, destinations, and extras. Live pricing — book now or request a quote.",
+};
+
 export type BusinessInfo = typeof DEFAULT_BUSINESS;
+export type CustomTourHero = typeof DEFAULT_CUSTOM_TOUR;
 
 export type SiteBrand = {
   brandName: string;
   logoUrl: string | null;
   business: BusinessInfo;
+  customTour: CustomTourHero;
 };
 
 function mapBusiness(d: any): BusinessInfo {
@@ -47,6 +56,14 @@ function mapBusiness(d: any): BusinessInfo {
   };
 }
 
+function mapCustomTour(d: any): CustomTourHero {
+  return {
+    eyebrow: d?.custom_tour_eyebrow || DEFAULT_CUSTOM_TOUR.eyebrow,
+    title: d?.custom_tour_title || DEFAULT_CUSTOM_TOUR.title,
+    subtitle: d?.custom_tour_subtitle || DEFAULT_CUSTOM_TOUR.subtitle,
+  };
+}
+
 export function useSiteBrand() {
   const fetchBrand = useServerFn(getPublicSiteSettings);
 
@@ -59,12 +76,14 @@ export function useSiteBrand() {
         brandName: (data as any)?.brand_name || DEFAULT_BRAND_NAME,
         logoUrl: (data as any)?.logo_url ?? DEFAULT_BRAND_LOGO,
         business: mapBusiness(data),
+        customTour: mapCustomTour(data),
       };
     },
     placeholderData: {
       brandName: DEFAULT_BRAND_NAME,
       logoUrl: DEFAULT_BRAND_LOGO,
       business: DEFAULT_BUSINESS,
+      customTour: DEFAULT_CUSTOM_TOUR,
     },
   });
 
@@ -73,5 +92,6 @@ export function useSiteBrand() {
     brandName: query.data?.brandName ?? DEFAULT_BRAND_NAME,
     logoUrl: query.data?.logoUrl ?? DEFAULT_BRAND_LOGO,
     business: query.data?.business ?? DEFAULT_BUSINESS,
+    customTour: query.data?.customTour ?? DEFAULT_CUSTOM_TOUR,
   };
 }

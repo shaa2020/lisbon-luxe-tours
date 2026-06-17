@@ -5,6 +5,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { Nav } from "@/components/site/Nav";
 import { Footer } from "@/components/site/Footer";
+import { useSiteBrand } from "@/lib/brand";
 import { getCustomTourComponents, submitCustomTour } from "@/lib/custom-tour.functions";
 import { Check, MapPin, Car, Clock, Sparkles, Loader2 } from "lucide-react";
 
@@ -43,6 +44,7 @@ const CAT_META = {
 const ORDER: (keyof typeof CAT_META)[] = ["vehicle", "duration", "destination", "addon"];
 
 function CustomBuilderPage() {
+  const { customTour } = useSiteBrand();
   const fetcher = useServerFn(getCustomTourComponents);
   const submit = useServerFn(submitCustomTour);
   const { data: components = [], isLoading } = useQuery({
@@ -163,13 +165,13 @@ function CustomBuilderPage() {
         <section className="bg-ink text-white py-12 md:py-20">
           <div className="container-x text-center">
             <p className="text-[11px] uppercase tracking-[0.3em] text-gold mb-3">
-              Build your own
+              {customTour.eyebrow}
             </p>
             <h1 className="font-display text-4xl md:text-5xl font-bold mb-4">
-              Design Your Private Lisbon Tour
+              {customTour.title}
             </h1>
-            <p className="max-w-xl mx-auto text-white/75 text-sm md:text-base">
-              Pick your vehicle, destinations, and extras. Live pricing — book now or request a quote.
+            <p className="max-w-xl mx-auto text-white/75 text-sm md:text-base whitespace-pre-wrap">
+              {customTour.subtitle}
             </p>
           </div>
         </section>
