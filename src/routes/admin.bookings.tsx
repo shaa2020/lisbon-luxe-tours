@@ -117,6 +117,28 @@ function BookingsInbox() {
         </p>
       </div>
 
+      <div className="flex flex-wrap gap-2 mb-3">
+        {(
+          [
+            { id: "all", label: "All sources", count: bookings.length },
+            { id: "custom", label: "Custom tour requests", count: customCount },
+            { id: "standard", label: "Standard tours", count: bookings.length - customCount },
+          ] as const
+        ).map((opt) => (
+          <button
+            key={opt.id}
+            onClick={() => setSourceFilter(opt.id)}
+            className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition ${
+              sourceFilter === opt.id
+                ? "bg-foreground text-background border-foreground"
+                : "bg-card text-muted-foreground border-border hover:border-foreground"
+            }`}
+          >
+            {opt.label} <span className="opacity-70">({opt.count})</span>
+          </button>
+        ))}
+      </div>
+
       <div className="flex flex-wrap gap-2 mb-6">
         {(["all", ...STATUSES] as const).map((s) => (
           <button
@@ -133,6 +155,7 @@ function BookingsInbox() {
           </button>
         ))}
       </div>
+
 
       {isLoading ? (
         <p className="text-sm text-muted-foreground">Loading…</p>
