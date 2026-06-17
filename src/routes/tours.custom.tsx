@@ -29,6 +29,7 @@ type Component = {
   name: string;
   description: string | null;
   price_cents: number;
+  extra_per_guest_cents: number;
   image_url: string | null;
   sort_order: number;
   active: boolean;
