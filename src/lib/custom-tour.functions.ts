@@ -38,6 +38,9 @@ async function stripeFetch(path: string, init?: RequestInit & { form?: Record<st
   const text = await res.text();
   if (!res.ok) throw new Error(`Stripe ${path} ${res.status}: ${text.slice(0, 300)}`);
   return text ? JSON.parse(text) : {};
+}
+
+
 
 
 export const getCustomTourComponents = createServerFn({ method: "GET" }).handler(async () => {
