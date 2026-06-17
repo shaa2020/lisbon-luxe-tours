@@ -26,11 +26,12 @@ type Booking = {
   created_at: string;
 };
 
-const STATUSES = ["new", "confirmed", "done", "archived"] as const;
+const STATUSES = ["new", "quoted", "confirmed", "done", "archived"] as const;
 
 function statusBadge(s: string) {
   const map: Record<string, string> = {
     new: "bg-primary/10 text-primary border-primary/20",
+    quoted: "bg-amber-500/10 text-amber-700 border-amber-500/20 dark:text-amber-400",
     confirmed: "bg-emerald-500/10 text-emerald-700 border-emerald-500/20 dark:text-emerald-400",
     done: "bg-muted text-muted-foreground border-border",
     archived: "bg-muted/50 text-muted-foreground border-border",
@@ -42,6 +43,7 @@ function BookingsInbox() {
   const qc = useQueryClient();
   useSiteBrand();
   const [filter, setFilter] = useState<string>("all");
+  const [sourceFilter, setSourceFilter] = useState<"all" | "custom" | "standard">("all");
 
   const { data: bookings = [], isLoading } = useQuery({
     queryKey: ["admin-bookings"],
@@ -55,11 +57,18 @@ function BookingsInbox() {
     },
   });
 
-  const filtered = filter === "all" ? bookings : bookings.filter((b) => b.status === filter);
+  const bySource =
+    sourceFilter === "custom"
+      ? bookings.filter((b) => b.tour_slug === "custom")
+      : sourceFilter === "standard"
+        ? bookings.filter((b) => b.tour_slug !== "custom")
+        : bookings;
+  const filtered = filter === "all" ? bySource : bySource.filter((b) => b.status === filter);
   const counts = STATUSES.reduce(
-    (acc, s) => ({ ...acc, [s]: bookings.filter((b) => b.status === s).length }),
-    { all: bookings.length } as Record<string, number>,
+    (acc, s) => ({ ...acc, [s]: bySource.filter((b) => b.status === s).length }),
+    { all: bySource.length } as Record<string, number>,
   );
+  const customCount = bookings.filter((b) => b.tour_slug === "custom").length;
 
   const updateStatus = async (id: string, status: string) => {
     const { error } = await supabase.from("bookings").update({ status }).eq("id", id);
