@@ -74,6 +74,9 @@ async function loadComponents(ids: string[]) {
   const rows = (data ?? []).filter((r) => r.active);
   if (rows.length === 0) throw new Error("No valid components selected");
   return rows;
+}
+
+
 
 
 export const submitCustomTour = createServerFn({ method: "POST" })
