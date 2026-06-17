@@ -23,6 +23,7 @@ type Row = {
   name: string;
   description: string | null;
   price_cents: number;
+  extra_per_guest_cents: number;
   image_url: string | null;
   sort_order: number;
   active: boolean;
@@ -37,6 +38,7 @@ const EMPTY: Draft = {
   name: "",
   description: "",
   price_cents: 0,
+  extra_per_guest_cents: 0,
   image_url: "",
   sort_order: 0,
   active: true,
