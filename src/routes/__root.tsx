@@ -111,6 +111,46 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "icon", type: "image/png", sizes: "192x192", href: "/app-icon-192.png" },
       { rel: "icon", type: "image/png", sizes: "512x512", href: "/app-icon-512.png" },
     ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "TravelAgency",
+              "@id": "https://tuktuk24lisbon.com/#org",
+              name: "Tuk Tuk 24",
+              url: "https://tuktuk24lisbon.com",
+              telephone: "+351922024690",
+              email: "hello@tuktuk24.pt",
+              priceRange: "€€",
+              address: {
+                "@type": "PostalAddress",
+                streetAddress: "Largo da Graça 12",
+                addressLocality: "Lisboa",
+                postalCode: "1100-265",
+                addressCountry: "PT",
+              },
+              areaServed: ["Lisboa", "Sintra", "Cascais", "Belém", "Portugal"],
+              sameAs: ["https://instagram.com", "https://facebook.com"],
+            },
+            {
+              "@type": "WebSite",
+              "@id": "https://tuktuk24lisbon.com/#website",
+              url: "https://tuktuk24lisbon.com",
+              name: "Tuk Tuk 24",
+              publisher: { "@id": "https://tuktuk24lisbon.com/#org" },
+              potentialAction: {
+                "@type": "SearchAction",
+                target: "https://tuktuk24lisbon.com/tours?q={search_term_string}",
+                "query-input": "required name=search_term_string",
+              },
+            },
+          ],
+        }),
+      },
+    ],
   }),
   shellComponent: RootShell,
   component: RootComponent,

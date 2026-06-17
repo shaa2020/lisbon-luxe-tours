@@ -26,11 +26,12 @@ type Booking = {
   created_at: string;
 };
 
-const STATUSES = ["new", "confirmed", "done", "archived"] as const;
+const STATUSES = ["new", "quoted", "confirmed", "done", "archived"] as const;
 
 function statusBadge(s: string) {
   const map: Record<string, string> = {
     new: "bg-primary/10 text-primary border-primary/20",
+    quoted: "bg-amber-500/10 text-amber-700 border-amber-500/20 dark:text-amber-400",
     confirmed: "bg-emerald-500/10 text-emerald-700 border-emerald-500/20 dark:text-emerald-400",
     done: "bg-muted text-muted-foreground border-border",
     archived: "bg-muted/50 text-muted-foreground border-border",
@@ -42,6 +43,7 @@ function BookingsInbox() {
   const qc = useQueryClient();
   useSiteBrand();
   const [filter, setFilter] = useState<string>("all");
+  const [sourceFilter, setSourceFilter] = useState<"all" | "custom" | "standard">("all");
 
   const { data: bookings = [], isLoading } = useQuery({
     queryKey: ["admin-bookings"],
@@ -55,11 +57,18 @@ function BookingsInbox() {
     },
   });
 
-  const filtered = filter === "all" ? bookings : bookings.filter((b) => b.status === filter);
+  const bySource =
+    sourceFilter === "custom"
+      ? bookings.filter((b) => b.tour_slug === "custom")
+      : sourceFilter === "standard"
+        ? bookings.filter((b) => b.tour_slug !== "custom")
+        : bookings;
+  const filtered = filter === "all" ? bySource : bySource.filter((b) => b.status === filter);
   const counts = STATUSES.reduce(
-    (acc, s) => ({ ...acc, [s]: bookings.filter((b) => b.status === s).length }),
-    { all: bookings.length } as Record<string, number>,
+    (acc, s) => ({ ...acc, [s]: bySource.filter((b) => b.status === s).length }),
+    { all: bySource.length } as Record<string, number>,
   );
+  const customCount = bookings.filter((b) => b.tour_slug === "custom").length;
 
   const updateStatus = async (id: string, status: string) => {
     const { error } = await supabase.from("bookings").update({ status }).eq("id", id);
@@ -108,6 +117,28 @@ function BookingsInbox() {
         </p>
       </div>
 
+      <div className="flex flex-wrap gap-2 mb-3">
+        {(
+          [
+            { id: "all", label: "All sources", count: bookings.length },
+            { id: "custom", label: "Custom tour requests", count: customCount },
+            { id: "standard", label: "Standard tours", count: bookings.length - customCount },
+          ] as const
+        ).map((opt) => (
+          <button
+            key={opt.id}
+            onClick={() => setSourceFilter(opt.id)}
+            className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition ${
+              sourceFilter === opt.id
+                ? "bg-foreground text-background border-foreground"
+                : "bg-card text-muted-foreground border-border hover:border-foreground"
+            }`}
+          >
+            {opt.label} <span className="opacity-70">({opt.count})</span>
+          </button>
+        ))}
+      </div>
+
       <div className="flex flex-wrap gap-2 mb-6">
         {(["all", ...STATUSES] as const).map((s) => (
           <button
@@ -124,6 +155,7 @@ function BookingsInbox() {
           </button>
         ))}
       </div>
+
 
       {isLoading ? (
         <p className="text-sm text-muted-foreground">Loading…</p>

@@ -20,6 +20,7 @@ export function Nav({ overlay = false }: { overlay?: boolean }) {
     { to: "/tours", label: "Tours" },
     { to: "/tours/custom", label: "Build Your Tour" },
     { to: "/about", label: "About" },
+    { to: "/faq", label: "FAQ" },
     { to: "/contact", label: "Contact" },
   ] as const;
 

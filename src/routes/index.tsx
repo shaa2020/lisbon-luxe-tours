@@ -12,6 +12,7 @@ import { Nav } from "@/components/site/Nav";
 import { Footer } from "@/components/site/Footer";
 import { WhatsappFab } from "@/components/site/Whatsapp";
 import { BookingModal } from "@/components/site/BookingModal";
+import { TestimonialsSection } from "@/components/site/TestimonialsSection";
 import { useBlogPosts, useTours, tourPricing, type Tour } from "@/lib/cms";
 
 // Hero now uses the tuk-tuk/flowers image (per user request 2026-06-16)
@@ -51,6 +52,7 @@ function Index() {
       <WhyTravel />
       <PopularTours onBook={setBookingTour} />
       <Destinations />
+      <TestimonialsSection />
       <Gallery />
       <TravelTipsAndSignup />
       <Footer />
