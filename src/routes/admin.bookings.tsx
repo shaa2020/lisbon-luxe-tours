@@ -61,6 +61,9 @@ function BookingsInbox() {
   useSiteBrand();
   const [filter, setFilter] = useState<string>("all");
   const [sourceFilter, setSourceFilter] = useState<"all" | "custom" | "standard">("all");
+  const [search, setSearch] = useState("");
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
 
   const { data: bookings = [], isLoading } = useQuery({
     queryKey: ["admin-bookings"],
@@ -80,12 +83,73 @@ function BookingsInbox() {
       : sourceFilter === "standard"
         ? bookings.filter((b) => b.tour_slug !== "custom")
         : bookings;
-  const filtered = filter === "all" ? bySource : bySource.filter((b) => b.status === filter);
+  const q = search.trim().toLowerCase();
+  const filtered = bySource
+    .filter((b) => filter === "all" || b.status === filter)
+    .filter((b) => {
+      if (!q) return true;
+      return (
+        b.customer_name?.toLowerCase().includes(q) ||
+        b.email?.toLowerCase().includes(q) ||
+        (b.phone ?? "").toLowerCase().includes(q) ||
+        (b.tour_title ?? "").toLowerCase().includes(q)
+      );
+    })
+    .filter((b) => {
+      if (!dateFrom && !dateTo) return true;
+      if (!b.travel_date) return false;
+      if (dateFrom && b.travel_date < dateFrom) return false;
+      if (dateTo && b.travel_date > dateTo) return false;
+      return true;
+    });
   const counts = STATUSES.reduce(
     (acc, s) => ({ ...acc, [s]: bySource.filter((b) => b.status === s).length }),
     { all: bySource.length } as Record<string, number>,
   );
   const customCount = bookings.filter((b) => b.tour_slug === "custom").length;
+
+  const exportCsv = () => {
+    const headers = [
+      "Created",
+      "Status",
+      "Payment",
+      "Source",
+      "Customer",
+      "Email",
+      "Phone",
+      "Tour",
+      "Travel date",
+      "Guests",
+      "Total (EUR)",
+      "Notes",
+    ];
+    const escape = (v: unknown) => {
+      const s = v == null ? "" : String(v);
+      return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+    };
+    const rows = filtered.map((b) => [
+      new Date(b.created_at).toISOString(),
+      b.status,
+      b.payment_status ?? "",
+      b.tour_slug === "custom" ? "custom" : "standard",
+      b.customer_name,
+      b.email,
+      b.phone ?? "",
+      b.tour_title ?? "",
+      b.travel_date ?? "",
+      b.guests,
+      b.total_estimate ?? "",
+      (b.notes ?? "").replace(/\n/g, " "),
+    ]);
+    const csv = [headers, ...rows].map((r) => r.map(escape).join(",")).join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `bookings-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
 
   const updateStatus = async (id: string, status: string) => {
     const { error } = await supabase.from("bookings").update({ status }).eq("id", id);
