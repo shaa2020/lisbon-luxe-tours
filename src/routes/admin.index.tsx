@@ -194,6 +194,79 @@ function AdminDashboard() {
         <h1 className="text-3xl font-display font-bold">Dashboard</h1>
         <p className="text-sm text-muted-foreground mt-1">A quick look at what's happening on the site.</p>
       </div>
+
+      {/* ===== Revenue KPI strip ===== */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+        {[
+          { label: "Today", value: revenue.data?.today, Icon: Euro },
+          { label: "This week", value: revenue.data?.week, Icon: TrendingUp },
+          { label: "This month", value: revenue.data?.month, Icon: TrendingUp },
+          { label: "All time", value: revenue.data?.all, Icon: Euro },
+        ].map((k) => (
+          <div key={k.label} className="rounded-xl border border-border bg-card p-4">
+            <div className="flex items-center justify-between mb-1">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                {k.label}
+              </p>
+              <k.Icon className="w-3.5 h-3.5 text-muted-foreground" />
+            </div>
+            <p className="font-display text-2xl font-bold text-primary tabular-nums">
+              {revenue.isLoading ? "…" : fmtEur(k.value)}
+            </p>
+            <p className="text-[10px] text-muted-foreground mt-0.5">Paid revenue</p>
+          </div>
+        ))}
+      </div>
+
+      {/* ===== Upcoming this week ===== */}
+      <section className="rounded-xl border border-border bg-card p-5 mb-6">
+        <div className="flex items-center justify-between mb-3">
+          <div>
+            <p className="text-sm font-semibold text-foreground">Upcoming this week</p>
+            <p className="text-xs text-muted-foreground">Bookings with a travel date between today and Sunday.</p>
+          </div>
+          <Link
+            to="/admin/bookings"
+            className="text-xs font-semibold text-primary hover:underline"
+          >
+            View all →
+          </Link>
+        </div>
+        {upcoming.isLoading ? (
+          <p className="text-sm text-muted-foreground">Loading…</p>
+        ) : (upcoming.data ?? []).length === 0 ? (
+          <p className="text-sm text-muted-foreground">Nothing scheduled. Enjoy the week!</p>
+        ) : (
+          <ul className="divide-y divide-border">
+            {(upcoming.data ?? []).map((u: any) => (
+              <li key={u.id} className="py-2.5 flex items-center justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="text-sm font-medium text-foreground truncate">
+                    {u.customer_name}{" "}
+                    <span className="text-muted-foreground font-normal">
+                      · {u.tour_title || "Custom tour"}
+                    </span>
+                  </p>
+                  <p className="text-xs text-muted-foreground inline-flex items-center gap-2">
+                    {new Date(u.travel_date).toLocaleDateString(undefined, {
+                      weekday: "short",
+                      day: "numeric",
+                      month: "short",
+                    })}
+                    <span className="inline-flex items-center gap-1">
+                      <Users className="w-3 h-3" /> {u.guests}
+                    </span>
+                  </p>
+                </div>
+                <span className="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full border bg-primary/10 text-primary border-primary/20">
+                  {u.status}
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
       <div className="grid lg:grid-cols-[1.2fr_0.8fr] gap-6">
         <div className="grid sm:grid-cols-2 gap-4">
         {cards.map((c) => (
