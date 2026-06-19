@@ -1,11 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Map, BookOpen, CalendarCheck, Mail, CreditCard, Star } from "lucide-react";
+import { Map, BookOpen, CalendarCheck, Mail, CreditCard, Star, Euro, Users, TrendingUp } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { BrandLogo } from "@/components/site/BrandLogo";
 import { uploadMediaFile } from "@/lib/admin-helpers";
+import { useRevenueStats, useUpcomingThisWeek, useAdminBadges } from "@/lib/admin-stats";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/admin/")({
@@ -149,6 +150,13 @@ function AdminDashboard() {
     }
   };
 
+  const revenue = useRevenueStats();
+  const upcoming = useUpcomingThisWeek();
+  const badges = useAdminBadges();
+
+  const fmtEur = (v: number | undefined) =>
+    v == null ? "—" : `€${v.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+
   const cards = [
     { to: "/admin/tours", label: "Tours", count: tours.data, desc: "Create, edit and publish tour pages.", Icon: Map, badge: null },
     { to: "/admin/blog", label: "Journal", count: posts.data, desc: "Write and publish stories.", Icon: BookOpen, badge: null },
@@ -160,9 +168,23 @@ function AdminDashboard() {
       Icon: Star,
       badge: pendingReviews.data ? `${pendingReviews.data} pending` : null,
     },
-    { to: "/admin/bookings", label: "Bookings", count: bookings.data, desc: "Reply to booking requests on WhatsApp.", Icon: CalendarCheck, badge: null },
+    {
+      to: "/admin/bookings",
+      label: "Bookings",
+      count: bookings.data,
+      desc: "Reply to booking requests on WhatsApp.",
+      Icon: CalendarCheck,
+      badge: badges.data?.bookings ? `${badges.data.bookings} new` : null,
+    },
     { to: "/admin/orders", label: "Orders", count: orders.data, desc: "Card payments and revenue.", Icon: CreditCard, badge: null },
-    { to: "/admin/messages", label: "Messages", count: messages.data, desc: "Contact form messages inbox.", Icon: Mail, badge: null },
+    {
+      to: "/admin/messages",
+      label: "Messages",
+      count: messages.data,
+      desc: "Contact form messages inbox.",
+      Icon: Mail,
+      badge: badges.data?.messages ? `${badges.data.messages} new` : null,
+    },
   ] as const;
 
   return (
