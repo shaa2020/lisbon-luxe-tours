@@ -237,6 +237,53 @@ function BookingsInbox() {
         ))}
       </div>
 
+      <div className="flex flex-col sm:flex-row gap-2 mb-6">
+        <input
+          type="search"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search name, email, phone or tour…"
+          className="flex-1 rounded-md border border-border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary"
+        />
+        <div className="flex gap-2">
+          <label className="flex items-center gap-1 text-xs text-muted-foreground">
+            <span className="hidden sm:inline">From</span>
+            <input
+              type="date"
+              value={dateFrom}
+              onChange={(e) => setDateFrom(e.target.value)}
+              className="rounded-md border border-border bg-background px-2 py-2 text-sm"
+            />
+          </label>
+          <label className="flex items-center gap-1 text-xs text-muted-foreground">
+            <span className="hidden sm:inline">To</span>
+            <input
+              type="date"
+              value={dateTo}
+              onChange={(e) => setDateTo(e.target.value)}
+              className="rounded-md border border-border bg-background px-2 py-2 text-sm"
+            />
+          </label>
+          {(search || dateFrom || dateTo) && (
+            <button
+              onClick={() => { setSearch(""); setDateFrom(""); setDateTo(""); }}
+              className="rounded-md border border-border px-3 py-2 text-xs text-muted-foreground hover:text-foreground"
+            >
+              Clear
+            </button>
+          )}
+          <button
+            onClick={exportCsv}
+            disabled={filtered.length === 0}
+            className="rounded-md bg-primary px-3 py-2 text-xs font-semibold text-primary-foreground disabled:opacity-50"
+          >
+            Export CSV ({filtered.length})
+          </button>
+        </div>
+      </div>
+
+
+
 
       {isLoading ? (
         <p className="text-sm text-muted-foreground">Loading…</p>
