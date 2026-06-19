@@ -72,7 +72,7 @@ function ContactPage() {
         <div className="relative h-[280px] md:h-[320px] overflow-hidden bg-ink">
           <div className="container-x relative h-full flex flex-col justify-center text-white">
             <p className="eyebrow text-gold mb-3">◆  Concierge</p>
-            <h1 className="font-display font-bold text-5xl md:text-6xl mb-4 leading-[1.05] text-white">
+            <h1 className="font-display font-bold text-[2rem] sm:text-5xl md:text-6xl mb-4 leading-[1.1] text-white">
               Tell us what you'd love to see.
             </h1>
             <p className="text-white/80 max-w-xl">
