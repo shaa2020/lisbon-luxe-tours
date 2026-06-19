@@ -83,7 +83,7 @@ function ContactPage() {
         </div>
       </header>
 
-      <section className="container-x py-16 md:py-20 grid md:grid-cols-2 gap-12 items-start">
+      <section className="container-x py-16 md:py-20 grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
         {/* Contact details */}
         <div>
           <p className="eyebrow text-gold mb-3">Get in touch</p>
