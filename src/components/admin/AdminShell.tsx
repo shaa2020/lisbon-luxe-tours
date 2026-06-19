@@ -194,15 +194,23 @@ export function AdminShell({ children }: { children: ReactNode }) {
           {PRIMARY.map((n) => {
             const active = isActiveRoute(n.to, location.pathname);
             const Icon = n.icon;
+            const b = badgeFor(n.to);
             return (
               <Link
                 key={n.to}
                 to={n.to}
-                className={`flex flex-col items-center justify-center gap-0.5 active:scale-95 transition ${
+                className={`relative flex flex-col items-center justify-center gap-0.5 active:scale-95 transition ${
                   active ? "text-primary" : "text-muted-foreground"
                 }`}
               >
-                <Icon className={`w-5 h-5 ${active ? "stroke-[2.4]" : ""}`} />
+                <div className="relative">
+                  <Icon className={`w-5 h-5 ${active ? "stroke-[2.4]" : ""}`} />
+                  {b > 0 && (
+                    <span className="absolute -top-1.5 -right-2 inline-flex items-center justify-center min-w-[16px] h-[16px] px-1 rounded-full text-[9px] font-bold bg-destructive text-destructive-foreground">
+                      {b > 9 ? "9+" : b}
+                    </span>
+                  )}
+                </div>
                 <span className="text-[10px] font-medium tracking-wide">{n.label}</span>
                 {active && <span className="absolute top-0 h-0.5 w-10 bg-primary rounded-b-full" />}
               </Link>
@@ -210,11 +218,19 @@ export function AdminShell({ children }: { children: ReactNode }) {
           })}
           <button
             onClick={() => setMoreOpen(true)}
-            className={`flex flex-col items-center justify-center gap-0.5 active:scale-95 transition ${
+            className={`relative flex flex-col items-center justify-center gap-0.5 active:scale-95 transition ${
               moreActive ? "text-primary" : "text-muted-foreground"
             }`}
           >
-            <MoreHorizontal className="w-5 h-5" />
+            <div className="relative">
+              <MoreHorizontal className="w-5 h-5" />
+              {((badges?.messages ?? 0) + (badges?.reviews ?? 0)) > 0 && (
+                <span className="absolute -top-1.5 -right-2 inline-flex items-center justify-center min-w-[16px] h-[16px] px-1 rounded-full text-[9px] font-bold bg-destructive text-destructive-foreground">
+                  {Math.min(9, (badges?.messages ?? 0) + (badges?.reviews ?? 0))}
+                  {((badges?.messages ?? 0) + (badges?.reviews ?? 0)) > 9 ? "+" : ""}
+                </span>
+              )}
+            </div>
             <span className="text-[10px] font-medium tracking-wide">More</span>
           </button>
         </div>
