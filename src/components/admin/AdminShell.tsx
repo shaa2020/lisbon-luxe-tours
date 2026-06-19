@@ -263,6 +263,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
               {MORE.map((n) => {
                 const active = isActiveRoute(n.to, location.pathname);
                 const Icon = n.icon;
+                const b = badgeFor(n.to);
                 return (
                   <Link
                     key={n.to}
@@ -278,7 +279,12 @@ export function AdminShell({ children }: { children: ReactNode }) {
                     }`}>
                       <Icon className="w-5 h-5" />
                     </span>
-                    <span className="font-medium">{n.label}</span>
+                    <span className="font-medium flex-1">{n.label}</span>
+                    {b > 0 && (
+                      <span className="inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full text-[10px] font-bold bg-destructive text-destructive-foreground">
+                        {b > 99 ? "99+" : b}
+                      </span>
+                    )}
                   </Link>
                 );
               })}
