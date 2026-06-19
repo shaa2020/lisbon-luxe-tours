@@ -2,6 +2,7 @@ import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState, type ReactNode } from "react";
 import { useAuth } from "@/lib/auth";
 import { useSiteBrand } from "@/lib/brand";
+import { useAdminBadges } from "@/lib/admin-stats";
 import {
   LayoutDashboard,
   Map,
@@ -52,6 +53,13 @@ export function AdminShell({ children }: { children: ReactNode }) {
   const { brandName } = useSiteBrand();
   const navigate = useNavigate();
   const { location } = useRouterState();
+  const { data: badges } = useAdminBadges();
+  const badgeFor = (to: string): number => {
+    if (to === "/admin/bookings") return badges?.bookings ?? 0;
+    if (to === "/admin/messages") return badges?.messages ?? 0;
+    if (to === "/admin/reviews") return badges?.reviews ?? 0;
+    return 0;
+  };
   const [moreOpen, setMoreOpen] = useState(false);
 
   useEffect(() => {
