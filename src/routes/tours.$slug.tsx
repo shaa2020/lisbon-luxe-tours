@@ -4,7 +4,8 @@ import { TourCard } from "@/components/site/TourCard";
 import { Nav } from "@/components/site/Nav";
 import { Footer } from "@/components/site/Footer";
 import { WhatsappFab } from "@/components/site/Whatsapp";
-import { BookingModal } from "@/components/site/BookingModal";
+import { TourBookingPanel } from "@/components/site/TourBookingPanel";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { ReviewsSection } from "@/components/site/ReviewsSection";
 import { StarRating } from "@/components/site/StarRating";
 import { useTour, useTours, tourPricing, mapTour } from "@/lib/cms";
@@ -77,7 +78,7 @@ function TourPage() {
   const { data: allTours = [] } = useTours();
   const { data: reviews = [] } = useTourReviews(slug);
   const reviewStats = aggregateReviews(reviews);
-  const [bookingOpen, setBookingOpen] = useState(false);
+  const [sheetOpen, setSheetOpen] = useState(false);
 
   if (isLoading) {
     return (
@@ -232,44 +233,15 @@ function TourPage() {
           <ReviewsSection tourId={tour.id ?? null} tourSlug={tour.slug} tourTitle={tour.title} />
         </div>
 
-        {/* Sticky booking card */}
-        <aside className="lg:sticky lg:top-28 h-fit">
-          <div className="bg-white rounded-2xl border border-border shadow-[0_20px_50px_rgba(30,58,95,0.10)] p-7">
-            <div className="flex items-baseline justify-between mb-1">
-              <p className="text-[11px] font-semibold uppercase tracking-widest text-body">From</p>
-              <p className="text-[11px] font-semibold uppercase tracking-widest text-body">per group</p>
-            </div>
-            <div className="flex items-baseline gap-3 mb-2 flex-wrap">
-              <p className="font-display font-bold text-5xl text-gold leading-none">€{pricing.current}</p>
-              {pricing.onSale && (
-                <>
-                  <span className="font-display text-2xl text-body/50 line-through leading-none">€{pricing.original}</span>
-                  <span className="bg-red-600 text-white text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-sm">−{pricing.discountPct}%</span>
-                </>
-              )}
-            </div>
-            <p className="text-body text-sm mb-6">Private · {tour.duration} · Up to 7 guests</p>
-
-            <button
-              onClick={() => setBookingOpen(true)}
-              className="w-full bg-gold text-white py-4 rounded-full text-[12px] font-semibold uppercase tracking-widest hover:bg-ink transition shadow-[0_8px_20px_rgba(43,182,247,0.35)] mb-3"
-            >
-              Check Availability →
-            </button>
-            <a
-              href="https://wa.me/351922024690"
-              className="w-full block text-center border border-border text-ink py-4 rounded-full text-[12px] font-semibold uppercase tracking-widest hover:border-gold hover:text-gold transition"
-            >
-              WhatsApp Concierge
-            </a>
-
-            <ul className="mt-6 pt-6 border-t border-border space-y-2.5 text-[13px] text-body">
-              <li className="flex gap-2"><span className="text-gold">✓</span> Free cancellation up to 24h</li>
-              <li className="flex gap-2"><span className="text-gold">✓</span> Reserve now, pay later</li>
-              <li className="flex gap-2"><span className="text-gold">✓</span> Hotel pick-up included</li>
-              <li className="flex gap-2"><span className="text-gold">✓</span> Concierge replies in &lt;4h</li>
-            </ul>
-          </div>
+        {/* Sticky booking panel (desktop) */}
+        <aside className="hidden lg:block lg:sticky lg:top-28 h-fit">
+          <TourBookingPanel tour={tour} />
+          <a
+            href="https://wa.me/351922024690"
+            className="mt-3 w-full block text-center border border-border text-ink py-3.5 rounded-full text-[12px] font-semibold uppercase tracking-widest hover:border-gold hover:text-gold transition"
+          >
+            WhatsApp Concierge
+          </a>
         </aside>
       </section>
 
@@ -310,18 +282,24 @@ function TourPage() {
           </div>
         </div>
         <button
-          onClick={() => setBookingOpen(true)}
+          onClick={() => setSheetOpen(true)}
           className="flex-1 max-w-[220px] bg-gold text-white py-3.5 rounded-full text-[12px] font-semibold uppercase tracking-widest hover:bg-ink transition shadow-[0_6px_15px_rgba(43,182,247,0.35)]"
         >
-          Book Now →
+          Check Availability →
         </button>
       </div>
 
-      <BookingModal
-        tour={bookingOpen ? tour : null}
-        open={bookingOpen}
-        onOpenChange={setBookingOpen}
-      />
+      {/* Mobile booking sheet */}
+      <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+        <SheetContent side="bottom" className="bg-white text-ink p-0 max-h-[92vh] overflow-y-auto rounded-t-2xl border-border">
+          <SheetHeader className="px-5 pt-5 pb-2 text-left">
+            <SheetTitle className="font-display text-xl text-ink">{tour.title}</SheetTitle>
+          </SheetHeader>
+          <div className="px-5 pb-8">
+            <TourBookingPanel tour={tour} compact />
+          </div>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }
