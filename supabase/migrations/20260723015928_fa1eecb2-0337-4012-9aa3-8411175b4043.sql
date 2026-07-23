@@ -1,0 +1,3 @@
+UPDATE public.faqs
+SET answer = 'Free cancellation up to 24 hours before the tour — you get a full refund, no questions asked. Cancellations made less than 24 hours before the tour are non-refundable. If you reschedule your tour and later cancel, refund eligibility is calculated from the ORIGINAL booked date and time, not the rescheduled one. Need help? Message us on WhatsApp.'
+WHERE question ILIKE '%cancellation%';
