@@ -82,9 +82,9 @@ function AboutPage() {
       <section className="bg-ink text-white py-20 md:py-24">
         <div className="container-x">
           <div className="text-center mb-14">
-            <p className="eyebrow text-gold mb-3">The Fleet</p>
+            <p className="eyebrow text-gold mb-3">Our fleet</p>
             <h2 className="font-display text-3xl md:text-4xl font-bold text-white">
-              Four vehicles. One standard.
+              A few vehicles, all kept in shape.
             </h2>
           </div>
 
