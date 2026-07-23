@@ -125,24 +125,18 @@ function Hero() {
 
 function SearchBar() {
   return (
-    <div className="bg-white rounded-2xl shadow-[0_20px_50px_rgba(30,58,95,0.15)] p-4 md:p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 gap-3 md:gap-2 items-end">
-      <SearchField label="Destinations" placeholder="City, region, or anywhere">
+    <div className="bg-white rounded-2xl shadow-[0_20px_50px_rgba(30,58,95,0.15)] p-4 md:p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-2 items-end">
+      <SearchField label="Where" placeholder="Alfama, Sintra, Belém…">
         <PinIco />
       </SearchField>
-      <SearchField label="Check in" placeholder="dd / mm / yy" type="date">
+      <SearchField label="Date" placeholder="dd / mm / yy" type="date">
         <CalIco />
       </SearchField>
-      <SearchField label="Check out" placeholder="dd / mm / yy" type="date">
-        <CalIco />
-      </SearchField>
-      <SearchField label="People" placeholder="2" type="number">
+      <SearchField label="Guests" placeholder="2" type="number">
         <UserIco />
       </SearchField>
-      <SearchField label="Max Budget" placeholder="€1,500" type="number">
-        <span className="text-[13px] font-semibold">€</span>
-      </SearchField>
       <Link to="/tours" className="sm:col-span-2 md:col-span-1 h-[52px] rounded-full bg-gold text-white font-semibold text-[13px] tracking-widest uppercase shadow-[0_8px_20px_rgba(43,182,247,0.4)] hover:bg-ink hover:shadow-[0_8px_20px_rgba(30,58,95,0.4)] transition-all flex items-center justify-center">
-        Search Tour
+        Find a tour
       </Link>
     </div>
   );
