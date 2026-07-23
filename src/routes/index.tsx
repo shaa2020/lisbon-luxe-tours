@@ -408,7 +408,7 @@ function PopularCard({ tour, onBook }: { tour: Tour; onBook: () => void }) {
           <Link to="/tours/$slug" params={{ slug: tour.slug }}>{tour.title}</Link>
         </h3>
         <div className="flex items-center gap-1 text-gold text-[11px] mb-4">
-          ★★★★★ <span className="text-ink/40 ml-1">(reviews)</span>
+          <span className="text-[11px] text-body/70 mb-4 block">Private group · English & Portuguese</span>
         </div>
         <div className="flex items-center gap-4 text-[11px] text-body mb-5 pb-5 border-b border-border">
           <span className="flex items-center gap-1.5"><PinIco /> Portugal</span>
