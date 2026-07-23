@@ -176,25 +176,24 @@ function AboutSection() {
   return (
     <section className="container-x py-16 md:py-32 grid md:grid-cols-2 gap-12 md:gap-16 items-center">
       <div>
-        <p className="eyebrow text-gold mb-4">About Us</p>
+        <p className="eyebrow text-gold mb-4">About us</p>
         <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-ink leading-tight mb-6">
-          A boutique travel house, rooted in Lisboa since 2012.
+          A small tuk-tuk crew, born and raised in Lisbon.
         </h2>
         <p className="text-body leading-relaxed mb-8">
-          We are a small team of native guides, chauffeurs, and concierges who design private
-          journeys across Portugal. Every itinerary is custom — never a coach, never a crowd.
-          From the Moorish lanes of Alfama to the mist-wrapped palaces of Sintra, we travel slow,
-          we travel local, and we travel only with you.
+          We're a family-run team of Lisboeta drivers and guides. No coach buses, no scripted
+          headsets — just our tuk-tuks, the neighborhoods we grew up in, and the time to show
+          them properly. Tell us what you like and we'll build the route around it.
         </p>
 
         <ul className="grid grid-cols-2 gap-y-3 gap-x-6 mb-10">
           {[
-            "5 Star Accommodations",
-            "Handpick Hotels",
-            "Accessibility Management",
-            "First Class Flights",
-            "Inclusive Packages",
-            "Private 24/7 Concierge",
+            "Local, licensed guides",
+            "Electric tuk-tuks",
+            "Private group only",
+            "English · Portuguese · Spanish",
+            "Hotel pickup available",
+            "WhatsApp us anytime",
           ].map((f) => (
             <li key={f} className="flex items-center gap-3 text-[14px] text-ink">
               <span className="w-5 h-5 rounded-full bg-gold/15 text-gold flex items-center justify-center text-[12px]">
@@ -209,7 +208,7 @@ function AboutSection() {
           to="/about"
           className="inline-flex items-center px-8 py-4 rounded-full bg-gold text-white text-[12px] font-semibold uppercase tracking-widest shadow-[0_8px_20px_rgba(43,182,247,0.35)] hover:bg-ink hover:shadow-[0_8px_20px_rgba(30,58,95,0.35)] transition-all"
         >
-          Learn about our Portugal tours
+          More about us
         </Link>
       </div>
 
