@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { format } from "date-fns";
-import { CalendarIcon, Clock, Globe2, ShieldCheck, MapPin, Loader2, Minus, Plus, ChevronDown } from "lucide-react";
+import { CalendarIcon, Clock, Globe2, ShieldCheck, MapPin, Loader2, Minus, Plus, ChevronDown, Check } from "lucide-react";
 import { type Tour, tourPricing } from "@/lib/cms";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -9,12 +9,15 @@ import { useServerFn } from "@tanstack/react-start";
 import { createCheckoutSession } from "@/lib/checkout.functions";
 import { toast } from "sonner";
 import { CANCELLATION_POLICY_FULL } from "@/lib/cancellation";
+import { useSiteBrand } from "@/lib/brand";
 
 const TIME_SLOTS = ["09:00", "10:30", "13:00", "15:00", "17:00", "18:30"];
 
 export function TourBookingPanel({ tour }: { tour: Tour; compact?: boolean }) {
   const checkoutFn = useServerFn(createCheckoutSession);
   const pricing = tourPricing(tour);
+  const { hotelPickupFeeCents } = useSiteBrand();
+  const pickupFee = Math.max(0, Math.round((hotelPickupFeeCents || 0) / 100));
 
   const [date, setDate] = useState<Date | undefined>();
   const [time, setTime] = useState<string>(TIME_SLOTS[1]);
@@ -23,9 +26,11 @@ export function TourBookingPanel({ tour }: { tour: Tour; compact?: boolean }) {
   const [email, setEmail] = useState("");
   const [showContact, setShowContact] = useState(false);
   const [paying, setPaying] = useState(false);
+  const [pickup, setPickup] = useState(false);
 
   const extras = Math.max(0, guests - 2) * 35;
-  const total = pricing.current + extras;
+  const pickupCharge = pickup ? pickupFee : 0;
+  const total = pricing.current + extras + pickupCharge;
   const isEmail = (s: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);
   const canContinue = !!date && !!time && guests > 0;
 
@@ -44,6 +49,7 @@ export function TourBookingPanel({ tour }: { tour: Tour; compact?: boolean }) {
           travel_date: date ? format(date, "yyyy-MM-dd") : null,
           time,
           guests,
+          notes: pickup ? `Hotel pickup & drop-off requested (+€${pickupFee})` : null,
           amount: total * 100,
           image_url: tour.image?.startsWith("http") ? tour.image : null,
         },
@@ -54,6 +60,7 @@ export function TourBookingPanel({ tour }: { tour: Tour; compact?: boolean }) {
       toast.error((err as Error).message || "Could not start checkout.");
     }
   };
+
 
   return (
     <div className="bg-paper border border-border shadow-[0_4px_24px_rgba(30,58,95,0.06)] rounded-[4px] overflow-hidden">
