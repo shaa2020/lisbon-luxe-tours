@@ -29,6 +29,8 @@ export const DEFAULT_CUSTOM_TOUR = {
     "Pick your vehicle, destinations, and extras. Live pricing — book now or request a quote.",
 };
 
+export const DEFAULT_HOTEL_PICKUP_FEE_CENTS = 2000;
+
 export type BusinessInfo = typeof DEFAULT_BUSINESS;
 export type CustomTourHero = typeof DEFAULT_CUSTOM_TOUR;
 
@@ -37,6 +39,7 @@ export type SiteBrand = {
   logoUrl: string | null;
   business: BusinessInfo;
   customTour: CustomTourHero;
+  hotelPickupFeeCents: number;
 };
 
 function mapBusiness(d: any): BusinessInfo {
