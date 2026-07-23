@@ -93,7 +93,7 @@ export function TourBookingPanel({ tour }: { tour: Tour; compact?: boolean }) {
         <div className="flex gap-2.5 p-3 bg-gold/5 border border-gold/20 rounded-[2px]">
           <ShieldCheck className="w-3.5 h-3.5 text-gold shrink-0 mt-0.5" />
           <p className="text-[11px] leading-relaxed text-body">
-            <span className="text-ink font-medium">Free cancellation</span> up to 24 hours before the tour. Cancellations within 24 hours are non-refundable.
+            <span className="text-ink font-medium">Free cancellation</span> up to 24 hours before the tour. Cancellations within 24 hours are non-refundable. If you reschedule and later cancel, refund is calculated from the <span className="text-ink font-medium">original booked date</span>.
           </p>
         </div>
       </div>
