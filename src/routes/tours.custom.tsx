@@ -45,13 +45,15 @@ const CAT_META = {
 const ORDER: (keyof typeof CAT_META)[] = ["vehicle", "duration", "destination", "addon"];
 
 function CustomBuilderPage() {
-  const { customTour } = useSiteBrand();
+  const { customTour, hotelPickupFeeCents } = useSiteBrand();
+  const pickupFee = Math.max(0, Math.round((hotelPickupFeeCents || 0) / 100));
   const fetcher = useServerFn(getCustomTourComponents);
   const submit = useServerFn(submitCustomTour);
   const { data: components = [], isLoading } = useQuery({
     queryKey: ["custom-tour-components"],
     queryFn: () => fetcher(),
   });
+  const [pickup, setPickup] = useState(false);
 
   const grouped = useMemo(() => {
     const map: Record<string, Component[]> = {
