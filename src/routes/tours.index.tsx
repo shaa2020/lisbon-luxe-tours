@@ -185,19 +185,19 @@ function ToursPage() {
       {/* CTA */}
       <section className="bg-cloud/60 py-20 md:py-24">
         <div className="container-x text-center max-w-3xl">
-          <p className="eyebrow text-gold mb-3">Don't see your perfect day?</p>
+          <p className="eyebrow text-gold mb-3">Want something different?</p>
           <h2 className="font-display text-3xl md:text-4xl font-bold text-ink mb-4">
-            We build private itineraries from scratch.
+            Build your own tuk-tuk route.
           </h2>
           <p className="text-body mb-8">
-            Tell us your dates, your appetites, your pace — your concierge will design a day
-            no two other guests have ever had.
+            Tell us how much time you have and what you're into — we'll put a route together for
+            the day and quote you upfront.
           </p>
           <Link
             to="/contact"
             className="inline-flex items-center px-8 py-4 rounded-full bg-gold text-white text-[12px] font-semibold uppercase tracking-widest shadow-[0_8px_20px_rgba(43,182,247,0.35)] hover:bg-ink hover:shadow-[0_8px_20px_rgba(30,58,95,0.35)] transition-all"
           >
-            Design a Custom Tour →
+            Plan a custom tour →
           </Link>
         </div>
       </section>
