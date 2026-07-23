@@ -252,10 +252,31 @@ export function TourBookingPanel({ tour }: { tour: Tour; compact?: boolean }) {
 
       {/* Total + CTA */}
       <div className="bg-cloud/40 border-t border-border p-6 space-y-4">
+        {(extras > 0 || pickupCharge > 0) && (
+          <div className="space-y-1 text-[11px] text-body">
+            <div className="flex justify-between">
+              <span>Base</span>
+              <span>€{pricing.current.toFixed(2)}</span>
+            </div>
+            {extras > 0 && (
+              <div className="flex justify-between">
+                <span>Extra guests</span>
+                <span>+€{extras.toFixed(2)}</span>
+              </div>
+            )}
+            {pickupCharge > 0 && (
+              <div className="flex justify-between">
+                <span>Hotel pickup &amp; drop-off</span>
+                <span>+€{pickupCharge.toFixed(2)}</span>
+              </div>
+            )}
+          </div>
+        )}
         <div className="flex justify-between items-baseline">
           <span className="text-xs text-body">Total Amount</span>
           <span className="font-display text-2xl text-ink leading-none">€{total.toFixed(2)}</span>
         </div>
+
         <button
           onClick={handleContinue}
           disabled={paying || !canContinue}
