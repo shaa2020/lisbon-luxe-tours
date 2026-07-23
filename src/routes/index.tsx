@@ -286,7 +286,7 @@ function FlashCard({ tour }: { tour: Tour }) {
           {tour.title}
         </h3>
         <div className="flex items-center gap-1 text-gold text-[11px] mb-3">
-          ★★★★★ <span className="text-ink/40 ml-1">(124)</span>
+          <span className="text-[11px] text-body/70">Private group</span>
         </div>
         <div className="flex items-center justify-between text-[11px] text-body">
           <span className="flex items-center gap-1"><PinIco /> Lisboa</span>
