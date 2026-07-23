@@ -553,9 +553,9 @@ function TravelTipsAndSignup() {
       <div className="flex items-end justify-between mb-12">
         <div>
           <h2 className="font-display text-3xl md:text-4xl font-bold text-ink mb-2">
-            Travel Tips
+            From our journal
           </h2>
-          <p className="text-body text-sm">Stories, guides and seasonal advice from our concierge.</p>
+          <p className="text-body text-sm">Notes and tips from around the city.</p>
         </div>
         <Link to="/journal" className="text-[12px] font-semibold uppercase tracking-widest text-gold hover:text-ink transition">
           View All ›
