@@ -62,18 +62,18 @@ function AboutPage() {
           />
         </div>
         <div>
-          <p className="eyebrow text-gold mb-3">Our Story</p>
+          <p className="eyebrow text-gold mb-3">How we started</p>
           <h2 className="font-display text-3xl md:text-4xl font-bold text-ink mb-6 leading-tight">
-            A small house, with a long table.
+            One tuk-tuk, one neighborhood, then the rest of the city.
           </h2>
           <p className="text-body leading-relaxed mb-5">
-            We began with one electric tuk-tuk and the belief that Lisbon deserved to be shown — not
-            performed. A decade later, our team of Lisboeta guides and chauffeurs designs private
-            journeys for travellers who would rather see one neighborhood deeply than ten quickly.
+            We started with a single electric tuk-tuk and a simple idea: show Lisbon the way
+            we'd show a friend visiting for the weekend. Alfama in the morning before the
+            crowds, a pastel de nata stop we actually eat at, and back before the heat kicks in.
           </p>
           <p className="text-body leading-relaxed">
-            Every itinerary is custom. Every guide was born here. And the only currency we trade
-            in is time — yours, ours, and the city's.
+            Every route is planned around you — how much time you have, what you're up for,
+            whether you want to walk more or ride more. Ask us anything on the day.
           </p>
         </div>
       </section>
