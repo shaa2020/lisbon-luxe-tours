@@ -147,7 +147,7 @@ function AboutPage() {
                 { t: "Never shared.", d: "Every tour runs as a single private party — your group only." },
                 { t: "Native guides.", d: "Born in Lisboa, trained for years, paid fairly, never scripted." },
                 { t: "Flat pricing.", d: "What you see is what you pay. No commissions, no surprises." },
-                { t: "Free 24h cancel.", d: "Plans change. We get it. Cancel up to 24h before with no fee." },
+                { t: "Free 24h cancel.", d: "Free cancellation up to 24 hours before the tour — full refund. Cancellations within 24 hours are non-refundable. If you reschedule and later cancel, refund eligibility is calculated from the original booked date and time, not the rescheduled one." },
               ].map((v) => (
                 <li key={v.t} className="flex gap-4">
                   <span className="shrink-0 w-7 h-7 rounded-full bg-gold/15 text-gold flex items-center justify-center text-[12px] font-bold">✓</span>
