@@ -1,0 +1,1 @@
+ALTER TABLE public.site_settings ADD COLUMN IF NOT EXISTS hotel_pickup_fee_cents integer NOT NULL DEFAULT 2000;
