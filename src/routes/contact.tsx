@@ -9,14 +9,14 @@ import { useSiteBrand } from "@/lib/brand";
 export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
-      { title: "Contact & Concierge — Tuk Tuk 24" },
+      { title: "Contact — Tuk Tuk 24 Lisbon" },
       {
         name: "description",
         content:
-          "Plan a private tour or custom Portugal itinerary. Reach our Lisboa concierge by form, email, or WhatsApp — we reply within a few hours.",
+          "Plan a private tuk-tuk tour in Lisbon. Reach us by form, email or WhatsApp — we usually reply within a few hours.",
       },
       { property: "og:title", content: "Contact Tuk Tuk 24" },
-      { property: "og:description", content: "Speak with a Lisboa concierge." },
+      { property: "og:description", content: "Get in touch with our Lisbon tuk-tuk team." },
       { property: "og:url", content: "/contact" },
     ],
     links: [{ rel: "canonical", href: "/contact" }],
