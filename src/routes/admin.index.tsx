@@ -103,6 +103,7 @@ function AdminDashboard() {
         facebook_url: d.facebook_url ?? "",
         twitter_url: d.twitter_url ?? "",
         footer_legal: d.footer_legal ?? "",
+        hotel_pickup_fee_cents: Number(d.hotel_pickup_fee_cents ?? 2000) || 0,
       });
     }
   }, [brand.data]);
