@@ -600,11 +600,11 @@ function SignupCard() {
   return (
     <div className="relative rounded-xl bg-gradient-to-br from-ink to-[#0f2945] text-white p-8 overflow-hidden">
       <div className="absolute -bottom-10 -right-10 w-48 h-48 rounded-full bg-gold/20 blur-2xl" />
-      <p className="eyebrow text-gold mb-3">Sign up</p>
+      <p className="eyebrow text-gold mb-3">Stay in touch</p>
       <h3 className="font-display text-2xl font-bold leading-tight mb-2">
-        …to get newsletter
+        Quiet emails, honest deals.
       </h3>
-      <p className="text-white/70 text-sm mb-6">& receive our best offer.</p>
+      <p className="text-white/70 text-sm mb-6">Seasonal tips and the odd last-minute spot.</p>
       {done ? (
         <div className="rounded-md bg-white/10 border border-white/20 p-4 text-sm">
           Thanks — we'll be in touch at <span className="text-gold font-semibold">{email}</span>.
