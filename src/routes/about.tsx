@@ -138,15 +138,15 @@ function AboutPage() {
       <section className="bg-cloud/60 py-20 md:py-24">
         <div className="container-x grid md:grid-cols-2 gap-14 items-center">
           <div>
-            <p className="eyebrow text-gold mb-3">Why Tuk Tuk 24</p>
+            <p className="eyebrow text-gold mb-3">What to expect</p>
             <h2 className="font-display text-3xl md:text-4xl font-bold text-ink mb-6 leading-tight">
-              The small print that actually matters.
+              A few things worth knowing before you book.
             </h2>
             <ul className="space-y-4">
               {[
-                { t: "Never shared.", d: "Every tour runs as a single private party — your group only." },
-                { t: "Native guides.", d: "Born in Lisboa, trained for years, paid fairly, never scripted." },
-                { t: "Flat pricing.", d: "What you see is what you pay. No commissions, no surprises." },
+                { t: "Private, always.", d: "You book, you ride. No shared groups, no strangers on the bench next to you." },
+                { t: "Local drivers.", d: "Born and raised here. Ask them where to eat afterwards — they'll actually know." },
+                { t: "Flat price.", d: "The number on the site is the number you pay. No commissions added at the end." },
                 { t: "Free 24h cancel.", d: "Free cancellation up to 24 hours before the tour — full refund. Cancellations within 24 hours are non-refundable. If you reschedule and later cancel, refund eligibility is calculated from the original booked date and time, not the rescheduled one." },
               ].map((v) => (
                 <li key={v.t} className="flex gap-4">
