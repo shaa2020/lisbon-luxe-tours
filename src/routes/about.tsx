@@ -10,16 +10,16 @@ import { WhatsappFab } from "@/components/site/Whatsapp";
 export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
-      { title: "About — Tuk Tuk 24 Private Tours of Portugal" },
+      { title: "About — Tuk Tuk 24 Lisbon" },
       {
         name: "description",
         content:
-          "Founded in Lisboa in 2012. A boutique fleet of electric tuk-tuks and Mercedes vans, operated by a small team of multilingual local guides.",
+          "A small, family-run tuk-tuk company based in Lisbon. Local drivers, electric tuk-tuks, private tours only.",
       },
       { property: "og:title", content: "About Tuk Tuk 24" },
       {
         property: "og:description",
-        content: "The philosophy, the people, and the fleet behind our private Portugal experiences.",
+        content: "The people and tuk-tuks behind our Lisbon tours.",
       },
       { property: "og:url", content: "/about" },
     ],
