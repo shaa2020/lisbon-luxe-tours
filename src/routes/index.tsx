@@ -507,9 +507,9 @@ function Gallery() {
     <section className="bg-cloud/40 py-20 md:py-24">
       <div className="container-x">
         <div className="text-center mb-12">
-          <p className="eyebrow text-gold mb-3">Tourist's Shared Photo</p>
+          <p className="eyebrow text-gold mb-3">From the tuk-tuk</p>
           <h2 className="font-display text-3xl md:text-4xl font-bold text-ink">
-            Moments from our travelers.
+            Snapshots from recent rides.
           </h2>
         </div>
 
