@@ -11,13 +11,7 @@ type Faq = { id: string; question: string; answer: string };
 
 const FALLBACK: Faq[] = [
   {
-    id: "fallback-cancel",
-    question: "What is your cancellation policy?",
-    answer:
-      "Free cancellation up to 24 hours before the tour — you get a full refund, no questions asked. Cancellations made less than 24 hours before the tour are non-refundable. If you reschedule your tour and later cancel, refund eligibility is calculated from the ORIGINAL booked date and time, not the rescheduled one. Need help? Message us on WhatsApp.",
-  },
-  {
-    id: "fallback-book",
+    id: "fallback",
     question: "How do I book a tuk-tuk tour in Lisbon?",
     answer:
       "You can book directly through any tour page, by using our Build Your Tour designer, on WhatsApp, or by contacting us. We reply within four hours.",

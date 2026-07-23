@@ -8,7 +8,6 @@ import { cn } from "@/lib/utils";
 import { useServerFn } from "@tanstack/react-start";
 import { createCheckoutSession } from "@/lib/checkout.functions";
 import { toast } from "sonner";
-import { CANCELLATION_POLICY_FULL } from "@/lib/cancellation";
 
 const TIME_SLOTS = ["09:00", "10:30", "13:00", "15:00", "17:00", "18:30"];
 
@@ -81,21 +80,8 @@ export function TourBookingPanel({ tour }: { tour: Tour; compact?: boolean }) {
       <div className="p-6 grid grid-cols-2 gap-y-4 gap-x-2">
         <Detail icon={<Clock className="w-4 h-4" />} label={tour.duration} />
         <Detail icon={<Globe2 className="w-4 h-4" />} label="EN / PT Guide" />
-        <Detail
-          icon={<ShieldCheck className="w-4 h-4" />}
-          label="Free cancel · 24h"
-          title={CANCELLATION_POLICY_FULL}
-        />
+        <Detail icon={<ShieldCheck className="w-4 h-4" />} label="Free Cancel" />
         <Detail icon={<MapPin className="w-4 h-4" />} label="Hotel Pickup" />
-      </div>
-
-      <div className="px-6 pb-2">
-        <div className="flex gap-2.5 p-3 bg-gold/5 border border-gold/20 rounded-[2px]">
-          <ShieldCheck className="w-3.5 h-3.5 text-gold shrink-0 mt-0.5" />
-          <p className="text-[11px] leading-relaxed text-body">
-            <span className="text-ink font-medium">Free cancellation</span> up to 24 hours before the tour. Cancellations within 24 hours are non-refundable. If you reschedule and later cancel, refund is calculated from the <span className="text-ink font-medium">original booked date</span>.
-          </p>
-        </div>
       </div>
 
       {/* Controls */}
@@ -233,9 +219,9 @@ export function TourBookingPanel({ tour }: { tour: Tour; compact?: boolean }) {
   );
 }
 
-function Detail({ icon, label, title }: { icon: React.ReactNode; label: string; title?: string }) {
+function Detail({ icon, label }: { icon: React.ReactNode; label: string }) {
   return (
-    <div className="flex items-center gap-3" title={title}>
+    <div className="flex items-center gap-3">
       <div className="w-4 h-4 text-gold shrink-0">{icon}</div>
       <span className="text-xs text-ink font-medium truncate">{label}</span>
     </div>
