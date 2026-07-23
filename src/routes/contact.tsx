@@ -140,8 +140,8 @@ function ContactPage() {
               <p className="eyebrow text-gold mb-3">Received</p>
               <h3 className="font-display text-2xl md:text-3xl font-bold mb-3">Thank you — we'll be in touch.</h3>
               <p className="text-white/70 max-w-sm mx-auto">
-                A member of the concierge team will reply within a few hours with availability
-                and a draft itinerary.
+                One of us will get back to you within a few hours with availability
+                and a rough plan for the day.
               </p>
             </div>
           ) : (
