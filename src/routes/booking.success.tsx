@@ -69,10 +69,16 @@ function SuccessPage() {
               You'll receive details on WhatsApp shortly.
             </p>
             {state.amount ? (
-              <p className="font-display text-3xl text-gold mb-8">
+              <p className="font-display text-3xl text-gold mb-6">
                 €{(state.amount / 100).toFixed(2)}
               </p>
             ) : null}
+            <div className="mb-8 p-4 bg-gold/5 border border-gold/20 rounded-lg text-left">
+              <p className="text-[11px] font-semibold uppercase tracking-widest text-gold mb-1.5">Cancellation policy</p>
+              <p className="text-xs text-body leading-relaxed">
+                <span className="text-ink font-medium">Free cancellation</span> up to 24 hours before the tour. Cancellations made less than 24 hours before the tour are non-refundable.
+              </p>
+            </div>
             <Link
               to="/"
               className="inline-block px-7 py-3 rounded-full bg-ink text-white text-[11px] font-semibold uppercase tracking-widest hover:bg-gold transition"
