@@ -94,7 +94,14 @@ export function TourBookingPanel({ tour }: { tour: Tour; compact?: boolean }) {
           title={CANCELLATION_POLICY_FULL}
         />
         <Detail icon={<MapPin className="w-4 h-4" />} label="Hotel Pickup" />
+        <Detail
+          icon={<MapPin className="w-4 h-4" />}
+          label={pickupFee > 0 ? `Hotel Pickup · +€${pickupFee}` : "Hotel Pickup"}
+          title={pickupFee > 0 ? `Optional hotel pickup & drop-off available for €${pickupFee}.` : undefined}
+        />
       </div>
+
+
 
       <div className="px-6 pb-2">
         <div className="flex gap-2.5 p-3 bg-gold/5 border border-gold/20 rounded-[2px]">
