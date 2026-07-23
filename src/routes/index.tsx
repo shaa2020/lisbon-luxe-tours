@@ -302,18 +302,18 @@ function FlashCard({ tour }: { tour: Tour }) {
 function WhyTravel() {
   const features = [
     {
-      title: "Stay Safe",
-      body: "Vetted vehicles, licensed guides, 24/7 concierge support — your journey is in trusted hands.",
+      title: "Small & private",
+      body: "You book, your group rides — no strangers, no shared vans. Just you, us, and the city.",
       icon: <ShieldIco />,
     },
     {
-      title: "Quality Services",
-      body: "Hand-picked hotels, private vehicles, table reservations and skip-the-line palace tickets.",
+      title: "Real Lisboetas",
+      body: "Our guides grew up here. They'll take you past the queues and into the streets they actually live on.",
       icon: <BadgeIco />,
     },
     {
-      title: "Save Money",
-      body: "Transparent flat pricing — no commissions, no hidden upsells, no surprises at checkout.",
+      title: "One flat price",
+      body: "The price you see is the price you pay. No commission games, no upsells at the end of the ride.",
       icon: <CoinIco />,
     },
   ];
@@ -335,9 +335,9 @@ function WhyTravel() {
       </svg>
 
       <div className="text-center mb-14">
-        <p className="eyebrow text-gold mb-3">Why travel with Tuk Tuk 24</p>
+        <p className="eyebrow text-gold mb-3">Why ride with us</p>
         <h2 className="font-display text-3xl md:text-4xl font-bold text-ink">
-          Slow, private, unforgettable.
+          Small tuk-tuks, big city, no rush.
         </h2>
       </div>
 
