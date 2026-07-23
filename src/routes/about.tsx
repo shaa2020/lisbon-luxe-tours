@@ -122,9 +122,9 @@ function AboutPage() {
       <section className="container-x py-20 md:py-24">
         <div className="grid md:grid-cols-3 gap-10 text-center">
           {[
-            { k: "12+", v: "Years guiding" },
+            { k: "10+", v: "Years driving Lisbon" },
             { k: "100%", v: "Electric tuk-tuks" },
-            { k: "4.97", v: "Avg review · 1.2k stays" },
+            { k: "24h", v: "WhatsApp reply, usually faster" },
           ].map((s) => (
             <div key={s.v} className="p-8 rounded-2xl bg-cloud/60 border border-border hover:border-gold/40 transition-colors">
               <p className="font-display font-bold text-5xl md:text-6xl text-gold mb-2">{s.k}</p>
