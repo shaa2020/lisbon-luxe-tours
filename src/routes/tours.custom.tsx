@@ -45,13 +45,15 @@ const CAT_META = {
 const ORDER: (keyof typeof CAT_META)[] = ["vehicle", "duration", "destination", "addon"];
 
 function CustomBuilderPage() {
-  const { customTour } = useSiteBrand();
+  const { customTour, hotelPickupFeeCents } = useSiteBrand();
+  const pickupFee = Math.max(0, Math.round((hotelPickupFeeCents || 0) / 100));
   const fetcher = useServerFn(getCustomTourComponents);
   const submit = useServerFn(submitCustomTour);
   const { data: components = [], isLoading } = useQuery({
     queryKey: ["custom-tour-components"],
     queryFn: () => fetcher(),
   });
+  const [pickup, setPickup] = useState(false);
 
   const grouped = useMemo(() => {
     const map: Record<string, Component[]> = {
@@ -102,7 +104,8 @@ function CustomBuilderPage() {
   const extraPerGuest = selectedComponents.reduce((s, c) => s + (c.extra_per_guest_cents || 0), 0);
   const guestsNum = Math.max(1, Number(form.guests) || 1);
   const extraGuests = Math.max(0, guestsNum - 2);
-  const total = baseTotal + extraPerGuest * extraGuests;
+  const pickupCharge = pickup ? pickupFee * 100 : 0;
+  const total = baseTotal + extraPerGuest * extraGuests + pickupCharge;
 
   const hasVehicle = grouped.vehicle?.some((c) => selected.has(c.id));
   const hasDuration = grouped.duration?.some((c) => selected.has(c.id));
@@ -136,7 +139,10 @@ function CustomBuilderPage() {
           travel_date: form.travel_date || null,
           time: form.time || null,
           guests: Number(form.guests) || 1,
-          notes: form.notes.trim() || null,
+          notes: [
+            form.notes.trim() || null,
+            pickup ? `Hotel pickup & drop-off requested (+€${pickupFee})` : null,
+          ].filter(Boolean).join("\n\n") || null,
           mode,
         },
       });
@@ -280,6 +286,22 @@ function CustomBuilderPage() {
                   </ul>
                 )}
 
+                {pickupFee > 0 && (
+                  <label className="flex items-start gap-3 mb-3 p-3 rounded-lg border border-border cursor-pointer hover:border-gold/50 transition-colors">
+                    <input
+                      type="checkbox"
+                      checked={pickup}
+                      onChange={(e) => setPickup(e.target.checked)}
+                      className="mt-1 accent-gold"
+                    />
+                    <span className="flex-1">
+                      <span className="block text-sm text-ink font-medium">Add hotel pickup &amp; drop-off</span>
+                      <span className="block text-[11px] text-muted-foreground">We collect you at your hotel and drop you off after the tour.</span>
+                    </span>
+                    <span className="text-sm font-medium text-ink">+€{pickupFee}</span>
+                  </label>
+                )}
+
                 <div className="border-t border-border pt-3 mb-5 space-y-1">
                   <div className="flex justify-between text-xs text-muted-foreground">
                     <span>Base (up to 2 guests)</span>
@@ -291,6 +313,12 @@ function CustomBuilderPage() {
                         Extra guests ({extraGuests} × €{(extraPerGuest / 100).toFixed(0)})
                       </span>
                       <span>€{((extraPerGuest * extraGuests) / 100).toFixed(0)}</span>
+                    </div>
+                  )}
+                  {pickup && pickupFee > 0 && (
+                    <div className="flex justify-between text-xs text-muted-foreground">
+                      <span>Hotel pickup &amp; drop-off</span>
+                      <span>€{pickupFee}</span>
                     </div>
                   )}
                   <div className="flex justify-between items-baseline pt-1">

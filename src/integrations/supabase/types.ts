@@ -358,6 +358,7 @@ export type Database = {
           facebook_url: string | null
           footer_legal: string | null
           footer_tagline: string | null
+          hotel_pickup_fee_cents: number
           id: boolean
           instagram_url: string | null
           logo_url: string | null
@@ -380,6 +381,7 @@ export type Database = {
           facebook_url?: string | null
           footer_legal?: string | null
           footer_tagline?: string | null
+          hotel_pickup_fee_cents?: number
           id?: boolean
           instagram_url?: string | null
           logo_url?: string | null
@@ -402,6 +404,7 @@ export type Database = {
           facebook_url?: string | null
           footer_legal?: string | null
           footer_tagline?: string | null
+          hotel_pickup_fee_cents?: number
           id?: boolean
           instagram_url?: string | null
           logo_url?: string | null

@@ -29,6 +29,8 @@ export const DEFAULT_CUSTOM_TOUR = {
     "Pick your vehicle, destinations, and extras. Live pricing — book now or request a quote.",
 };
 
+export const DEFAULT_HOTEL_PICKUP_FEE_CENTS = 2000;
+
 export type BusinessInfo = typeof DEFAULT_BUSINESS;
 export type CustomTourHero = typeof DEFAULT_CUSTOM_TOUR;
 
@@ -37,6 +39,7 @@ export type SiteBrand = {
   logoUrl: string | null;
   business: BusinessInfo;
   customTour: CustomTourHero;
+  hotelPickupFeeCents: number;
 };
 
 function mapBusiness(d: any): BusinessInfo {
@@ -77,6 +80,8 @@ export function useSiteBrand() {
         logoUrl: (data as any)?.logo_url ?? DEFAULT_BRAND_LOGO,
         business: mapBusiness(data),
         customTour: mapCustomTour(data),
+        hotelPickupFeeCents:
+          Number((data as any)?.hotel_pickup_fee_cents ?? DEFAULT_HOTEL_PICKUP_FEE_CENTS) || 0,
       };
     },
     placeholderData: {
@@ -84,6 +89,7 @@ export function useSiteBrand() {
       logoUrl: DEFAULT_BRAND_LOGO,
       business: DEFAULT_BUSINESS,
       customTour: DEFAULT_CUSTOM_TOUR,
+      hotelPickupFeeCents: DEFAULT_HOTEL_PICKUP_FEE_CENTS,
     },
   });
 
@@ -93,5 +99,6 @@ export function useSiteBrand() {
     logoUrl: query.data?.logoUrl ?? DEFAULT_BRAND_LOGO,
     business: query.data?.business ?? DEFAULT_BUSINESS,
     customTour: query.data?.customTour ?? DEFAULT_CUSTOM_TOUR,
+    hotelPickupFeeCents: query.data?.hotelPickupFeeCents ?? DEFAULT_HOTEL_PICKUP_FEE_CENTS,
   };
 }

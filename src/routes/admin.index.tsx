@@ -82,6 +82,7 @@ function AdminDashboard() {
     facebook_url: "",
     twitter_url: "",
     footer_legal: "",
+    hotel_pickup_fee_cents: 2000,
   });
   const [savingBiz, setSavingBiz] = useState(false);
 
@@ -102,6 +103,7 @@ function AdminDashboard() {
         facebook_url: d.facebook_url ?? "",
         twitter_url: d.twitter_url ?? "",
         footer_legal: d.footer_legal ?? "",
+        hotel_pickup_fee_cents: Number(d.hotel_pickup_fee_cents ?? 2000) || 0,
       });
     }
   }, [brand.data]);
@@ -376,6 +378,25 @@ function AdminDashboard() {
             </label>
           ))}
         </div>
+        <label className="block space-y-1 max-w-xs">
+          <span className="text-xs font-medium text-foreground">Hotel pickup &amp; drop-off fee (€)</span>
+          <input
+            type="number"
+            min={0}
+            step="1"
+            value={Math.round((biz.hotel_pickup_fee_cents ?? 0) / 100)}
+            onChange={(e) =>
+              setBiz((b) => ({
+                ...b,
+                hotel_pickup_fee_cents: Math.max(0, Math.round(Number(e.target.value) || 0) * 100),
+              }))
+            }
+            className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary"
+          />
+          <span className="block text-[11px] text-muted-foreground">
+            Shown on tour and custom booking pages. Added to the total when guests opt in. Set to 0 to hide.
+          </span>
+        </label>
         <button
           type="button"
           onClick={saveBiz}
