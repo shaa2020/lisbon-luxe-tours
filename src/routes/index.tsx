@@ -450,9 +450,9 @@ function Destinations() {
   return (
     <section className="container-x py-20 md:py-28">
       <div className="text-center mb-14">
-        <p className="eyebrow text-gold mb-3">Choose Your Destinations</p>
+        <p className="eyebrow text-gold mb-3">Where we go</p>
         <h2 className="font-display text-3xl md:text-4xl font-bold text-ink">
-          Where in Portugal will it be?
+          Pick a neighborhood, we'll drive.
         </h2>
       </div>
 
