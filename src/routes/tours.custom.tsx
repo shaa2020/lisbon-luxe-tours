@@ -286,6 +286,22 @@ function CustomBuilderPage() {
                   </ul>
                 )}
 
+                {pickupFee > 0 && (
+                  <label className="flex items-start gap-3 mb-3 p-3 rounded-lg border border-border cursor-pointer hover:border-gold/50 transition-colors">
+                    <input
+                      type="checkbox"
+                      checked={pickup}
+                      onChange={(e) => setPickup(e.target.checked)}
+                      className="mt-1 accent-gold"
+                    />
+                    <span className="flex-1">
+                      <span className="block text-sm text-ink font-medium">Add hotel pickup &amp; drop-off</span>
+                      <span className="block text-[11px] text-muted-foreground">We collect you at your hotel and drop you off after the tour.</span>
+                    </span>
+                    <span className="text-sm font-medium text-ink">+€{pickupFee}</span>
+                  </label>
+                )}
+
                 <div className="border-t border-border pt-3 mb-5 space-y-1">
                   <div className="flex justify-between text-xs text-muted-foreground">
                     <span>Base (up to 2 guests)</span>
@@ -297,6 +313,12 @@ function CustomBuilderPage() {
                         Extra guests ({extraGuests} × €{(extraPerGuest / 100).toFixed(0)})
                       </span>
                       <span>€{((extraPerGuest * extraGuests) / 100).toFixed(0)}</span>
+                    </div>
+                  )}
+                  {pickup && pickupFee > 0 && (
+                    <div className="flex justify-between text-xs text-muted-foreground">
+                      <span>Hotel pickup &amp; drop-off</span>
+                      <span>€{pickupFee}</span>
                     </div>
                   )}
                   <div className="flex justify-between items-baseline pt-1">
