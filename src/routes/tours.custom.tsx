@@ -104,7 +104,8 @@ function CustomBuilderPage() {
   const extraPerGuest = selectedComponents.reduce((s, c) => s + (c.extra_per_guest_cents || 0), 0);
   const guestsNum = Math.max(1, Number(form.guests) || 1);
   const extraGuests = Math.max(0, guestsNum - 2);
-  const total = baseTotal + extraPerGuest * extraGuests;
+  const pickupCharge = pickup ? pickupFee * 100 : 0;
+  const total = baseTotal + extraPerGuest * extraGuests + pickupCharge;
 
   const hasVehicle = grouped.vehicle?.some((c) => selected.has(c.id));
   const hasDuration = grouped.duration?.some((c) => selected.has(c.id));
