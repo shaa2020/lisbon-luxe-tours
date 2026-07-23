@@ -80,6 +80,8 @@ export function useSiteBrand() {
         logoUrl: (data as any)?.logo_url ?? DEFAULT_BRAND_LOGO,
         business: mapBusiness(data),
         customTour: mapCustomTour(data),
+        hotelPickupFeeCents:
+          Number((data as any)?.hotel_pickup_fee_cents ?? DEFAULT_HOTEL_PICKUP_FEE_CENTS) || 0,
       };
     },
     placeholderData: {
@@ -87,6 +89,7 @@ export function useSiteBrand() {
       logoUrl: DEFAULT_BRAND_LOGO,
       business: DEFAULT_BUSINESS,
       customTour: DEFAULT_CUSTOM_TOUR,
+      hotelPickupFeeCents: DEFAULT_HOTEL_PICKUP_FEE_CENTS,
     },
   });
 
@@ -96,5 +99,6 @@ export function useSiteBrand() {
     logoUrl: query.data?.logoUrl ?? DEFAULT_BRAND_LOGO,
     business: query.data?.business ?? DEFAULT_BUSINESS,
     customTour: query.data?.customTour ?? DEFAULT_CUSTOM_TOUR,
+    hotelPickupFeeCents: query.data?.hotelPickupFeeCents ?? DEFAULT_HOTEL_PICKUP_FEE_CENTS,
   };
 }
