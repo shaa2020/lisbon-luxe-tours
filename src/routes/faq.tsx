@@ -14,7 +14,7 @@ const FALLBACK: Faq[] = [
     id: "fallback-cancel",
     question: "What is your cancellation policy?",
     answer:
-      "Free cancellation up to 24 hours before the tour — you get a full refund, no questions asked. Cancellations made less than 24 hours before the tour are non-refundable. Need to reschedule inside the 24-hour window? Message us on WhatsApp and we'll do our best based on availability.",
+      "Free cancellation up to 24 hours before the tour — you get a full refund, no questions asked. Cancellations made less than 24 hours before the tour are non-refundable. If you reschedule your tour and later cancel, refund eligibility is calculated from the ORIGINAL booked date and time, not the rescheduled one. Need help? Message us on WhatsApp.",
   },
   {
     id: "fallback-book",
