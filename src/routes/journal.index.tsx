@@ -16,7 +16,7 @@ export const Route = createFileRoute("/journal/")({
       { property: "og:title", content: "Journal — Tuk Tuk 24" },
       {
         property: "og:description",
-        content: "Travel stories, local planning advice and Portugal itineraries from our concierge team.",
+        content: "Notes, tips and route ideas from our Lisbon tuk-tuk drivers.",
       },
       { property: "og:url", content: "/journal" },
     ],
