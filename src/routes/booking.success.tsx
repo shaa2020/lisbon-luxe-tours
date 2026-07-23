@@ -76,7 +76,7 @@ function SuccessPage() {
             <div className="mb-8 p-4 bg-gold/5 border border-gold/20 rounded-lg text-left">
               <p className="text-[11px] font-semibold uppercase tracking-widest text-gold mb-1.5">Cancellation policy</p>
               <p className="text-xs text-body leading-relaxed">
-                <span className="text-ink font-medium">Free cancellation</span> up to 24 hours before the tour. Cancellations made less than 24 hours before the tour are non-refundable.
+                <span className="text-ink font-medium">Free cancellation</span> up to 24 hours before the tour. Cancellations made less than 24 hours before the tour are non-refundable. If you reschedule and later cancel, refund eligibility is calculated from the <span className="text-ink font-medium">original booked date and time</span>, not the rescheduled one.
               </p>
             </div>
             <Link

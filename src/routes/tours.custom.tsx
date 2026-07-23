@@ -389,7 +389,7 @@ function CustomBuilderPage() {
                 </p>
                 <div className="mt-3 p-3 bg-gold/5 border border-gold/20 rounded-lg">
                   <p className="text-[11px] leading-relaxed text-body">
-                    <span className="text-ink font-medium">Free cancellation</span> up to 24 hours before the tour. Cancellations within 24 hours are non-refundable.
+                    <span className="text-ink font-medium">Free cancellation</span> up to 24 hours before the tour. Cancellations within 24 hours are non-refundable. If you reschedule and later cancel, refund is calculated from the <span className="text-ink font-medium">original booked date</span>.
                   </p>
                 </div>
               </div>
