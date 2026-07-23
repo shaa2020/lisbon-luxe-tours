@@ -82,6 +82,7 @@ function AdminDashboard() {
     facebook_url: "",
     twitter_url: "",
     footer_legal: "",
+    hotel_pickup_fee_cents: 2000,
   });
   const [savingBiz, setSavingBiz] = useState(false);
 
