@@ -22,17 +22,17 @@ const lockedAboutImg = `${aboutImg}?v=locked-20260616`;
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Tuk Tuk 24 — Discover Portugal · Private Tours of Lisboa, Sintra & the Coast" },
+      { title: "Tuk Tuk 24 — Private Tuk-Tuk Tours in Lisbon" },
       {
         name: "description",
         content:
-          "Plan your Portugal trip with Tuk Tuk 24. Browse popular private tuk-tuk, Sintra, Belém, Cascais and sunset tours. Real local guides, flexible departures, instant inquiry.",
+          "Private tuk-tuk tours around Lisbon with local drivers. Alfama, Belém, Sintra, sunset rides — small groups, flat prices, easy booking.",
       },
-      { property: "og:title", content: "Tuk Tuk 24 — Discover Portugal" },
+      { property: "og:title", content: "Tuk Tuk 24 — Private Tuk-Tuk Tours in Lisbon" },
       {
         property: "og:description",
         content:
-          "Private tours, flash deals and curated itineraries across Lisboa, Sintra, Belém and the Atlantic coast.",
+          "Small, family-run tuk-tuk tours around Lisbon with local drivers.",
       },
       { property: "og:url", content: "/" },
     ],
@@ -81,17 +81,17 @@ function Hero() {
 
         <div className="relative container-x h-full flex flex-col justify-center text-white">
           <p className="eyebrow text-white/90 mb-3 md:mb-4 animate-[fade-up_0.9s_var(--ease-out-expo)_both]">
-            ◆  Discover
+            ◆  Lisboa
           </p>
           <h1
             className="font-display font-bold tracking-tight leading-[1.02] mb-5 md:mb-6 text-white animate-[fade-up_1s_var(--ease-out-expo)_0.1s_both] max-w-4xl"
             style={{ fontSize: "clamp(40px, 7vw, 92px)" }}
           >
-            Private Tuk Tuk Tours in Portugal
+            Private Tuk Tuk Tours in Lisbon
           </h1>
           <p className="max-w-xl text-white/90 text-[15px] md:text-lg leading-relaxed animate-[fade-up_1s_var(--ease-out-expo)_0.2s_both]">
-            A land of cinnamon-tiled rooftops, Atlantic cliffs and slow afternoons. Explore
-            with a private guide — by tuk-tuk, by Mercedes, by foot — entirely your own pace.
+            See Lisbon the way we do — through the hills of Alfama, along the river in Belém,
+            and up to Sintra. Small groups, local guides, your pace.
           </p>
 
           <div className="absolute right-6 bottom-16 hidden lg:block animate-[fade-in_1.4s_var(--ease-out-expo)_0.4s_both]">
@@ -125,24 +125,18 @@ function Hero() {
 
 function SearchBar() {
   return (
-    <div className="bg-white rounded-2xl shadow-[0_20px_50px_rgba(30,58,95,0.15)] p-4 md:p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 gap-3 md:gap-2 items-end">
-      <SearchField label="Destinations" placeholder="City, region, or anywhere">
+    <div className="bg-white rounded-2xl shadow-[0_20px_50px_rgba(30,58,95,0.15)] p-4 md:p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-2 items-end">
+      <SearchField label="Where" placeholder="Alfama, Sintra, Belém…">
         <PinIco />
       </SearchField>
-      <SearchField label="Check in" placeholder="dd / mm / yy" type="date">
+      <SearchField label="Date" placeholder="dd / mm / yy" type="date">
         <CalIco />
       </SearchField>
-      <SearchField label="Check out" placeholder="dd / mm / yy" type="date">
-        <CalIco />
-      </SearchField>
-      <SearchField label="People" placeholder="2" type="number">
+      <SearchField label="Guests" placeholder="2" type="number">
         <UserIco />
       </SearchField>
-      <SearchField label="Max Budget" placeholder="€1,500" type="number">
-        <span className="text-[13px] font-semibold">€</span>
-      </SearchField>
       <Link to="/tours" className="sm:col-span-2 md:col-span-1 h-[52px] rounded-full bg-gold text-white font-semibold text-[13px] tracking-widest uppercase shadow-[0_8px_20px_rgba(43,182,247,0.4)] hover:bg-ink hover:shadow-[0_8px_20px_rgba(30,58,95,0.4)] transition-all flex items-center justify-center">
-        Search Tour
+        Find a tour
       </Link>
     </div>
   );
@@ -182,25 +176,24 @@ function AboutSection() {
   return (
     <section className="container-x py-16 md:py-32 grid md:grid-cols-2 gap-12 md:gap-16 items-center">
       <div>
-        <p className="eyebrow text-gold mb-4">About Us</p>
+        <p className="eyebrow text-gold mb-4">About us</p>
         <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-ink leading-tight mb-6">
-          A boutique travel house, rooted in Lisboa since 2012.
+          A small tuk-tuk crew, born and raised in Lisbon.
         </h2>
         <p className="text-body leading-relaxed mb-8">
-          We are a small team of native guides, chauffeurs, and concierges who design private
-          journeys across Portugal. Every itinerary is custom — never a coach, never a crowd.
-          From the Moorish lanes of Alfama to the mist-wrapped palaces of Sintra, we travel slow,
-          we travel local, and we travel only with you.
+          We're a family-run team of Lisboeta drivers and guides. No coach buses, no scripted
+          headsets — just our tuk-tuks, the neighborhoods we grew up in, and the time to show
+          them properly. Tell us what you like and we'll build the route around it.
         </p>
 
         <ul className="grid grid-cols-2 gap-y-3 gap-x-6 mb-10">
           {[
-            "5 Star Accommodations",
-            "Handpick Hotels",
-            "Accessibility Management",
-            "First Class Flights",
-            "Inclusive Packages",
-            "Private 24/7 Concierge",
+            "Local, licensed guides",
+            "Electric tuk-tuks",
+            "Private group only",
+            "English · Portuguese · Spanish",
+            "Hotel pickup available",
+            "WhatsApp us anytime",
           ].map((f) => (
             <li key={f} className="flex items-center gap-3 text-[14px] text-ink">
               <span className="w-5 h-5 rounded-full bg-gold/15 text-gold flex items-center justify-center text-[12px]">
@@ -215,7 +208,7 @@ function AboutSection() {
           to="/about"
           className="inline-flex items-center px-8 py-4 rounded-full bg-gold text-white text-[12px] font-semibold uppercase tracking-widest shadow-[0_8px_20px_rgba(43,182,247,0.35)] hover:bg-ink hover:shadow-[0_8px_20px_rgba(30,58,95,0.35)] transition-all"
         >
-          Learn about our Portugal tours
+          More about us
         </Link>
       </div>
 
@@ -246,9 +239,9 @@ function FlashDeals() {
         <div className="flex items-end justify-between mb-12">
           <div>
             <h2 className="font-display text-3xl md:text-4xl font-bold text-ink mb-2">
-              Flash Deal
+              Last-minute spots
             </h2>
-            <p className="text-body text-sm">Our best last-minute offers. Book now and go!</p>
+            <p className="text-body text-sm">Tours leaving soon with a couple of seats left.</p>
           </div>
           <Link to="/tours" className="text-[12px] font-semibold uppercase tracking-widest text-gold hover:text-ink transition">
             View All ›
@@ -293,7 +286,7 @@ function FlashCard({ tour }: { tour: Tour }) {
           {tour.title}
         </h3>
         <div className="flex items-center gap-1 text-gold text-[11px] mb-3">
-          ★★★★★ <span className="text-ink/40 ml-1">(124)</span>
+          <span className="text-[11px] text-body/70">Private group</span>
         </div>
         <div className="flex items-center justify-between text-[11px] text-body">
           <span className="flex items-center gap-1"><PinIco /> Lisboa</span>
@@ -309,18 +302,18 @@ function FlashCard({ tour }: { tour: Tour }) {
 function WhyTravel() {
   const features = [
     {
-      title: "Stay Safe",
-      body: "Vetted vehicles, licensed guides, 24/7 concierge support — your journey is in trusted hands.",
+      title: "Small & private",
+      body: "You book, your group rides — no strangers, no shared vans. Just you, us, and the city.",
       icon: <ShieldIco />,
     },
     {
-      title: "Quality Services",
-      body: "Hand-picked hotels, private vehicles, table reservations and skip-the-line palace tickets.",
+      title: "Real Lisboetas",
+      body: "Our guides grew up here. They'll take you past the queues and into the streets they actually live on.",
       icon: <BadgeIco />,
     },
     {
-      title: "Save Money",
-      body: "Transparent flat pricing — no commissions, no hidden upsells, no surprises at checkout.",
+      title: "One flat price",
+      body: "The price you see is the price you pay. No commission games, no upsells at the end of the ride.",
       icon: <CoinIco />,
     },
   ];
@@ -342,9 +335,9 @@ function WhyTravel() {
       </svg>
 
       <div className="text-center mb-14">
-        <p className="eyebrow text-gold mb-3">Why travel with Tuk Tuk 24</p>
+        <p className="eyebrow text-gold mb-3">Why ride with us</p>
         <h2 className="font-display text-3xl md:text-4xl font-bold text-ink">
-          Slow, private, unforgettable.
+          Small tuk-tuks, big city, no rush.
         </h2>
       </div>
 
@@ -374,9 +367,9 @@ function PopularTours({ onBook }: { onBook: (t: Tour) => void }) {
         <div className="flex items-end justify-between mb-12">
           <div>
             <h2 className="font-display text-3xl md:text-4xl font-bold text-ink mb-2">
-              Popular Tour
+              Our most-booked tours
             </h2>
-            <p className="text-body text-sm">Most-loved private experiences from our collection.</p>
+            <p className="text-body text-sm">The routes travelers keep asking us to run.</p>
           </div>
           <Link to="/tours" className="text-[12px] font-semibold uppercase tracking-widest text-gold hover:text-ink transition">
             View All ›
@@ -414,9 +407,7 @@ function PopularCard({ tour, onBook }: { tour: Tour; onBook: () => void }) {
         <h3 className="font-display font-semibold text-ink text-[16px] leading-snug mb-2 hover:text-gold transition-colors">
           <Link to="/tours/$slug" params={{ slug: tour.slug }}>{tour.title}</Link>
         </h3>
-        <div className="flex items-center gap-1 text-gold text-[11px] mb-4">
-          ★★★★★ <span className="text-ink/40 ml-1">(reviews)</span>
-        </div>
+        <p className="text-[11px] text-body/70 mb-4">Private group · English & Portuguese</p>
         <div className="flex items-center gap-4 text-[11px] text-body mb-5 pb-5 border-b border-border">
           <span className="flex items-center gap-1.5"><PinIco /> Portugal</span>
           <span className="flex items-center gap-1.5"><ClockIco /> {tour.duration}</span>
@@ -459,9 +450,9 @@ function Destinations() {
   return (
     <section className="container-x py-20 md:py-28">
       <div className="text-center mb-14">
-        <p className="eyebrow text-gold mb-3">Choose Your Destinations</p>
+        <p className="eyebrow text-gold mb-3">Where we go</p>
         <h2 className="font-display text-3xl md:text-4xl font-bold text-ink">
-          Where in Portugal will it be?
+          Pick a neighborhood, we'll drive.
         </h2>
       </div>
 
@@ -516,9 +507,9 @@ function Gallery() {
     <section className="bg-cloud/40 py-20 md:py-24">
       <div className="container-x">
         <div className="text-center mb-12">
-          <p className="eyebrow text-gold mb-3">Tourist's Shared Photo</p>
+          <p className="eyebrow text-gold mb-3">From the tuk-tuk</p>
           <h2 className="font-display text-3xl md:text-4xl font-bold text-ink">
-            Moments from our travelers.
+            Snapshots from recent rides.
           </h2>
         </div>
 
@@ -562,9 +553,9 @@ function TravelTipsAndSignup() {
       <div className="flex items-end justify-between mb-12">
         <div>
           <h2 className="font-display text-3xl md:text-4xl font-bold text-ink mb-2">
-            Travel Tips
+            From our journal
           </h2>
-          <p className="text-body text-sm">Stories, guides and seasonal advice from our concierge.</p>
+          <p className="text-body text-sm">Notes and tips from around the city.</p>
         </div>
         <Link to="/journal" className="text-[12px] font-semibold uppercase tracking-widest text-gold hover:text-ink transition">
           View All ›
@@ -609,11 +600,11 @@ function SignupCard() {
   return (
     <div className="relative rounded-xl bg-gradient-to-br from-ink to-[#0f2945] text-white p-8 overflow-hidden">
       <div className="absolute -bottom-10 -right-10 w-48 h-48 rounded-full bg-gold/20 blur-2xl" />
-      <p className="eyebrow text-gold mb-3">Sign up</p>
+      <p className="eyebrow text-gold mb-3">Stay in touch</p>
       <h3 className="font-display text-2xl font-bold leading-tight mb-2">
-        …to get newsletter
+        Quiet emails, honest deals.
       </h3>
-      <p className="text-white/70 text-sm mb-6">& receive our best offer.</p>
+      <p className="text-white/70 text-sm mb-6">Seasonal tips and the odd last-minute spot.</p>
       {done ? (
         <div className="rounded-md bg-white/10 border border-white/20 p-4 text-sm">
           Thanks — we'll be in touch at <span className="text-gold font-semibold">{email}</span>.

@@ -9,14 +9,14 @@ import { useSiteBrand } from "@/lib/brand";
 export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
-      { title: "Contact & Concierge — Tuk Tuk 24" },
+      { title: "Contact — Tuk Tuk 24 Lisbon" },
       {
         name: "description",
         content:
-          "Plan a private tour or custom Portugal itinerary. Reach our Lisboa concierge by form, email, or WhatsApp — we reply within a few hours.",
+          "Plan a private tuk-tuk tour in Lisbon. Reach us by form, email or WhatsApp — we usually reply within a few hours.",
       },
       { property: "og:title", content: "Contact Tuk Tuk 24" },
-      { property: "og:description", content: "Speak with a Lisboa concierge." },
+      { property: "og:description", content: "Get in touch with our Lisbon tuk-tuk team." },
       { property: "og:url", content: "/contact" },
     ],
     links: [{ rel: "canonical", href: "/contact" }],
@@ -140,8 +140,8 @@ function ContactPage() {
               <p className="eyebrow text-gold mb-3">Received</p>
               <h3 className="font-display text-2xl md:text-3xl font-bold mb-3">Thank you — we'll be in touch.</h3>
               <p className="text-white/70 max-w-sm mx-auto">
-                A member of the concierge team will reply within a few hours with availability
-                and a draft itinerary.
+                One of us will get back to you within a few hours with availability
+                and a rough plan for the day.
               </p>
             </div>
           ) : (

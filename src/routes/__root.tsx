@@ -74,22 +74,22 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Tuk Tuk 24 — Private Lisbon Tuk-Tuk & Luxury Tours" },
+      { title: "Tuk Tuk 24 — Private Tuk-Tuk Tours in Lisbon" },
       {
         name: "description",
         content:
-          "Cinematic private tuk-tuk and luxury SUV tours in Lisbon, Sintra, Belém and Cascais. Bespoke itineraries, multilingual guides, door-to-door concierge.",
+          "Private tuk-tuk tours in Lisbon with local drivers. Alfama, Belém, Sintra and the coast — small groups, flat prices, easy WhatsApp booking.",
       },
-      { property: "og:title", content: "Tuk Tuk 24 — Private Lisbon Tuk-Tuk & Luxury Tours" },
+      { property: "og:title", content: "Tuk Tuk 24 — Private Tuk-Tuk Tours in Lisbon" },
       {
         property: "og:description",
         content:
-          "Private electric tuk-tuks and luxury chauffeured experiences across Portugal.",
+          "Small, family-run tuk-tuk tours around Lisbon with local drivers.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Tuk Tuk 24 — Private Lisbon Tuk-Tuk & Luxury Tours" },
-      { name: "twitter:description", content: "Cinematic private tuk-tuk and luxury SUV tours in Lisbon, Sintra, Belém and Cascais." },
+      { name: "twitter:title", content: "Tuk Tuk 24 — Private Tuk-Tuk Tours in Lisbon" },
+      { name: "twitter:description", content: "Small, family-run tuk-tuk tours around Lisbon with local drivers." },
       { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/76264757-16b0-4de3-8741-88f13d8b4088" },
       { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/76264757-16b0-4de3-8741-88f13d8b4088" },
       { name: "theme-color", content: "#1e3a5f" },

@@ -10,16 +10,16 @@ import { WhatsappFab } from "@/components/site/Whatsapp";
 export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
-      { title: "About — Tuk Tuk 24 Private Tours of Portugal" },
+      { title: "About — Tuk Tuk 24 Lisbon" },
       {
         name: "description",
         content:
-          "Founded in Lisboa in 2012. A boutique fleet of electric tuk-tuks and Mercedes vans, operated by a small team of multilingual local guides.",
+          "A small, family-run tuk-tuk company based in Lisbon. Local drivers, electric tuk-tuks, private tours only.",
       },
       { property: "og:title", content: "About Tuk Tuk 24" },
       {
         property: "og:description",
-        content: "The philosophy, the people, and the fleet behind our private Portugal experiences.",
+        content: "The people and tuk-tuks behind our Lisbon tours.",
       },
       { property: "og:url", content: "/about" },
     ],
@@ -39,13 +39,13 @@ function AboutPage() {
           <img src={vanImg} alt="Tuk Tuk 24 Mercedes V-Class fleet on a Lisbon street" className="absolute inset-0 w-full h-full object-cover" />
           <div className="absolute inset-0 bg-ink/55" />
           <div className="container-x relative h-full flex flex-col justify-center text-white">
-            <p className="eyebrow text-white/80 mb-3">◆  Our Philosophy</p>
+            <p className="eyebrow text-white/80 mb-3">◆  Who we are</p>
             <h1 className="font-display font-bold text-5xl md:text-6xl mb-4 leading-[1.05]">
-              Travel slow.<br />Travel local.
+              Local drivers.<br />Real Lisbon.
             </h1>
             <p className="text-white/85 max-w-xl">
-              Tuk Tuk 24 is a boutique travel house founded in Lisboa in 2012 — built around
-              private guides, quiet vehicles, and itineraries with breathing room.
+              Tuk Tuk 24 is a small, family-run tuk-tuk company based in Lisbon. We drive the
+              routes we grew up on, at a pace that lets you actually see the place.
             </p>
           </div>
         </div>
@@ -62,18 +62,18 @@ function AboutPage() {
           />
         </div>
         <div>
-          <p className="eyebrow text-gold mb-3">Our Story</p>
+          <p className="eyebrow text-gold mb-3">How we started</p>
           <h2 className="font-display text-3xl md:text-4xl font-bold text-ink mb-6 leading-tight">
-            A small house, with a long table.
+            One tuk-tuk, one neighborhood, then the rest of the city.
           </h2>
           <p className="text-body leading-relaxed mb-5">
-            We began with one electric tuk-tuk and the belief that Lisbon deserved to be shown — not
-            performed. A decade later, our team of Lisboeta guides and chauffeurs designs private
-            journeys for travellers who would rather see one neighborhood deeply than ten quickly.
+            We started with a single electric tuk-tuk and a simple idea: show Lisbon the way
+            we'd show a friend visiting for the weekend. Alfama in the morning before the
+            crowds, a pastel de nata stop we actually eat at, and back before the heat kicks in.
           </p>
           <p className="text-body leading-relaxed">
-            Every itinerary is custom. Every guide was born here. And the only currency we trade
-            in is time — yours, ours, and the city's.
+            Every route is planned around you — how much time you have, what you're up for,
+            whether you want to walk more or ride more. Ask us anything on the day.
           </p>
         </div>
       </section>
@@ -82,9 +82,9 @@ function AboutPage() {
       <section className="bg-ink text-white py-20 md:py-24">
         <div className="container-x">
           <div className="text-center mb-14">
-            <p className="eyebrow text-gold mb-3">The Fleet</p>
+            <p className="eyebrow text-gold mb-3">Our fleet</p>
             <h2 className="font-display text-3xl md:text-4xl font-bold text-white">
-              Four vehicles. One standard.
+              A few vehicles, all kept in shape.
             </h2>
           </div>
 
@@ -122,9 +122,9 @@ function AboutPage() {
       <section className="container-x py-20 md:py-24">
         <div className="grid md:grid-cols-3 gap-10 text-center">
           {[
-            { k: "12+", v: "Years guiding" },
+            { k: "10+", v: "Years driving Lisbon" },
             { k: "100%", v: "Electric tuk-tuks" },
-            { k: "4.97", v: "Avg review · 1.2k stays" },
+            { k: "24h", v: "WhatsApp reply, usually faster" },
           ].map((s) => (
             <div key={s.v} className="p-8 rounded-2xl bg-cloud/60 border border-border hover:border-gold/40 transition-colors">
               <p className="font-display font-bold text-5xl md:text-6xl text-gold mb-2">{s.k}</p>
@@ -138,15 +138,15 @@ function AboutPage() {
       <section className="bg-cloud/60 py-20 md:py-24">
         <div className="container-x grid md:grid-cols-2 gap-14 items-center">
           <div>
-            <p className="eyebrow text-gold mb-3">Why Tuk Tuk 24</p>
+            <p className="eyebrow text-gold mb-3">What to expect</p>
             <h2 className="font-display text-3xl md:text-4xl font-bold text-ink mb-6 leading-tight">
-              The small print that actually matters.
+              A few things worth knowing before you book.
             </h2>
             <ul className="space-y-4">
               {[
-                { t: "Never shared.", d: "Every tour runs as a single private party — your group only." },
-                { t: "Native guides.", d: "Born in Lisboa, trained for years, paid fairly, never scripted." },
-                { t: "Flat pricing.", d: "What you see is what you pay. No commissions, no surprises." },
+                { t: "Private, always.", d: "You book, you ride. No shared groups, no strangers on the bench next to you." },
+                { t: "Local drivers.", d: "Born and raised here. Ask them where to eat afterwards — they'll actually know." },
+                { t: "Flat price.", d: "The number on the site is the number you pay. No commissions added at the end." },
                 { t: "Free 24h cancel.", d: "Free cancellation up to 24 hours before the tour — full refund. Cancellations within 24 hours are non-refundable. If you reschedule and later cancel, refund eligibility is calculated from the original booked date and time, not the rescheduled one." },
               ].map((v) => (
                 <li key={v.t} className="flex gap-4">
