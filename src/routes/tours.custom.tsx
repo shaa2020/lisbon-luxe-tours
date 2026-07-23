@@ -139,7 +139,10 @@ function CustomBuilderPage() {
           travel_date: form.travel_date || null,
           time: form.time || null,
           guests: Number(form.guests) || 1,
-          notes: form.notes.trim() || null,
+          notes: [
+            form.notes.trim() || null,
+            pickup ? `Hotel pickup & drop-off requested (+€${pickupFee})` : null,
+          ].filter(Boolean).join("\n\n") || null,
           mode,
         },
       });
