@@ -239,9 +239,9 @@ function FlashDeals() {
         <div className="flex items-end justify-between mb-12">
           <div>
             <h2 className="font-display text-3xl md:text-4xl font-bold text-ink mb-2">
-              Flash Deal
+              Last-minute spots
             </h2>
-            <p className="text-body text-sm">Our best last-minute offers. Book now and go!</p>
+            <p className="text-body text-sm">Tours leaving soon with a couple of seats left.</p>
           </div>
           <Link to="/tours" className="text-[12px] font-semibold uppercase tracking-widest text-gold hover:text-ink transition">
             View All ›
