@@ -81,17 +81,17 @@ function Hero() {
 
         <div className="relative container-x h-full flex flex-col justify-center text-white">
           <p className="eyebrow text-white/90 mb-3 md:mb-4 animate-[fade-up_0.9s_var(--ease-out-expo)_both]">
-            ◆  Discover
+            ◆  Lisboa
           </p>
           <h1
             className="font-display font-bold tracking-tight leading-[1.02] mb-5 md:mb-6 text-white animate-[fade-up_1s_var(--ease-out-expo)_0.1s_both] max-w-4xl"
             style={{ fontSize: "clamp(40px, 7vw, 92px)" }}
           >
-            Private Tuk Tuk Tours in Portugal
+            Private Tuk Tuk Tours in Lisbon
           </h1>
           <p className="max-w-xl text-white/90 text-[15px] md:text-lg leading-relaxed animate-[fade-up_1s_var(--ease-out-expo)_0.2s_both]">
-            A land of cinnamon-tiled rooftops, Atlantic cliffs and slow afternoons. Explore
-            with a private guide — by tuk-tuk, by Mercedes, by foot — entirely your own pace.
+            See Lisbon the way we do — through the hills of Alfama, along the river in Belém,
+            and up to Sintra. Small groups, local guides, your pace.
           </p>
 
           <div className="absolute right-6 bottom-16 hidden lg:block animate-[fade-in_1.4s_var(--ease-out-expo)_0.4s_both]">
