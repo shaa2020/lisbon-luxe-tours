@@ -230,7 +230,19 @@ function TourPage() {
             </div>
           )}
 
+          <div className="p-7 bg-white border border-gold/25 rounded-2xl">
+            <p className="eyebrow text-gold mb-3">Cancellation Policy</p>
+            <h3 className="font-display text-xl font-semibold text-ink mb-3">Flexible, risk-free booking</h3>
+            <ul className="space-y-2.5 text-sm text-body leading-relaxed">
+              <li className="flex gap-3"><span className="text-gold font-bold">✓</span> <span><span className="text-ink font-medium">Free cancellation</span> up to 24 hours before your tour start time — full refund, no questions asked.</span></li>
+              <li className="flex gap-3"><span className="text-ink/40">✕</span> <span>Cancellations made <span className="text-ink font-medium">less than 24 hours</span> before the tour are <span className="text-ink font-medium">non-refundable</span>.</span></li>
+              <li className="flex gap-3"><span className="text-ink/40">✕</span> <span>If you reschedule and later cancel, refund eligibility is calculated from the <span className="text-ink font-medium">original booked date and time</span> — not the rescheduled one.</span></li>
+              <li className="flex gap-3"><span className="text-gold font-bold">✓</span> <span>Rescheduling within the 24h window is possible subject to availability — message us on WhatsApp.</span></li>
+            </ul>
+          </div>
+
           <ReviewsSection tourId={tour.id ?? null} tourSlug={tour.slug} tourTitle={tour.title} />
+
         </div>
 
         {/* Sticky booking panel (desktop) */}
