@@ -367,9 +367,9 @@ function PopularTours({ onBook }: { onBook: (t: Tour) => void }) {
         <div className="flex items-end justify-between mb-12">
           <div>
             <h2 className="font-display text-3xl md:text-4xl font-bold text-ink mb-2">
-              Popular Tour
+              Our most-booked tours
             </h2>
-            <p className="text-body text-sm">Most-loved private experiences from our collection.</p>
+            <p className="text-body text-sm">The routes travelers keep asking us to run.</p>
           </div>
           <Link to="/tours" className="text-[12px] font-semibold uppercase tracking-widest text-gold hover:text-ink transition">
             View All ›
