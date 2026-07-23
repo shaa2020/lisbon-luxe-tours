@@ -22,17 +22,17 @@ const lockedAboutImg = `${aboutImg}?v=locked-20260616`;
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Tuk Tuk 24 — Discover Portugal · Private Tours of Lisboa, Sintra & the Coast" },
+      { title: "Tuk Tuk 24 — Private Tuk-Tuk Tours in Lisbon" },
       {
         name: "description",
         content:
-          "Plan your Portugal trip with Tuk Tuk 24. Browse popular private tuk-tuk, Sintra, Belém, Cascais and sunset tours. Real local guides, flexible departures, instant inquiry.",
+          "Private tuk-tuk tours around Lisbon with local drivers. Alfama, Belém, Sintra, sunset rides — small groups, flat prices, easy booking.",
       },
-      { property: "og:title", content: "Tuk Tuk 24 — Discover Portugal" },
+      { property: "og:title", content: "Tuk Tuk 24 — Private Tuk-Tuk Tours in Lisbon" },
       {
         property: "og:description",
         content:
-          "Private tours, flash deals and curated itineraries across Lisboa, Sintra, Belém and the Atlantic coast.",
+          "Small, family-run tuk-tuk tours around Lisbon with local drivers.",
       },
       { property: "og:url", content: "/" },
     ],
