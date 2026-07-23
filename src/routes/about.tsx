@@ -39,13 +39,13 @@ function AboutPage() {
           <img src={vanImg} alt="Tuk Tuk 24 Mercedes V-Class fleet on a Lisbon street" className="absolute inset-0 w-full h-full object-cover" />
           <div className="absolute inset-0 bg-ink/55" />
           <div className="container-x relative h-full flex flex-col justify-center text-white">
-            <p className="eyebrow text-white/80 mb-3">◆  Our Philosophy</p>
+            <p className="eyebrow text-white/80 mb-3">◆  Who we are</p>
             <h1 className="font-display font-bold text-5xl md:text-6xl mb-4 leading-[1.05]">
-              Travel slow.<br />Travel local.
+              Local drivers.<br />Real Lisbon.
             </h1>
             <p className="text-white/85 max-w-xl">
-              Tuk Tuk 24 is a boutique travel house founded in Lisboa in 2012 — built around
-              private guides, quiet vehicles, and itineraries with breathing room.
+              Tuk Tuk 24 is a small, family-run tuk-tuk company based in Lisbon. We drive the
+              routes we grew up on, at a pace that lets you actually see the place.
             </p>
           </div>
         </div>
