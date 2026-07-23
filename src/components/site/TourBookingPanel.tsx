@@ -201,6 +201,35 @@ export function TourBookingPanel({ tour }: { tour: Tour; compact?: boolean }) {
           )}
         </div>
 
+        {/* Hotel pickup */}
+        {pickupFee > 0 && (
+          <button
+            type="button"
+            onClick={() => setPickup((v) => !v)}
+            className={cn(
+              "w-full flex items-center justify-between px-4 py-3 border rounded-[2px] text-left transition-colors",
+              pickup ? "border-gold bg-gold/5" : "border-border bg-paper hover:border-gold",
+            )}
+          >
+            <span className="flex items-center gap-3">
+              <span
+                className={cn(
+                  "w-4 h-4 border rounded-[2px] flex items-center justify-center",
+                  pickup ? "bg-gold border-gold" : "border-body",
+                )}
+              >
+                {pickup && <Check className="w-3 h-3 text-white" />}
+              </span>
+              <span>
+                <span className="block text-sm text-ink font-medium">Add hotel pickup &amp; drop-off</span>
+                <span className="block text-[11px] text-body">We meet you at your hotel and drop you back after the tour.</span>
+              </span>
+            </span>
+            <span className="text-sm font-medium text-ink">+€{pickupFee}</span>
+          </button>
+        )}
+
+
         {/* Contact (revealed) */}
         {showContact && (
           <div className="space-y-2 animate-fade-in">
