@@ -5,7 +5,15 @@ import { supabase } from "@/integrations/supabase/client";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { useSiteBrand } from "@/lib/brand";
 import { toast } from "sonner";
-import { MessageCircle, Mail, Phone, Calendar, Users, Trash2 } from "lucide-react";
+import { MessageCircle, Mail, Phone, Calendar, Users, Trash2, Edit3, Copy, Check, Loader2, Clock } from "lucide-react";
+import { useServerFn } from "@tanstack/react-start";
+import {
+  adminCreateModificationCheckout,
+  adminListModifications,
+  adminApplyModification,
+  adminWaiveModification,
+  getStripeSessionUrl,
+} from "@/lib/booking-changes.functions";
 
 export const Route = createFileRoute("/admin/bookings")({
   component: BookingsInbox,
@@ -64,6 +72,17 @@ function BookingsInbox() {
   const [search, setSearch] = useState("");
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [editGuests, setEditGuests] = useState<number | "">("");
+  const [editAmount, setEditAmount] = useState<number | "">("");
+  const [editNote, setEditNote] = useState("");
+  const [generating, setGenerating] = useState(false);
+
+  const createCheckout = useServerFn(adminCreateModificationCheckout);
+  const listMods = useServerFn(adminListModifications);
+  const applyMod = useServerFn(adminApplyModification);
+  const waiveMod = useServerFn(adminWaiveModification);
+  const getSessionUrl = useServerFn(getStripeSessionUrl);
 
   const { data: bookings = [], isLoading } = useQuery({
     queryKey: ["admin-bookings"],
@@ -185,6 +204,87 @@ function BookingsInbox() {
     const body = `Hi ${b.customer_name},\n\nThanks for your booking request${
       b.tour_title ? ` for "${b.tour_title}"` : ""
     }${b.travel_date ? ` on ${b.travel_date}` : ""}.\n\nWe'd love to confirm the details with you.\n\nBest,\nThe team`;
+    return `mailto:${b.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  };
+
+  const { data: modifications = [] } = useQuery({
+    queryKey: ["admin-booking-modifications", expandedId],
+    queryFn: async () => {
+      if (!expandedId) return [];
+      return listMods({ data: { bookingId: expandedId } });
+    },
+    enabled: !!expandedId,
+  });
+
+  const toggleExpanded = (id: string, guests: number) => {
+    if (expandedId === id) {
+      setExpandedId(null);
+      return;
+    }
+    setExpandedId(id);
+    setEditGuests(guests);
+    setEditAmount("");
+    setEditNote("");
+  };
+
+  const generatePaymentLink = async (b: Booking, changeType: "add_guests" | "extend_duration" | "admin_adjustment") => {
+    setGenerating(true);
+    try {
+      const newGuests = typeof editGuests === "number" ? editGuests : undefined;
+      const newAmountCents = typeof editAmount === "number" ? Math.round(editAmount * 100) : undefined;
+      const res = await createCheckout({
+        data: {
+          bookingId: b.id,
+          changeType,
+          newGuests,
+          newAmountCents,
+          note: editNote.trim() || null,
+        },
+      });
+
+      if (res.mode === "pay" && "url" in res && res.url) {
+        await navigator.clipboard.writeText(res.url);
+        toast.success("Payment link copied to clipboard");
+      } else if (res.mode === "waived") {
+        toast.success("Change recorded with no extra charge");
+        qc.invalidateQueries({ queryKey: ["admin-bookings"] });
+        qc.invalidateQueries({ queryKey: ["admin-booking-modifications", expandedId] });
+      } else {
+        toast.success("Change request recorded");
+      }
+    } catch (err) {
+      toast.error((err as Error).message || "Could not create checkout");
+    } finally {
+      setGenerating(false);
+    }
+  };
+
+  const applyWithoutPayment = async (modId: string) => {
+    try {
+      await applyMod({ data: { modificationId: modId } });
+      toast.success("Change applied");
+      qc.invalidateQueries({ queryKey: ["admin-bookings"] });
+      qc.invalidateQueries({ queryKey: ["admin-booking-modifications", expandedId] });
+    } catch (err) {
+      toast.error((err as Error).message || "Could not apply change");
+    }
+  };
+
+  const waiveAndApply = async (modId: string) => {
+    try {
+      await waiveMod({ data: { modificationId: modId } });
+      await applyMod({ data: { modificationId: modId } });
+      toast.success("Change waived and applied");
+      qc.invalidateQueries({ queryKey: ["admin-bookings"] });
+      qc.invalidateQueries({ queryKey: ["admin-booking-modifications", expandedId] });
+    } catch (err) {
+      toast.error((err as Error).message || "Could not waive change");
+    }
+  };
+
+  const paymentLinkMailto = (b: Booking, url: string) => {
+    const subject = `Payment link for your booking change — Tuk Tuk 24`;
+    const body = `Hi ${b.customer_name},\n\nWe've updated your booking. Please use the link below to pay the difference:\n\n${url}\n\nLet us know if you have any questions.\n\nBest,\nTuk Tuk 24`;
     return `mailto:${b.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   };
 
@@ -425,6 +525,13 @@ function BookingsInbox() {
                   ))}
                 </select>
                 <button
+                  onClick={() => toggleExpanded(b.id, b.guests)}
+                  className="inline-flex items-center gap-1.5 rounded-md border border-border bg-background px-3 py-2 text-sm font-semibold hover:bg-muted"
+                >
+                  <Edit3 className="w-4 h-4" />
+                  Edit / changes
+                </button>
+                <button
                   onClick={() => remove(b.id)}
                   className="ml-auto inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-destructive"
                 >
@@ -432,6 +539,138 @@ function BookingsInbox() {
                   Delete
                 </button>
               </div>
+
+              {expandedId === b.id && (
+                <div className="mt-5 pt-5 border-t border-border">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">
+                    Edit booking
+                  </p>
+                  <div className="grid sm:grid-cols-2 gap-4 mb-4">
+                    <div>
+                      <label className="block text-xs text-muted-foreground mb-1">New guest count</label>
+                      <input
+                        type="number"
+                        min={1}
+                        max={20}
+                        value={editGuests}
+                        onChange={(e) => setEditGuests(e.target.value === "" ? "" : Number(e.target.value))}
+                        className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-muted-foreground mb-1">New total amount (€)</label>
+                      <input
+                        type="number"
+                        min={0}
+                        step="0.01"
+                        value={editAmount}
+                        onChange={(e) => setEditAmount(e.target.value === "" ? "" : Number(e.target.value))}
+                        placeholder="Leave blank to auto-calculate"
+                        className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
+                      />
+                    </div>
+                    <div className="sm:col-span-2">
+                      <label className="block text-xs text-muted-foreground mb-1">Note</label>
+                      <input
+                        value={editNote}
+                        onChange={(e) => setEditNote(e.target.value)}
+                        placeholder="Reason for change"
+                        className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex flex-wrap gap-2 mb-6">
+                    <button
+                      onClick={() => generatePaymentLink(b, "add_guests")}
+                      disabled={generating}
+                      className="inline-flex items-center gap-1.5 rounded-md bg-primary text-primary-foreground px-3 py-2 text-sm font-semibold hover:bg-primary/90 disabled:opacity-50"
+                    >
+                      {generating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Copy className="w-4 h-4" />}
+                      Generate guest-change link
+                    </button>
+                    <button
+                      onClick={() => generatePaymentLink(b, "extend_duration")}
+                      disabled={generating || typeof editAmount !== "number"}
+                      className="inline-flex items-center gap-1.5 rounded-md bg-amber-600 text-white px-3 py-2 text-sm font-semibold hover:bg-amber-700 disabled:opacity-50"
+                    >
+                      {generating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Clock className="w-4 h-4" />}
+                      Generate extension link
+                    </button>
+                    <button
+                      onClick={() => generatePaymentLink(b, "admin_adjustment")}
+                      disabled={generating || typeof editAmount !== "number"}
+                      className="inline-flex items-center gap-1.5 rounded-md border border-border bg-background px-3 py-2 text-sm font-semibold hover:bg-muted disabled:opacity-50"
+                    >
+                      Custom adjustment
+                    </button>
+                  </div>
+
+                  {modifications.length > 0 && (
+                    <div>
+                      <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">
+                        Change history
+                      </p>
+                      <div className="space-y-2">
+                        {modifications.map((m: any) => (
+                          <div
+                            key={m.id}
+                            className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border bg-muted/30 p-3 text-sm"
+                          >
+                            <div>
+                              <p className="font-medium capitalize">{m.change_type.replace(/_/g, " ")}</p>
+                              <p className="text-xs text-muted-foreground">
+                                Diff: €{(m.difference_cents / 100).toFixed(2)} · Status: {m.status} · Payment: {m.payment_status}
+                              </p>
+                              {m.notes && <p className="text-xs text-muted-foreground mt-1">{m.notes}</p>}
+                            </div>
+                            <div className="flex flex-wrap gap-2">
+                              {m.status !== "applied" && m.payment_status === "pending" && m.difference_cents > 0 && m.stripe_session_id && (
+                                <>
+                                  <button
+                                    onClick={async () => {
+                                      const { url } = await getSessionUrl({ data: { sessionId: m.stripe_session_id } });
+                                      if (url) {
+                                        await navigator.clipboard.writeText(url);
+                                        toast.success("Link copied");
+                                      }
+                                    }}
+                                    className="inline-flex items-center gap-1 rounded-md border border-border bg-background px-2 py-1 text-xs hover:bg-muted"
+                                  >
+                                    <Copy className="w-3 h-3" /> Copy link
+                                  </button>
+                                  <a
+                                    href={paymentLinkMailto(b, `https://checkout.stripe.com/pay/${m.stripe_session_id}`)}
+                                    className="inline-flex items-center gap-1 rounded-md bg-primary text-primary-foreground px-2 py-1 text-xs hover:bg-primary/90"
+                                  >
+                                    <Mail className="w-3 h-3" /> Email link
+                                  </a>
+                                </>
+                              )}
+                              {m.status !== "applied" && m.payment_status === "paid" && (
+                                <button
+                                  onClick={() => applyWithoutPayment(m.id)}
+                                  className="inline-flex items-center gap-1 rounded-md bg-emerald-600 text-white px-2 py-1 text-xs hover:bg-emerald-700"
+                                >
+                                  <Check className="w-3 h-3" /> Apply
+                                </button>
+                              )}
+                              {m.status !== "applied" && m.difference_cents <= 0 && (
+                                <button
+                                  onClick={() => waiveAndApply(m.id)}
+                                  className="inline-flex items-center gap-1 rounded-md bg-emerald-600 text-white px-2 py-1 text-xs hover:bg-emerald-700"
+                                >
+                                  <Check className="w-3 h-3" /> Apply free
+                                </button>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
             </article>
           ))}
         </div>

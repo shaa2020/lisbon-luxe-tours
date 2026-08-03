@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { getRequestHost } from "@tanstack/react-start/server";
 import { z } from "zod";
+import { applyModificationToBooking } from "./booking-changes.server";
 
 const GATEWAY_URL = "https://connector-gateway.lovable.dev/stripe";
 
@@ -157,6 +158,43 @@ export const confirmCheckout = createServerFn({ method: "POST" })
         .from("bookings")
         .update({ payment_status: "paid", status: "confirmed" })
         .eq("id", order.booking_id);
+
+      const { data: mod } = await supabaseAdmin
+        .from("booking_modifications")
+        .select("id")
+        .eq("stripe_session_id", data.session_id)
+        .maybeSingle();
+      if (mod) {
+        await applyModificationToBooking(supabaseAdmin, mod.id);
+      }
+    }
+
+    // Modification-only sessions don't have an orders row.
+    if (!order && paid) {
+      const { data: mod } = await supabaseAdmin
+        .from("booking_modifications")
+        .select("id, booking_id")
+        .eq("stripe_session_id", data.session_id)
+        .maybeSingle();
+      if (mod) {
+        await supabaseAdmin
+          .from("booking_modifications")
+          .update({ payment_status: "paid", status: "approved" })
+          .eq("id", mod.id);
+        await applyModificationToBooking(supabaseAdmin, mod.id);
+        const { data: booking } = await supabaseAdmin
+          .from("bookings")
+          .select("tour_title, amount_total, customer_name")
+          .eq("id", mod.booking_id)
+          .maybeSingle();
+        return {
+          paid: true,
+          status: "paid",
+          tour_title: booking?.tour_title || null,
+          amount_total: booking?.amount_total || 0,
+          customer_name: booking?.customer_name || null,
+        };
+      }
     }
 
     return {

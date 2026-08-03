@@ -21,6 +21,7 @@ import { Route as ToursCustomRouteImport } from './routes/tours.custom'
 import { Route as ToursSlugRouteImport } from './routes/tours.$slug'
 import { Route as JournalSlugRouteImport } from './routes/journal.$slug'
 import { Route as BookingSuccessRouteImport } from './routes/booking.success'
+import { Route as BookingManageRouteImport } from './routes/booking.manage'
 import { Route as BookingCancelledRouteImport } from './routes/booking.cancelled'
 import { Route as AdminReviewsRouteImport } from './routes/admin.reviews'
 import { Route as AdminOrdersRouteImport } from './routes/admin.orders'
@@ -93,6 +94,11 @@ const JournalSlugRoute = JournalSlugRouteImport.update({
 const BookingSuccessRoute = BookingSuccessRouteImport.update({
   id: '/booking/success',
   path: '/booking/success',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BookingManageRoute = BookingManageRouteImport.update({
+  id: '/booking/manage',
+  path: '/booking/manage',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BookingCancelledRoute = BookingCancelledRouteImport.update({
@@ -176,6 +182,7 @@ export interface FileRoutesByFullPath {
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/reviews': typeof AdminReviewsRoute
   '/booking/cancelled': typeof BookingCancelledRoute
+  '/booking/manage': typeof BookingManageRoute
   '/booking/success': typeof BookingSuccessRoute
   '/journal/$slug': typeof JournalSlugRoute
   '/tours/$slug': typeof ToursSlugRoute
@@ -203,6 +210,7 @@ export interface FileRoutesByTo {
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/reviews': typeof AdminReviewsRoute
   '/booking/cancelled': typeof BookingCancelledRoute
+  '/booking/manage': typeof BookingManageRoute
   '/booking/success': typeof BookingSuccessRoute
   '/journal/$slug': typeof JournalSlugRoute
   '/tours/$slug': typeof ToursSlugRoute
@@ -231,6 +239,7 @@ export interface FileRoutesById {
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/reviews': typeof AdminReviewsRoute
   '/booking/cancelled': typeof BookingCancelledRoute
+  '/booking/manage': typeof BookingManageRoute
   '/booking/success': typeof BookingSuccessRoute
   '/journal/$slug': typeof JournalSlugRoute
   '/tours/$slug': typeof ToursSlugRoute
@@ -260,6 +269,7 @@ export interface FileRouteTypes {
     | '/admin/orders'
     | '/admin/reviews'
     | '/booking/cancelled'
+    | '/booking/manage'
     | '/booking/success'
     | '/journal/$slug'
     | '/tours/$slug'
@@ -287,6 +297,7 @@ export interface FileRouteTypes {
     | '/admin/orders'
     | '/admin/reviews'
     | '/booking/cancelled'
+    | '/booking/manage'
     | '/booking/success'
     | '/journal/$slug'
     | '/tours/$slug'
@@ -314,6 +325,7 @@ export interface FileRouteTypes {
     | '/admin/orders'
     | '/admin/reviews'
     | '/booking/cancelled'
+    | '/booking/manage'
     | '/booking/success'
     | '/journal/$slug'
     | '/tours/$slug'
@@ -342,6 +354,7 @@ export interface RootRouteChildren {
   AdminOrdersRoute: typeof AdminOrdersRoute
   AdminReviewsRoute: typeof AdminReviewsRoute
   BookingCancelledRoute: typeof BookingCancelledRoute
+  BookingManageRoute: typeof BookingManageRoute
   BookingSuccessRoute: typeof BookingSuccessRoute
   JournalSlugRoute: typeof JournalSlugRoute
   ToursSlugRoute: typeof ToursSlugRoute
@@ -440,6 +453,13 @@ declare module '@tanstack/react-router' {
       path: '/booking/success'
       fullPath: '/booking/success'
       preLoaderRoute: typeof BookingSuccessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/booking/manage': {
+      id: '/booking/manage'
+      path: '/booking/manage'
+      fullPath: '/booking/manage'
+      preLoaderRoute: typeof BookingManageRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/booking/cancelled': {
@@ -550,6 +570,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminOrdersRoute: AdminOrdersRoute,
   AdminReviewsRoute: AdminReviewsRoute,
   BookingCancelledRoute: BookingCancelledRoute,
+  BookingManageRoute: BookingManageRoute,
   BookingSuccessRoute: BookingSuccessRoute,
   JournalSlugRoute: JournalSlugRoute,
   ToursSlugRoute: ToursSlugRoute,
