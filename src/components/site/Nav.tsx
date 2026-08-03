@@ -21,6 +21,7 @@ export function Nav({ overlay = false }: { overlay?: boolean }) {
     { to: "/tours/custom", label: "Build Your Tour" },
     { to: "/about", label: "About" },
     { to: "/faq", label: "FAQ" },
+    { to: "/booking/manage", label: "Manage Booking" },
     { to: "/contact", label: "Contact" },
   ] as const;
 
