@@ -79,12 +79,20 @@ function SuccessPage() {
                 <span className="text-ink font-medium">Free cancellation</span> up to 24 hours before the tour. Cancellations made less than 24 hours before the tour are non-refundable. If you reschedule and later cancel, refund eligibility is calculated from the <span className="text-ink font-medium">original booked date and time</span>, not the rescheduled one.
               </p>
             </div>
-            <Link
-              to="/"
-              className="inline-block px-7 py-3 rounded-full bg-ink text-white text-[11px] font-semibold uppercase tracking-widest hover:bg-gold transition"
-            >
-              Back to home
-            </Link>
+            <div className="flex flex-wrap gap-3 justify-center">
+              <Link
+                to="/"
+                className="inline-block px-7 py-3 rounded-full bg-ink text-white text-[11px] font-semibold uppercase tracking-widest hover:bg-gold transition"
+              >
+                Back to home
+              </Link>
+              <Link
+                to="/booking/manage"
+                className="inline-block px-7 py-3 rounded-full border border-ink/20 text-ink text-[11px] font-semibold uppercase tracking-widest hover:border-gold hover:text-gold transition"
+              >
+                Manage or extend booking
+              </Link>
+            </div>
           </>
         ) : (
           <>

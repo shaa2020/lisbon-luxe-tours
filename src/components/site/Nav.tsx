@@ -21,6 +21,7 @@ export function Nav({ overlay = false }: { overlay?: boolean }) {
     { to: "/tours/custom", label: "Build Your Tour" },
     { to: "/about", label: "About" },
     { to: "/faq", label: "FAQ" },
+    { to: "/booking/manage", label: "Manage Booking" },
     { to: "/contact", label: "Contact" },
   ] as const;
 
@@ -40,6 +41,8 @@ export function Nav({ overlay = false }: { overlay?: boolean }) {
           <div className="flex items-center gap-5">
             <a href="https://instagram.com" aria-label="Instagram" className="hover:text-gold transition-colors"><IgIcon /></a>
             <a href="https://facebook.com" aria-label="Facebook" className="hover:text-gold transition-colors"><FbIcon /></a>
+            <span className="opacity-30">|</span>
+            <Link to="/booking/manage" className="hover:text-gold transition-colors">Manage / extend booking</Link>
             <span className="opacity-30">|</span>
             <span className="text-white/70">EN · PT · ES</span>
           </div>
