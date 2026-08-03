@@ -29,7 +29,9 @@ function SuccessPage() {
     tour?: string | null;
     amount?: number;
     name?: string | null;
+    bookingId?: string | null;
   }>({ loading: true, paid: false });
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     if (!session_id) {
@@ -44,6 +46,7 @@ function SuccessPage() {
           tour: r.tour_title,
           amount: r.amount_total,
           name: r.customer_name,
+          bookingId: r.booking_id,
         }),
       )
       .catch(() => setState({ loading: false, paid: false }));
@@ -72,6 +75,28 @@ function SuccessPage() {
               <p className="font-display text-3xl text-gold mb-6">
                 €{(state.amount / 100).toFixed(2)}
               </p>
+            ) : null}
+            {state.bookingId ? (
+              <div className="mb-6 p-4 border border-border rounded-lg text-left">
+                <p className="text-[11px] font-semibold uppercase tracking-widest text-body mb-1.5">
+                  Your booking reference
+                </p>
+                <p className="font-mono text-sm text-ink break-all">{state.bookingId}</p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    navigator.clipboard?.writeText(state.bookingId!);
+                    setCopied(true);
+                    setTimeout(() => setCopied(false), 2000);
+                  }}
+                  className="mt-2 text-[11px] font-semibold uppercase tracking-widest text-gold hover:underline"
+                >
+                  {copied ? "Copied" : "Copy reference"}
+                </button>
+                <p className="text-xs text-body mt-2 leading-relaxed">
+                  Keep this — you'll need it with your email to manage or extend your booking.
+                </p>
+              </div>
             ) : null}
             <div className="mb-8 p-4 bg-gold/5 border border-gold/20 rounded-lg text-left">
               <p className="text-[11px] font-semibold uppercase tracking-widest text-gold mb-1.5">Cancellation policy</p>
