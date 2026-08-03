@@ -109,6 +109,7 @@ function BookingsInbox() {
       if (!q) return true;
       return (
         b.customer_name?.toLowerCase().includes(q) ||
+        b.id.toLowerCase().includes(q) ||
         b.email?.toLowerCase().includes(q) ||
         (b.phone ?? "").toLowerCase().includes(q) ||
         (b.tour_title ?? "").toLowerCase().includes(q)
@@ -415,6 +416,17 @@ function BookingsInbox() {
                       timeStyle: "short",
                     })}
                   </p>
+                  <button
+                    type="button"
+                    title="Click to copy full booking ID"
+                    onClick={() => {
+                      navigator.clipboard?.writeText(b.id);
+                      toast.success("Booking ID copied");
+                    }}
+                    className="mt-1 font-mono text-[11px] text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    Ref #{b.id.slice(0, 8).toUpperCase()}
+                  </button>
                 </div>
                 {b.total_estimate != null && (
                   <p className="font-display text-2xl text-primary tabular-nums">
