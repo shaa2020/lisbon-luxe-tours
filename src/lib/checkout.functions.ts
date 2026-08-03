@@ -190,6 +190,7 @@ export const confirmCheckout = createServerFn({ method: "POST" })
         return {
           paid: true,
           status: "paid",
+          booking_id: mod.booking_id as string | null,
           tour_title: booking?.tour_title || null,
           amount_total: booking?.amount_total || 0,
           customer_name: booking?.customer_name || null,
@@ -200,6 +201,7 @@ export const confirmCheckout = createServerFn({ method: "POST" })
     return {
       paid,
       status: newStatus,
+      booking_id: order?.booking_id || null,
       tour_title: order?.tour_title || null,
       amount_total: order?.amount_total || 0,
       customer_name: order?.customer_name || null,

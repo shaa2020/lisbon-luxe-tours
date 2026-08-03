@@ -29,7 +29,9 @@ function SuccessPage() {
     tour?: string | null;
     amount?: number;
     name?: string | null;
+    bookingId?: string | null;
   }>({ loading: true, paid: false });
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     if (!session_id) {
@@ -44,6 +46,7 @@ function SuccessPage() {
           tour: r.tour_title,
           amount: r.amount_total,
           name: r.customer_name,
+          bookingId: r.booking_id,
         }),
       )
       .catch(() => setState({ loading: false, paid: false }));
