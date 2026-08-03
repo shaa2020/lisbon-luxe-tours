@@ -42,6 +42,8 @@ export function Nav({ overlay = false }: { overlay?: boolean }) {
             <a href="https://instagram.com" aria-label="Instagram" className="hover:text-gold transition-colors"><IgIcon /></a>
             <a href="https://facebook.com" aria-label="Facebook" className="hover:text-gold transition-colors"><FbIcon /></a>
             <span className="opacity-30">|</span>
+            <Link to="/booking/manage" className="hover:text-gold transition-colors">Manage / extend booking</Link>
+            <span className="opacity-30">|</span>
             <span className="text-white/70">EN · PT · ES</span>
           </div>
         </div>
