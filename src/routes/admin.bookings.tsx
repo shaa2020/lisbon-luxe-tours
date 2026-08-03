@@ -629,11 +629,9 @@ function BookingsInbox() {
                                 <>
                                   <button
                                     onClick={async () => {
-                                      const session = await stripeFetch(
-                                        `/v1/checkout/sessions/${encodeURIComponent(m.stripe_session_id)}`,
-                                      );
-                                      if (session.url) {
-                                        await navigator.clipboard.writeText(session.url);
+                                      const { url } = await getSessionUrl({ data: { sessionId: m.stripe_session_id } });
+                                      if (url) {
+                                        await navigator.clipboard.writeText(url);
                                         toast.success("Link copied");
                                       }
                                     }}
