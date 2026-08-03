@@ -65,6 +65,59 @@ export type Database = {
         }
         Relationships: []
       }
+      booking_modifications: {
+        Row: {
+          booking_id: string
+          change_type: string
+          created_at: string
+          difference_cents: number
+          id: string
+          new_value: Json
+          notes: string | null
+          old_value: Json
+          payment_status: string
+          status: string
+          stripe_session_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          booking_id: string
+          change_type: string
+          created_at?: string
+          difference_cents?: number
+          id?: string
+          new_value?: Json
+          notes?: string | null
+          old_value?: Json
+          payment_status?: string
+          status?: string
+          stripe_session_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          booking_id?: string
+          change_type?: string
+          created_at?: string
+          difference_cents?: number
+          id?: string
+          new_value?: Json
+          notes?: string | null
+          old_value?: Json
+          payment_status?: string
+          status?: string
+          stripe_session_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "booking_modifications_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       bookings: {
         Row: {
           amount_total: number | null
