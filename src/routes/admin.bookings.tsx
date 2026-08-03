@@ -82,6 +82,7 @@ function BookingsInbox() {
   const listMods = useServerFn(adminListModifications);
   const applyMod = useServerFn(adminApplyModification);
   const waiveMod = useServerFn(adminWaiveModification);
+  const getSessionUrl = useServerFn(getStripeSessionUrl);
 
   const { data: bookings = [], isLoading } = useQuery({
     queryKey: ["admin-bookings"],
