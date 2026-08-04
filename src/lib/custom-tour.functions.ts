@@ -2,46 +2,8 @@ import { createServerFn } from "@tanstack/react-start";
 import { getRequestHost } from "@tanstack/react-start/server";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { createMolliePayment, paymentsStatus } from "./mollie.server";
 
-const GATEWAY_URL = "https://connector-gateway.lovable.dev/stripe";
-
-function getStripeKey(): string {
-  const key =
-    process.env.STRIPE_API_KEY ||
-    process.env.STRIPE_LIVE_API_KEY ||
-    process.env.STRIPE_SANDBOX_API_KEY ||
-    "";
-  if (!key) throw new Error("Stripe key not configured");
-  return key;
-}
-function getLovableKey(): string {
-  const key = process.env.LOVABLE_API_KEY || "";
-  if (!key) throw new Error("LOVABLE_API_KEY not configured");
-  return key;
-}
-
-async function stripeFetch(
-  path: string,
-  init?: { method?: string; form?: Record<string, string> },
-) {
-  const headers: Record<string, string> = {
-    "Lovable-API-Key": getLovableKey(),
-    "X-Connection-Api-Key": getStripeKey(),
-  };
-  let body: BodyInit | undefined;
-  if (init?.form) {
-    headers["Content-Type"] = "application/x-www-form-urlencoded";
-    body = new URLSearchParams(init.form).toString();
-  }
-  const res = await fetch(`${GATEWAY_URL}${path}`, {
-    method: init?.method || "GET",
-    headers,
-    body,
-  });
-  const text = await res.text();
-  if (!res.ok) throw new Error(`Stripe ${path} ${res.status}: ${text.slice(0, 300)}`);
-  return text ? JSON.parse(text) : {};
-}
 
 export const getCustomTourComponents = createServerFn({ method: "GET" }).handler(async () => {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
