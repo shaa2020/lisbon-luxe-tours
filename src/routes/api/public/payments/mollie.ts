@@ -39,7 +39,7 @@ export const Route = createFileRoute("/api/public/payments/mollie")({
             .update({
               payment_status: paid ? "paid" : payment.status,
               stripe_payment_intent_id: payment.id,
-              raw: payment as unknown as Record<string, unknown>,
+              raw: JSON.parse(JSON.stringify(payment)),
             })
             .eq("stripe_session_id", paymentId);
 
