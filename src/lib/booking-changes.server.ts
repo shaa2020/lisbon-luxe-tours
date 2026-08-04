@@ -5,17 +5,41 @@ const EXTRA_GUEST_CENTS = 3500;
 
 type BookingRow = Database["public"]["Tables"]["bookings"]["Row"];
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 export async function fetchBooking(
   supabase: SupabaseClient<Database>,
   bookingId: string,
   email?: string,
 ) {
-  let query = supabase.from("bookings").select("*").eq("id", bookingId);
-  if (email) query = query.ilike("email", email);
-  const { data, error } = await query.single();
+  const ref = bookingId.trim().replace(/^#/, "");
+
+  if (UUID_RE.test(ref)) {
+    let query = supabase.from("bookings").select("*").eq("id", ref);
+    if (email) query = query.ilike("email", email);
+    const { data, error } = await query.single();
+    if (error) throw error;
+    return data as BookingRow;
+  }
+
+  // Customers only see the short reference (first 8 characters of the id),
+  // so match on that prefix. Requires the email for safety.
+  if (!email) throw new Error("Booking not found");
+  const short = ref.toLowerCase();
+  if (short.length < 6) throw new Error("Booking not found");
+
+  const { data, error } = await supabase
+    .from("bookings")
+    .select("*")
+    .ilike("email", email)
+    .order("created_at", { ascending: false })
+    .limit(200);
   if (error) throw error;
-  return data as BookingRow;
+  const match = (data ?? []).find((b) => b.id.toLowerCase().startsWith(short));
+  if (!match) throw new Error("Booking not found");
+  return match as BookingRow;
 }
+
 
 export function hasPickupInNotes(notes: string | null) {
   if (!notes) return false;
