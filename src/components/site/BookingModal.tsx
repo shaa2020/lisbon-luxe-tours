@@ -103,7 +103,12 @@ export function BookingModal({
           image_url: tour.image?.startsWith("http") ? tour.image : null,
         },
       });
-      window.location.href = res.url;
+      if (res.mode === "pay" && res.url) {
+        window.location.href = res.url;
+      } else {
+        setPaying(false);
+        toast.success(res.message || "Request received — we'll confirm by email shortly.");
+      }
     } catch (err) {
       setPaying(false);
       toast.error((err as Error).message || "Could not start checkout.");
