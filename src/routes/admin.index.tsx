@@ -83,6 +83,8 @@ function AdminDashboard() {
     twitter_url: "",
     footer_legal: "",
     hotel_pickup_fee_cents: 2000,
+    payments_enabled: true,
+    payments_maintenance_message: "",
   });
   const [savingBiz, setSavingBiz] = useState(false);
 
@@ -104,6 +106,8 @@ function AdminDashboard() {
         twitter_url: d.twitter_url ?? "",
         footer_legal: d.footer_legal ?? "",
         hotel_pickup_fee_cents: Number(d.hotel_pickup_fee_cents ?? 2000) || 0,
+        payments_enabled: (d as any).payments_enabled !== false,
+        payments_maintenance_message: (d as any).payments_maintenance_message ?? "",
       });
     }
   }, [brand.data]);
@@ -326,7 +330,36 @@ function AdminDashboard() {
               className="block w-full text-xs text-muted-foreground"
             />
             <div className="flex gap-2">
-              <button
+              <div className="space-y-3 rounded-md border border-border p-4 max-w-xl">
+          <label className="flex items-center gap-3">
+            <input
+              type="checkbox"
+              checked={biz.payments_enabled !== false}
+              onChange={(e) => setBiz((b) => ({ ...b, payments_enabled: e.target.checked }))}
+              className="h-4 w-4"
+            />
+            <span className="text-xs font-medium text-foreground">
+              Online payments enabled
+            </span>
+          </label>
+          <p className="text-[11px] text-muted-foreground">
+            Turn this off to put checkout in maintenance mode. Bookings are still saved and appear
+            here as payment requests, and customers see the message below instead of a payment page.
+          </p>
+          <label className="block space-y-1">
+            <span className="text-xs font-medium text-foreground">Maintenance message</span>
+            <textarea
+              rows={3}
+              value={biz.payments_maintenance_message ?? ""}
+              onChange={(e) =>
+                setBiz((b) => ({ ...b, payments_maintenance_message: e.target.value }))
+              }
+              placeholder="Online payments are temporarily unavailable while we update our booking system. Please send us your request and we will confirm by email or WhatsApp."
+              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary"
+            />
+          </label>
+        </div>
+        <button
                 type="button"
                 onClick={saveBrand}
                 disabled={savingBrand || uploadingLogo}

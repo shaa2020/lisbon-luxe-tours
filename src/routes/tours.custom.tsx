@@ -149,7 +149,10 @@ function CustomBuilderPage() {
       if (res.mode === "pay" && "url" in res && res.url) {
         window.location.href = res.url;
       } else {
-        toast.success("Quote request sent! We'll be in touch within 24h.");
+        toast.success(
+          ("message" in res && res.message) || "Quote request sent! We'll be in touch within 24h.",
+          { duration: 8000 },
+        );
         setSelected(new Set());
         setForm({
           customer_name: "",

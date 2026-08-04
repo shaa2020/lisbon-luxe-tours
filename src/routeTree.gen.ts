@@ -34,7 +34,7 @@ import { Route as AdminToursIndexRouteImport } from './routes/admin.tours.index'
 import { Route as AdminBlogIndexRouteImport } from './routes/admin.blog.index'
 import { Route as AdminToursIdRouteImport } from './routes/admin.tours.$id'
 import { Route as AdminBlogIdRouteImport } from './routes/admin.blog.$id'
-import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
+import { Route as ApiPublicPaymentsMollieRouteImport } from './routes/api/public/payments/mollie'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
@@ -161,12 +161,11 @@ const AdminBlogIdRoute = AdminBlogIdRouteImport.update({
   path: '/admin/blog/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiPublicPaymentsWebhookRoute =
-  ApiPublicPaymentsWebhookRouteImport.update({
-    id: '/api/public/payments/webhook',
-    path: '/api/public/payments/webhook',
-    getParentRoute: () => rootRouteImport,
-  } as any)
+const ApiPublicPaymentsMollieRoute = ApiPublicPaymentsMollieRouteImport.update({
+  id: '/api/public/payments/mollie',
+  path: '/api/public/payments/mollie',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -194,7 +193,7 @@ export interface FileRoutesByFullPath {
   '/admin/tours/$id': typeof AdminToursIdRoute
   '/admin/blog/': typeof AdminBlogIndexRoute
   '/admin/tours/': typeof AdminToursIndexRoute
-  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
+  '/api/public/payments/mollie': typeof ApiPublicPaymentsMollieRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -222,7 +221,7 @@ export interface FileRoutesByTo {
   '/admin/tours/$id': typeof AdminToursIdRoute
   '/admin/blog': typeof AdminBlogIndexRoute
   '/admin/tours': typeof AdminToursIndexRoute
-  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
+  '/api/public/payments/mollie': typeof ApiPublicPaymentsMollieRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -251,7 +250,7 @@ export interface FileRoutesById {
   '/admin/tours/$id': typeof AdminToursIdRoute
   '/admin/blog/': typeof AdminBlogIndexRoute
   '/admin/tours/': typeof AdminToursIndexRoute
-  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
+  '/api/public/payments/mollie': typeof ApiPublicPaymentsMollieRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -281,7 +280,7 @@ export interface FileRouteTypes {
     | '/admin/tours/$id'
     | '/admin/blog/'
     | '/admin/tours/'
-    | '/api/public/payments/webhook'
+    | '/api/public/payments/mollie'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -309,7 +308,7 @@ export interface FileRouteTypes {
     | '/admin/tours/$id'
     | '/admin/blog'
     | '/admin/tours'
-    | '/api/public/payments/webhook'
+    | '/api/public/payments/mollie'
   id:
     | '__root__'
     | '/'
@@ -337,7 +336,7 @@ export interface FileRouteTypes {
     | '/admin/tours/$id'
     | '/admin/blog/'
     | '/admin/tours/'
-    | '/api/public/payments/webhook'
+    | '/api/public/payments/mollie'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -366,7 +365,7 @@ export interface RootRouteChildren {
   AdminToursIdRoute: typeof AdminToursIdRoute
   AdminBlogIndexRoute: typeof AdminBlogIndexRoute
   AdminToursIndexRoute: typeof AdminToursIndexRoute
-  ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
+  ApiPublicPaymentsMollieRoute: typeof ApiPublicPaymentsMollieRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -546,11 +545,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminBlogIdRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/payments/webhook': {
-      id: '/api/public/payments/webhook'
-      path: '/api/public/payments/webhook'
-      fullPath: '/api/public/payments/webhook'
-      preLoaderRoute: typeof ApiPublicPaymentsWebhookRouteImport
+    '/api/public/payments/mollie': {
+      id: '/api/public/payments/mollie'
+      path: '/api/public/payments/mollie'
+      fullPath: '/api/public/payments/mollie'
+      preLoaderRoute: typeof ApiPublicPaymentsMollieRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -582,7 +581,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminToursIdRoute: AdminToursIdRoute,
   AdminBlogIndexRoute: AdminBlogIndexRoute,
   AdminToursIndexRoute: AdminToursIndexRoute,
-  ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
+  ApiPublicPaymentsMollieRoute: ApiPublicPaymentsMollieRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

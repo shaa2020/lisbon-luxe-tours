@@ -58,7 +58,7 @@ function ManageBookingPage() {
       setNewGuests((data as unknown as BookingView).guests + 1);
       setStep("view");
     } catch (err) {
-      toast.error("Booking not found. Check the ID and email.");
+      toast.error("Booking not found. Check the reference and the email you booked with.");
     } finally {
       setLoading(false);
     }
@@ -80,7 +80,10 @@ function ManageBookingPage() {
       if (res.mode === "pay" && "url" in res && res.url) {
         window.location.href = res.url;
       } else {
-        toast.success("Request sent. We'll be in touch within 24h.");
+        toast.success(
+          ("message" in res && res.message) || "Request sent. We'll be in touch within 24h.",
+          { duration: 8000 },
+        );
         setStep("view");
       }
     } catch (err) {
@@ -115,12 +118,12 @@ function ManageBookingPage() {
               <form onSubmit={handleLookup} className="space-y-4">
                 <div>
                   <label className="text-[10px] uppercase tracking-widest text-body font-bold block mb-2">
-                    Booking ID
+                    Booking reference
                   </label>
                   <input
                     value={bookingId}
                     onChange={(e) => setBookingId(e.target.value)}
-                    placeholder="e.g. a1b2c3d4-e5f6-..."
+                    placeholder="e.g. a1b2c3d4 (from your confirmation)"
                     className="w-full px-4 py-3 bg-paper border border-border rounded-[2px] text-sm text-ink placeholder:text-body focus:outline-none focus:border-gold transition-colors"
                     required
                   />

@@ -415,6 +415,8 @@ export type Database = {
           id: boolean
           instagram_url: string | null
           logo_url: string | null
+          payments_enabled: boolean
+          payments_maintenance_message: string
           twitter_url: string | null
           updated_at: string
           whatsapp_phone: string | null
@@ -438,6 +440,8 @@ export type Database = {
           id?: boolean
           instagram_url?: string | null
           logo_url?: string | null
+          payments_enabled?: boolean
+          payments_maintenance_message?: string
           twitter_url?: string | null
           updated_at?: string
           whatsapp_phone?: string | null
@@ -461,6 +465,8 @@ export type Database = {
           id?: boolean
           instagram_url?: string | null
           logo_url?: string | null
+          payments_enabled?: boolean
+          payments_maintenance_message?: string
           twitter_url?: string | null
           updated_at?: string
           whatsapp_phone?: string | null

@@ -5,17 +5,41 @@ const EXTRA_GUEST_CENTS = 3500;
 
 type BookingRow = Database["public"]["Tables"]["bookings"]["Row"];
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 export async function fetchBooking(
   supabase: SupabaseClient<Database>,
   bookingId: string,
   email?: string,
 ) {
-  let query = supabase.from("bookings").select("*").eq("id", bookingId);
-  if (email) query = query.ilike("email", email);
-  const { data, error } = await query.single();
+  const ref = bookingId.trim().replace(/^#/, "");
+
+  if (UUID_RE.test(ref)) {
+    let query = supabase.from("bookings").select("*").eq("id", ref);
+    if (email) query = query.ilike("email", email);
+    const { data, error } = await query.single();
+    if (error) throw error;
+    return data as BookingRow;
+  }
+
+  // Customers only see the short reference (first 8 characters of the id),
+  // so match on that prefix. Requires the email for safety.
+  if (!email) throw new Error("Booking not found");
+  const short = ref.toLowerCase();
+  if (short.length < 6) throw new Error("Booking not found");
+
+  const { data, error } = await supabase
+    .from("bookings")
+    .select("*")
+    .ilike("email", email)
+    .order("created_at", { ascending: false })
+    .limit(200);
   if (error) throw error;
-  return data as BookingRow;
+  const match = (data ?? []).find((b) => b.id.toLowerCase().startsWith(short));
+  if (!match) throw new Error("Booking not found");
+  return match as BookingRow;
 }
+
 
 export function hasPickupInNotes(notes: string | null) {
   if (!notes) return false;
@@ -104,31 +128,26 @@ export async function calculateModificationAmount(
   };
 }
 
-export async function createStripeModificationSession(
-  stripeFetch: (path: string, init?: { method?: string; form?: Record<string, string> }) => Promise<any>,
+export async function createModificationPayment(
   booking: BookingRow,
   modificationId: string,
   differenceCents: number,
   origin: string,
 ) {
-  const form: Record<string, string> = {
-    mode: "payment",
-    "line_items[0][quantity]": "1",
-    "line_items[0][price_data][currency]": "eur",
-    "line_items[0][price_data][unit_amount]": String(differenceCents),
-    "line_items[0][price_data][product_data][name]": `Tour change — ${booking.tour_title || "Booking"}`,
-    "line_items[0][price_data][product_data][description]": `Extra guests or tour extension for booking ${booking.id.slice(0, 8)}`.slice(0, 500),
-    customer_email: booking.email,
-    success_url: `${origin}/booking/success?session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${origin}/booking/cancelled?session_id={CHECKOUT_SESSION_ID}`,
-    "metadata[booking_id]": booking.id,
-    "metadata[tour_slug]": booking.tour_slug || "",
-    "metadata[guests]": String(booking.guests || 1),
-    "metadata[modification_id]": modificationId,
-  };
-
-  return stripeFetch("/v1/checkout/sessions", { method: "POST", form });
+  const { createMolliePayment } = await import("./mollie.server");
+  return createMolliePayment({
+    amountCents: differenceCents,
+    description: `Tour change · ${booking.tour_title || "Booking"} · ref ${booking.id.slice(0, 8)}`,
+    origin,
+    metadata: {
+      booking_id: booking.id,
+      tour_slug: booking.tour_slug || "",
+      guests: String(booking.guests || 1),
+      modification_id: modificationId,
+    },
+  });
 }
+
 
 export async function applyModificationToBooking(
   supabase: SupabaseClient<Database>,

@@ -4,13 +4,13 @@ import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import {
   calculateModificationAmount,
-  createStripeModificationSession,
+  createModificationPayment,
   fetchBooking,
 } from "./booking-changes.server";
-import { stripeFetch } from "./stripe-gateway.server";
+import { paymentsStatus } from "./mollie.server";
 
 const getBookingInput = z.object({
-  bookingId: z.string().uuid(),
+  bookingId: z.string().trim().min(6).max(64),
   email: z.string().email().max(200),
 });
 
@@ -39,7 +39,7 @@ export const getBookingForManage = createServerFn({ method: "POST" })
   });
 
 const requestChangeInput = z.object({
-  bookingId: z.string().uuid(),
+  bookingId: z.string().trim().min(6).max(64),
   email: z.string().email().max(200),
   changeType: z.enum(["add_guests", "extend_duration"]),
   newGuests: z.number().int().min(1).max(20).optional(),
@@ -119,12 +119,18 @@ export const requestBookingChange = createServerFn({ method: "POST" })
       .single();
     if (modErr || !mod) throw modErr || new Error("Could not create modification");
 
+    const payments = await paymentsStatus(supabaseAdmin);
+    if (!payments.available) {
+      return { mode: "request" as const, modificationId: mod.id, message: payments.message };
+    }
+
+
+
     const host = getRequestHost();
     const proto = host.includes("localhost") ? "http" : "https";
     const origin = `${proto}://${host}`;
 
-    const session = await createStripeModificationSession(
-      stripeFetch,
+    const session = await createModificationPayment(
       booking,
       mod.id,
       calc.differenceCents,
@@ -150,7 +156,7 @@ export const requestBookingChange = createServerFn({ method: "POST" })
       travel_date: booking.travel_date,
     });
 
-    return { mode: "pay" as const, url: session.url as string, modificationId: mod.id };
+    return { mode: "pay" as const, url: session.checkoutUrl as string, modificationId: mod.id };
   });
 
 const adminCreateInput = z.object({
@@ -221,8 +227,7 @@ export const adminCreateModificationCheckout = createServerFn({ method: "POST" }
     const proto = host.includes("localhost") ? "http" : "https";
     const origin = `${proto}://${host}`;
 
-    const session = await createStripeModificationSession(
-      stripeFetch,
+    const session = await createModificationPayment(
       booking,
       mod.id,
       calc.differenceCents,
@@ -250,7 +255,7 @@ export const adminCreateModificationCheckout = createServerFn({ method: "POST" }
 
     return {
       mode: "pay" as const,
-      url: session.url as string,
+      url: session.checkoutUrl as string,
       modificationId: mod.id,
       differenceCents: calc.differenceCents,
     };
@@ -310,8 +315,7 @@ export const getStripeSessionUrl = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => sessionUrlInput.parse(d))
   .handler(async ({ data }) => {
-    const session = await stripeFetch(
-      `/v1/checkout/sessions/${encodeURIComponent(data.sessionId)}`,
-    );
-    return { url: session.url as string | undefined };
+    const { getMolliePayment } = await import("./mollie.server");
+    const payment = await getMolliePayment(data.sessionId);
+    return { url: payment.checkoutUrl ?? undefined };
   });
