@@ -2,46 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { getRequestHost } from "@tanstack/react-start/server";
 import { z } from "zod";
 import { applyModificationToBooking } from "./booking-changes.server";
-
-const GATEWAY_URL = "https://connector-gateway.lovable.dev/stripe";
-
-function getStripeKey(): string {
-  const key =
-    process.env.STRIPE_API_KEY ||
-    process.env.STRIPE_LIVE_API_KEY ||
-    process.env.STRIPE_SANDBOX_API_KEY ||
-    "";
-  if (!key) throw new Error("Stripe key not configured");
-  return key;
-}
-
-function getLovableKey(): string {
-  const key = process.env.LOVABLE_API_KEY || "";
-  if (!key) throw new Error("LOVABLE_API_KEY not configured");
-  return key;
-}
-
-async function stripeFetch(path: string, init?: RequestInit & { form?: Record<string, string> }) {
-  const headers: Record<string, string> = {
-    "Lovable-API-Key": getLovableKey(),
-    "X-Connection-Api-Key": getStripeKey(),
-  };
-  let body: BodyInit | undefined = init?.body as BodyInit | undefined;
-  if (init?.form) {
-    headers["Content-Type"] = "application/x-www-form-urlencoded";
-    body = new URLSearchParams(init.form).toString();
-  }
-  const res = await fetch(`${GATEWAY_URL}${path}`, {
-    method: init?.method || "GET",
-    headers: { ...headers, ...(init?.headers as Record<string, string>) },
-    body,
-  });
-  const text = await res.text();
-  if (!res.ok) {
-    throw new Error(`Stripe ${path} ${res.status}: ${text.slice(0, 300)}`);
-  }
-  return text ? JSON.parse(text) : {};
-}
+import { createMolliePayment, getMolliePayment, paymentsStatus } from "./mollie.server";
 
 const checkoutInput = z.object({
   tour_slug: z.string().max(120),
@@ -61,6 +22,7 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => checkoutInput.parse(data))
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const payments = await paymentsStatus(supabaseAdmin);
 
     const { data: booking, error: bErr } = await supabaseAdmin
       .from("bookings")
@@ -78,43 +40,39 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
         total_estimate: Math.round(data.amount / 100),
         amount_total: data.amount,
         status: "new",
-        payment_status: "pending",
+        payment_status: payments.available ? "pending" : "request",
       })
       .select("id")
       .single();
     if (bErr || !booking) throw new Error(bErr?.message || "Booking insert failed");
 
+    if (!payments.available) {
+      return {
+        mode: "maintenance" as const,
+        message: payments.message,
+        booking_id: booking.id as string,
+        url: null,
+      };
+    }
+
     const host = getRequestHost();
     const proto = host.includes("localhost") ? "http" : "https";
     const origin = `${proto}://${host}`;
 
-    const form: Record<string, string> = {
-      mode: "payment",
-      "line_items[0][quantity]": "1",
-      "line_items[0][price_data][currency]": "eur",
-      "line_items[0][price_data][unit_amount]": String(data.amount),
-      "line_items[0][price_data][product_data][name]": `${data.tour_title} · ${data.guests} guest${data.guests === 1 ? "" : "s"}`,
-      "line_items[0][price_data][product_data][description]":
-        `Tuk Tuk 24 tour${data.travel_date ? ` on ${data.travel_date}` : ""}${data.time ? ` at ${data.time}` : ""}`.slice(0, 500),
-      customer_email: data.email,
-      success_url: `${origin}/booking/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${origin}/booking/cancelled?session_id={CHECKOUT_SESSION_ID}`,
-      "metadata[booking_id]": booking.id,
-      "metadata[tour_slug]": data.tour_slug,
-      "metadata[guests]": String(data.guests),
-    };
-    if (data.image_url) {
-      form["line_items[0][price_data][product_data][images][0]"] = data.image_url;
-    }
-
-    const session = await stripeFetch("/v1/checkout/sessions", {
-      method: "POST",
-      form,
+    const payment = await createMolliePayment({
+      amountCents: data.amount,
+      description: `${data.tour_title} · ${data.guests} guest${data.guests === 1 ? "" : "s"}${data.travel_date ? ` · ${data.travel_date}` : ""}`,
+      origin,
+      metadata: {
+        booking_id: booking.id,
+        tour_slug: data.tour_slug,
+        guests: String(data.guests),
+      },
     });
 
     await supabaseAdmin.from("orders").insert({
       booking_id: booking.id,
-      stripe_session_id: session.id,
+      stripe_session_id: payment.id,
       amount_total: data.amount,
       currency: "eur",
       payment_status: "pending",
@@ -126,7 +84,13 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
       travel_date: data.travel_date || null,
     });
 
-    return { url: session.url as string, sessionId: session.id as string };
+    return {
+      mode: "pay" as const,
+      message: null,
+      url: payment.checkoutUrl as string | null,
+      booking_id: booking.id as string,
+      sessionId: payment.id as string,
+    };
   });
 
 export const confirmCheckout = createServerFn({ method: "POST" })
@@ -136,18 +100,15 @@ export const confirmCheckout = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-    const session = await stripeFetch(
-      `/v1/checkout/sessions/${encodeURIComponent(data.session_id)}`,
-    );
-
-    const paid = session.payment_status === "paid";
-    const newStatus = paid ? "paid" : session.payment_status || "pending";
+    const payment = await getMolliePayment(data.session_id);
+    const paid = payment.status === "paid";
+    const newStatus = paid ? "paid" : payment.status || "pending";
 
     const { data: order } = await supabaseAdmin
       .from("orders")
       .update({
         payment_status: newStatus,
-        stripe_payment_intent_id: session.payment_intent || null,
+        stripe_payment_intent_id: payment.id,
       })
       .eq("stripe_session_id", data.session_id)
       .select("booking_id, tour_title, amount_total, customer_name")
@@ -169,7 +130,7 @@ export const confirmCheckout = createServerFn({ method: "POST" })
       }
     }
 
-    // Modification-only sessions don't have an orders row.
+    // Modification-only payments don't have an orders row.
     if (!order && paid) {
       const { data: mod } = await supabaseAdmin
         .from("booking_modifications")
