@@ -134,7 +134,22 @@ export const submitCustomTour = createServerFn({ method: "POST" })
     if (bErr || !booking) throw new Error(bErr?.message || "Booking insert failed");
 
     if (data.mode === "request") {
-      return { mode: "request" as const, booking_id: booking.id, total };
+      return { mode: "request" as const, booking_id: booking.id, total, url: null, message: null };
+    }
+
+    const payments = await paymentsStatus(supabaseAdmin);
+    if (!payments.available) {
+      await supabaseAdmin
+        .from("bookings")
+        .update({ payment_status: "request" })
+        .eq("id", booking.id);
+      return {
+        mode: "maintenance" as const,
+        booking_id: booking.id,
+        total,
+        url: null,
+        message: payments.message,
+      };
     }
 
     if (total < 100) throw new Error("Total must be at least 1 EUR to checkout");
@@ -143,27 +158,20 @@ export const submitCustomTour = createServerFn({ method: "POST" })
     const proto = host.includes("localhost") ? "http" : "https";
     const origin = `${proto}://${host}`;
 
-    const form: Record<string, string> = {
-      mode: "payment",
-      "line_items[0][quantity]": "1",
-      "line_items[0][price_data][currency]": "eur",
-      "line_items[0][price_data][unit_amount]": String(total),
-      "line_items[0][price_data][product_data][name]":
-        `Custom Tour - ${data.guests} guest${data.guests === 1 ? "" : "s"}`,
-      "line_items[0][price_data][product_data][description]": summary.slice(0, 500),
-      customer_email: data.email,
-      success_url: `${origin}/booking/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${origin}/booking/cancelled?session_id={CHECKOUT_SESSION_ID}`,
-      "metadata[booking_id]": booking.id,
-      "metadata[tour_slug]": "custom",
-      "metadata[guests]": String(data.guests),
-    };
-
-    const session = await stripeFetch("/v1/checkout/sessions", { method: "POST", form });
+    const payment = await createMolliePayment({
+      amountCents: total,
+      description: `Custom Tour · ${data.guests} guest${data.guests === 1 ? "" : "s"}`,
+      origin,
+      metadata: {
+        booking_id: booking.id,
+        tour_slug: "custom",
+        guests: String(data.guests),
+      },
+    });
 
     await supabaseAdmin.from("orders").insert({
       booking_id: booking.id,
-      stripe_session_id: session.id,
+      stripe_session_id: payment.id,
       amount_total: total,
       currency: "eur",
       payment_status: "pending",
@@ -175,8 +183,16 @@ export const submitCustomTour = createServerFn({ method: "POST" })
       travel_date: data.travel_date || null,
     });
 
-    return { mode: "pay" as const, url: session.url as string, sessionId: session.id as string };
+    return {
+      mode: "pay" as const,
+      url: payment.checkoutUrl,
+      sessionId: payment.id,
+      booking_id: booking.id,
+      total,
+      message: null,
+    };
   });
+
 
 // ===== Admin =====
 const upsertInput = z.object({
