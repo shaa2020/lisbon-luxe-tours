@@ -119,6 +119,13 @@ export const requestBookingChange = createServerFn({ method: "POST" })
       .single();
     if (modErr || !mod) throw modErr || new Error("Could not create modification");
 
+    const payments = await paymentsStatus(supabaseAdmin);
+    if (!payments.available) {
+      return { mode: "request" as const, modificationId: mod.id, message: payments.message };
+    }
+
+
+
     const host = getRequestHost();
     const proto = host.includes("localhost") ? "http" : "https";
     const origin = `${proto}://${host}`;
