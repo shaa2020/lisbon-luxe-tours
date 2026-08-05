@@ -38,7 +38,7 @@ function AboutPage() {
       {/* Page header */}
       <header className="relative pt-[120px] pb-12">
         <div className="relative h-[320px] md:h-[380px] overflow-hidden">
-          <img src={vanImg} alt="Tuk Tuk 24 Mercedes V-Class fleet on a Lisbon street" className="absolute inset-0 w-full h-full object-cover" />
+          <img src={aboutHeroImg} alt="Tuk Tuk 24 white electric tuk-tuks parked on Lisbon cobblestones" className="absolute inset-0 w-full h-full object-cover" />
           <div className="absolute inset-0 bg-ink/55" />
           <div className="container-x relative h-full flex flex-col justify-center text-white">
             <p className="eyebrow text-white/80 mb-3">◆  Who we are</p>
