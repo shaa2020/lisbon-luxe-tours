@@ -382,7 +382,57 @@ function AdminDashboard() {
         </section>
       </div>
 
+      <section className="mt-8 rounded-xl border border-border bg-card p-5 space-y-5">
+        <div>
+          <p className="text-sm font-semibold text-foreground">Website images</p>
+          <p className="text-xs text-muted-foreground">
+            Homepage background and About page photo. Uploads are optimised automatically.
+          </p>
+        </div>
+        <div className="grid sm:grid-cols-2 gap-5">
+          {[
+            { key: "hero_image_url" as const, label: "Homepage background", value: heroImage, set: setHeroImage },
+            { key: "about_image_url" as const, label: "About page image", value: aboutImage, set: setAboutImage },
+          ].map((f) => (
+            <div key={f.key} className="space-y-2">
+              <span className="text-xs font-medium text-foreground">{f.label}</span>
+              <div className="h-36 rounded-lg border border-border bg-background overflow-hidden flex items-center justify-center">
+                {f.value ? (
+                  <img src={f.value} alt={f.label} className="w-full h-full object-cover" />
+                ) : (
+                  <span className="text-xs text-muted-foreground">Using built-in image</span>
+                )}
+              </div>
+              <input
+                type="file"
+                accept="image/*"
+                disabled={uploadingImage === f.key}
+                onChange={(e) =>
+                  e.target.files?.[0] && onSiteImage(f.key, f.set, e.target.files[0])
+                }
+                className="block w-full text-xs text-muted-foreground"
+              />
+              <div className="flex gap-2">
+                {f.value && (
+                  <button
+                    type="button"
+                    onClick={() => onSiteImage(f.key, f.set, null)}
+                    className="rounded-md border border-border px-3 py-1.5 text-xs font-medium text-foreground"
+                  >
+                    Reset to built-in
+                  </button>
+                )}
+                {uploadingImage === f.key && (
+                  <span className="text-xs text-muted-foreground self-center">Uploading…</span>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
       <section className="mt-8 rounded-xl border border-border bg-card p-5 space-y-4">
+
         <div>
           <p className="text-sm font-semibold text-foreground">Business information</p>
           <p className="text-xs text-muted-foreground">Email, phone, address and social links shown across the website.</p>
