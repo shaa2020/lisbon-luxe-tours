@@ -1,11 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import heroImg from "@/assets/hero-lisbon.jpg";
+import heroAsset from "@/assets/hero-lisbon-tuktuk.jpg.asset.json";
+const heroImg = heroAsset.url;
 import alfamaImg from "@/assets/tour-alfama.jpg";
 import sintraImg from "@/assets/tour-sintra.jpg";
 import belemImg from "@/assets/dest-belem.jpg";
 import cascaisImg from "@/assets/dest-cascais.jpg";
-import aboutImg from "@/assets/about-tuktuk.jpg";
+import aboutAsset from "@/assets/about-tuktuk-fleet.jpg.asset.json";
+const aboutImg = aboutAsset.url;
 import caboImg from "@/assets/tour-caboroca.jpg";
 import vanImg from "@/assets/fleet-van.jpg";
 import { Nav } from "@/components/site/Nav";
