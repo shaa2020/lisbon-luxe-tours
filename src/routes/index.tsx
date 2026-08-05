@@ -16,6 +16,7 @@ import { WhatsappFab } from "@/components/site/Whatsapp";
 import { BookingModal } from "@/components/site/BookingModal";
 import { TestimonialsSection } from "@/components/site/TestimonialsSection";
 import { useBlogPosts, useTours, tourPricing, type Tour } from "@/lib/cms";
+import { useSiteBrand } from "@/lib/brand";
 
 // Hero now uses the tuk-tuk/flowers image (per user request 2026-06-16)
 const lockedHeroImg = `${aboutImg}?v=locked-20260616-hero`;
@@ -71,11 +72,12 @@ function Index() {
 /* ============================== HERO ============================== */
 
 function Hero() {
+  const { heroImageUrl } = useSiteBrand();
   return (
     <section className="relative pt-[68px] md:pt-[110px] pb-0">
       <div className="relative h-[420px] sm:h-[460px] md:h-[500px] overflow-hidden">
         <img
-          src={lockedHeroImg}
+          src={heroImageUrl || lockedHeroImg}
           alt="Discover Lisboa, Portugal"
           className="absolute inset-0 w-full h-full object-cover animate-[scale-in_1.6s_var(--ease-out-expo)_both]"
         />
@@ -219,7 +221,7 @@ function AboutSection() {
         <div className="absolute -bottom-4 -left-4 sm:-bottom-6 sm:-left-6 w-20 h-20 sm:w-24 sm:h-24 rounded-full border-2 border-dashed border-gold/40" />
         <div className="relative rounded-3xl overflow-hidden h-[340px] sm:h-[420px] md:h-[460px] shadow-[0_30px_60px_rgba(30,58,95,0.18)]">
           <img
-            src={lockedAboutImg}
+            src={aboutImageUrl || lockedAboutImg}
             alt="Local tuk-tuk guide welcoming travelers in Lisbon"
             className="w-full h-full object-cover"
             loading="lazy"
