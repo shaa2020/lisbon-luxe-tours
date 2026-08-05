@@ -5,6 +5,7 @@ const aboutHeroImg = aboutHeroAsset.url;
 import alfamaImg from "@/assets/tour-alfama.jpg";
 import sintraImg from "@/assets/tour-sintra.jpg";
 import caboImg from "@/assets/tour-caboroca.jpg";
+import { useSiteBrand } from "@/lib/brand";
 import { Nav } from "@/components/site/Nav";
 import { Footer } from "@/components/site/Footer";
 import { WhatsappFab } from "@/components/site/Whatsapp";
@@ -31,6 +32,7 @@ export const Route = createFileRoute("/about")({
 });
 
 function AboutPage() {
+  const { aboutImageUrl } = useSiteBrand();
   return (
     <div className="min-h-screen bg-paper text-ink overflow-x-clip">
       <Nav overlay />
@@ -38,7 +40,7 @@ function AboutPage() {
       {/* Page header */}
       <header className="relative pt-[120px] pb-12">
         <div className="relative h-[320px] md:h-[380px] overflow-hidden">
-          <img src={aboutHeroImg} alt="Tuk Tuk 24 white electric tuk-tuks parked on Lisbon cobblestones" className="absolute inset-0 w-full h-full object-cover" />
+          <img src={aboutImageUrl || aboutHeroImg} alt="Tuk Tuk 24 white electric tuk-tuks parked on Lisbon cobblestones" className="absolute inset-0 w-full h-full object-cover" />
           <div className="absolute inset-0 bg-ink/55" />
           <div className="container-x relative h-full flex flex-col justify-center text-white">
             <p className="eyebrow text-white/80 mb-3">◆  Who we are</p>

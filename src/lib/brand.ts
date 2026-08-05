@@ -37,6 +37,8 @@ export type CustomTourHero = typeof DEFAULT_CUSTOM_TOUR;
 export type SiteBrand = {
   brandName: string;
   logoUrl: string | null;
+  heroImageUrl: string | null;
+  aboutImageUrl: string | null;
   business: BusinessInfo;
   customTour: CustomTourHero;
   hotelPickupFeeCents: number;
@@ -78,6 +80,8 @@ export function useSiteBrand() {
       return {
         brandName: (data as any)?.brand_name || DEFAULT_BRAND_NAME,
         logoUrl: (data as any)?.logo_url ?? DEFAULT_BRAND_LOGO,
+        heroImageUrl: (data as any)?.hero_image_url ?? null,
+        aboutImageUrl: (data as any)?.about_image_url ?? null,
         business: mapBusiness(data),
         customTour: mapCustomTour(data),
         hotelPickupFeeCents:
@@ -87,6 +91,8 @@ export function useSiteBrand() {
     placeholderData: {
       brandName: DEFAULT_BRAND_NAME,
       logoUrl: DEFAULT_BRAND_LOGO,
+      heroImageUrl: null,
+      aboutImageUrl: null,
       business: DEFAULT_BUSINESS,
       customTour: DEFAULT_CUSTOM_TOUR,
       hotelPickupFeeCents: DEFAULT_HOTEL_PICKUP_FEE_CENTS,
@@ -97,6 +103,8 @@ export function useSiteBrand() {
     ...query,
     brandName: query.data?.brandName ?? DEFAULT_BRAND_NAME,
     logoUrl: query.data?.logoUrl ?? DEFAULT_BRAND_LOGO,
+    heroImageUrl: query.data?.heroImageUrl ?? null,
+    aboutImageUrl: query.data?.aboutImageUrl ?? null,
     business: query.data?.business ?? DEFAULT_BUSINESS,
     customTour: query.data?.customTour ?? DEFAULT_CUSTOM_TOUR,
     hotelPickupFeeCents: query.data?.hotelPickupFeeCents ?? DEFAULT_HOTEL_PICKUP_FEE_CENTS,

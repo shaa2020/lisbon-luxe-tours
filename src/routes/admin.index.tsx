@@ -69,6 +69,9 @@ function AdminDashboard() {
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
   const [savingBrand, setSavingBrand] = useState(false);
   const [uploadingLogo, setUploadingLogo] = useState(false);
+  const [heroImage, setHeroImage] = useState<string | null>(null);
+  const [aboutImage, setAboutImage] = useState<string | null>(null);
+  const [uploadingImage, setUploadingImage] = useState<string | null>(null);
 
   const [biz, setBiz] = useState({
     contact_email: "",
@@ -93,6 +96,8 @@ function AdminDashboard() {
       const d: any = brand.data;
       setBrandName(d.brand_name || "Tuk Tuk 24");
       setLogoUrl(d.logo_url ?? null);
+      setHeroImage(d.hero_image_url ?? null);
+      setAboutImage(d.about_image_url ?? null);
       setBiz({
         contact_email: d.contact_email ?? "",
         contact_phone: d.contact_phone ?? "",
@@ -153,6 +158,29 @@ function AdminDashboard() {
       toast.error((error as Error).message);
     } finally {
       setUploadingLogo(false);
+    }
+  };
+
+  const onSiteImage = async (
+    column: "hero_image_url" | "about_image_url",
+    setter: (v: string | null) => void,
+    file: File | null,
+  ) => {
+    setUploadingImage(column);
+    try {
+      const url = file ? await uploadMediaFile("site", column, file) : null;
+      const { error } = await supabase
+        .from("site_settings")
+        .upsert({ id: true, [column]: url } as any);
+      if (error) throw error;
+      setter(url);
+      qc.invalidateQueries({ queryKey: ["site-brand"] });
+      qc.invalidateQueries({ queryKey: ["site-brand-admin"] });
+      toast.success(file ? "Image uploaded & saved" : "Reset to built-in image");
+    } catch (error) {
+      toast.error((error as Error).message);
+    } finally {
+      setUploadingImage(null);
     }
   };
 
@@ -382,7 +410,57 @@ function AdminDashboard() {
         </section>
       </div>
 
+      <section className="mt-8 rounded-xl border border-border bg-card p-5 space-y-5">
+        <div>
+          <p className="text-sm font-semibold text-foreground">Website images</p>
+          <p className="text-xs text-muted-foreground">
+            Homepage background and About page photo. Uploads are optimised automatically.
+          </p>
+        </div>
+        <div className="grid sm:grid-cols-2 gap-5">
+          {[
+            { key: "hero_image_url" as const, label: "Homepage background", value: heroImage, set: setHeroImage },
+            { key: "about_image_url" as const, label: "About page image", value: aboutImage, set: setAboutImage },
+          ].map((f) => (
+            <div key={f.key} className="space-y-2">
+              <span className="text-xs font-medium text-foreground">{f.label}</span>
+              <div className="h-36 rounded-lg border border-border bg-background overflow-hidden flex items-center justify-center">
+                {f.value ? (
+                  <img src={f.value} alt={f.label} className="w-full h-full object-cover" />
+                ) : (
+                  <span className="text-xs text-muted-foreground">Using built-in image</span>
+                )}
+              </div>
+              <input
+                type="file"
+                accept="image/*"
+                disabled={uploadingImage === f.key}
+                onChange={(e) =>
+                  e.target.files?.[0] && onSiteImage(f.key, f.set, e.target.files[0])
+                }
+                className="block w-full text-xs text-muted-foreground"
+              />
+              <div className="flex gap-2">
+                {f.value && (
+                  <button
+                    type="button"
+                    onClick={() => onSiteImage(f.key, f.set, null)}
+                    className="rounded-md border border-border px-3 py-1.5 text-xs font-medium text-foreground"
+                  >
+                    Reset to built-in
+                  </button>
+                )}
+                {uploadingImage === f.key && (
+                  <span className="text-xs text-muted-foreground self-center">Uploading…</span>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
       <section className="mt-8 rounded-xl border border-border bg-card p-5 space-y-4">
+
         <div>
           <p className="text-sm font-semibold text-foreground">Business information</p>
           <p className="text-xs text-muted-foreground">Email, phone, address and social links shown across the website.</p>

@@ -41,7 +41,7 @@ async function compressImage(file: File): Promise<{ blob: Blob; ext: string }> {
 }
 
 export async function uploadMediaFile(
-  folder: "tours" | "blog" | "brand" | "custom",
+  folder: "tours" | "blog" | "brand" | "custom" | "site",
   slug: string,
   file: File,
 ): Promise<string> {

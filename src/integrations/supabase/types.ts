@@ -397,6 +397,7 @@ export type Database = {
       }
       site_settings: {
         Row: {
+          about_image_url: string | null
           address_line1: string | null
           address_line2: string | null
           brand_name: string
@@ -411,6 +412,7 @@ export type Database = {
           facebook_url: string | null
           footer_legal: string | null
           footer_tagline: string | null
+          hero_image_url: string | null
           hotel_pickup_fee_cents: number
           id: boolean
           instagram_url: string | null
@@ -422,6 +424,7 @@ export type Database = {
           whatsapp_phone: string | null
         }
         Insert: {
+          about_image_url?: string | null
           address_line1?: string | null
           address_line2?: string | null
           brand_name?: string
@@ -436,6 +439,7 @@ export type Database = {
           facebook_url?: string | null
           footer_legal?: string | null
           footer_tagline?: string | null
+          hero_image_url?: string | null
           hotel_pickup_fee_cents?: number
           id?: boolean
           instagram_url?: string | null
@@ -447,6 +451,7 @@ export type Database = {
           whatsapp_phone?: string | null
         }
         Update: {
+          about_image_url?: string | null
           address_line1?: string | null
           address_line2?: string | null
           brand_name?: string
@@ -461,6 +466,7 @@ export type Database = {
           facebook_url?: string | null
           footer_legal?: string | null
           footer_tagline?: string | null
+          hero_image_url?: string | null
           hotel_pickup_fee_cents?: number
           id?: boolean
           instagram_url?: string | null
