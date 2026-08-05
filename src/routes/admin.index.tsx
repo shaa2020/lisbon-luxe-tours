@@ -69,6 +69,9 @@ function AdminDashboard() {
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
   const [savingBrand, setSavingBrand] = useState(false);
   const [uploadingLogo, setUploadingLogo] = useState(false);
+  const [heroImage, setHeroImage] = useState<string | null>(null);
+  const [aboutImage, setAboutImage] = useState<string | null>(null);
+  const [uploadingImage, setUploadingImage] = useState<string | null>(null);
 
   const [biz, setBiz] = useState({
     contact_email: "",
@@ -93,6 +96,8 @@ function AdminDashboard() {
       const d: any = brand.data;
       setBrandName(d.brand_name || "Tuk Tuk 24");
       setLogoUrl(d.logo_url ?? null);
+      setHeroImage(d.hero_image_url ?? null);
+      setAboutImage(d.about_image_url ?? null);
       setBiz({
         contact_email: d.contact_email ?? "",
         contact_phone: d.contact_phone ?? "",
@@ -153,6 +158,29 @@ function AdminDashboard() {
       toast.error((error as Error).message);
     } finally {
       setUploadingLogo(false);
+    }
+  };
+
+  const onSiteImage = async (
+    column: "hero_image_url" | "about_image_url",
+    setter: (v: string | null) => void,
+    file: File | null,
+  ) => {
+    setUploadingImage(column);
+    try {
+      const url = file ? await uploadMediaFile("site", column, file) : null;
+      const { error } = await supabase
+        .from("site_settings")
+        .upsert({ id: true, [column]: url } as any);
+      if (error) throw error;
+      setter(url);
+      qc.invalidateQueries({ queryKey: ["site-brand"] });
+      qc.invalidateQueries({ queryKey: ["site-brand-admin"] });
+      toast.success(file ? "Image uploaded & saved" : "Reset to built-in image");
+    } catch (error) {
+      toast.error((error as Error).message);
+    } finally {
+      setUploadingImage(null);
     }
   };
 
