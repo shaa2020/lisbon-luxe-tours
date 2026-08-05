@@ -177,6 +177,7 @@ function SearchField({
 /* ============================== ABOUT ============================== */
 
 function AboutSection() {
+  const { aboutImageUrl } = useSiteBrand();
   return (
     <section className="container-x py-16 md:py-32 grid md:grid-cols-2 gap-12 md:gap-16 items-center">
       <div>
