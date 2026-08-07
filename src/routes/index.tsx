@@ -1,5 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
+import { toast } from "sonner";
 import heroAsset from "@/assets/hero-lisbon-tuktuk.jpg.asset.json";
 const heroImg = heroAsset.url;
 import alfamaImg from "@/assets/tour-alfama.jpg";
@@ -14,6 +16,7 @@ import { WhatsappFab } from "@/components/site/Whatsapp";
 import { BookingModal } from "@/components/site/BookingModal";
 import { TestimonialsSection } from "@/components/site/TestimonialsSection";
 import { useBlogPosts, useTours, tourPricing, type Tour } from "@/lib/cms";
+import { subscribeToNewsletter } from "@/lib/subscribers.functions";
 import aboutAsset from "@/assets/about-tuktuk-fleet.jpg.asset.json";
 const aboutImg = aboutAsset.url;
 import { useSiteBrand } from "@/lib/brand";
