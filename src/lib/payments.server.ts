@@ -446,8 +446,10 @@ export async function createPayment(
 
 /** Look a payment up by its reference, routing to the gateway that owns it. */
 export async function getPaymentByReference(id: string): Promise<PaymentResult & { provider: ProviderId }> {
+  await refreshGatewaySecretCache();
   const owner = (Object.values(GATEWAYS) as GatewayAdapter[]).find((g) => g.ownsReference(id));
   const adapter = owner ?? mollieAdapter;
+
   const payment = await adapter.getPayment(id);
   return { ...payment, provider: adapter.id };
 }
