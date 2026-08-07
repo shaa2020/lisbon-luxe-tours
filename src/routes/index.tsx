@@ -137,7 +137,7 @@ function Hero() {
             </p>
 
             {/* Slide index */}
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-5">
+            <div className="absolute bottom-24 left-1/2 -translate-x-1/2 flex items-center gap-5">
               {HERO_SLIDES.map((s, i) => (
                 <button
                   key={s}
