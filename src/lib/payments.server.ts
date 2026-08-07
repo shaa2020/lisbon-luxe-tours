@@ -82,8 +82,12 @@ function mollieKey(mode: GatewayMode): string {
 }
 
 
-async function mollieFetch(path: string, init?: { method?: string; body?: Record<string, unknown> }) {
-  const key = mollieKey();
+async function mollieFetch(
+  path: string,
+  mode: GatewayMode,
+  init?: { method?: string; body?: Record<string, unknown> },
+) {
+  const key = mollieKey(mode);
   if (!key) throw new Error("Mollie API key not configured");
   const res = await fetch(`${MOLLIE_API}${path}`, {
     method: init?.method || "GET",
@@ -107,9 +111,9 @@ function normalizeMollie(payment: any): PaymentResult {
 
 const mollieAdapter: GatewayAdapter = {
   id: "mollie",
-  hasCredentials: () => !!mollieKey(),
+  hasCredentials: (mode) => !!mollieKey(mode),
   ownsReference: (id) => id.startsWith("tr_"),
-  async createPayment(input) {
+  async createPayment(input, mode) {
     const isLocal = input.origin.includes("localhost") || input.origin.includes("127.0.0.1");
     const redirectPath = input.redirectPath || "/booking/success";
     const body: Record<string, unknown> = {
@@ -120,9 +124,9 @@ const mollieAdapter: GatewayAdapter = {
     };
     if (!isLocal) body["webhookUrl"] = `${input.origin}/api/public/payments/mollie`;
 
-    const created = normalizeMollie(await mollieFetch("/payments", { method: "POST", body }));
+    const created = normalizeMollie(await mollieFetch("/payments", mode, { method: "POST", body }));
     const updated = normalizeMollie(
-      await mollieFetch(`/payments/${created.id}`, {
+      await mollieFetch(`/payments/${created.id}`, mode, {
         method: "PATCH",
         body: { redirectUrl: `${input.origin}${redirectPath}?session_id=${created.id}` },
       }),
@@ -130,12 +134,13 @@ const mollieAdapter: GatewayAdapter = {
     return { ...updated, checkoutUrl: updated.checkoutUrl || created.checkoutUrl };
   },
   async getPayment(id) {
-    return normalizeMollie(await mollieFetch(`/payments/${encodeURIComponent(id)}`));
+    const mode: GatewayMode = mollieKey("live") ? "live" : "test";
+    return normalizeMollie(await mollieFetch(`/payments/${encodeURIComponent(id)}`, mode));
   },
-  async testConnection() {
-    if (!mollieKey()) return { ok: false, message: "No Mollie API key saved yet." };
+  async testConnection(mode) {
+    if (!mollieKey(mode)) return { ok: false, message: `No Mollie ${mode} API key saved yet.` };
     try {
-      const me = await mollieFetch("/methods?limit=5");
+      const me = await mollieFetch("/methods?limit=5", mode);
       const count = me?.count ?? me?._embedded?.methods?.length ?? 0;
       return { ok: true, message: `Connected. ${count} payment method(s) enabled on your Mollie account.` };
     } catch (e) {
@@ -143,6 +148,7 @@ const mollieAdapter: GatewayAdapter = {
     }
   },
 };
+
 
 /* ------------------------------------------------------------------ Stripe */
 
