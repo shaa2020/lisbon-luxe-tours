@@ -282,6 +282,17 @@ const paypalAdapter: GatewayAdapter = {
     });
     const json = await res.json();
     if (!res.ok) throw new Error(JSON.stringify(json).slice(0, 300));
+
+    // PayPal only moves money once the approved order is captured.
+    if (json?.status === "APPROVED") {
+      const cap = await fetch(`${paypalBase(mode)}/v2/checkout/orders/${encodeURIComponent(id)}/capture`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+      });
+      const capJson = await cap.json();
+      if (cap.ok) return normalizePaypal(capJson);
+    }
+
     return normalizePaypal(json);
   },
   async testConnection(mode) {
