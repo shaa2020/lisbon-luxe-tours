@@ -34,6 +34,12 @@ export const Route = createFileRoute("/tours/")({
     ],
     links: [{ rel: "canonical", href: "https://tuktuk24lisbon.com/tours" }],
   }),
+  validateSearch: (search: Record<string, unknown>) => ({
+    q: typeof search['q'] === 'string' && search['q'] ? String(search['q']) : undefined,
+    date: typeof search['date'] === 'string' && search['date'] ? String(search['date']) : undefined,
+    guests: Number(search['guests']) > 0 ? Number(search['guests']) : undefined,
+    length: typeof search['length'] === 'string' && search['length'] ? String(search['length']) : undefined,
+  }),
   component: ToursPage,
 });
 
@@ -58,13 +64,14 @@ function useFaqs(limit = 6) {
 }
 
 function ToursPage() {
+  const sp = Route.useSearch();
   const { data: tours = [], isLoading } = useTours();
   const { data: statsBySlug = {} } = useReviewStatsBySlug();
   const { data: guestReviews = [] } = useFeaturedReviews(3);
   const { data: faqs = [] } = useFaqs(6);
   const { business, hotelPickupFeeCents } = useSiteBrand();
   const [cat, setCat] = useState<string>("all");
-  const [q, setQ] = useState("");
+  const [q, setQ] = useState(sp.q ?? "");
   const [sort, setSort] = useState<SortKey>("featured");
   const [bookingTour, setBookingTour] = useState<Tour | null>(null);
 
@@ -78,7 +85,9 @@ function ToursPage() {
         t.title.toLowerCase().includes(q.toLowerCase()) ||
         t.category.toLowerCase().includes(q.toLowerCase()) ||
         t.tagline.toLowerCase().includes(q.toLowerCase());
-      return okCat && okQ;
+      const hours = sp.length ? (sp.length.match(/\d+/)?.[0] ?? "") : "";
+      const okLen = !hours || t.duration.includes(hours);
+      return okCat && okQ && okLen;
     });
 
     const sorted = [...list];
@@ -87,7 +96,7 @@ function ToursPage() {
     else if (sort === "duration") sorted.sort((a, b) => a.duration.localeCompare(b.duration));
     else sorted.sort((a, b) => Number(!!b.featured) - Number(!!a.featured));
     return sorted;
-  }, [tours, cat, q, sort]);
+  }, [tours, cat, q, sort, sp.length]);
 
   const counts = useMemo(() => {
     const map: Record<string, number> = { all: tours.length };
@@ -483,6 +492,8 @@ function ToursPage() {
       <WhatsappFab />
 
       <BookingModal
+        defaultDate={sp.date}
+        defaultGuests={sp.guests}
         tour={bookingTour}
         open={!!bookingTour}
         onOpenChange={(v) => !v && setBookingTour(null)}

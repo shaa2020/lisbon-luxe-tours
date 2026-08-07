@@ -8,7 +8,7 @@ export const DEFAULT_BRAND_TAGLINE = "Lisbon Tours";
 export const DEFAULT_BRAND_LOGO = defaultLogoAsset.url;
 
 export const DEFAULT_BUSINESS = {
-  contactEmail: "hello@tuktuk24.pt",
+  contactEmail: "tuktuklisbon24@gmail.com",
   contactPhone: "+351 922 024 690",
   whatsappPhone: "+351922024690",
   addressLine1: "Largo da Graça 12",

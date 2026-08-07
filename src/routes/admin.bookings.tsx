@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { AdminShell } from "@/components/admin/AdminShell";
@@ -298,6 +298,8 @@ function BookingsInbox() {
           Reply on WhatsApp, confirm, and keep your pipeline tidy.
         </p>
       </div>
+
+      <BookingsCalendar bookings={bookings} />
 
       <div className="flex flex-wrap gap-2 mb-3">
         {(
@@ -695,5 +697,107 @@ function BookingsInbox() {
         </div>
       )}
     </AdminShell>
+  );
+}
+
+
+function BookingsCalendar({ bookings }: { bookings: Booking[] }) {
+  const [cursor, setCursor] = useState(() => {
+    const d = new Date();
+    return new Date(d.getFullYear(), d.getMonth(), 1);
+  });
+
+  const byDate = useMemo(() => {
+    const map: Record<string, Booking[]> = {};
+    for (const b of bookings) {
+      if (!b.travel_date) continue;
+      (map[b.travel_date] ??= []).push(b);
+    }
+    return map;
+  }, [bookings]);
+
+  const year = cursor.getFullYear();
+  const month = cursor.getMonth();
+  const first = new Date(year, month, 1);
+  const startOffset = (first.getDay() + 6) % 7; // Monday-first
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const cells: (number | null)[] = [
+    ...Array.from({ length: startOffset }, () => null),
+    ...Array.from({ length: daysInMonth }, (_, i) => i + 1),
+  ];
+  const todayKey = new Date().toISOString().slice(0, 10);
+  const key = (day: number) =>
+    `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+
+  const monthTotal = Object.entries(byDate).filter(([d]) =>
+    d.startsWith(`${year}-${String(month + 1).padStart(2, "0")}`),
+  ).reduce((n, [, list]) => n + list.length, 0);
+
+  return (
+    <div className="mb-6 rounded-2xl border border-border bg-card p-4">
+      <div className="flex items-center justify-between mb-3">
+        <div>
+          <h2 className="text-sm font-semibold">Tour calendar</h2>
+          <p className="text-xs text-muted-foreground">
+            {first.toLocaleDateString(undefined, { month: "long", year: "numeric" })} · {monthTotal} booking{monthTotal === 1 ? "" : "s"}
+          </p>
+        </div>
+        <div className="flex gap-1">
+          <button
+            onClick={() => setCursor(new Date(year, month - 1, 1))}
+            className="h-8 w-8 rounded-full border border-border text-sm hover:border-foreground"
+            aria-label="Previous month"
+          >
+            ‹
+          </button>
+          <button
+            onClick={() => setCursor(new Date(year, month + 1, 1))}
+            className="h-8 w-8 rounded-full border border-border text-sm hover:border-foreground"
+            aria-label="Next month"
+          >
+            ›
+          </button>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-7 gap-1 text-[10px] uppercase tracking-wider text-muted-foreground mb-1">
+        {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((d) => (
+          <div key={d} className="text-center py-1">{d}</div>
+        ))}
+      </div>
+
+      <div className="grid grid-cols-7 gap-1">
+        {cells.map((day, i) => {
+          if (day === null) return <div key={`e${i}`} className="min-h-[62px]" />;
+          const k = key(day);
+          const list = byDate[k] ?? [];
+          const isToday = k === todayKey;
+          return (
+            <div
+              key={k}
+              className={`min-h-[62px] rounded-lg border p-1 text-left ${
+                isToday ? "border-primary" : "border-border"
+              } ${list.length ? "bg-muted/50" : ""}`}
+            >
+              <div className="text-[11px] font-semibold text-muted-foreground">{day}</div>
+              <div className="space-y-0.5 mt-0.5">
+                {list.slice(0, 2).map((b) => (
+                  <div
+                    key={b.id}
+                    title={`${b.customer_name} · ${b.tour_title ?? "Tour"} · ${b.guests} guest(s)`}
+                    className="truncate rounded bg-foreground/90 text-background px-1 py-0.5 text-[10px]"
+                  >
+                    {b.customer_name}
+                  </div>
+                ))}
+                {list.length > 2 && (
+                  <div className="text-[10px] text-muted-foreground">+{list.length - 2} more</div>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
   );
 }

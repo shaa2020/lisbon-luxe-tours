@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Nav } from "@/components/site/Nav";
 import { Footer } from "@/components/site/Footer";
 import { WhatsappFab } from "@/components/site/Whatsapp";
+import { useSiteBrand } from "@/lib/brand";
 
 export const Route = createFileRoute("/privacy")({
   head: () => ({
@@ -27,6 +28,9 @@ export const Route = createFileRoute("/privacy")({
 });
 
 function PrivacyPage() {
+  const { business, brandName } = useSiteBrand();
+  const email = business.contactEmail;
+  const address = [business.addressLine1, business.addressLine2].filter(Boolean).join(", ");
   return (
     <div className="min-h-screen bg-paper text-ink overflow-x-clip">
       <Nav />
@@ -39,13 +43,13 @@ function PrivacyPage() {
 
           <div className="prose prose-ink max-w-none">
             <p className="text-body leading-relaxed">
-              Tuk Tuk 24 (“we”, “us”, “our”) is committed to protecting your personal data. This policy explains what information we collect, how we use it, and your rights under the General Data Protection Regulation (GDPR).
+              {brandName} (“we”, “us”, “our”) is committed to protecting your personal data. This policy explains what information we collect, how we use it, and your rights under the General Data Protection Regulation (GDPR).
             </p>
 
             <h2 className="font-display text-xl font-semibold text-ink mt-8 mb-3">1. Who we are</h2>
             <p className="text-body leading-relaxed">
-              Tuk Tuk 24 is a private tour operator based in Lisbon, Portugal. Our registered address is Largo da Graça 12, 1100-265 Lisboa, Portugal. For data-protection questions, email us at{" "}
-              <a href="mailto:hello@tuktuk24.pt" className="text-gold hover:underline">hello@tuktuk24.pt</a>.
+              Tuk Tuk 24 is a private tour operator based in Lisbon, Portugal. Our registered address is {address}. For data-protection questions, email us at{" "}
+              <a href={`mailto:${email}`} className="text-gold hover:underline">{email}</a>.
             </p>
 
             <h2 className="font-display text-xl font-semibold text-ink mt-8 mb-3">2. What data we collect</h2>
@@ -76,7 +80,7 @@ function PrivacyPage() {
             <h2 className="font-display text-xl font-semibold text-ink mt-8 mb-3">6. Your rights</h2>
             <p className="text-body leading-relaxed">
               You have the right to access, correct, delete, restrict, or object to the processing of your data, and to withdraw consent at any time. To exercise these rights, contact us at{" "}
-              <a href="mailto:hello@tuktuk24.pt" className="text-gold hover:underline">hello@tuktuk24.pt</a>.
+              <a href={`mailto:${email}`} className="text-gold hover:underline">{email}</a>.
             </p>
 
             <h2 className="font-display text-xl font-semibold text-ink mt-8 mb-3">7. Retention</h2>

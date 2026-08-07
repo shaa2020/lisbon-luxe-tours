@@ -27,16 +27,22 @@ export function BookingModal({
   tour,
   open,
   onOpenChange,
+  defaultDate,
+  defaultGuests,
 }: {
   tour: Tour | null;
   open: boolean;
   onOpenChange: (v: boolean) => void;
+  defaultDate?: string | undefined;
+  defaultGuests?: number | undefined;
 }) {
   const { business } = useSiteBrand();
   const checkoutFn = useServerFn(createCheckoutSession);
-  const [date, setDate] = useState<Date | undefined>();
+  const [date, setDate] = useState<Date | undefined>(
+    defaultDate ? new Date(`${defaultDate}T00:00:00`) : undefined,
+  );
   const [time, setTime] = useState<string>("");
-  const [guests, setGuests] = useState(2);
+  const [guests, setGuests] = useState(defaultGuests && defaultGuests > 0 ? defaultGuests : 2);
   const [name, setName] = useState("");
   const [contact, setContact] = useState("");
   const [submitted, setSubmitted] = useState(false);
@@ -48,7 +54,8 @@ export function BookingModal({
   const total = pricing.current + Math.max(0, guests - 2) * 35;
 
   const reset = () => {
-    setDate(undefined); setTime(""); setGuests(2);
+    setDate(defaultDate ? new Date(`${defaultDate}T00:00:00`) : undefined);
+    setTime(""); setGuests(defaultGuests && defaultGuests > 0 ? defaultGuests : 2);
     setName(""); setContact(""); setSubmitted(false); setPaying(false);
   };
 
