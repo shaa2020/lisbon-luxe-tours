@@ -515,6 +515,127 @@ const PROVIDER_META: Record<
   },
 };
 
+const GATEWAY_KEY_FIELDS: Record<GatewayRow["provider"], { key: string; label: string; help: string }[]> = {
+  stripe: [],
+  mollie: [
+    {
+      key: "MOLLIE_API_KEY",
+      label: "Mollie API key",
+      help: "Mollie dashboard → Developers → API keys. Paste the live key (live_…) while in Live mode, the test key (test_…) while in Test mode.",
+    },
+  ],
+  paypal: [
+    { key: "PAYPAL_CLIENT_ID", label: "Client ID", help: "PayPal Developer dashboard → Apps & Credentials." },
+    { key: "PAYPAL_CLIENT_SECRET", label: "Secret", help: "Shown next to the client ID in the same app." },
+  ],
+  manual: [],
+};
+
+function GatewayKeyForm({
+  provider,
+  mode,
+  savedFields,
+  onSaved,
+}: {
+  provider: GatewayRow["provider"];
+  mode: "test" | "live";
+  savedFields: string[];
+  onSaved: () => void;
+}) {
+  const fields = GATEWAY_KEY_FIELDS[provider];
+  const [open, setOpen] = useState(false);
+  const [values, setValues] = useState<Record<string, string>>({});
+  const [busy, setBusy] = useState(false);
+
+  const save = async () => {
+    setBusy(true);
+    try {
+      await saveGatewayKeys({ data: { provider, mode, values } });
+      toast.success(`${mode === "live" ? "Live" : "Test"} keys saved`);
+      setValues({});
+      setOpen(false);
+      onSaved();
+    } catch (error) {
+      toast.error((error as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const clear = async () => {
+    setBusy(true);
+    try {
+      await clearGatewayKeys({ data: { provider, mode } });
+      toast.success("Keys removed");
+      onSaved();
+    } catch (error) {
+      toast.error((error as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className="rounded-lg border border-border/70 bg-muted/30 p-3 space-y-2">
+      <div className="flex items-center justify-between gap-2">
+        <p className="text-[11px] font-semibold text-foreground">
+          {mode === "live" ? "Live" : "Test"} keys
+          {savedFields.length > 0 && (
+            <span className="ml-1 font-normal text-muted-foreground">· {savedFields.length} saved</span>
+          )}
+        </p>
+        <button
+          type="button"
+          onClick={() => setOpen((v) => !v)}
+          className="text-[11px] font-semibold text-primary underline underline-offset-2"
+        >
+          {open ? "Close" : savedFields.length ? "Replace keys" : "Add keys"}
+        </button>
+      </div>
+
+      {open && (
+        <div className="space-y-2">
+          {fields.map((f) => (
+            <label key={f.key} className="block space-y-1">
+              <span className="text-[11px] font-medium text-foreground">
+                {f.label}
+                {savedFields.includes(f.key) && (
+                  <span className="ml-1 text-emerald-600">· saved</span>
+                )}
+              </span>
+              <input
+                type="password"
+                autoComplete="off"
+                placeholder={savedFields.includes(f.key) ? "•••••••• (leave blank to keep)" : f.key}
+                value={values[f.key] ?? ""}
+                onChange={(e) => setValues((v) => ({ ...v, [f.key]: e.target.value }))}
+                className={input}
+              />
+              <span className="block text-[10px] text-muted-foreground">{f.help}</span>
+            </label>
+          ))}
+          <div className="flex flex-wrap gap-2">
+            <button type="button" onClick={save} disabled={busy} className={btn}>
+              {busy ? "Saving…" : "Save keys"}
+            </button>
+            {savedFields.length > 0 && (
+              <button
+                type="button"
+                onClick={clear}
+                disabled={busy}
+                className="rounded-md border border-border px-3 py-2 text-sm font-medium text-destructive"
+              >
+                Remove saved keys
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+
 function PaymentsSettings({
   maintenanceEnabled,
   maintenanceMessage,
