@@ -753,9 +753,12 @@ function SignupCard() {
             className="w-full h-[46px] px-4 rounded-md bg-white text-ink placeholder:text-ink/40 outline-none text-sm border border-transparent focus:border-gold transition"
           />
           <button
-            type="submit"
+            type="button"
             disabled={submitting}
-            onClick={() => console.log("INLINE BUTTON CLICK")}
+            onClick={() => {
+              console.log("INLINE BUTTON CLICK");
+              window.alert("clicked");
+            }}
             className="w-full h-[46px] rounded-full bg-gold text-white text-[12px] font-semibold uppercase tracking-widest hover:bg-white hover:text-gold transition disabled:opacity-50"
           >
             {submitting ? "..." : "Sign up"}
