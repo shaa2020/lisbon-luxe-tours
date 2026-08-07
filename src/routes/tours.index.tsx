@@ -5,37 +5,70 @@ import { Footer } from "@/components/site/Footer";
 import { WhatsappFab } from "@/components/site/Whatsapp";
 import { BookingModal } from "@/components/site/BookingModal";
 import { useTours, tourCategories, tourPricing, type Tour } from "@/lib/cms";
+import { useReviewStatsBySlug, useFeaturedReviews, type SlugStats } from "@/lib/reviews";
+import { StarRating } from "@/components/site/StarRating";
+import { useSiteBrand } from "@/lib/brand";
+import { CANCELLATION_POLICY_BULLETS } from "@/lib/cancellation";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import heroImg from "@/assets/hero-lisbon.jpg";
 
 export const Route = createFileRoute("/tours/")({
   head: () => ({
     meta: [
-      { title: "All Tours — Tuk Tuk 24 Private Tours of Portugal" },
+      { title: "Private Lisbon Tuk-Tuk & Day Tours — Prices, Times, Pick-up" },
       {
         name: "description",
         content:
-          "Browse the full collection of private tuk-tuk, Sintra, Belém, Cascais and sunset experiences. Filter by category, sort by duration or price.",
+          "Every private tour we run in Lisbon, Sintra, Belém and Cascais — with real prices, durations, what's included, pick-up details and our cancellation policy.",
       },
-      { property: "og:title", content: "All Tours — Tuk Tuk 24" },
+      { property: "og:title", content: "Private Lisbon Tours — Tuk Tuk 24" },
       {
         property: "og:description",
-        content: "Private experiences across Portugal — never shared, never rushed.",
+        content:
+          "Real prices, real durations, local drivers. Private groups only, hotel pick-up available.",
       },
-      { property: "og:url", content: "/tours" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { property: "og:url", content: "https://tuktuk24lisbon.com/tours" },
     ],
-    links: [{ rel: "canonical", href: "/tours" }],
+    links: [{ rel: "canonical", href: "https://tuktuk24lisbon.com/tours" }],
   }),
   component: ToursPage,
 });
 
 type SortKey = "featured" | "price-asc" | "price-desc" | "duration";
 
+type Faq = { id: string; question: string; answer: string };
+
+function useFaqs(limit = 6) {
+  return useQuery({
+    queryKey: ["public-faqs", "tours", limit],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("faqs" as never)
+        .select("id, question, answer, sort_order, active")
+        .eq("active", true)
+        .order("sort_order", { ascending: true })
+        .limit(limit);
+      if (error) throw error;
+      return (data ?? []) as unknown as Faq[];
+    },
+  });
+}
+
 function ToursPage() {
   const { data: tours = [], isLoading } = useTours();
+  const { data: statsBySlug = {} } = useReviewStatsBySlug();
+  const { data: guestReviews = [] } = useFeaturedReviews(3);
+  const { data: faqs = [] } = useFaqs(6);
+  const { business, hotelPickupFeeCents } = useSiteBrand();
   const [cat, setCat] = useState<string>("all");
   const [q, setQ] = useState("");
   const [sort, setSort] = useState<SortKey>("featured");
   const [bookingTour, setBookingTour] = useState<Tour | null>(null);
+
+  const pickupFee = Math.round((hotelPickupFeeCents ?? 0) / 100);
 
   const filtered = useMemo(() => {
     const list = tours.filter((t) => {
@@ -62,21 +95,87 @@ function ToursPage() {
     return map;
   }, [tours]);
 
+  const activeCategories = tourCategories.filter((c) => (counts[c.slug] ?? 0) > 0);
+
+  const itemListLd = useMemo(
+    () => ({
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      name: "Private tours by Tuk Tuk 24 in Lisbon",
+      itemListElement: tours.map((t, i) => {
+        const p = tourPricing(t);
+        const s = statsBySlug[t.slug];
+        return {
+          "@type": "ListItem",
+          position: i + 1,
+          item: {
+            "@type": "Product",
+            name: t.title,
+            url: `https://tuktuk24lisbon.com/tours/${t.slug}`,
+            description: t.description,
+            offers: {
+              "@type": "Offer",
+              price: p.current,
+              priceCurrency: "EUR",
+              availability: "https://schema.org/InStock",
+            },
+            ...(s && s.count > 0
+              ? {
+                  aggregateRating: {
+                    "@type": "AggregateRating",
+                    ratingValue: Number(s.average.toFixed(1)),
+                    reviewCount: s.count,
+                  },
+                }
+              : {}),
+          },
+        };
+      }),
+    }),
+    [tours, statsBySlug],
+  );
+
   return (
     <div className="min-h-screen bg-paper text-ink overflow-x-clip">
       <Nav />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListLd) }} />
 
       {/* PAGE HEADER */}
-      <header className="relative pt-[78px] pb-12">
-        <div className="relative h-[320px] md:h-[380px] overflow-hidden rounded-none">
-          <img src={heroImg} alt="" className="absolute inset-0 w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-ink/55" />
+      <header className="relative pt-[78px]">
+        <div className="relative h-[300px] md:h-[360px] overflow-hidden">
+          <img
+            src={heroImg}
+            alt="A Tuk Tuk 24 electric tuk-tuk on a cobbled Lisbon street"
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-ink/60" />
           <div className="container-x relative h-full flex flex-col justify-center text-white">
-            <p className="eyebrow text-white/80 mb-3">◆  The Collection</p>
-            <h1 className="font-display font-bold text-5xl md:text-6xl mb-3">All Tours</h1>
-            <p className="text-white/85 max-w-xl">
-              {tours.length} private experiences across Lisboa, Sintra, Belém, Cascais and beyond.
+            <p className="eyebrow text-white/80 mb-3">Lisbon · Sintra · Belém · Cascais</p>
+            <h1 className="font-display font-bold text-white text-4xl md:text-6xl mb-4 leading-[1.05] max-w-3xl [text-shadow:0_2px_18px_rgba(0,0,0,0.35)]">
+              {tours.length > 0 ? `${tours.length} private tours` : "Private tours"}, driven by
+              people who live here.
+            </h1>
+            <p className="text-white/85 max-w-xl text-sm md:text-base leading-relaxed">
+              Every tour below is private — your group only. Prices are the full price for the
+              vehicle, not per person, and we tell you the route before you pay.
             </p>
+          </div>
+        </div>
+
+        {/* TRUST STRIP */}
+        <div className="bg-ink text-white/85">
+          <div className="container-x py-4 grid grid-cols-2 md:grid-cols-4 gap-y-3 gap-x-6 text-[12px] md:text-[13px]">
+            {[
+              "Private groups only — never shared",
+              `Hotel pick-up & drop-off · €${pickupFee}`,
+              "Free cancellation up to 24h before",
+              "Licensed local drivers · electric tuk-tuks",
+            ].map((t) => (
+              <div key={t} className="flex items-start gap-2">
+                <span className="text-gold mt-[1px]">✓</span>
+                <span>{t}</span>
+              </div>
+            ))}
           </div>
         </div>
       </header>
@@ -106,8 +205,9 @@ function ToursPage() {
                 value={sort}
                 onChange={(e) => setSort(e.target.value as SortKey)}
                 className="px-4 py-2.5 rounded-full bg-cloud border border-border text-sm text-ink focus:outline-none focus:border-gold cursor-pointer"
+                aria-label="Sort tours"
               >
-                <option value="featured">Featured</option>
+                <option value="featured">Most booked</option>
                 <option value="price-asc">Price ↑</option>
                 <option value="price-desc">Price ↓</option>
                 <option value="duration">Duration</option>
@@ -119,7 +219,7 @@ function ToursPage() {
             <FilterChip active={cat === "all"} onClick={() => setCat("all")} count={counts.all}>
               All
             </FilterChip>
-            {tourCategories.map((c) => (
+            {activeCategories.map((c) => (
               <FilterChip
                 key={c.slug}
                 active={cat === c.slug}
@@ -158,49 +258,226 @@ function ToursPage() {
                   <div className="h-3 w-24 bg-cloud rounded" />
                   <div className="h-5 w-3/4 bg-cloud rounded" />
                   <div className="h-3 w-full bg-cloud rounded" />
+                  <div className="h-3 w-2/3 bg-cloud rounded" />
+                  <div className="h-10 w-full bg-cloud rounded mt-4" />
                 </div>
               </div>
             ))}
           </div>
         ) : filtered.length === 0 ? (
-          <div className="text-center py-24 border border-dashed border-border rounded-2xl bg-cloud/40">
-            <p className="font-display text-2xl text-ink mb-3">Nothing here yet.</p>
-            <p className="text-body text-sm mb-6">Try clearing the filters or searching differently.</p>
-            <button
-              onClick={() => { setCat("all"); setQ(""); }}
-              className="px-6 py-3 rounded-full bg-gold text-white text-[12px] font-semibold uppercase tracking-widest hover:bg-ink transition"
+          <div className="text-center py-20 border border-dashed border-border rounded-2xl bg-cloud/40 px-6">
+            <p className="font-display text-2xl text-ink mb-2">No tour matches "{q || "that filter"}".</p>
+            <p className="text-body text-sm mb-6">
+              Try one of these instead, or tell us what you had in mind and we'll build the route.
+            </p>
+            <div className="flex flex-wrap justify-center gap-2 mb-7">
+              {activeCategories.slice(0, 5).map((c) => (
+                <button
+                  key={c.slug}
+                  onClick={() => { setCat(c.slug); setQ(""); }}
+                  className="px-4 py-2 rounded-full bg-white border border-border text-[11px] font-semibold uppercase tracking-widest text-ink hover:border-gold hover:text-gold transition"
+                >
+                  {c.title} · {counts[c.slug]}
+                </button>
+              ))}
+            </div>
+            <Link
+              to="/tours/custom"
+              className="inline-block px-6 py-3 rounded-full bg-gold text-white text-[12px] font-semibold uppercase tracking-widest hover:bg-ink transition"
             >
-              Reset
-            </button>
+              Build your own tour
+            </Link>
           </div>
         ) : (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filtered.map((t) => (
-              <TourGridCard key={t.slug} tour={t} onBook={() => setBookingTour(t)} />
+              <TourGridCard
+                key={t.slug}
+                tour={t}
+                stats={statsBySlug[t.slug]}
+                onBook={() => setBookingTour(t)}
+              />
             ))}
           </div>
         )}
       </section>
 
-      {/* CTA */}
-      <section className="bg-cloud/60 py-20 md:py-24">
-        <div className="container-x text-center max-w-3xl">
-          <p className="eyebrow text-gold mb-3">Want something different?</p>
-          <h2 className="font-display text-3xl md:text-4xl font-bold text-ink mb-4">
-            Build your own tuk-tuk route.
+      {/* HOW A TOUR RUNS */}
+      <section className="bg-white border-y border-border py-16 md:py-20">
+        <div className="container-x">
+          <p className="eyebrow text-gold mb-3">How a tour actually runs</p>
+          <h2 className="font-display text-3xl md:text-4xl font-bold text-ink mb-10 max-w-2xl leading-tight">
+            No queue, no meeting point hunt, no surprise extras.
           </h2>
-          <p className="text-body mb-8">
-            Tell us how much time you have and what you're into — we'll put a route together for
-            the day and quote you upfront.
-          </p>
-          <Link
-            to="/contact"
-            className="inline-flex items-center px-8 py-4 rounded-full bg-gold text-white text-[12px] font-semibold uppercase tracking-widest shadow-[0_8px_20px_rgba(43,182,247,0.35)] hover:bg-ink hover:shadow-[0_8px_20px_rgba(30,58,95,0.35)] transition-all"
-          >
-            Plan a custom tour →
-          </Link>
+          <ol className="grid md:grid-cols-3 gap-6">
+            {[
+              {
+                n: "01",
+                t: "The day before, we message you",
+                d: "A WhatsApp with your driver's name, the pick-up time and where exactly they'll wait. If rain is coming, we say so and offer to move the day.",
+              },
+              {
+                n: "02",
+                t: "Your driver meets you at the door",
+                d: "Hotel, apartment or a corner you pick — no hunting for a meeting point. Water on board, and a roof if the weather turns.",
+              },
+              {
+                n: "03",
+                t: "The route bends around you",
+                d: "Want longer at a viewpoint, or to skip a stop for coffee in Alfama? Just say it. Extra time is charged only if you ask for it, at the rate on your booking.",
+              },
+            ].map((s) => (
+              <li key={s.n} className="bg-cloud/50 border border-border rounded-2xl p-7">
+                <p className="font-display text-4xl font-bold text-gold/70 mb-3">{s.n}</p>
+                <h3 className="font-display text-xl font-semibold text-ink mb-2">{s.t}</h3>
+                <p className="text-sm text-body leading-relaxed">{s.d}</p>
+              </li>
+            ))}
+          </ol>
         </div>
       </section>
+
+      {/* GOOD TO KNOW */}
+      <section className="container-x py-16 md:py-20 grid lg:grid-cols-2 gap-12">
+        <div>
+          <p className="eyebrow text-gold mb-3">Good to know</p>
+          <h2 className="font-display text-3xl md:text-4xl font-bold text-ink mb-6 leading-tight">
+            The practical stuff, before you book.
+          </h2>
+          <dl className="divide-y divide-border border-y border-border">
+            {[
+              {
+                q: "Pick-up & drop-off",
+                a: `We collect you from your hotel or apartment anywhere in central Lisbon and drop you back. Door-to-door pick-up is €${pickupFee} per booking, added at checkout only if you choose it.`,
+              },
+              {
+                q: "Rain",
+                a: "Tuk-tuks have side covers and the premium ones have a roof. If the forecast is genuinely bad we'll message you the day before and you can move the date for free.",
+              },
+              {
+                q: "Luggage",
+                a: "Small bags and daypacks travel fine. Full suitcases only on the van and SUV — tell us in the notes and we'll send the right vehicle.",
+              },
+              {
+                q: "Kids & accessibility",
+                a: "Children are welcome; tell us their ages and we'll bring a booster. Tuk-tuks have a step up, so for limited mobility we recommend the SUV or van instead — just ask.",
+              },
+              {
+                q: "Payment",
+                a: "Card and the usual local methods at checkout. The price you see is the total for your private group — no per-person surcharge, no booking fee at the end.",
+              },
+              {
+                q: "Languages",
+                a: "Our drivers guide in English and Portuguese. Spanish and French are available on request if you book a few days ahead.",
+              },
+            ].map((r) => (
+              <div key={r.q} className="py-4">
+                <dt className="font-display font-semibold text-ink mb-1">{r.q}</dt>
+                <dd className="text-sm text-body leading-relaxed">{r.a}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+
+        <div className="space-y-8">
+          <div className="bg-ink text-white rounded-2xl p-8">
+            <p className="eyebrow text-gold mb-3">Cancellation policy</p>
+            <h3 className="font-display text-2xl font-semibold mb-5">
+              Plans change. Here's exactly where you stand.
+            </h3>
+            <ul className="space-y-3">
+              {CANCELLATION_POLICY_BULLETS.map((b) => (
+                <li key={b.text} className="flex gap-3 text-sm leading-relaxed">
+                  <span className={b.ok ? "text-gold" : "text-white/40"}>{b.ok ? "✓" : "✕"}</span>
+                  <span className="text-white/80">{b.text}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="bg-cloud/60 border border-border rounded-2xl p-8">
+            <p className="eyebrow text-gold mb-3">Not sure which tour?</p>
+            <h3 className="font-display text-2xl font-semibold text-ink mb-3">
+              Tell us your day and we'll shape the route.
+            </h3>
+            <p className="text-sm text-body leading-relaxed mb-6">
+              Send how long you have, how many of you there are and what you're curious about.
+              You'll get a route and a fixed price back — usually the same day.
+            </p>
+            <div className="flex flex-wrap gap-3">
+              <Link
+                to="/tours/custom"
+                className="px-6 py-3 rounded-full bg-gold text-white text-[11px] font-semibold uppercase tracking-widest hover:bg-ink transition"
+              >
+                Build your own tour
+              </Link>
+              <a
+                href={`https://wa.me/${business.whatsappPhone.replace(/[^\d]/g, "")}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-6 py-3 rounded-full border border-ink/20 text-ink text-[11px] font-semibold uppercase tracking-widest hover:border-gold hover:text-gold transition"
+              >
+                Ask on WhatsApp
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* REAL REVIEWS */}
+      {guestReviews.length > 0 && (
+        <section className="bg-cloud/50 py-16 md:py-20 border-t border-border">
+          <div className="container-x">
+            <p className="eyebrow text-gold mb-3">From guests who rode with us</p>
+            <h2 className="font-display text-3xl md:text-4xl font-bold text-ink mb-10">
+              What people said afterwards.
+            </h2>
+            <div className="grid md:grid-cols-3 gap-5">
+              {guestReviews.map((r) => (
+                <article key={r.id} className="bg-white border border-border rounded-2xl p-6 flex flex-col">
+                  <StarRating value={r.rating} readOnly size={16} />
+                  {r.title && (
+                    <h3 className="font-display text-lg font-semibold text-ink mt-3">{r.title}</h3>
+                  )}
+                  <p className="text-sm text-body leading-relaxed mt-2 flex-1">
+                    "{r.body.length > 220 ? r.body.slice(0, 220) + "…" : r.body}"
+                  </p>
+                  <p className="mt-5 pt-4 border-t border-border text-xs font-semibold text-ink">
+                    {r.author_name}
+                  </p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* FAQ */}
+      {faqs.length > 0 && (
+        <section className="container-x py-16 md:py-20">
+          <p className="eyebrow text-gold mb-3">Questions we get a lot</p>
+          <h2 className="font-display text-3xl md:text-4xl font-bold text-ink mb-8">
+            Before you book.
+          </h2>
+          <div className="divide-y divide-border border-y border-border">
+            {faqs.map((f) => (
+              <details key={f.id} className="group py-5">
+                <summary className="flex items-center justify-between cursor-pointer list-none font-display text-lg font-semibold text-ink">
+                  <span className="pr-6">{f.question}</span>
+                  <span className="text-gold transition-transform group-open:rotate-45 shrink-0">+</span>
+                </summary>
+                <p className="text-sm text-body leading-relaxed mt-3 max-w-3xl">{f.answer}</p>
+              </details>
+            ))}
+          </div>
+          <Link
+            to="/faq"
+            className="inline-block mt-8 text-[11px] font-semibold uppercase tracking-widest text-gold border-b-2 border-gold pb-1 hover:text-ink hover:border-ink transition"
+          >
+            Read all frequently asked questions
+          </Link>
+        </section>
+      )}
 
       <Footer />
       <WhatsappFab />
@@ -238,20 +515,26 @@ function FilterChip({
   );
 }
 
-function TourGridCard({ tour, onBook }: { tour: Tour; onBook: () => void }) {
+function TourGridCard({
+  tour, stats, onBook,
+}: {
+  tour: Tour; stats?: SlugStats; onBook: () => void;
+}) {
   const pricing = tourPricing(tour);
+  const included = (tour.included ?? []).slice(0, 3);
+
   return (
     <article className="group bg-white rounded-xl overflow-hidden shadow-[0_4px_20px_rgba(30,58,95,0.06)] hover:shadow-[0_20px_40px_rgba(30,58,95,0.12)] hover:-translate-y-1 transition-all duration-500 flex flex-col">
       <Link to="/tours/$slug" params={{ slug: tour.slug }} className="relative block aspect-[16/10] overflow-hidden">
         <img
           src={tour.image}
-          alt={tour.title}
+          alt={`${tour.title} — private tour in ${tour.category}`}
           loading="lazy"
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
         />
         {tour.featured && (
-          <span className="absolute top-3 left-3 bg-gold text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-sm">
-            Signature
+          <span className="absolute top-3 left-3 bg-ink/85 text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-sm">
+            Most booked
           </span>
         )}
         {pricing.onSale && (
@@ -259,9 +542,12 @@ function TourGridCard({ tour, onBook }: { tour: Tour; onBook: () => void }) {
             −{pricing.discountPct}% Sale
           </span>
         )}
-        <span className="absolute top-3 right-3 bg-white/95 text-ink text-[11px] font-semibold px-3 py-1 rounded-full flex items-center gap-1">
-          <span className="text-gold">★</span> 4.9
-        </span>
+        {stats && stats.count > 0 && (
+          <span className="absolute top-3 right-3 bg-white/95 text-ink text-[11px] font-semibold px-3 py-1 rounded-full flex items-center gap-1">
+            <span className="text-gold">★</span> {stats.average.toFixed(1)}
+            <span className="text-ink/50 font-normal">({stats.count})</span>
+          </span>
+        )}
       </Link>
 
       <div className="p-6 flex-1 flex flex-col">
@@ -269,26 +555,36 @@ function TourGridCard({ tour, onBook }: { tour: Tour; onBook: () => void }) {
         <h3 className="font-display font-semibold text-ink text-lg leading-snug mb-2 group-hover:text-gold transition-colors">
           <Link to="/tours/$slug" params={{ slug: tour.slug }}>{tour.title}</Link>
         </h3>
-        <p className="text-sm text-body leading-relaxed mb-4 line-clamp-2 flex-1">
+        <p className="text-sm text-body leading-relaxed mb-4 line-clamp-2">
           {tour.description}
         </p>
 
-        <div className="flex items-center gap-4 text-[11px] text-body mb-5 pb-5 border-b border-border">
-          <span>⏱ {tour.duration}</span>
-          <span>Private group</span>
-        </div>
+        <ul className="space-y-1.5 mb-4 flex-1">
+          <li className="flex gap-2 text-[12px] text-body">
+            <span className="text-gold">·</span> {tour.duration} · private group, no strangers
+          </li>
+          {included.map((i) => (
+            <li key={i} className="flex gap-2 text-[12px] text-body">
+              <span className="text-gold">·</span> {i}
+            </li>
+          ))}
+          <li className="flex gap-2 text-[12px] text-body">
+            <span className="text-gold">·</span> English & Portuguese guide · instant confirmation
+          </li>
+        </ul>
 
-        <div className="flex items-end justify-between">
+        <div className="flex items-end justify-between pt-5 border-t border-border">
           <div>
-            <p className="text-[10px] uppercase tracking-widest text-body mb-1">From</p>
+            <p className="text-[10px] uppercase tracking-widest text-body mb-1">Total for your group</p>
             <div className="flex items-baseline gap-2 flex-wrap">
               <p className="font-display font-bold text-2xl text-gold leading-none">€{pricing.current}</p>
               {pricing.onSale && (
                 <p className="text-sm text-body/60 line-through leading-none">€{pricing.original}</p>
               )}
             </div>
+            <p className="text-[10px] text-body/70 mt-1">Free cancellation up to 24h before</p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 shrink-0">
             <Link
               to="/tours/$slug"
               params={{ slug: tour.slug }}
