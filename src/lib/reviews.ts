@@ -203,3 +203,20 @@ export function useReviewStatsBySlug() {
     },
   });
 }
+
+/** All approved reviews, newest first — for the public /reviews page. */
+export function useAllPublicReviews() {
+  return useQuery({
+    queryKey: ["reviews", "all-public"],
+    staleTime: 60_000,
+    queryFn: async (): Promise<Review[]> => {
+      const { data, error } = await supabase
+        .from("reviews_public" as never)
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(200);
+      if (error) throw error;
+      return ((data ?? []) as unknown as Review[]).map((r) => ({ ...r, author_email: null }));
+    },
+  });
+}

@@ -30,6 +30,8 @@ function SuccessPage() {
     amount?: number;
     name?: string | null;
     bookingId?: string | null;
+    travelDate?: string | null;
+    guests?: number | null;
   }>({ loading: true, paid: false });
   const [copied, setCopied] = useState(false);
 
@@ -47,6 +49,8 @@ function SuccessPage() {
           amount: r.amount_total,
           name: r.customer_name,
           bookingId: r.booking_id,
+          travelDate: r.travel_date,
+          guests: r.guests,
         }),
       )
       .catch(() => setState({ loading: false, paid: false }));
@@ -104,6 +108,44 @@ function SuccessPage() {
                 <span className="text-ink font-medium">Free cancellation</span> up to 24 hours before the tour. Cancellations made less than 24 hours before the tour are non-refundable. If you reschedule and later cancel, refund eligibility is calculated from the <span className="text-ink font-medium">original booked date and time</span>, not the rescheduled one.
               </p>
             </div>
+            <div className="mb-8 text-left">
+              <p className="text-[11px] font-semibold uppercase tracking-widest text-body mb-3">What happens next</p>
+              <ol className="space-y-3">
+                {[
+                  "You'll get a WhatsApp/email confirmation from our team within a few hours.",
+                  "24 hours before the tour we send your driver's name, phone number and exact pickup point.",
+                  "On the day, meet your driver at the agreed spot — just bring comfortable shoes.",
+                ].map((t, i) => (
+                  <li key={t} className="flex gap-3">
+                    <span className="w-6 h-6 shrink-0 rounded-full bg-gold/15 border border-gold/40 text-gold grid place-items-center text-[11px] font-semibold">
+                      {i + 1}
+                    </span>
+                    <span className="text-xs text-body leading-relaxed">{t}</span>
+                  </li>
+                ))}
+              </ol>
+            </div>
+
+            {state.travelDate ? (
+              <div className="mb-8 flex flex-wrap gap-3 justify-center">
+                <a
+                  href={googleCalUrl(state)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-5 py-2.5 rounded-full border border-ink/20 text-ink text-[11px] font-semibold uppercase tracking-widest hover:border-gold hover:text-gold transition"
+                >
+                  Add to Google Calendar
+                </a>
+                <button
+                  type="button"
+                  onClick={() => downloadIcs(state)}
+                  className="px-5 py-2.5 rounded-full border border-ink/20 text-ink text-[11px] font-semibold uppercase tracking-widest hover:border-gold hover:text-gold transition"
+                >
+                  Apple / Outlook (.ics)
+                </button>
+              </div>
+            ) : null}
+
             <div className="flex flex-wrap gap-3 justify-center">
               <Link
                 to="/"
@@ -136,4 +178,69 @@ function SuccessPage() {
       </div>
     </div>
   );
+}
+
+type SuccessState = {
+  tour?: string | null;
+  bookingId?: string | null;
+  travelDate?: string | null;
+  guests?: number | null;
+};
+
+function calRange(dateStr: string) {
+  const start = new Date(`${dateStr}T09:00:00`);
+  const end = new Date(start.getTime() + 3 * 60 * 60 * 1000);
+  const fmt = (d: Date) => d.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
+  return { start: fmt(start), end: fmt(end) };
+}
+
+function calTitle(s: SuccessState) {
+  return `${s.tour || "Tuk Tuk 24 tour"} · Lisbon`;
+}
+
+function calDetails(s: SuccessState) {
+  return [
+    s.bookingId ? `Booking reference: ${s.bookingId}` : null,
+    s.guests ? `Guests: ${s.guests}` : null,
+    "Your driver's details arrive 24h before the tour.",
+  ]
+    .filter(Boolean)
+    .join("\n");
+}
+
+function googleCalUrl(s: SuccessState) {
+  const { start, end } = calRange(s.travelDate as string);
+  const params = new URLSearchParams({
+    action: "TEMPLATE",
+    text: calTitle(s),
+    dates: `${start}/${end}`,
+    details: calDetails(s),
+    location: "Lisbon, Portugal",
+  });
+  return `https://calendar.google.com/calendar/render?${params.toString()}`;
+}
+
+function downloadIcs(s: SuccessState) {
+  const { start, end } = calRange(s.travelDate as string);
+  const ics = [
+    "BEGIN:VCALENDAR",
+    "VERSION:2.0",
+    "PRODID:-//Tuk Tuk 24//Booking//EN",
+    "BEGIN:VEVENT",
+    `UID:${s.bookingId || Date.now()}@tuktuk24lisbon.com`,
+    `DTSTAMP:${start}`,
+    `DTSTART:${start}`,
+    `DTEND:${end}`,
+    `SUMMARY:${calTitle(s)}`,
+    `DESCRIPTION:${calDetails(s).replace(/\n/g, "\\n")}`,
+    "LOCATION:Lisbon, Portugal",
+    "END:VEVENT",
+    "END:VCALENDAR",
+  ].join("\r\n");
+  const url = URL.createObjectURL(new Blob([ics], { type: "text/calendar" }));
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "tuktuk24-booking.ics";
+  a.click();
+  URL.revokeObjectURL(url);
 }
