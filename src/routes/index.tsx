@@ -90,7 +90,7 @@ function Hero() {
 
       <div className="relative container-x pt-[92px] md:pt-[132px] pb-24 md:pb-28">
         {/* Inset hero card */}
-        <div className="relative rounded-sm overflow-hidden h-[440px] sm:h-[520px] md:h-[600px] shadow-[0_40px_90px_rgba(10,20,35,0.45)]">
+        <div className="relative rounded-sm overflow-hidden h-[400px] sm:h-[520px] md:h-[600px] shadow-[0_40px_90px_rgba(10,20,35,0.45)]">
           <img
             src={src}
             alt="Private tuk-tuk tour through the streets of Lisbon"
@@ -137,7 +137,7 @@ function Hero() {
             </p>
 
             {/* Slide index */}
-            <div className="absolute bottom-24 left-1/2 -translate-x-1/2 flex items-center gap-5">
+            <div className="absolute bottom-6 md:bottom-24 left-1/2 -translate-x-1/2 flex items-center gap-5">
               {HERO_SLIDES.map((s, i) => (
                 <button
                   key={s}
@@ -156,7 +156,7 @@ function Hero() {
         </div>
 
         {/* Segmented search bar overlapping the card */}
-        <div className="relative -mt-8 md:-mt-10 px-0 sm:px-10 md:px-16 z-10">
+        <div className="relative mt-6 md:-mt-10 px-0 sm:px-10 md:px-16 z-10">
           <SearchBar />
         </div>
       </div>
@@ -181,7 +181,7 @@ function SearchBar() {
       </SearchField>
       <Link
         to="/tours"
-        className="sm:col-span-2 lg:col-span-1 h-[68px] px-8 bg-gold text-white font-semibold text-[13px] tracking-widest uppercase hover:bg-ink transition-colors flex items-center justify-center gap-2"
+        className="sm:col-span-2 lg:col-span-1 h-[60px] md:h-[68px] px-8 bg-gold text-white font-semibold text-[13px] tracking-widest uppercase hover:bg-ink transition-colors flex items-center justify-center gap-2"
       >
         <SearchIco />
         Search
@@ -211,7 +211,7 @@ function SearchField({
   children: React.ReactNode;
 }) {
   return (
-    <label className="flex items-center gap-3 h-[68px] px-5 border-b sm:border-b-0 sm:border-r border-border last:border-r-0 min-w-0">
+    <label className="flex items-center gap-3 h-[60px] md:h-[68px] px-5 border-b sm:border-b-0 sm:border-r border-border last:border-r-0 min-w-0">
       <span className="text-gold shrink-0">{children}</span>
       <span className="flex flex-col min-w-0 flex-1">
         <span className="text-[10px] font-semibold text-ink/50 uppercase tracking-widest">
