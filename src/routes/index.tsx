@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
@@ -195,27 +195,53 @@ function Hero() {
 }
 
 function SearchBar() {
+  const navigate = useNavigate();
+  const [dest, setDest] = useState("");
+  const [date, setDate] = useState("");
+  const [guests, setGuests] = useState("");
+  const [length, setLength] = useState("");
+
+  const submit = (e?: React.FormEvent) => {
+    e?.preventDefault();
+    navigate({
+      to: "/tours",
+      search: {
+        q: dest.trim() || undefined,
+        date: date || undefined,
+        guests: guests ? Number(guests) : undefined,
+        length: length.trim() || undefined,
+      },
+    });
+  };
+
   return (
-    <div className="bg-white shadow-[0_24px_60px_rgba(10,20,35,0.28)] grid grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_1fr_auto] overflow-hidden">
-      <SearchField label="Destination" placeholder="Alfama, Sintra, Belém…">
+    <div
+      role="search"
+      onKeyDown={(e) => {
+        if (e.key === "Enter") submit();
+      }}
+      className="bg-white shadow-[0_24px_60px_rgba(10,20,35,0.28)] grid grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_1fr_auto] overflow-hidden"
+    >
+      <SearchField label="Destination" placeholder="Alfama, Sintra, Belém…" value={dest} onChange={setDest}>
         <PinIco />
       </SearchField>
-      <SearchField label="Date" placeholder="dd / mm / yy" type="date">
+      <SearchField label="Date" placeholder="dd / mm / yy" type="date" value={date} onChange={setDate}>
         <CalIco />
       </SearchField>
-      <SearchField label="Guests" placeholder="2" type="number">
+      <SearchField label="Guests" placeholder="2" type="number" value={guests} onChange={setGuests}>
         <UserIco />
       </SearchField>
-      <SearchField label="Tour length" placeholder="2 hours">
+      <SearchField label="Tour length" placeholder="2 hours" value={length} onChange={setLength}>
         <CalIco />
       </SearchField>
-      <Link
-        to="/tours"
+      <button
+        type="button"
+        onClick={() => submit()}
         className="col-span-2 lg:col-span-1 h-[56px] md:h-[68px] px-8 bg-gold text-white font-semibold text-[13px] tracking-widest uppercase hover:bg-ink transition-colors flex items-center justify-center gap-2"
       >
         <SearchIco />
         Search
-      </Link>
+      </button>
     </div>
   );
 }
@@ -233,11 +259,15 @@ function SearchField({
   label,
   placeholder,
   type = "text",
+  value,
+  onChange,
   children,
 }: {
   label: string;
   placeholder: string;
   type?: string;
+  value: string;
+  onChange: (v: string) => void;
   children: React.ReactNode;
 }) {
   return (
@@ -250,6 +280,9 @@ function SearchField({
         <input
           type={type}
           placeholder={placeholder}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          min={type === "number" ? 1 : undefined}
           className="w-full bg-transparent text-[14px] text-ink placeholder:text-ink/40 outline-none min-w-0"
         />
       </span>

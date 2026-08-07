@@ -123,7 +123,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
               name: "Tuk Tuk 24",
               url: "https://tuktuk24lisbon.com",
               telephone: "+351922024690",
-              email: "hello@tuktuk24.pt",
+              email: "tuktuklisbon24@gmail.com",
               priceRange: "€€",
               address: {
                 "@type": "PostalAddress",
