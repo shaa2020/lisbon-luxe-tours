@@ -37,13 +37,50 @@ export const DEFAULT_MAINTENANCE_MESSAGE =
 
 const env = (key: string): string => process.env[key] || "";
 
+/**
+ * Keys entered by the admin (encrypted in the database) take priority over
+ * environment secrets. Refreshed before any gateway operation.
+ */
+let SECRET_CACHE: Record<string, Record<string, string>> = {};
+
+export async function refreshGatewaySecretCache() {
+  const { loadAllGatewaySecrets } = await import("./gateway-secrets.server");
+  SECRET_CACHE = await loadAllGatewaySecrets();
+  return SECRET_CACHE;
+}
+
+function secret(provider: ProviderId, mode: GatewayMode, key: string): string {
+  return (SECRET_CACHE[`${provider}:${mode}`]?.[key] || "").trim() || env(key);
+}
+
+/** Which keys each gateway asks the admin for, per mode. */
+export const GATEWAY_FIELDS: Record<ProviderId, { key: string; label: string; help: string }[]> = {
+  stripe: [],
+  mollie: [
+    {
+      key: "MOLLIE_API_KEY",
+      label: "Mollie API key",
+      help: "Mollie dashboard → Developers → API keys. Use the live key (live_…) in Live mode and the test key (test_…) in Test mode.",
+    },
+  ],
+  paypal: [
+    { key: "PAYPAL_CLIENT_ID", label: "Client ID", help: "PayPal Developer dashboard → Apps & Credentials." },
+    { key: "PAYPAL_CLIENT_SECRET", label: "Secret", help: "Shown next to the client ID in the same app." },
+  ],
+  manual: [],
+};
+
 /* ------------------------------------------------------------------ Mollie */
 
 const MOLLIE_API = "https://api.mollie.com/v2";
 
-function mollieKey(): string {
-  return env("MOLLIE_API_KEY") || env("MOLLIE_LIVE_API_KEY") || env("MOLLIE_TEST_API_KEY");
+function mollieKey(mode: GatewayMode): string {
+  return (
+    secret("mollie", mode, "MOLLIE_API_KEY") ||
+    (mode === "live" ? env("MOLLIE_LIVE_API_KEY") : env("MOLLIE_TEST_API_KEY"))
+  );
 }
+
 
 async function mollieFetch(path: string, init?: { method?: string; body?: Record<string, unknown> }) {
   const key = mollieKey();
