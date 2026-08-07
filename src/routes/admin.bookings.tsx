@@ -12,7 +12,7 @@ import {
   adminListModifications,
   adminApplyModification,
   adminWaiveModification,
-  getStripeSessionUrl,
+  getMolliePaymentUrl,
 } from "@/lib/booking-changes.functions";
 
 export const Route = createFileRoute("/admin/bookings")({
@@ -82,7 +82,7 @@ function BookingsInbox() {
   const listMods = useServerFn(adminListModifications);
   const applyMod = useServerFn(adminApplyModification);
   const waiveMod = useServerFn(adminWaiveModification);
-  const getSessionUrl = useServerFn(getStripeSessionUrl);
+  const getPaymentUrl = useServerFn(getMolliePaymentUrl);
 
   const { data: bookings = [], isLoading } = useQuery({
     queryKey: ["admin-bookings"],
@@ -639,9 +639,9 @@ function BookingsInbox() {
                             <div className="flex flex-wrap gap-2">
                               {m.status !== "applied" && m.payment_status === "pending" && m.difference_cents > 0 && m.stripe_session_id && (
                                 <>
-                                  <button
+                              <button
                                     onClick={async () => {
-                                      const { url } = await getSessionUrl({ data: { sessionId: m.stripe_session_id } });
+                                      const { url } = await getPaymentUrl({ data: { sessionId: m.stripe_session_id } });
                                       if (url) {
                                         await navigator.clipboard.writeText(url);
                                         toast.success("Link copied");
@@ -651,12 +651,19 @@ function BookingsInbox() {
                                   >
                                     <Copy className="w-3 h-3" /> Copy link
                                   </button>
-                                  <a
-                                    href={paymentLinkMailto(b, `https://checkout.stripe.com/pay/${m.stripe_session_id}`)}
+                                  <button
+                                    onClick={async () => {
+                                      const { url } = await getPaymentUrl({ data: { sessionId: m.stripe_session_id } });
+                                      if (url) {
+                                        window.location.href = paymentLinkMailto(b, url);
+                                      } else {
+                                        toast.error("Payment link not available");
+                                      }
+                                    }}
                                     className="inline-flex items-center gap-1 rounded-md bg-primary text-primary-foreground px-2 py-1 text-xs hover:bg-primary/90"
                                   >
                                     <Mail className="w-3 h-3" /> Email link
-                                  </a>
+                                  </button>
                                 </>
                               )}
                               {m.status !== "applied" && m.payment_status === "paid" && (
