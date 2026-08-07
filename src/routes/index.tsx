@@ -713,16 +713,13 @@ function SignupCard() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("INLINE SUBMIT", email);
     if (!email.trim()) return;
     setSubmitting(true);
     try {
       const res = await subscribe({ data: { email: email.trim() } });
-      console.log("INLINE RES", res);
       toast.success(res.message);
       setDone(true);
     } catch (err) {
-      console.log("INLINE ERR", err);
       toast.error((err as Error).message || "Could not subscribe.");
     } finally {
       setSubmitting(false);
