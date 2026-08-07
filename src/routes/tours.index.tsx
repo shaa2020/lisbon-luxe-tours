@@ -151,7 +151,7 @@ function ToursPage() {
           <div className="absolute inset-0 bg-ink/60" />
           <div className="container-x relative h-full flex flex-col justify-center text-white">
             <p className="eyebrow text-white/80 mb-3">Lisbon · Sintra · Belém · Cascais</p>
-            <h1 className="font-display font-bold text-4xl md:text-6xl mb-4 leading-[1.05] max-w-3xl">
+            <h1 className="font-display font-bold text-white text-4xl md:text-6xl mb-4 leading-[1.05] max-w-3xl [text-shadow:0_2px_18px_rgba(0,0,0,0.35)]">
               {tours.length > 0 ? `${tours.length} private tours` : "Private tours"}, driven by
               people who live here.
             </h1>
