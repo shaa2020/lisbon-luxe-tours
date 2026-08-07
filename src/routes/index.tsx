@@ -252,7 +252,6 @@ function SearchField({
 /* ============================== ABOUT ============================== */
 
 function AboutSection() {
-  const { aboutImageUrl } = useSiteBrand();
 
   const facts = [
     { k: "Group size", v: "Private only — max 6 per tuk-tuk" },
