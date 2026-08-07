@@ -705,6 +705,24 @@ function TravelTipsAndSignup() {
 function SignupCard() {
   const [email, setEmail] = useState("");
   const [done, setDone] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const subscribe = useServerFn(subscribeToNewsletter);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email.trim()) return;
+    setSubmitting(true);
+    try {
+      const res = await subscribe({ data: { email: email.trim() } });
+      toast.success(res.message);
+      setDone(true);
+    } catch (err) {
+      toast.error((err as Error).message || "Could not subscribe.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
     <div className="relative rounded-xl bg-gradient-to-br from-ink to-[#0f2945] text-white p-8 overflow-hidden">
       <div className="absolute -bottom-10 -right-10 w-48 h-48 rounded-full bg-gold/20 blur-2xl" />
@@ -718,13 +736,7 @@ function SignupCard() {
           Thanks — we'll be in touch at <span className="text-gold font-semibold">{email}</span>.
         </div>
       ) : (
-        <form
-          className="space-y-3 relative"
-          onSubmit={(e) => {
-            e.preventDefault();
-            if (email) setDone(true);
-          }}
-        >
+        <form className="space-y-3 relative" onSubmit={handleSubmit}>
           <input
             type="email"
             required
@@ -733,8 +745,12 @@ function SignupCard() {
             placeholder="E-mail address"
             className="w-full h-[46px] px-4 rounded-md bg-white text-ink placeholder:text-ink/40 outline-none text-sm border border-transparent focus:border-gold transition"
           />
-          <button type="submit" className="w-full h-[46px] rounded-full bg-gold text-white text-[12px] font-semibold uppercase tracking-widest hover:bg-white hover:text-gold transition">
-            Sign up
+          <button
+            type="submit"
+            disabled={submitting}
+            className="w-full h-[46px] rounded-full bg-gold text-white text-[12px] font-semibold uppercase tracking-widest hover:bg-white hover:text-gold transition disabled:opacity-50"
+          >
+            {submitting ? "..." : "Sign up"}
           </button>
         </form>
       )}
