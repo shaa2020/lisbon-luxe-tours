@@ -71,93 +71,116 @@ function Index() {
 
 /* ============================== HERO ============================== */
 
-const HERO_SLIDES = ["Alfama", "Belém", "Sintra", "Cascais"] as const;
+const DEFAULT_HERO_LABELS = ["Alfama", "Belém", "Sintra", "Cascais"];
 
 function Hero() {
-  const { heroImageUrl } = useSiteBrand();
+  const { heroImageUrl, heroSlides } = useSiteBrand();
+  const fallback = heroImageUrl || lockedHeroImg;
+
+  const slides =
+    heroSlides.length > 0
+      ? heroSlides.map((s) => ({ label: s.label || "Lisboa", image: s.image_url || fallback }))
+      : DEFAULT_HERO_LABELS.map((label) => ({ label, image: fallback }));
+
   const [slide, setSlide] = useState(0);
-  const src = heroImageUrl || lockedHeroImg;
-  const prev = HERO_SLIDES[(slide + HERO_SLIDES.length - 1) % HERO_SLIDES.length];
-  const next = HERO_SLIDES[(slide + 1) % HERO_SLIDES.length];
+  const count = slides.length;
+
+  useEffect(() => {
+    if (count < 2) return;
+    const t = setInterval(() => setSlide((s) => (s + 1) % count), 5500);
+    return () => clearInterval(t);
+  }, [count]);
+
+  const idx = slide % count;
+  const current = slides[idx];
+  const prev = slides[(idx + count - 1) % count];
+  const next = slides[(idx + 1) % count];
 
   return (
     <section className="relative">
-      {/* Full-bleed blurred backdrop */}
-      <div className="absolute inset-0 overflow-hidden">
-        <img src={src} alt="" aria-hidden className="w-full h-full object-cover scale-110 blur-[6px]" />
-        <div className="absolute inset-0 bg-ink/45" />
-      </div>
-
-      <div className="relative container-x pt-[92px] md:pt-[132px] pb-24 md:pb-28">
-        {/* Inset hero card */}
-        <div className="relative rounded-sm overflow-hidden h-[400px] sm:h-[520px] md:h-[600px] shadow-[0_40px_90px_rgba(10,20,35,0.45)]">
+      <div className="relative h-[560px] sm:h-[640px] md:h-[760px] overflow-hidden">
+        {slides.map((s, i) => (
           <img
-            src={src}
-            alt="Private tuk-tuk tour through the streets of Lisbon"
-            className="absolute inset-0 w-full h-full object-cover animate-[scale-in_1.6s_var(--ease-out-expo)_both]"
+            key={`${s.label}-${i}`}
+            src={s.image}
+            alt={i === idx ? `Private tuk-tuk tour in ${s.label}, Lisbon` : ""}
+            aria-hidden={i !== idx}
+            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-[1200ms] ${
+              i === idx ? "opacity-100 scale-105" : "opacity-0"
+            }`}
+            style={{ transitionProperty: "opacity, transform", transform: i === idx ? "scale(1.04)" : "scale(1)" }}
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-ink/45 via-ink/25 to-ink/65" />
+        ))}
+        <div className="absolute inset-0 bg-gradient-to-b from-ink/55 via-ink/30 to-ink/70" />
 
-          {/* Side slide labels */}
-          <button
-            type="button"
-            aria-label={`Previous: ${prev}`}
-            onClick={() => setSlide((s) => (s + HERO_SLIDES.length - 1) % HERO_SLIDES.length)}
-            className="absolute left-4 top-1/2 -translate-y-1/2 hidden md:flex items-center gap-3 text-white/70 hover:text-white transition"
-          >
-            <span className="w-8 h-8 rounded-full border border-white/50 grid place-items-center text-[11px]">◀</span>
-            <span className="text-2xl font-display">{prev}</span>
-          </button>
-          <button
-            type="button"
-            aria-label={`Next: ${next}`}
-            onClick={() => setSlide((s) => (s + 1) % HERO_SLIDES.length)}
-            className="absolute right-4 top-1/2 -translate-y-1/2 hidden md:flex items-center gap-3 text-white/70 hover:text-white transition"
-          >
-            <span className="text-2xl font-display">{next}</span>
-            <span className="w-8 h-8 rounded-full border border-white/50 grid place-items-center text-[11px]">▶</span>
-          </button>
-
-          {/* Centered headline */}
-          <div className="relative h-full flex flex-col items-center justify-center text-center px-5">
-            <p
-              className="text-white text-3xl sm:text-4xl md:text-6xl -mb-3 sm:-mb-5 md:-mb-8 animate-[fade-up_0.9s_var(--ease-out-expo)_both]"
-              style={{ fontFamily: '"Yellowtail", cursive' }}
+        {/* Side slide labels */}
+        {count > 1 && (
+          <>
+            <button
+              type="button"
+              aria-label={`Previous: ${prev.label}`}
+              onClick={() => setSlide((s) => (s + count - 1) % count)}
+              className="absolute left-6 top-1/2 -translate-y-1/2 hidden md:flex items-center gap-3 text-white/70 hover:text-white transition"
             >
-              Explore Beautiful
-            </p>
-            <h1
-              className="font-sans font-bold uppercase text-white leading-[0.92] tracking-tight animate-[fade-up_1s_var(--ease-out-expo)_0.1s_both]"
-              style={{ fontSize: "clamp(52px, 13vw, 170px)" }}
+              <span className="w-9 h-9 rounded-full border border-white/50 grid place-items-center text-[11px]">◀</span>
+              <span className="text-2xl font-display">{prev.label}</span>
+            </button>
+            <button
+              type="button"
+              aria-label={`Next: ${next.label}`}
+              onClick={() => setSlide((s) => (s + 1) % count)}
+              className="absolute right-6 top-1/2 -translate-y-1/2 hidden md:flex items-center gap-3 text-white/70 hover:text-white transition"
             >
-              {HERO_SLIDES[slide]}
-            </h1>
-            <p className="mt-5 max-w-xl text-white/85 text-[14px] md:text-[16px] leading-relaxed animate-[fade-up_1s_var(--ease-out-expo)_0.2s_both]">
-              Private tuk-tuk tours with local drivers. Small groups, flat prices, your pace.
-            </p>
+              <span className="text-2xl font-display">{next.label}</span>
+              <span className="w-9 h-9 rounded-full border border-white/50 grid place-items-center text-[11px]">▶</span>
+            </button>
+          </>
+        )}
 
-            {/* Slide index */}
-            <div className="absolute bottom-6 md:bottom-24 left-1/2 -translate-x-1/2 flex items-center gap-5">
-              {HERO_SLIDES.map((s, i) => (
-                <button
-                  key={s}
-                  type="button"
-                  onClick={() => setSlide(i)}
-                  aria-label={`Show ${s}`}
-                  className={`text-[12px] tracking-widest transition ${
-                    i === slide ? "text-white font-semibold" : "text-white/50 hover:text-white/80"
-                  }`}
-                >
-                  {String(i + 1).padStart(2, "0")}
-                </button>
-              ))}
-            </div>
-          </div>
+        {/* Centered headline */}
+        <div className="relative h-full container-x flex flex-col items-center justify-center text-center pt-[68px] md:pt-[110px] pb-40 md:pb-32">
+          <p
+            className="text-white text-3xl sm:text-4xl md:text-6xl -mb-3 sm:-mb-5 md:-mb-8"
+            style={{ fontFamily: '"Yellowtail", cursive' }}
+          >
+            Explore Beautiful
+          </p>
+          <h1
+            key={current.label}
+            className="font-sans font-bold uppercase text-white leading-[0.92] tracking-tight animate-[fade-up_0.8s_var(--ease-out-expo)_both]"
+            style={{ fontSize: "clamp(52px, 13vw, 170px)" }}
+          >
+            {current.label}
+          </h1>
+          <p className="mt-5 max-w-xl text-white/85 text-[14px] md:text-[16px] leading-relaxed">
+            Private tuk-tuk tours with local drivers. Small groups, flat prices, your pace.
+          </p>
         </div>
 
-        {/* Segmented search bar overlapping the card */}
-        <div className="relative mt-6 md:-mt-10 px-0 sm:px-10 md:px-16 z-10">
-          <SearchBar />
+        {/* Slide index */}
+        {count > 1 && (
+          <div className="absolute bottom-[124px] md:bottom-[112px] left-1/2 -translate-x-1/2 flex items-center gap-5">
+            {slides.map((s, i) => (
+              <button
+                key={`dot-${s.label}-${i}`}
+                type="button"
+                onClick={() => setSlide(i)}
+                aria-label={`Show ${s.label}`}
+                className={`text-[12px] tracking-widest transition ${
+                  i === idx ? "text-white font-semibold" : "text-white/50 hover:text-white/80"
+                }`}
+              >
+                {String(i + 1).padStart(2, "0")}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* Search bar sitting inside the hero */}
+        <div className="absolute inset-x-0 bottom-0 md:bottom-8">
+          <div className="container-x">
+            <SearchBar />
+          </div>
         </div>
       </div>
     </section>
