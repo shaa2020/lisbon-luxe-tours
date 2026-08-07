@@ -138,7 +138,7 @@ function Hero() {
         )}
 
         {/* Centered headline */}
-        <div className="relative h-full container-x flex flex-col items-center justify-center text-center pt-[68px] md:pt-[110px] pb-40 md:pb-32">
+        <div className="relative h-full container-x flex flex-col items-center justify-center text-center pt-[68px] md:pt-[110px] pb-52 md:pb-32">
           <p
             className="text-white text-3xl sm:text-4xl md:text-6xl -mb-3 sm:-mb-5 md:-mb-8"
             style={{ fontFamily: '"Yellowtail", cursive' }}
@@ -159,7 +159,7 @@ function Hero() {
 
         {/* Slide index */}
         {count > 1 && (
-          <div className="absolute bottom-[124px] md:bottom-[112px] left-1/2 -translate-x-1/2 flex items-center gap-5">
+          <div className="absolute bottom-[188px] md:bottom-[112px] left-1/2 -translate-x-1/2 flex items-center gap-5">
             {slides.map((s, i) => (
               <button
                 key={`dot-${s.label}-${i}`}
@@ -189,7 +189,7 @@ function Hero() {
 
 function SearchBar() {
   return (
-    <div className="bg-white shadow-[0_24px_60px_rgba(10,20,35,0.28)] grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_1fr_auto] overflow-hidden">
+    <div className="bg-white shadow-[0_24px_60px_rgba(10,20,35,0.28)] grid grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_1fr_auto] overflow-hidden">
       <SearchField label="Destination" placeholder="Alfama, Sintra, Belém…">
         <PinIco />
       </SearchField>
@@ -204,7 +204,7 @@ function SearchBar() {
       </SearchField>
       <Link
         to="/tours"
-        className="sm:col-span-2 lg:col-span-1 h-[60px] md:h-[68px] px-8 bg-gold text-white font-semibold text-[13px] tracking-widest uppercase hover:bg-ink transition-colors flex items-center justify-center gap-2"
+        className="col-span-2 lg:col-span-1 h-[56px] md:h-[68px] px-8 bg-gold text-white font-semibold text-[13px] tracking-widest uppercase hover:bg-ink transition-colors flex items-center justify-center gap-2"
       >
         <SearchIco />
         Search
@@ -234,7 +234,7 @@ function SearchField({
   children: React.ReactNode;
 }) {
   return (
-    <label className="flex items-center gap-3 h-[60px] md:h-[68px] px-5 border-b sm:border-b-0 sm:border-r border-border last:border-r-0 min-w-0">
+    <label className="flex items-center gap-3 h-[56px] md:h-[68px] px-4 md:px-5 border-b border-r border-border lg:border-b-0 [&:nth-child(2)]:border-r-0 lg:[&:nth-child(2)]:border-r min-w-0">
       <span className="text-gold shrink-0">{children}</span>
       <span className="flex flex-col min-w-0 flex-1">
         <span className="text-[10px] font-semibold text-ink/50 uppercase tracking-widest">
