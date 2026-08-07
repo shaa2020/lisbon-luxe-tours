@@ -345,6 +345,33 @@ export type Database = {
           },
         ]
       }
+      payment_gateway_secrets: {
+        Row: {
+          created_at: string
+          id: string
+          mode: string
+          provider: string
+          secrets_ciphertext: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          mode: string
+          provider: string
+          secrets_ciphertext: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          mode?: string
+          provider?: string
+          secrets_ciphertext?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       payment_gateways: {
         Row: {
           config: Json
