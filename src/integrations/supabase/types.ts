@@ -135,6 +135,7 @@ export type Database = {
           tour_slug: string | null
           tour_title: string | null
           travel_date: string | null
+          travel_time: string | null
         }
         Insert: {
           amount_total?: number | null
@@ -152,6 +153,7 @@ export type Database = {
           tour_slug?: string | null
           tour_title?: string | null
           travel_date?: string | null
+          travel_time?: string | null
         }
         Update: {
           amount_total?: number | null
@@ -169,6 +171,7 @@ export type Database = {
           tour_slug?: string | null
           tour_title?: string | null
           travel_date?: string | null
+          travel_time?: string | null
         }
         Relationships: []
       }
@@ -409,6 +412,7 @@ export type Database = {
           custom_tour_eyebrow: string | null
           custom_tour_subtitle: string | null
           custom_tour_title: string | null
+          daily_slot_capacity: number
           facebook_url: string | null
           footer_legal: string | null
           footer_tagline: string | null
@@ -437,6 +441,7 @@ export type Database = {
           custom_tour_eyebrow?: string | null
           custom_tour_subtitle?: string | null
           custom_tour_title?: string | null
+          daily_slot_capacity?: number
           facebook_url?: string | null
           footer_legal?: string | null
           footer_tagline?: string | null
@@ -465,6 +470,7 @@ export type Database = {
           custom_tour_eyebrow?: string | null
           custom_tour_subtitle?: string | null
           custom_tour_title?: string | null
+          daily_slot_capacity?: number
           facebook_url?: string | null
           footer_legal?: string | null
           footer_tagline?: string | null

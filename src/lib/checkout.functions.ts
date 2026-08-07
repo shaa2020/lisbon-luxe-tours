@@ -33,6 +33,7 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
         email: data.email,
         phone: data.phone ?? null,
         travel_date: data.travel_date || null,
+        travel_time: data.time || null,
         guests: data.guests,
         notes: [data.time ? `Preferred time: ${data.time}` : null, data.notes]
           .filter(Boolean)
@@ -111,7 +112,7 @@ export const confirmCheckout = createServerFn({ method: "POST" })
         stripe_payment_intent_id: payment.id,
       })
       .eq("stripe_session_id", data.session_id)
-      .select("booking_id, tour_title, amount_total, customer_name")
+      .select("booking_id, tour_title, amount_total, customer_name, travel_date, guests")
       .maybeSingle();
 
     if (order?.booking_id && paid) {
@@ -155,6 +156,8 @@ export const confirmCheckout = createServerFn({ method: "POST" })
           tour_title: booking?.tour_title || null,
           amount_total: booking?.amount_total || 0,
           customer_name: booking?.customer_name || null,
+          travel_date: null as string | null,
+          guests: null as number | null,
         };
       }
     }
@@ -166,5 +169,7 @@ export const confirmCheckout = createServerFn({ method: "POST" })
       tour_title: order?.tour_title || null,
       amount_total: order?.amount_total || 0,
       customer_name: order?.customer_name || null,
+      travel_date: order?.travel_date || null,
+      guests: order?.guests || null,
     };
   });

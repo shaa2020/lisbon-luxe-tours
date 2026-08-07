@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { getDayAvailability, requestBooking } from "@/lib/availability.functions";
 import { format } from "date-fns";
 import { CalendarIcon, Clock, Globe2, ShieldCheck, MapPin, Loader2, Minus, Plus, ChevronDown, Check } from "lucide-react";
 import { type Tour, tourPricing } from "@/lib/cms";
@@ -27,12 +29,52 @@ export function TourBookingPanel({ tour }: { tour: Tour; compact?: boolean }) {
   const [showContact, setShowContact] = useState(false);
   const [paying, setPaying] = useState(false);
   const [pickup, setPickup] = useState(false);
+  const [requesting, setRequesting] = useState(false);
+  const [reference, setReference] = useState<string | null>(null);
+  const requestFn = useServerFn(requestBooking);
+  const availabilityFn = useServerFn(getDayAvailability);
+
+  const dateKey = date ? format(date, "yyyy-MM-dd") : null;
+  const { data: availability } = useQuery({
+    queryKey: ["availability", dateKey],
+    enabled: !!dateKey,
+    queryFn: () => availabilityFn({ data: { date: dateKey as string } }),
+  });
+  const slotInfo = (t: string) => availability?.slots.find((s) => s.time === t);
 
   const extras = Math.max(0, guests - 2) * 35;
   const pickupCharge = pickup ? pickupFee : 0;
   const total = pricing.current + extras + pickupCharge;
   const isEmail = (s: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);
-  const canContinue = !!date && !!time && guests > 0;
+  const canContinue = !!date && !!time && guests > 0 && !slotInfo(time)?.full;
+
+  const handleRequest = async () => {
+    if (!date || !time) { toast.error("Pick a date and time first."); return; }
+    if (!showContact) { setShowContact(true); return; }
+    if (!name.trim() || !isEmail(email)) { toast.error("Enter your name and a valid email."); return; }
+    setRequesting(true);
+    try {
+      const res = await requestFn({
+        data: {
+          tour_slug: tour.slug,
+          tour_title: tour.title,
+          customer_name: name,
+          email,
+          travel_date: format(date, "yyyy-MM-dd"),
+          time,
+          guests,
+          notes: pickup ? `Hotel pickup & drop-off requested (+EUR ${pickupFee})` : null,
+          amount: total * 100,
+        },
+      });
+      setReference(res.reference);
+      toast.success(`Reserved! Reference ${res.reference}. We hold your slot for 24 hours and send a payment link.`, { duration: 9000 });
+    } catch (err) {
+      toast.error((err as Error).message || "Could not save your request.");
+    } finally {
+      setRequesting(false);
+    }
+  };
 
   const handleContinue = async () => {
     if (!canContinue) { toast.error("Pick a date and time first."); return; }
@@ -158,23 +200,40 @@ export function TourBookingPanel({ tour }: { tour: Tour; compact?: boolean }) {
         <div>
           <label className="text-[10px] uppercase tracking-widest text-body font-bold block mb-2">Start Time</label>
           <div className="grid grid-cols-3 gap-2">
-            {TIME_SLOTS.map((t) => (
-              <button
-                key={t}
-                type="button"
-                onClick={() => setTime(t)}
-                className={cn(
-                  "py-2.5 text-xs rounded-[2px] border transition-colors",
-                  time === t
-                    ? "border-gold bg-gold/5 text-ink font-medium"
-                    : "border-border text-ink hover:border-gold",
-                )}
-              >
-                {t}
-              </button>
-            ))}
+            {TIME_SLOTS.map((t) => {
+              const info = slotInfo(t);
+              const full = !!info?.full;
+              return (
+                <button
+                  key={t}
+                  type="button"
+                  disabled={full}
+                  onClick={() => setTime(t)}
+                  title={full ? "Fully booked" : info ? `${info.left} tuk-tuk(s) left` : undefined}
+                  className={cn(
+                    "py-2.5 min-h-[44px] text-xs rounded-[2px] border transition-colors",
+                    full
+                      ? "border-border text-body/40 line-through cursor-not-allowed"
+                      : time === t
+                        ? "border-gold bg-gold/5 text-ink font-medium"
+                        : "border-border text-ink hover:border-gold",
+                  )}
+                >
+                  {t}
+                  {info && !full && info.left <= 1 && (
+                    <span className="block text-[9px] text-gold">1 left</span>
+                  )}
+                </button>
+              );
+            })}
           </div>
         </div>
+
+        {dateKey && availability?.dayFull && (
+          <p className="text-[11px] text-gold">
+            This date is fully booked — please choose another day or message us on WhatsApp.
+          </p>
+        )}
 
         {/* Guests */}
         <div>
@@ -284,23 +343,51 @@ export function TourBookingPanel({ tour }: { tour: Tour; compact?: boolean }) {
           <span className="font-display text-2xl text-ink leading-none">€{total.toFixed(2)}</span>
         </div>
 
-        <button
-          onClick={handleContinue}
-          disabled={paying || !canContinue}
-          className="w-full bg-ink text-paper py-4 rounded-[2px] font-medium tracking-[0.2em] text-xs uppercase hover:bg-gold transition-colors shadow-[0_8px_20px_rgba(30,58,95,0.18)] disabled:opacity-40 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
-        >
-          {paying ? (
-            <><Loader2 className="w-4 h-4 animate-spin" /> Redirecting…</>
-          ) : showContact ? (
-            <>Pay €{total.toFixed(2)}</>
-          ) : (
-            <>Continue to Booking</>
-          )}
-        </button>
-        <p className="text-[10px] text-center text-body italic">
-          {showContact ? "Secure checkout via Stripe" : "No payment required yet"}
-        </p>
+        {reference ? (
+          <div className="border border-gold/40 bg-gold/5 rounded-[2px] p-4 text-center">
+            <p className="text-xs text-body">Slot held for 24 hours</p>
+            <p className="font-display text-2xl text-ink mt-1">Ref {reference}</p>
+            <p className="text-[11px] text-body mt-2">
+              We'll email you a payment link shortly. {CANCELLATION_POLICY_FULL}
+            </p>
+          </div>
+        ) : (
+          <>
+            <button
+              onClick={handleContinue}
+              disabled={paying || requesting || !canContinue}
+              className="w-full bg-ink text-paper py-4 rounded-[2px] font-medium tracking-[0.2em] text-xs uppercase hover:bg-gold transition-colors shadow-[0_8px_20px_rgba(30,58,95,0.18)] disabled:opacity-40 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
+            >
+              {paying ? (
+                <><Loader2 className="w-4 h-4 animate-spin" /> Redirecting…</>
+              ) : showContact ? (
+                <>Pay €{total.toFixed(2)}</>
+              ) : (
+                <>Continue to Booking</>
+              )}
+            </button>
+
+            <button
+              onClick={handleRequest}
+              disabled={paying || requesting || !canContinue}
+              className="w-full border border-ink/20 text-ink py-3.5 rounded-[2px] font-medium tracking-[0.15em] text-[11px] uppercase hover:border-gold hover:text-gold transition-colors disabled:opacity-40 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
+            >
+              {requesting ? (
+                <><Loader2 className="w-4 h-4 animate-spin" /> Reserving…</>
+              ) : (
+                <>Reserve now, pay later</>
+              )}
+            </button>
+
+            <p className="text-[10px] text-center text-body italic">
+              {showContact
+                ? "Secure payment · free cancellation up to 24h before the tour"
+                : "No payment required yet — reserve and pay within 24h"}
+            </p>
+          </>
+        )}
       </div>
+
     </div>
   );
 }

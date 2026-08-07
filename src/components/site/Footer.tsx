@@ -99,6 +99,7 @@ export function Footer() {
           <h4 className="font-display font-semibold text-ink mb-5">Contact</h4>
           <ul className="space-y-3 text-sm text-body">
             <li><Link to="/about" className="hover:text-gold transition-colors">About Us</Link></li>
+            <li><Link to="/reviews" className="hover:text-gold transition-colors">Reviews</Link></li>
             <li><Link to="/faq" className="hover:text-gold transition-colors">FAQ</Link></li>
             <li><Link to="/contact" className="hover:text-gold transition-colors">Get in touch</Link></li>
           </ul>

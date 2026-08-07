@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { useSiteBrand } from "@/lib/brand";
 import { toast } from "sonner";
-import { MessageCircle, Mail, Phone, Calendar, Users, Trash2, Edit3, Copy, Check, Loader2, Clock } from "lucide-react";
+import { MessageCircle, Mail, Phone, Calendar, Users, Trash2, Edit3, Copy, Check, Loader2, Clock, Star } from "lucide-react";
 import { useServerFn } from "@tanstack/react-start";
 import {
   adminCreateModificationCheckout,
@@ -206,6 +206,24 @@ function BookingsInbox() {
       b.tour_title ? ` for "${b.tour_title}"` : ""
     }${b.travel_date ? ` on ${b.travel_date}` : ""}.\n\nWe'd love to confirm the details with you.\n\nBest,\nThe team`;
     return `mailto:${b.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  };
+
+  const reviewRequestMailto = (b: Booking) => {
+    const subject = `How was your Lisbon tour${b.tour_title ? ` — ${b.tour_title}` : ""}?`;
+    const body = `Hi ${b.customer_name},\n\nThanks again for riding with us${
+      b.tour_title ? ` on the "${b.tour_title}"` : ""
+    }${b.travel_date ? ` on ${b.travel_date}` : ""}. We hope you enjoyed Lisbon!\n\nIf you have a minute, we'd really appreciate a short review — it helps other travellers find us:\nhttps://tuktuk24lisbon.com/reviews\n\nThank you,\nThe Tuk Tuk 24 team`;
+    return `mailto:${b.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  };
+
+  const reviewRequestWa = (b: Booking) => {
+    if (!b.phone) return null;
+    const num = b.phone.replace(/[^\d]/g, "");
+    if (!num) return null;
+    const msg = `Hi ${b.customer_name}, thanks for riding with Tuk Tuk 24${
+      b.tour_title ? ` (${b.tour_title})` : ""
+    }! If you enjoyed it, would you mind leaving us a quick review? https://tuktuk24lisbon.com/reviews`;
+    return `https://wa.me/${num}?text=${encodeURIComponent(msg)}`;
   };
 
   const { data: modifications = [] } = useQuery({
@@ -527,6 +545,24 @@ function BookingsInbox() {
                   <Mail className="w-4 h-4" />
                   Email customer
                 </a>
+                <a
+                  href={reviewRequestMailto(b)}
+                  className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-2 text-sm font-semibold hover:border-primary hover:text-primary"
+                >
+                  <Star className="w-4 h-4" />
+                  Ask for review
+                </a>
+                {reviewRequestWa(b) && (
+                  <a
+                    href={reviewRequestWa(b)!}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-2 text-sm font-semibold hover:border-primary hover:text-primary"
+                  >
+                    <Star className="w-4 h-4" />
+                    Review via WhatsApp
+                  </a>
+                )}
                 <select
                   value={b.status}
                   onChange={(e) => updateStatus(b.id, e.target.value)}
