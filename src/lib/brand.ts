@@ -34,11 +34,26 @@ export const DEFAULT_HOTEL_PICKUP_FEE_CENTS = 2000;
 export type BusinessInfo = typeof DEFAULT_BUSINESS;
 export type CustomTourHero = typeof DEFAULT_CUSTOM_TOUR;
 
+export type HeroSlide = { label: string; image_url: string | null };
+
+function mapHeroSlides(d: any): HeroSlide[] {
+  const raw = (d as any)?.hero_slides;
+  if (!Array.isArray(raw)) return [];
+  return raw
+    .filter((s: any) => s && typeof s === "object")
+    .map((s: any) => ({
+      label: String(s.label ?? "").trim(),
+      image_url: s.image_url ? String(s.image_url) : null,
+    }))
+    .filter((s: HeroSlide) => s.label || s.image_url);
+}
+
 export type SiteBrand = {
   brandName: string;
   logoUrl: string | null;
   heroImageUrl: string | null;
   aboutImageUrl: string | null;
+  heroSlides: HeroSlide[];
   business: BusinessInfo;
   customTour: CustomTourHero;
   hotelPickupFeeCents: number;
