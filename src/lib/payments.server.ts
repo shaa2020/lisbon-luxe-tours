@@ -155,8 +155,11 @@ const mollieAdapter: GatewayAdapter = {
 const STRIPE_GATEWAY = "https://connector-gateway.lovable.dev/stripe";
 
 function stripeKey(mode: GatewayMode): string {
-  return mode === "live" ? env("STRIPE_LIVE_API_KEY") : env("STRIPE_SANDBOX_API_KEY");
+  return mode === "live"
+    ? secret("stripe", "live", "STRIPE_LIVE_API_KEY")
+    : secret("stripe", "test", "STRIPE_SANDBOX_API_KEY");
 }
+
 
 async function stripeFetch(
   path: string,
