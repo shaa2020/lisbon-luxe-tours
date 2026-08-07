@@ -1,5 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
+import { toast } from "sonner";
 import heroAsset from "@/assets/hero-lisbon-tuktuk.jpg.asset.json";
 const heroImg = heroAsset.url;
 import alfamaImg from "@/assets/tour-alfama.jpg";
@@ -14,6 +16,7 @@ import { WhatsappFab } from "@/components/site/Whatsapp";
 import { BookingModal } from "@/components/site/BookingModal";
 import { TestimonialsSection } from "@/components/site/TestimonialsSection";
 import { useBlogPosts, useTours, tourPricing, type Tour } from "@/lib/cms";
+import { subscribeToNewsletter } from "@/lib/subscribers.functions";
 import aboutAsset from "@/assets/about-tuktuk-fleet.jpg.asset.json";
 const aboutImg = aboutAsset.url;
 import { useSiteBrand } from "@/lib/brand";
@@ -97,7 +100,7 @@ function Hero() {
 
   return (
     <section className="relative">
-      <div className="relative h-[560px] sm:h-[640px] md:h-[760px] overflow-hidden">
+      <div className="relative h-[460px] sm:h-[540px] md:h-[760px] overflow-hidden">
         {slides.map((s, i) => (
           <img
             key={`${s.label}-${i}`}
@@ -137,7 +140,7 @@ function Hero() {
         )}
 
         {/* Centered headline */}
-        <div className="relative h-full container-x flex flex-col items-center justify-center text-center pt-[68px] md:pt-[110px] pb-52 md:pb-32">
+        <div className="relative h-full container-x flex flex-col items-center justify-center text-center pt-[68px] md:pt-[110px] pb-28 md:pb-32">
           <p
             className="text-white text-3xl sm:text-4xl md:text-6xl -mb-3 sm:-mb-5 md:-mb-8"
             style={{ fontFamily: '"Yellowtail", cursive' }}
@@ -147,18 +150,18 @@ function Hero() {
           <h1
             key={current.label}
             className="font-sans font-bold uppercase text-white leading-[0.92] tracking-tight animate-[fade-up_0.8s_var(--ease-out-expo)_both]"
-            style={{ fontSize: "clamp(52px, 13vw, 170px)" }}
+            style={{ fontSize: "clamp(46px, 12vw, 170px)" }}
           >
             {current.label}
           </h1>
-          <p className="mt-5 max-w-xl text-white/85 text-[14px] md:text-[16px] leading-relaxed">
+          <p className="mt-4 md:mt-5 max-w-xl text-white/85 text-[14px] md:text-[16px] leading-relaxed px-4">
             Private tuk-tuk tours with local drivers. Small groups, flat prices, your pace.
           </p>
         </div>
 
         {/* Slide index */}
         {count > 1 && (
-          <div className="absolute bottom-[188px] md:bottom-[112px] left-1/2 -translate-x-1/2 flex items-center gap-5">
+          <div className="absolute bottom-[100px] md:bottom-[112px] left-1/2 -translate-x-1/2 flex items-center gap-5">
             {slides.map((s, i) => (
               <button
                 key={`dot-${s.label}-${i}`}
@@ -175,12 +178,17 @@ function Hero() {
           </div>
         )}
 
-        {/* Search bar sitting inside the hero */}
-        <div className="absolute inset-x-0 bottom-0 md:bottom-8">
+        {/* Search bar — inside hero on desktop, hidden on mobile (shown below hero) */}
+        <div className="hidden md:block absolute inset-x-0 bottom-8">
           <div className="container-x">
             <SearchBar />
           </div>
         </div>
+      </div>
+
+      {/* Mobile search bar sits below the hero so nothing overlaps */}
+      <div className="md:hidden container-x -mt-8 relative z-10">
+        <SearchBar />
       </div>
     </section>
   );
@@ -700,6 +708,24 @@ function TravelTipsAndSignup() {
 function SignupCard() {
   const [email, setEmail] = useState("");
   const [done, setDone] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const subscribe = useServerFn(subscribeToNewsletter);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email.trim()) return;
+    setSubmitting(true);
+    try {
+      const res = await subscribe({ data: { email: email.trim() } });
+      toast.success(res.message);
+      setDone(true);
+    } catch (err) {
+      toast.error((err as Error).message || "Could not subscribe.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
     <div className="relative rounded-xl bg-gradient-to-br from-ink to-[#0f2945] text-white p-8 overflow-hidden">
       <div className="absolute -bottom-10 -right-10 w-48 h-48 rounded-full bg-gold/20 blur-2xl" />
@@ -713,13 +739,7 @@ function SignupCard() {
           Thanks — we'll be in touch at <span className="text-gold font-semibold">{email}</span>.
         </div>
       ) : (
-        <form
-          className="space-y-3 relative"
-          onSubmit={(e) => {
-            e.preventDefault();
-            if (email) setDone(true);
-          }}
-        >
+        <form className="space-y-3 relative" onSubmit={handleSubmit}>
           <input
             type="email"
             required
@@ -728,8 +748,12 @@ function SignupCard() {
             placeholder="E-mail address"
             className="w-full h-[46px] px-4 rounded-md bg-white text-ink placeholder:text-ink/40 outline-none text-sm border border-transparent focus:border-gold transition"
           />
-          <button type="submit" className="w-full h-[46px] rounded-full bg-gold text-white text-[12px] font-semibold uppercase tracking-widest hover:bg-white hover:text-gold transition">
-            Sign up
+          <button
+            type="submit"
+            disabled={submitting}
+            className="w-full h-[46px] rounded-full bg-gold text-white text-[12px] font-semibold uppercase tracking-widest hover:bg-white hover:text-gold transition disabled:opacity-50"
+          >
+            {submitting ? "..." : "Sign up"}
           </button>
         </form>
       )}

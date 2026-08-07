@@ -311,7 +311,7 @@ export const adminWaiveModification = createServerFn({ method: "POST" })
 
 const sessionUrlInput = z.object({ sessionId: z.string().min(5).max(200) });
 
-export const getStripeSessionUrl = createServerFn({ method: "POST" })
+export const getMolliePaymentUrl = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => sessionUrlInput.parse(d))
   .handler(async ({ data }) => {
