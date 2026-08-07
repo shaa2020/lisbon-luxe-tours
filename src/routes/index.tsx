@@ -710,7 +710,6 @@ function SignupCard() {
   const [done, setDone] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const subscribe = useServerFn(subscribeToNewsletter);
-  console.log("SIGNUPCARD RENDER done=", done, "email=", email);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
