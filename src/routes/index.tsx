@@ -71,57 +71,94 @@ function Index() {
 
 /* ============================== HERO ============================== */
 
+const HERO_SLIDES = ["Alfama", "Belém", "Sintra", "Cascais"] as const;
+
 function Hero() {
   const { heroImageUrl } = useSiteBrand();
+  const [slide, setSlide] = useState(0);
+  const src = heroImageUrl || lockedHeroImg;
+  const prev = HERO_SLIDES[(slide + HERO_SLIDES.length - 1) % HERO_SLIDES.length];
+  const next = HERO_SLIDES[(slide + 1) % HERO_SLIDES.length];
+
   return (
-    <section className="relative pt-[68px] md:pt-[110px] pb-0">
-      <div className="relative h-[420px] sm:h-[460px] md:h-[500px] overflow-hidden">
-        <img
-          src={heroImageUrl || lockedHeroImg}
-          alt="Discover Lisboa, Portugal"
-          className="absolute inset-0 w-full h-full object-cover animate-[scale-in_1.6s_var(--ease-out-expo)_both]"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-ink/55 via-ink/35 to-ink/75" />
-
-        <div className="relative container-x h-full flex flex-col justify-center text-white">
-          <p className="eyebrow text-white/90 mb-3 md:mb-4 animate-[fade-up_0.9s_var(--ease-out-expo)_both]">
-            ◆  Lisboa
-          </p>
-          <h1
-            className="font-display font-bold tracking-tight leading-[1.02] mb-5 md:mb-6 text-white animate-[fade-up_1s_var(--ease-out-expo)_0.1s_both] max-w-4xl"
-            style={{ fontSize: "clamp(40px, 7vw, 92px)" }}
-          >
-            Private Tuk Tuk Tours in Lisbon
-          </h1>
-          <p className="max-w-xl text-white/90 text-[15px] md:text-lg leading-relaxed animate-[fade-up_1s_var(--ease-out-expo)_0.2s_both]">
-            See Lisbon the way we do — through the hills of Alfama, along the river in Belém,
-            and up to Sintra. Small groups, local guides, your pace.
-          </p>
-
-          <div className="absolute right-6 bottom-16 hidden lg:block animate-[fade-in_1.4s_var(--ease-out-expo)_0.4s_both]">
-            <svg width="220" height="120" viewBox="0 0 220 120" fill="none">
-              <path
-                d="M10 100 Q 80 10, 200 30"
-                stroke="white"
-                strokeWidth="1.5"
-                strokeDasharray="3 5"
-                fill="none"
-              />
-              <circle cx="200" cy="30" r="5" fill="#2bb6f7" />
-              <text x="160" y="20" fill="white" fontSize="11" fontFamily="Poppins">
-                Sintra
-              </text>
-              <text x="15" y="115" fill="white" fontSize="11" fontFamily="Poppins">
-                Lisboa
-              </text>
-            </svg>
-          </div>
-        </div>
+    <section className="relative">
+      {/* Full-bleed blurred backdrop */}
+      <div className="absolute inset-0 overflow-hidden">
+        <img src={src} alt="" aria-hidden className="w-full h-full object-cover scale-110 blur-[6px]" />
+        <div className="absolute inset-0 bg-ink/45" />
       </div>
 
-      {/* Floating search bar */}
-      <div className="relative container-x -mt-10 md:-mt-12 z-10">
-        <SearchBar />
+      <div className="relative container-x pt-[92px] md:pt-[132px] pb-24 md:pb-28">
+        {/* Inset hero card */}
+        <div className="relative rounded-sm overflow-hidden h-[440px] sm:h-[520px] md:h-[600px] shadow-[0_40px_90px_rgba(10,20,35,0.45)]">
+          <img
+            src={src}
+            alt="Private tuk-tuk tour through the streets of Lisbon"
+            className="absolute inset-0 w-full h-full object-cover animate-[scale-in_1.6s_var(--ease-out-expo)_both]"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-ink/45 via-ink/25 to-ink/65" />
+
+          {/* Side slide labels */}
+          <button
+            type="button"
+            aria-label={`Previous: ${prev}`}
+            onClick={() => setSlide((s) => (s + HERO_SLIDES.length - 1) % HERO_SLIDES.length)}
+            className="absolute left-4 top-1/2 -translate-y-1/2 hidden md:flex items-center gap-3 text-white/70 hover:text-white transition"
+          >
+            <span className="w-8 h-8 rounded-full border border-white/50 grid place-items-center text-[11px]">◀</span>
+            <span className="text-2xl font-display">{prev}</span>
+          </button>
+          <button
+            type="button"
+            aria-label={`Next: ${next}`}
+            onClick={() => setSlide((s) => (s + 1) % HERO_SLIDES.length)}
+            className="absolute right-4 top-1/2 -translate-y-1/2 hidden md:flex items-center gap-3 text-white/70 hover:text-white transition"
+          >
+            <span className="text-2xl font-display">{next}</span>
+            <span className="w-8 h-8 rounded-full border border-white/50 grid place-items-center text-[11px]">▶</span>
+          </button>
+
+          {/* Centered headline */}
+          <div className="relative h-full flex flex-col items-center justify-center text-center px-5">
+            <p
+              className="text-white text-3xl sm:text-4xl md:text-6xl -mb-3 sm:-mb-5 md:-mb-8 animate-[fade-up_0.9s_var(--ease-out-expo)_both]"
+              style={{ fontFamily: '"Yellowtail", cursive' }}
+            >
+              Explore Beautiful
+            </p>
+            <h1
+              className="font-sans font-bold uppercase text-white leading-[0.92] tracking-tight animate-[fade-up_1s_var(--ease-out-expo)_0.1s_both]"
+              style={{ fontSize: "clamp(52px, 13vw, 170px)" }}
+            >
+              {HERO_SLIDES[slide]}
+            </h1>
+            <p className="mt-5 max-w-xl text-white/85 text-[14px] md:text-[16px] leading-relaxed animate-[fade-up_1s_var(--ease-out-expo)_0.2s_both]">
+              Private tuk-tuk tours with local drivers. Small groups, flat prices, your pace.
+            </p>
+
+            {/* Slide index */}
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-5">
+              {HERO_SLIDES.map((s, i) => (
+                <button
+                  key={s}
+                  type="button"
+                  onClick={() => setSlide(i)}
+                  aria-label={`Show ${s}`}
+                  className={`text-[12px] tracking-widest transition ${
+                    i === slide ? "text-white font-semibold" : "text-white/50 hover:text-white/80"
+                  }`}
+                >
+                  {String(i + 1).padStart(2, "0")}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Segmented search bar overlapping the card */}
+        <div className="relative -mt-8 md:-mt-10 px-0 sm:px-10 md:px-16 z-10">
+          <SearchBar />
+        </div>
       </div>
     </section>
   );
@@ -129,8 +166,8 @@ function Hero() {
 
 function SearchBar() {
   return (
-    <div className="bg-white rounded-2xl shadow-[0_20px_50px_rgba(30,58,95,0.15)] p-4 md:p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-2 items-end">
-      <SearchField label="Where" placeholder="Alfama, Sintra, Belém…">
+    <div className="bg-white shadow-[0_24px_60px_rgba(10,20,35,0.28)] grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_1fr_auto] overflow-hidden">
+      <SearchField label="Destination" placeholder="Alfama, Sintra, Belém…">
         <PinIco />
       </SearchField>
       <SearchField label="Date" placeholder="dd / mm / yy" type="date">
@@ -139,10 +176,26 @@ function SearchBar() {
       <SearchField label="Guests" placeholder="2" type="number">
         <UserIco />
       </SearchField>
-      <Link to="/tours" className="sm:col-span-2 md:col-span-1 h-[52px] rounded-full bg-gold text-white font-semibold text-[13px] tracking-widest uppercase shadow-[0_8px_20px_rgba(43,182,247,0.4)] hover:bg-ink hover:shadow-[0_8px_20px_rgba(30,58,95,0.4)] transition-all flex items-center justify-center">
-        Find a tour
+      <SearchField label="Tour length" placeholder="2 hours">
+        <CalIco />
+      </SearchField>
+      <Link
+        to="/tours"
+        className="sm:col-span-2 lg:col-span-1 h-[68px] px-8 bg-gold text-white font-semibold text-[13px] tracking-widest uppercase hover:bg-ink transition-colors flex items-center justify-center gap-2"
+      >
+        <SearchIco />
+        Search
       </Link>
     </div>
+  );
+}
+
+function SearchIco() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <circle cx="11" cy="11" r="7" />
+      <path d="M20 20l-3.5-3.5" />
+    </svg>
   );
 }
 
@@ -158,16 +211,16 @@ function SearchField({
   children: React.ReactNode;
 }) {
   return (
-    <label className="block">
-      <span className="block text-[11px] font-semibold text-ink/60 uppercase tracking-widest mb-2">
-        {label}
-      </span>
-      <span className="flex items-center gap-2 px-3 h-[44px] rounded-md border border-border bg-cloud/40 focus-within:border-gold transition">
-        <span className="text-gold shrink-0">{children}</span>
+    <label className="flex items-center gap-3 h-[68px] px-5 border-b sm:border-b-0 sm:border-r border-border last:border-r-0 min-w-0">
+      <span className="text-gold shrink-0">{children}</span>
+      <span className="flex flex-col min-w-0 flex-1">
+        <span className="text-[10px] font-semibold text-ink/50 uppercase tracking-widest">
+          {label}
+        </span>
         <input
           type={type}
           placeholder={placeholder}
-          className="flex-1 bg-transparent text-[13px] text-ink placeholder:text-ink/40 outline-none min-w-0"
+          className="w-full bg-transparent text-[14px] text-ink placeholder:text-ink/40 outline-none min-w-0"
         />
       </span>
     </label>
