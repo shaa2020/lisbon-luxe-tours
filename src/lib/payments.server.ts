@@ -249,10 +249,12 @@ function paypalBase(mode: GatewayMode) {
 }
 
 function paypalCreds(mode: GatewayMode) {
-  const id = mode === "live" ? env("PAYPAL_CLIENT_ID") : env("PAYPAL_SANDBOX_CLIENT_ID") || env("PAYPAL_CLIENT_ID");
-  const secret = mode === "live" ? env("PAYPAL_SECRET") : env("PAYPAL_SANDBOX_SECRET") || env("PAYPAL_SECRET");
-  return { id, secret };
+  const id = secret("paypal", mode, "PAYPAL_CLIENT_ID") || env("PAYPAL_SANDBOX_CLIENT_ID");
+  const clientSecret =
+    secret("paypal", mode, "PAYPAL_CLIENT_SECRET") || env("PAYPAL_SECRET") || env("PAYPAL_SANDBOX_SECRET");
+  return { id, secret: clientSecret };
 }
+
 
 async function paypalToken(mode: GatewayMode) {
   const { id, secret } = paypalCreds(mode);
