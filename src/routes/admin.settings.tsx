@@ -506,12 +506,12 @@ const PROVIDER_META: Record<
   },
   mollie: {
     blurb: "European favourite: iDEAL, Bancontact, cards, MB WAY.",
-    keys: "Needs MOLLIE_API_KEY (live) / MOLLIE_TEST_API_KEY",
+    keys: "Paste your Mollie API key below",
     Icon: Wallet,
   },
   paypal: {
     blurb: "PayPal balance and cards through PayPal checkout.",
-    keys: "Needs PAYPAL_CLIENT_ID + PAYPAL_CLIENT_SECRET",
+    keys: "Paste your PayPal client ID and secret below",
     Icon: Banknote,
   },
   manual: {
