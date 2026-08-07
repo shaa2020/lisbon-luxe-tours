@@ -5,7 +5,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { BrandLogo } from "@/components/site/BrandLogo";
 import { uploadMediaFile } from "@/lib/admin-helpers";
-import { gatewayCredentialStatus, testGatewayConnection } from "@/lib/gateways.functions";
+import {
+  gatewayCredentialStatus,
+  testGatewayConnection,
+  saveGatewayKeys,
+  clearGatewayKeys,
+} from "@/lib/gateways.functions";
+
 import { toast } from "sonner";
 import { CheckCircle2, XCircle, CreditCard, Wallet, Banknote, HandCoins } from "lucide-react";
 
