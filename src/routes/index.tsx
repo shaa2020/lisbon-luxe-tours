@@ -97,7 +97,7 @@ function Hero() {
 
   return (
     <section className="relative">
-      <div className="relative h-[560px] sm:h-[640px] md:h-[760px] overflow-hidden">
+      <div className="relative h-[460px] sm:h-[540px] md:h-[760px] overflow-hidden">
         {slides.map((s, i) => (
           <img
             key={`${s.label}-${i}`}
@@ -137,7 +137,7 @@ function Hero() {
         )}
 
         {/* Centered headline */}
-        <div className="relative h-full container-x flex flex-col items-center justify-center text-center pt-[68px] md:pt-[110px] pb-52 md:pb-32">
+        <div className="relative h-full container-x flex flex-col items-center justify-center text-center pt-[68px] md:pt-[110px] pb-28 md:pb-32">
           <p
             className="text-white text-3xl sm:text-4xl md:text-6xl -mb-3 sm:-mb-5 md:-mb-8"
             style={{ fontFamily: '"Yellowtail", cursive' }}
@@ -147,18 +147,18 @@ function Hero() {
           <h1
             key={current.label}
             className="font-sans font-bold uppercase text-white leading-[0.92] tracking-tight animate-[fade-up_0.8s_var(--ease-out-expo)_both]"
-            style={{ fontSize: "clamp(52px, 13vw, 170px)" }}
+            style={{ fontSize: "clamp(46px, 12vw, 170px)" }}
           >
             {current.label}
           </h1>
-          <p className="mt-5 max-w-xl text-white/85 text-[14px] md:text-[16px] leading-relaxed">
+          <p className="mt-4 md:mt-5 max-w-xl text-white/85 text-[14px] md:text-[16px] leading-relaxed px-4">
             Private tuk-tuk tours with local drivers. Small groups, flat prices, your pace.
           </p>
         </div>
 
         {/* Slide index */}
         {count > 1 && (
-          <div className="absolute bottom-[188px] md:bottom-[112px] left-1/2 -translate-x-1/2 flex items-center gap-5">
+          <div className="absolute bottom-[100px] md:bottom-[112px] left-1/2 -translate-x-1/2 flex items-center gap-5">
             {slides.map((s, i) => (
               <button
                 key={`dot-${s.label}-${i}`}
@@ -175,12 +175,17 @@ function Hero() {
           </div>
         )}
 
-        {/* Search bar sitting inside the hero */}
-        <div className="absolute inset-x-0 bottom-0 md:bottom-8">
+        {/* Search bar — inside hero on desktop, hidden on mobile (shown below hero) */}
+        <div className="hidden md:block absolute inset-x-0 bottom-8">
           <div className="container-x">
             <SearchBar />
           </div>
         </div>
+      </div>
+
+      {/* Mobile search bar sits below the hero so nothing overlaps */}
+      <div className="md:hidden container-x -mt-8 relative z-10">
+        <SearchBar />
       </div>
     </section>
   );
