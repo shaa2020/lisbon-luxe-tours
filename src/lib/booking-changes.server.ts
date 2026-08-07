@@ -134,8 +134,9 @@ export async function createModificationPayment(
   differenceCents: number,
   origin: string,
 ) {
-  const { createMolliePayment } = await import("./mollie.server");
-  return createMolliePayment({
+  const { createPayment } = await import("./payments.server");
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  return createPayment(supabaseAdmin, {
     amountCents: differenceCents,
     description: `Tour change · ${booking.tour_title || "Booking"} · ref ${booking.id.slice(0, 8)}`,
     origin,

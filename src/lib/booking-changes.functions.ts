@@ -7,7 +7,7 @@ import {
   createModificationPayment,
   fetchBooking,
 } from "./booking-changes.server";
-import { paymentsStatus } from "./mollie.server";
+import { getPaymentByReference, paymentsStatus } from "./payments.server";
 
 const getBookingInput = z.object({
   bookingId: z.string().trim().min(6).max(64),
@@ -315,7 +315,6 @@ export const getMolliePaymentUrl = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => sessionUrlInput.parse(d))
   .handler(async ({ data }) => {
-    const { getMolliePayment } = await import("./mollie.server");
-    const payment = await getMolliePayment(data.sessionId);
+    const payment = await getPaymentByReference(data.sessionId);
     return { url: payment.checkoutUrl ?? undefined };
   });

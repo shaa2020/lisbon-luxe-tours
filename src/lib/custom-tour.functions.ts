@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { getRequestHost } from "@tanstack/react-start/server";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { createMolliePayment, paymentsStatus } from "./mollie.server";
+import { createPayment, paymentsStatus } from "./payments.server";
 
 
 export const getCustomTourComponents = createServerFn({ method: "GET" }).handler(async () => {
@@ -120,7 +120,7 @@ export const submitCustomTour = createServerFn({ method: "POST" })
     const proto = host.includes("localhost") ? "http" : "https";
     const origin = `${proto}://${host}`;
 
-    const payment = await createMolliePayment({
+    const payment = await createPayment(supabaseAdmin, {
       amountCents: total,
       description: `Custom Tour · ${data.guests} guest${data.guests === 1 ? "" : "s"}`,
       origin,
