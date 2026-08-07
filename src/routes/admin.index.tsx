@@ -72,6 +72,8 @@ function AdminDashboard() {
   const [heroImage, setHeroImage] = useState<string | null>(null);
   const [aboutImage, setAboutImage] = useState<string | null>(null);
   const [uploadingImage, setUploadingImage] = useState<string | null>(null);
+  type HeroSlideRow = { label: string; image_url: string | null };
+  const [heroSlides, setHeroSlides] = useState<HeroSlideRow[]>([]);
 
   const [biz, setBiz] = useState({
     contact_email: "",
@@ -98,6 +100,7 @@ function AdminDashboard() {
       setLogoUrl(d.logo_url ?? null);
       setHeroImage(d.hero_image_url ?? null);
       setAboutImage(d.about_image_url ?? null);
+      setHeroSlides(Array.isArray(d.hero_slides) ? (d.hero_slides as HeroSlideRow[]) : []);
       setBiz({
         contact_email: d.contact_email ?? "",
         contact_phone: d.contact_phone ?? "",
@@ -184,7 +187,7 @@ function AdminDashboard() {
     }
   };
 
-  const saveSlides = async (next: { label: string; image_url: string | null }[]) => {
+  const saveSlides = async (next: HeroSlideRow[]) => {
     setHeroSlides(next);
     const { error } = await supabase
       .from("site_settings")
