@@ -1,10 +1,32 @@
+import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { BrandLogo } from "@/components/site/BrandLogo";
 import { useSiteBrand } from "@/lib/brand";
+import { useServerFn } from "@tanstack/react-start";
+import { subscribeToNewsletter } from "@/lib/subscribers.functions";
+import { toast } from "sonner";
 
 export function Footer() {
   const { brandName, business } = useSiteBrand();
   const waHref = `https://wa.me/${(business.whatsappPhone || "").replace(/[^\d]/g, "")}`;
+  const [email, setEmail] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const subscribe = useServerFn(subscribeToNewsletter);
+
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email.trim()) return;
+    setSubmitting(true);
+    try {
+      const res = await subscribe({ data: { email: email.trim() } });
+      toast.success(res.message);
+      setEmail("");
+    } catch (err) {
+      toast.error((err as Error).message || "Could not subscribe.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
     <footer className="bg-white border-t border-border">
@@ -21,14 +43,21 @@ export function Footer() {
               <p className="text-body text-sm">Curated stories from Portugal — once a month, no noise.</p>
             </div>
           </div>
-          <form className="flex w-full md:w-auto">
+          <form onSubmit={handleSubscribe} className="flex w-full md:w-auto">
             <input
               type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               placeholder="Your e-mail"
               className="h-[46px] px-4 rounded-l-full bg-white text-ink placeholder:text-ink/40 outline-none text-sm border border-border focus:border-gold transition flex-1 md:w-72"
             />
-            <button className="h-[46px] px-6 rounded-r-full bg-gold text-white text-[12px] font-semibold uppercase tracking-widest hover:bg-ink transition">
-              Subscribe
+            <button
+              type="submit"
+              disabled={submitting}
+              className="h-[46px] px-6 rounded-r-full bg-gold text-white text-[12px] font-semibold uppercase tracking-widest hover:bg-ink transition disabled:opacity-50"
+            >
+              {submitting ? "..." : "Subscribe"}
             </button>
           </form>
         </div>
@@ -62,7 +91,7 @@ export function Footer() {
             <li><Link to="/tours" className="hover:text-gold transition-colors">Tours</Link></li>
             <li><Link to="/tours/custom" className="hover:text-gold transition-colors">Build Your Tour</Link></li>
             <li><Link to="/booking/manage" className="hover:text-gold transition-colors">Manage Booking</Link></li>
-            <li><Link to="/journal" className="hover:text-gold transition-colors">Latest News</Link></li>
+            <li><Link to="/journal" className="hover:text-gold transition-colors">Journal</Link></li>
           </ul>
         </div>
 
@@ -70,8 +99,6 @@ export function Footer() {
           <h4 className="font-display font-semibold text-ink mb-5">Contact</h4>
           <ul className="space-y-3 text-sm text-body">
             <li><Link to="/about" className="hover:text-gold transition-colors">About Us</Link></li>
-            <li><Link to="/tours" className="hover:text-gold transition-colors">Shop</Link></li>
-            <li><Link to="/journal" className="hover:text-gold transition-colors">Journal</Link></li>
             <li><Link to="/faq" className="hover:text-gold transition-colors">FAQ</Link></li>
             <li><Link to="/contact" className="hover:text-gold transition-colors">Get in touch</Link></li>
           </ul>
@@ -104,9 +131,9 @@ export function Footer() {
             © {new Date().getFullYear()} {brandName} · All Rights Reserved{business.footerLegal ? ` · ${business.footerLegal}` : ""}
           </p>
           <div className="flex gap-6 text-[12px] text-body">
-            <a href="#" className="hover:text-gold transition-colors">Privacy</a>
-            <a href="#" className="hover:text-gold transition-colors">Terms</a>
-            <a href="#" className="hover:text-gold transition-colors">Cookies</a>
+            <Link to="/privacy" className="hover:text-gold transition-colors">Privacy</Link>
+            <Link to="/terms" className="hover:text-gold transition-colors">Terms</Link>
+            <Link to="/cookies" className="hover:text-gold transition-colors">Cookies</Link>
           </div>
         </div>
       </div>
