@@ -26,33 +26,47 @@ Mobile: keeps the bottom tab bar (Home/Tours/Bookings/Orders/More)
 - Consistent page furniture across all admin pages: page title, description, primary action button, unified table/card styling, empty states, and toast feedback on every save.
 - Unsaved-changes warning on settings forms.
 
-## 2. Payments: Mollie or Stripe, switchable
+## 2. Payments: an installable gateway store in the admin
 
-A `payment_provider` setting (`mollie` | `stripe` | `off`) stored in site settings, plus a live/test mode flag. Checkout reads it at request time, so switching takes effect immediately with no redeploy.
+Admin → Settings → Payments becomes a small "gateway store": a grid of pre-built payment gateway cards you install and switch between yourself, no code.
 
-The Payments settings page shows:
+```text
+  [ Stripe ]        [ Mollie ]         [ PayPal ]        [ Manual / Off ]
+  Built-in           Your API key       Your API keys     No online payment
+  Not installed      Installed · Live   Coming soon       Fallback
+  [ Install ]        [ Active ]         [ Install ]       [ Use this ]
+```
 
-- Provider selector: Mollie / Stripe / Payments off (manual requests only)
-- Live status panel per provider: key present or missing, test vs live mode, last successful payment
-- Maintenance mode toggle + editable maintenance message (already exists, moves here)
-- Currency and the customer-facing payment note
+Each card has:
 
-Behaviour:
+- Logo, short description, which payment methods it supports (cards, iDEAL, Apple/Google Pay, MB Way, etc.)
+- Status badge: Not installed / Installed / Active / Key missing
+- **Install** button that opens a guided setup: what you need, where to get it, then a secure form for the key. Keys are never stored in the code or shown back.
+- **Test connection** button that makes a real call to the provider and reports success or the exact error
+- **Set as active** — only one gateway takes live payments at a time; switching is instant, no redeploy
+- Test / Live mode switch per gateway, with a clear warning banner on the site when in test mode
 
-- **Mollie** — your own API key. It is not currently saved in the backend, which is why online payments are effectively in maintenance mode right now. I will ask you for the Mollie key through the secure secret form when we get there (test key first if you prefer).
-- **Stripe** — Lovable's built-in Stripe. No account setup or keys from you; card, Apple Pay and Google Pay work out of the box. Charges are created through Lovable's Stripe connection and confirmed by its webhook.
-- **Off** — booking form still works and drops a "payment request" into Admin → Bookings, same as today's maintenance mode.
+Gateways shipped:
 
-Whichever provider is active, the rest of the app is unchanged: same booking record, same Orders row, same confirmation page, same booking reference, same cancellation policy.
+- **Stripe** — Lovable's built-in Stripe. One-click install, no account keys to paste; cards, Apple Pay and Google Pay work out of the box.
+- **Mollie** — your own API key (iDEAL, Bancontact, cards, SEPA). Your key isn't saved in the backend right now, which is why online payments sit in maintenance mode; the install flow will ask for it securely.
+- **PayPal** — same install pattern (client ID + secret), built as the third card.
+- **Manual / Off** — booking form still works and drops a "payment request" into Admin → Bookings, exactly like today's maintenance mode.
+
+Also on this page: maintenance toggle and message (moves here from the Dashboard), currency, and the customer-facing payment note.
+
+Whichever gateway is active, the rest of the app is unchanged: same booking record, same Orders row, same confirmation page, same booking reference, same cancellation policy. Orders show which gateway processed each payment.
 
 ## Technical notes
 
-- Migration: add `payment_provider text not null default 'mollie'` and `payment_mode text not null default 'live'` to `site_settings`.
-- Introduce `src/lib/payments.server.ts` as a provider-agnostic layer with `createPayment()` / `getPayment()`; `mollie.server.ts` stays as one implementation, a new `stripe.server.ts` (gateway client per Lovable's Stripe utility) as the other. `checkout.functions.ts` and `booking-changes.server.ts` call the abstraction, not Mollie directly.
-- Orders keep the existing `stripe_session_id` / `stripe_payment_intent_id` columns as generic provider references; add a `provider` column so admin can show which one handled each payment.
-- Stripe webhook lands at `src/routes/api/public/payments/webhook.ts` (signature-verified) alongside the existing Mollie webhook route; both funnel into the same confirmation logic.
-- Admin shell is refactored into `AdminShell` + `AdminSidebar` + a shared `AdminPage` wrapper; settings split into `src/routes/admin.settings.*.tsx` with a shared settings form hook.
-- Enabling built-in Stripe requires running Lovable's payments enablement step; I'll do that only if you pick Stripe as the active provider.
+- Migration: new `payment_gateways` table (`provider`, `enabled`, `mode`, `is_active`, `config` jsonb, timestamps), admin-only RLS; plus `payment_provider` on `site_settings` as the pointer to the active one.
+- `src/lib/payments.server.ts` — provider-agnostic `createPayment()` / `getPayment()` / `testConnection()` with a registry of gateway adapters. `mollie.server.ts` becomes one adapter; new `stripe.server.ts` (gateway client per Lovable's Stripe utility) and `paypal.server.ts` join it. `checkout.functions.ts` and `booking-changes.server.ts` call the abstraction, never a provider directly.
+- Secret keys go through Lovable's secure secret storage (`MOLLIE_API_KEY`, `PAYPAL_CLIENT_ID`/`PAYPAL_SECRET`); the admin UI only reports whether a key is present, never its value.
+- Orders keep `stripe_session_id` / `stripe_payment_intent_id` as generic provider references; add a `provider` column.
+- Webhooks: Stripe at `src/routes/api/public/payments/webhook.ts` (signature-verified), PayPal alongside it, existing Mollie route stays; all funnel into one confirmation path.
+- Admin shell refactored into `AdminShell` + `AdminSidebar` + shared `AdminPage`; settings split into `src/routes/admin.settings.*.tsx` with a shared settings form hook.
+- Adding a future gateway means one adapter file plus one entry in the registry — the admin store picks it up automatically.
+
 
 ## Order of work
 
