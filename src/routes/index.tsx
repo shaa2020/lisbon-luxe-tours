@@ -14,11 +14,12 @@ import { WhatsappFab } from "@/components/site/Whatsapp";
 import { BookingModal } from "@/components/site/BookingModal";
 import { TestimonialsSection } from "@/components/site/TestimonialsSection";
 import { useBlogPosts, useTours, tourPricing, type Tour } from "@/lib/cms";
+import aboutAsset from "@/assets/about-tuktuk-fleet.jpg.asset.json";
+const aboutImg = aboutAsset.url;
 import { useSiteBrand } from "@/lib/brand";
 
 // Hero now uses the tuk-tuk/flowers image (per user request 2026-06-16)
 const lockedHeroImg = `${aboutImg}?v=locked-20260616-hero`;
-const lockedAboutImg = `${aboutImg}?v=locked-20260616`;
 
 export const Route = createFileRoute("/")({
   head: () => ({
