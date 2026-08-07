@@ -39,16 +39,6 @@ function usePendingReviewCount() {
 }
 
 function AdminDashboard() {
-  const qc = useQueryClient();
-  const tours = useCount("tours");
-  const posts = useCount("blog_posts");
-  const bookings = useCount("bookings");
-  const messages = useCount("contact_messages");
-  const orders = useCount("orders");
-  const reviews = useCount("reviews");
-  const pendingReviews = usePendingReviewCount();
-
-function AdminDashboard() {
   const tours = useCount("tours");
   const posts = useCount("blog_posts");
   const bookings = useCount("bookings");
