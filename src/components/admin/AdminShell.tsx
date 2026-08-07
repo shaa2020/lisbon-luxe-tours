@@ -18,6 +18,7 @@ import {
   X,
   Sparkles,
   HelpCircle,
+  Settings,
 } from "lucide-react";
 
 type NavItem = {
@@ -39,6 +40,7 @@ const MORE: NavItem[] = [
   { to: "/admin/blog", label: "Journal", icon: BookOpen },
   { to: "/admin/reviews", label: "Reviews", icon: Star },
   { to: "/admin/messages", label: "Messages", icon: MessageSquare },
+  { to: "/admin/settings", label: "Settings", icon: Settings },
 ];
 
 const ALL = [...PRIMARY, ...MORE];

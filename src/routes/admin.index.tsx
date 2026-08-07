@@ -1,13 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { Map, BookOpen, CalendarCheck, Mail, CreditCard, Star, Euro, Users, TrendingUp } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { AdminShell } from "@/components/admin/AdminShell";
-import { BrandLogo } from "@/components/site/BrandLogo";
-import { uploadMediaFile } from "@/lib/admin-helpers";
 import { useRevenueStats, useUpcomingThisWeek, useAdminBadges } from "@/lib/admin-stats";
-import { toast } from "sonner";
 
 export const Route = createFileRoute("/admin/")({
   component: AdminDashboard,
@@ -43,7 +39,6 @@ function usePendingReviewCount() {
 }
 
 function AdminDashboard() {
-  const qc = useQueryClient();
   const tours = useCount("tours");
   const posts = useCount("blog_posts");
   const bookings = useCount("bookings");
@@ -51,164 +46,6 @@ function AdminDashboard() {
   const orders = useCount("orders");
   const reviews = useCount("reviews");
   const pendingReviews = usePendingReviewCount();
-
-  const brand = useQuery({
-    queryKey: ["site-brand-admin"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("site_settings")
-        .select("*")
-        .eq("id", true)
-        .single();
-      if (error) throw error;
-      return data as any;
-    },
-  });
-
-  const [brandName, setBrandName] = useState("Tuk Tuk 24");
-  const [logoUrl, setLogoUrl] = useState<string | null>(null);
-  const [savingBrand, setSavingBrand] = useState(false);
-  const [uploadingLogo, setUploadingLogo] = useState(false);
-  const [heroImage, setHeroImage] = useState<string | null>(null);
-  const [aboutImage, setAboutImage] = useState<string | null>(null);
-  const [uploadingImage, setUploadingImage] = useState<string | null>(null);
-  type HeroSlideRow = { label: string; image_url: string | null };
-  const [heroSlides, setHeroSlides] = useState<HeroSlideRow[]>([]);
-
-  const [biz, setBiz] = useState({
-    contact_email: "",
-    contact_phone: "",
-    whatsapp_phone: "",
-    address_line1: "",
-    address_line2: "",
-    city: "",
-    country: "",
-    instagram_url: "",
-    facebook_url: "",
-    twitter_url: "",
-    footer_legal: "",
-    hotel_pickup_fee_cents: 2000,
-    payments_enabled: true,
-    payments_maintenance_message: "",
-  });
-  const [savingBiz, setSavingBiz] = useState(false);
-
-  useEffect(() => {
-    if (brand.data) {
-      const d: any = brand.data;
-      setBrandName(d.brand_name || "Tuk Tuk 24");
-      setLogoUrl(d.logo_url ?? null);
-      setHeroImage(d.hero_image_url ?? null);
-      setAboutImage(d.about_image_url ?? null);
-      setHeroSlides(Array.isArray(d.hero_slides) ? (d.hero_slides as HeroSlideRow[]) : []);
-      setBiz({
-        contact_email: d.contact_email ?? "",
-        contact_phone: d.contact_phone ?? "",
-        whatsapp_phone: d.whatsapp_phone ?? "",
-        address_line1: d.address_line1 ?? "",
-        address_line2: d.address_line2 ?? "",
-        city: d.city ?? "",
-        country: d.country ?? "",
-        instagram_url: d.instagram_url ?? "",
-        facebook_url: d.facebook_url ?? "",
-        twitter_url: d.twitter_url ?? "",
-        footer_legal: d.footer_legal ?? "",
-        hotel_pickup_fee_cents: Number(d.hotel_pickup_fee_cents ?? 2000) || 0,
-        payments_enabled: (d as any).payments_enabled !== false,
-        payments_maintenance_message: (d as any).payments_maintenance_message ?? "",
-      });
-    }
-  }, [brand.data]);
-
-  const saveBrand = async () => {
-    setSavingBrand(true);
-    const { error } = await supabase.from("site_settings").upsert({
-      id: true,
-      brand_name: brandName.trim() || "Tuk Tuk 24",
-      logo_url: logoUrl,
-    });
-    setSavingBrand(false);
-    if (error) return toast.error(error.message);
-    toast.success("Brand updated");
-    qc.invalidateQueries({ queryKey: ["site-brand"] });
-    qc.invalidateQueries({ queryKey: ["site-brand-admin"] });
-  };
-
-  const saveBiz = async () => {
-    setSavingBiz(true);
-    const { error } = await supabase.from("site_settings").upsert({ id: true, ...biz } as any);
-    setSavingBiz(false);
-    if (error) return toast.error(error.message);
-    toast.success("Business info updated");
-    qc.invalidateQueries({ queryKey: ["site-brand"] });
-    qc.invalidateQueries({ queryKey: ["site-brand-admin"] });
-  };
-
-  const onBrandLogo = async (file: File) => {
-    setUploadingLogo(true);
-    try {
-      const url = await uploadMediaFile("brand", "logo", file);
-      setLogoUrl(url);
-      // Auto-persist so users don't have to click "Save brand" separately.
-      const { error } = await supabase
-        .from("site_settings")
-        .upsert({ id: true, logo_url: url });
-      if (error) throw error;
-      qc.invalidateQueries({ queryKey: ["site-brand"] });
-      qc.invalidateQueries({ queryKey: ["site-brand-admin"] });
-      toast.success("Logo uploaded & saved");
-    } catch (error) {
-      toast.error((error as Error).message);
-    } finally {
-      setUploadingLogo(false);
-    }
-  };
-
-  const onSiteImage = async (
-    column: "hero_image_url" | "about_image_url",
-    setter: (v: string | null) => void,
-    file: File | null,
-  ) => {
-    setUploadingImage(column);
-    try {
-      const url = file ? await uploadMediaFile("site", column, file) : null;
-      const { error } = await supabase
-        .from("site_settings")
-        .upsert({ id: true, [column]: url } as any);
-      if (error) throw error;
-      setter(url);
-      qc.invalidateQueries({ queryKey: ["site-brand"] });
-      qc.invalidateQueries({ queryKey: ["site-brand-admin"] });
-      toast.success(file ? "Image uploaded & saved" : "Reset to built-in image");
-    } catch (error) {
-      toast.error((error as Error).message);
-    } finally {
-      setUploadingImage(null);
-    }
-  };
-
-  const saveSlides = async (next: HeroSlideRow[]) => {
-    setHeroSlides(next);
-    const { error } = await supabase
-      .from("site_settings")
-      .upsert({ id: true, hero_slides: next } as any);
-    if (error) return toast.error(error.message);
-    qc.invalidateQueries({ queryKey: ["site-brand"] });
-    qc.invalidateQueries({ queryKey: ["site-brand-admin"] });
-    toast.success("Homepage slideshow updated");
-  };
-
-  const onSlideImage = async (index: number, file: File) => {
-    setUploadingImage(`slide-${index}`);
-    try {
-      const url = await uploadMediaFile("site", `hero-slide-${index}`, file);
-      await saveSlides(heroSlides.map((s, i) => (i === index ? { ...s, image_url: url } : s)));
-    } catch (error) {
-      toast.error((error as Error).message);
-    } finally {
-      setUploadingImage(null);
-    }
-  };
 
   const revenue = useRevenueStats();
   const upcoming = useUpcomingThisWeek();
@@ -356,283 +193,27 @@ function AdminDashboard() {
         ))}
         </div>
 
-        <section className="rounded-xl border border-border bg-card p-5 space-y-4">
+        <section className="rounded-xl border border-border bg-card p-5 space-y-3">
           <div>
-            <p className="text-sm font-semibold text-foreground">Brand settings</p>
-            <p className="text-xs text-muted-foreground">Update the public company name and logo.</p>
+            <p className="text-sm font-semibold text-foreground">Shortcuts</p>
+            <p className="text-xs text-muted-foreground">Configuration lives in Settings now.</p>
           </div>
-
-          <div className="rounded-lg border border-border bg-background p-4">
-            <BrandLogo brandName={brandName} logoUrl={logoUrl} showTagline />
-          </div>
-
-          <label className="block space-y-2">
-            <span className="text-xs font-medium text-foreground">Company name</span>
-            <input
-              value={brandName}
-              onChange={(e) => setBrandName(e.target.value)}
-              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary"
-            />
-          </label>
-
-          <div className="space-y-2">
-            <span className="text-xs font-medium text-foreground">Logo image</span>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => e.target.files?.[0] && onBrandLogo(e.target.files[0])}
-              className="block w-full text-xs text-muted-foreground"
-            />
-            <div className="flex gap-2">
-              <div className="space-y-3 rounded-md border border-border p-4 max-w-xl">
-          <label className="flex items-center gap-3">
-            <input
-              type="checkbox"
-              checked={biz.payments_enabled !== false}
-              onChange={(e) => setBiz((b) => ({ ...b, payments_enabled: e.target.checked }))}
-              className="h-4 w-4"
-            />
-            <span className="text-xs font-medium text-foreground">
-              Online payments enabled
-            </span>
-          </label>
-          <p className="text-[11px] text-muted-foreground">
-            Turn this off to put checkout in maintenance mode. Bookings are still saved and appear
-            here as payment requests, and customers see the message below instead of a payment page.
-          </p>
-          <label className="block space-y-1">
-            <span className="text-xs font-medium text-foreground">Maintenance message</span>
-            <textarea
-              rows={3}
-              value={biz.payments_maintenance_message ?? ""}
-              onChange={(e) =>
-                setBiz((b) => ({ ...b, payments_maintenance_message: e.target.value }))
-              }
-              placeholder="Online payments are temporarily unavailable while we update our booking system. Please send us your request and we will confirm by email or WhatsApp."
-              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary"
-            />
-          </label>
-        </div>
-        <button
-                type="button"
-                onClick={saveBrand}
-                disabled={savingBrand || uploadingLogo}
-                className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground disabled:opacity-50"
-              >
-                {savingBrand ? "Saving…" : "Save brand"}
-              </button>
-              {logoUrl && (
-                <button
-                  type="button"
-                  onClick={() => setLogoUrl(null)}
-                  className="rounded-md border border-border px-4 py-2 text-sm font-medium text-foreground"
-                >
-                  Use built-in logo
-                </button>
-              )}
-            </div>
-            {(uploadingLogo || brand.isLoading) && <p className="text-xs text-muted-foreground">Updating…</p>}
-          </div>
+          {[
+            { to: "/admin/settings", label: "Settings", desc: "Brand, contact, homepage, booking rules, payments." },
+            { to: "/admin/custom-builder", label: "Custom Builder", desc: "Prices and options for build-your-own tours." },
+            { to: "/admin/faqs", label: "FAQs", desc: "Questions shown on the FAQ page." },
+          ].map((s) => (
+            <Link
+              key={s.to}
+              to={s.to}
+              className="block rounded-lg border border-border bg-background p-4 hover:border-primary transition"
+            >
+              <p className="text-sm font-semibold text-foreground">{s.label}</p>
+              <p className="text-xs text-muted-foreground mt-0.5">{s.desc}</p>
+            </Link>
+          ))}
         </section>
       </div>
-
-      <section className="mt-8 rounded-xl border border-border bg-card p-5 space-y-5">
-        <div>
-          <p className="text-sm font-semibold text-foreground">Website images</p>
-          <p className="text-xs text-muted-foreground">
-            Homepage background and About page photo. Uploads are optimised automatically.
-          </p>
-        </div>
-        <div className="grid sm:grid-cols-2 gap-5">
-          {[
-            { key: "hero_image_url" as const, label: "Homepage background", value: heroImage, set: setHeroImage },
-            { key: "about_image_url" as const, label: "About page image", value: aboutImage, set: setAboutImage },
-          ].map((f) => (
-            <div key={f.key} className="space-y-2">
-              <span className="text-xs font-medium text-foreground">{f.label}</span>
-              <div className="h-36 rounded-lg border border-border bg-background overflow-hidden flex items-center justify-center">
-                {f.value ? (
-                  <img src={f.value} alt={f.label} className="w-full h-full object-cover" />
-                ) : (
-                  <span className="text-xs text-muted-foreground">Using built-in image</span>
-                )}
-              </div>
-              <input
-                type="file"
-                accept="image/*"
-                disabled={uploadingImage === f.key}
-                onChange={(e) =>
-                  e.target.files?.[0] && onSiteImage(f.key, f.set, e.target.files[0])
-                }
-                className="block w-full text-xs text-muted-foreground"
-              />
-              <div className="flex gap-2">
-                {f.value && (
-                  <button
-                    type="button"
-                    onClick={() => onSiteImage(f.key, f.set, null)}
-                    className="rounded-md border border-border px-3 py-1.5 text-xs font-medium text-foreground"
-                  >
-                    Reset to built-in
-                  </button>
-                )}
-                {uploadingImage === f.key && (
-                  <span className="text-xs text-muted-foreground self-center">Uploading…</span>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="mt-8 rounded-xl border border-border bg-card p-5 space-y-5">
-        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
-          <div className="min-w-0">
-            <p className="text-sm font-semibold text-foreground">Homepage slideshow</p>
-            <p className="text-xs text-muted-foreground">
-              Each slide shows a destination name and its own photo. Slides rotate automatically every 5.5s.
-              With no slides, the homepage background image is used.
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={() => saveSlides([...heroSlides, { label: "Lisboa", image_url: null }])}
-            className="shrink-0 rounded-md bg-primary px-3 py-2 text-xs font-semibold text-primary-foreground"
-          >
-            Add slide
-          </button>
-        </div>
-
-        {heroSlides.length === 0 ? (
-          <p className="text-xs text-muted-foreground">No slides yet — add one to start the slideshow.</p>
-        ) : (
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {heroSlides.map((s, i) => (
-              <div key={i} className="space-y-2 rounded-lg border border-border p-3">
-                <div className="h-32 rounded-md bg-background overflow-hidden flex items-center justify-center">
-                  {s.image_url ? (
-                    <img src={s.image_url} alt={s.label} className="w-full h-full object-cover" />
-                  ) : (
-                    <span className="text-xs text-muted-foreground">Using homepage background</span>
-                  )}
-                </div>
-                <input
-                  value={s.label}
-                  onChange={(e) =>
-                    setHeroSlides(heroSlides.map((x, j) => (j === i ? { ...x, label: e.target.value } : x)))
-                  }
-                  onBlur={() => saveSlides(heroSlides)}
-                  placeholder="Destination name"
-                  className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground"
-                />
-                <input
-                  type="file"
-                  accept="image/*"
-                  disabled={uploadingImage === `slide-${i}`}
-                  onChange={(e) => e.target.files?.[0] && onSlideImage(i, e.target.files[0])}
-                  className="block w-full text-xs text-muted-foreground"
-                />
-                <div className="flex flex-wrap gap-2">
-                  <button
-                    type="button"
-                    disabled={i === 0}
-                    onClick={() => {
-                      const n = [...heroSlides];
-                      [n[i - 1], n[i]] = [n[i], n[i - 1]];
-                      saveSlides(n);
-                    }}
-                    className="rounded-md border border-border px-2 py-1 text-xs text-foreground disabled:opacity-40"
-                  >
-                    ↑
-                  </button>
-                  <button
-                    type="button"
-                    disabled={i === heroSlides.length - 1}
-                    onClick={() => {
-                      const n = [...heroSlides];
-                      [n[i + 1], n[i]] = [n[i], n[i + 1]];
-                      saveSlides(n);
-                    }}
-                    className="rounded-md border border-border px-2 py-1 text-xs text-foreground disabled:opacity-40"
-                  >
-                    ↓
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => saveSlides(heroSlides.filter((_, j) => j !== i))}
-                    className="rounded-md border border-border px-2 py-1 text-xs font-medium text-destructive"
-                  >
-                    Remove
-                  </button>
-                  {uploadingImage === `slide-${i}` && (
-                    <span className="text-xs text-muted-foreground self-center">Uploading…</span>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </section>
-
-      <section className="mt-8 rounded-xl border border-border bg-card p-5 space-y-4">
-
-        <div>
-          <p className="text-sm font-semibold text-foreground">Business information</p>
-          <p className="text-xs text-muted-foreground">Email, phone, address and social links shown across the website.</p>
-        </div>
-        <div className="grid sm:grid-cols-2 gap-3">
-          {[
-            { k: "contact_email", label: "Contact email" },
-            { k: "contact_phone", label: "Phone (displayed)" },
-            { k: "whatsapp_phone", label: "WhatsApp number (digits only ok)" },
-            { k: "address_line1", label: "Address line 1" },
-            { k: "address_line2", label: "Address line 2 / Postal & city" },
-            { k: "city", label: "City" },
-            { k: "country", label: "Country" },
-            { k: "instagram_url", label: "Instagram URL" },
-            { k: "facebook_url", label: "Facebook URL" },
-            { k: "twitter_url", label: "Twitter / X URL" },
-            { k: "footer_legal", label: "Footer legal line (RNAAT / NIF)" },
-          ].map((f) => (
-            <label key={f.k} className="block space-y-1">
-              <span className="text-xs font-medium text-foreground">{f.label}</span>
-              <input
-                value={(biz as any)[f.k] ?? ""}
-                onChange={(e) => setBiz((b) => ({ ...b, [f.k]: e.target.value }))}
-                className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary"
-              />
-            </label>
-          ))}
-        </div>
-        <label className="block space-y-1 max-w-xs">
-          <span className="text-xs font-medium text-foreground">Hotel pickup &amp; drop-off fee (€)</span>
-          <input
-            type="number"
-            min={0}
-            step="1"
-            value={Math.round((biz.hotel_pickup_fee_cents ?? 0) / 100)}
-            onChange={(e) =>
-              setBiz((b) => ({
-                ...b,
-                hotel_pickup_fee_cents: Math.max(0, Math.round(Number(e.target.value) || 0) * 100),
-              }))
-            }
-            className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary"
-          />
-          <span className="block text-[11px] text-muted-foreground">
-            Shown on tour and custom booking pages. Added to the total when guests opt in. Set to 0 to hide.
-          </span>
-        </label>
-        <button
-          type="button"
-          onClick={saveBiz}
-          disabled={savingBiz}
-          className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground disabled:opacity-50"
-        >
-          {savingBiz ? "Saving…" : "Save business info"}
-        </button>
-      </section>
-
     </AdminShell>
   );
 }

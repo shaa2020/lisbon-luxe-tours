@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { getRequestHost } from "@tanstack/react-start/server";
 import { z } from "zod";
 import { applyModificationToBooking } from "./booking-changes.server";
-import { createMolliePayment, getMolliePayment, paymentsStatus } from "./mollie.server";
+import { createPayment, getPaymentByReference, paymentsStatus } from "./payments.server";
 
 const checkoutInput = z.object({
   tour_slug: z.string().max(120),
@@ -60,7 +60,7 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
     const proto = host.includes("localhost") ? "http" : "https";
     const origin = `${proto}://${host}`;
 
-    const payment = await createMolliePayment({
+    const payment = await createPayment(supabaseAdmin, {
       amountCents: data.amount,
       description: `${data.tour_title} · ${data.guests} guest${data.guests === 1 ? "" : "s"}${data.travel_date ? ` · ${data.travel_date}` : ""}`,
       origin,
@@ -74,6 +74,7 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
     await supabaseAdmin.from("orders").insert({
       booking_id: booking.id,
       stripe_session_id: payment.id,
+      provider: payment.provider,
       amount_total: data.amount,
       currency: "eur",
       payment_status: "pending",
@@ -101,7 +102,7 @@ export const confirmCheckout = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-    const payment = await getMolliePayment(data.session_id);
+    const payment = await getPaymentByReference(data.session_id);
     const paid = payment.status === "paid";
     const newStatus = paid ? "paid" : payment.status || "pending";
 

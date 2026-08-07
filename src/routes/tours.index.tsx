@@ -34,7 +34,9 @@ export const Route = createFileRoute("/tours/")({
     ],
     links: [{ rel: "canonical", href: "https://tuktuk24lisbon.com/tours" }],
   }),
-  validateSearch: (search: Record<string, unknown>) => ({
+  validateSearch: (
+    search: Record<string, unknown>,
+  ): { q?: string; date?: string; guests?: number; length?: string } => ({
     q: typeof search['q'] === 'string' && search['q'] ? String(search['q']) : undefined,
     date: typeof search['date'] === 'string' && search['date'] ? String(search['date']) : undefined,
     guests: Number(search['guests']) > 0 ? Number(search['guests']) : undefined,
