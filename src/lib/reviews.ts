@@ -174,3 +174,32 @@ export function useDeleteReview() {
     },
   });
 }
+
+export type SlugStats = { count: number; average: number };
+
+/** Approved review count + average per tour slug, in a single query. */
+export function useReviewStatsBySlug() {
+  return useQuery({
+    queryKey: ["reviews", "stats-by-slug"],
+    staleTime: 60_000,
+    queryFn: async (): Promise<Record<string, SlugStats>> => {
+      const { data, error } = await supabase
+        .from("reviews_public" as never)
+        .select("tour_slug, rating");
+      if (error) throw error;
+      const rows = (data ?? []) as unknown as { tour_slug: string | null; rating: number }[];
+      const acc: Record<string, { total: number; count: number }> = {};
+      for (const r of rows) {
+        if (!r.tour_slug) continue;
+        acc[r.tour_slug] ??= { total: 0, count: 0 };
+        acc[r.tour_slug].total += r.rating;
+        acc[r.tour_slug].count += 1;
+      }
+      const out: Record<string, SlugStats> = {};
+      for (const [slug, v] of Object.entries(acc)) {
+        out[slug] = { count: v.count, average: v.total / v.count };
+      }
+      return out;
+    },
+  });
+}
