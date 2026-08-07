@@ -74,6 +74,7 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
     await supabaseAdmin.from("orders").insert({
       booking_id: booking.id,
       stripe_session_id: payment.id,
+      provider: payment.provider,
       amount_total: data.amount,
       currency: "eur",
       payment_status: "pending",
