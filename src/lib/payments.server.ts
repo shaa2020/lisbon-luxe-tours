@@ -37,16 +37,57 @@ export const DEFAULT_MAINTENANCE_MESSAGE =
 
 const env = (key: string): string => process.env[key] || "";
 
+/**
+ * Keys entered by the admin (encrypted in the database) take priority over
+ * environment secrets. Refreshed before any gateway operation.
+ */
+let SECRET_CACHE: Record<string, Record<string, string>> = {};
+
+export async function refreshGatewaySecretCache() {
+  const { loadAllGatewaySecrets } = await import("./gateway-secrets.server");
+  SECRET_CACHE = await loadAllGatewaySecrets();
+  return SECRET_CACHE;
+}
+
+function secret(provider: ProviderId, mode: GatewayMode, key: string): string {
+  return (SECRET_CACHE[`${provider}:${mode}`]?.[key] || "").trim() || env(key);
+}
+
+/** Which keys each gateway asks the admin for, per mode. */
+export const GATEWAY_FIELDS: Record<ProviderId, { key: string; label: string; help: string }[]> = {
+  stripe: [],
+  mollie: [
+    {
+      key: "MOLLIE_API_KEY",
+      label: "Mollie API key",
+      help: "Mollie dashboard → Developers → API keys. Use the live key (live_…) in Live mode and the test key (test_…) in Test mode.",
+    },
+  ],
+  paypal: [
+    { key: "PAYPAL_CLIENT_ID", label: "Client ID", help: "PayPal Developer dashboard → Apps & Credentials." },
+    { key: "PAYPAL_CLIENT_SECRET", label: "Secret", help: "Shown next to the client ID in the same app." },
+  ],
+  manual: [],
+};
+
 /* ------------------------------------------------------------------ Mollie */
 
 const MOLLIE_API = "https://api.mollie.com/v2";
 
-function mollieKey(): string {
-  return env("MOLLIE_API_KEY") || env("MOLLIE_LIVE_API_KEY") || env("MOLLIE_TEST_API_KEY");
+function mollieKey(mode: GatewayMode): string {
+  return (
+    secret("mollie", mode, "MOLLIE_API_KEY") ||
+    (mode === "live" ? env("MOLLIE_LIVE_API_KEY") : env("MOLLIE_TEST_API_KEY"))
+  );
 }
 
-async function mollieFetch(path: string, init?: { method?: string; body?: Record<string, unknown> }) {
-  const key = mollieKey();
+
+async function mollieFetch(
+  path: string,
+  mode: GatewayMode,
+  init?: { method?: string; body?: Record<string, unknown> },
+) {
+  const key = mollieKey(mode);
   if (!key) throw new Error("Mollie API key not configured");
   const res = await fetch(`${MOLLIE_API}${path}`, {
     method: init?.method || "GET",
@@ -70,9 +111,9 @@ function normalizeMollie(payment: any): PaymentResult {
 
 const mollieAdapter: GatewayAdapter = {
   id: "mollie",
-  hasCredentials: () => !!mollieKey(),
+  hasCredentials: (mode) => !!mollieKey(mode),
   ownsReference: (id) => id.startsWith("tr_"),
-  async createPayment(input) {
+  async createPayment(input, mode) {
     const isLocal = input.origin.includes("localhost") || input.origin.includes("127.0.0.1");
     const redirectPath = input.redirectPath || "/booking/success";
     const body: Record<string, unknown> = {
@@ -83,9 +124,9 @@ const mollieAdapter: GatewayAdapter = {
     };
     if (!isLocal) body["webhookUrl"] = `${input.origin}/api/public/payments/mollie`;
 
-    const created = normalizeMollie(await mollieFetch("/payments", { method: "POST", body }));
+    const created = normalizeMollie(await mollieFetch("/payments", mode, { method: "POST", body }));
     const updated = normalizeMollie(
-      await mollieFetch(`/payments/${created.id}`, {
+      await mollieFetch(`/payments/${created.id}`, mode, {
         method: "PATCH",
         body: { redirectUrl: `${input.origin}${redirectPath}?session_id=${created.id}` },
       }),
@@ -93,12 +134,13 @@ const mollieAdapter: GatewayAdapter = {
     return { ...updated, checkoutUrl: updated.checkoutUrl || created.checkoutUrl };
   },
   async getPayment(id) {
-    return normalizeMollie(await mollieFetch(`/payments/${encodeURIComponent(id)}`));
+    const mode: GatewayMode = mollieKey("live") ? "live" : "test";
+    return normalizeMollie(await mollieFetch(`/payments/${encodeURIComponent(id)}`, mode));
   },
-  async testConnection() {
-    if (!mollieKey()) return { ok: false, message: "No Mollie API key saved yet." };
+  async testConnection(mode) {
+    if (!mollieKey(mode)) return { ok: false, message: `No Mollie ${mode} API key saved yet.` };
     try {
-      const me = await mollieFetch("/methods?limit=5");
+      const me = await mollieFetch("/methods?limit=5", mode);
       const count = me?.count ?? me?._embedded?.methods?.length ?? 0;
       return { ok: true, message: `Connected. ${count} payment method(s) enabled on your Mollie account.` };
     } catch (e) {
@@ -107,13 +149,17 @@ const mollieAdapter: GatewayAdapter = {
   },
 };
 
+
 /* ------------------------------------------------------------------ Stripe */
 
 const STRIPE_GATEWAY = "https://connector-gateway.lovable.dev/stripe";
 
 function stripeKey(mode: GatewayMode): string {
-  return mode === "live" ? env("STRIPE_LIVE_API_KEY") : env("STRIPE_SANDBOX_API_KEY");
+  return mode === "live"
+    ? secret("stripe", "live", "STRIPE_LIVE_API_KEY")
+    : secret("stripe", "test", "STRIPE_SANDBOX_API_KEY");
 }
+
 
 async function stripeFetch(
   path: string,
@@ -203,10 +249,12 @@ function paypalBase(mode: GatewayMode) {
 }
 
 function paypalCreds(mode: GatewayMode) {
-  const id = mode === "live" ? env("PAYPAL_CLIENT_ID") : env("PAYPAL_SANDBOX_CLIENT_ID") || env("PAYPAL_CLIENT_ID");
-  const secret = mode === "live" ? env("PAYPAL_SECRET") : env("PAYPAL_SANDBOX_SECRET") || env("PAYPAL_SECRET");
-  return { id, secret };
+  const id = secret("paypal", mode, "PAYPAL_CLIENT_ID") || env("PAYPAL_SANDBOX_CLIENT_ID");
+  const clientSecret =
+    secret("paypal", mode, "PAYPAL_CLIENT_SECRET") || env("PAYPAL_SECRET") || env("PAYPAL_SANDBOX_SECRET");
+  return { id, secret: clientSecret };
 }
+
 
 async function paypalToken(mode: GatewayMode) {
   const { id, secret } = paypalCreds(mode);
@@ -343,11 +391,13 @@ export type ActiveGateway = {
 export async function getActiveGateway(
   supabase: SupabaseClient<Database>,
 ): Promise<ActiveGateway> {
+  await refreshGatewaySecretCache();
   const { data } = await supabase
     .from("payment_gateways")
     .select("provider, mode, installed")
     .eq("is_active", true)
     .maybeSingle();
+
 
   const provider = ((data?.provider as ProviderId) || "manual") as ProviderId;
   const adapter = GATEWAYS[provider] ?? manualAdapter;
@@ -396,8 +446,10 @@ export async function createPayment(
 
 /** Look a payment up by its reference, routing to the gateway that owns it. */
 export async function getPaymentByReference(id: string): Promise<PaymentResult & { provider: ProviderId }> {
+  await refreshGatewaySecretCache();
   const owner = (Object.values(GATEWAYS) as GatewayAdapter[]).find((g) => g.ownsReference(id));
   const adapter = owner ?? mollieAdapter;
+
   const payment = await adapter.getPayment(id);
   return { ...payment, provider: adapter.id };
 }
