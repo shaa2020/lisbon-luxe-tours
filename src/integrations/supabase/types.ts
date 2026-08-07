@@ -288,6 +288,7 @@ export type Database = {
           guests: number | null
           id: string
           payment_status: string
+          provider: string
           raw: Json | null
           stripe_payment_intent_id: string | null
           stripe_session_id: string | null
@@ -306,6 +307,7 @@ export type Database = {
           guests?: number | null
           id?: string
           payment_status?: string
+          provider?: string
           raw?: Json | null
           stripe_payment_intent_id?: string | null
           stripe_session_id?: string | null
@@ -324,6 +326,7 @@ export type Database = {
           guests?: number | null
           id?: string
           payment_status?: string
+          provider?: string
           raw?: Json | null
           stripe_payment_intent_id?: string | null
           stripe_session_id?: string | null
@@ -341,6 +344,54 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      payment_gateways: {
+        Row: {
+          config: Json
+          created_at: string
+          id: string
+          installed: boolean
+          is_active: boolean
+          label: string
+          last_check_message: string | null
+          last_check_ok: boolean | null
+          last_checked_at: string | null
+          mode: string
+          provider: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          config?: Json
+          created_at?: string
+          id?: string
+          installed?: boolean
+          is_active?: boolean
+          label: string
+          last_check_message?: string | null
+          last_check_ok?: boolean | null
+          last_checked_at?: string | null
+          mode?: string
+          provider: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          config?: Json
+          created_at?: string
+          id?: string
+          installed?: boolean
+          is_active?: boolean
+          label?: string
+          last_check_message?: string | null
+          last_check_ok?: boolean | null
+          last_checked_at?: string | null
+          mode?: string
+          provider?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
       }
       reviews: {
         Row: {
@@ -422,6 +473,7 @@ export type Database = {
           id: boolean
           instagram_url: string | null
           logo_url: string | null
+          payment_provider: string
           payments_enabled: boolean
           payments_maintenance_message: string
           twitter_url: string | null
@@ -451,6 +503,7 @@ export type Database = {
           id?: boolean
           instagram_url?: string | null
           logo_url?: string | null
+          payment_provider?: string
           payments_enabled?: boolean
           payments_maintenance_message?: string
           twitter_url?: string | null
@@ -480,6 +533,7 @@ export type Database = {
           id?: boolean
           instagram_url?: string | null
           logo_url?: string | null
+          payment_provider?: string
           payments_enabled?: boolean
           payments_maintenance_message?: string
           twitter_url?: string | null
