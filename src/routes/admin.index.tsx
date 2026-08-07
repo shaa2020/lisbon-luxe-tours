@@ -184,6 +184,29 @@ function AdminDashboard() {
     }
   };
 
+  const saveSlides = async (next: { label: string; image_url: string | null }[]) => {
+    setHeroSlides(next);
+    const { error } = await supabase
+      .from("site_settings")
+      .upsert({ id: true, hero_slides: next } as any);
+    if (error) return toast.error(error.message);
+    qc.invalidateQueries({ queryKey: ["site-brand"] });
+    qc.invalidateQueries({ queryKey: ["site-brand-admin"] });
+    toast.success("Homepage slideshow updated");
+  };
+
+  const onSlideImage = async (index: number, file: File) => {
+    setUploadingImage(`slide-${index}`);
+    try {
+      const url = await uploadMediaFile("site", `hero-slide-${index}`, file);
+      await saveSlides(heroSlides.map((s, i) => (i === index ? { ...s, image_url: url } : s)));
+    } catch (error) {
+      toast.error((error as Error).message);
+    } finally {
+      setUploadingImage(null);
+    }
+  };
+
   const revenue = useRevenueStats();
   const upcoming = useUpcomingThisWeek();
   const badges = useAdminBadges();
