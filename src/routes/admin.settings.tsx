@@ -673,6 +673,18 @@ function PaymentsSettings({
                     </p>
                   )}
 
+                  {GATEWAY_KEY_FIELDS[g.provider].length > 0 && (
+                    <GatewayKeyForm
+                      provider={g.provider}
+                      mode={g.mode}
+                      savedFields={creds.data?.[g.provider]?.fields?.[g.mode] ?? []}
+                      onSaved={() => {
+                        qc.invalidateQueries({ queryKey: ["admin-gateway-credentials"] });
+                        refresh();
+                      }}
+                    />
+                  )}
+
                   <div className="flex flex-wrap gap-2 pt-1">
                     {!g.installed ? (
                       <button type="button" onClick={() => setInstalled(g, true)} className={btn}>
@@ -713,10 +725,11 @@ function PaymentsSettings({
           </div>
         )}
         <p className="text-[11px] text-muted-foreground">
-          API keys are stored as encrypted backend secrets, never in the browser. Ask in chat to add or change a key
-          for Mollie or PayPal.
+          Keys you save here are encrypted on the server and never shown again — only whether they are present. Each
+          mode (test / live) keeps its own set of keys.
         </p>
       </section>
+
 
       <section className={`${card} max-w-xl`}>
         <div>
