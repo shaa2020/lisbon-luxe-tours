@@ -413,6 +413,7 @@ export type Database = {
           footer_legal: string | null
           footer_tagline: string | null
           hero_image_url: string | null
+          hero_slides: Json
           hotel_pickup_fee_cents: number
           id: boolean
           instagram_url: string | null
@@ -440,6 +441,7 @@ export type Database = {
           footer_legal?: string | null
           footer_tagline?: string | null
           hero_image_url?: string | null
+          hero_slides?: Json
           hotel_pickup_fee_cents?: number
           id?: boolean
           instagram_url?: string | null
@@ -467,6 +469,7 @@ export type Database = {
           footer_legal?: string | null
           footer_tagline?: string | null
           hero_image_url?: string | null
+          hero_slides?: Json
           hotel_pickup_fee_cents?: number
           id?: boolean
           instagram_url?: string | null

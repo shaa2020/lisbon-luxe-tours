@@ -34,11 +34,26 @@ export const DEFAULT_HOTEL_PICKUP_FEE_CENTS = 2000;
 export type BusinessInfo = typeof DEFAULT_BUSINESS;
 export type CustomTourHero = typeof DEFAULT_CUSTOM_TOUR;
 
+export type HeroSlide = { label: string; image_url: string | null };
+
+function mapHeroSlides(d: any): HeroSlide[] {
+  const raw = (d as any)?.hero_slides;
+  if (!Array.isArray(raw)) return [];
+  return raw
+    .filter((s: any) => s && typeof s === "object")
+    .map((s: any) => ({
+      label: String(s.label ?? "").trim(),
+      image_url: s.image_url ? String(s.image_url) : null,
+    }))
+    .filter((s: HeroSlide) => s.label || s.image_url);
+}
+
 export type SiteBrand = {
   brandName: string;
   logoUrl: string | null;
   heroImageUrl: string | null;
   aboutImageUrl: string | null;
+  heroSlides: HeroSlide[];
   business: BusinessInfo;
   customTour: CustomTourHero;
   hotelPickupFeeCents: number;
@@ -82,6 +97,7 @@ export function useSiteBrand() {
         logoUrl: (data as any)?.logo_url ?? DEFAULT_BRAND_LOGO,
         heroImageUrl: (data as any)?.hero_image_url ?? null,
         aboutImageUrl: (data as any)?.about_image_url ?? null,
+        heroSlides: mapHeroSlides(data),
         business: mapBusiness(data),
         customTour: mapCustomTour(data),
         hotelPickupFeeCents:
@@ -93,6 +109,7 @@ export function useSiteBrand() {
       logoUrl: DEFAULT_BRAND_LOGO,
       heroImageUrl: null,
       aboutImageUrl: null,
+      heroSlides: [],
       business: DEFAULT_BUSINESS,
       customTour: DEFAULT_CUSTOM_TOUR,
       hotelPickupFeeCents: DEFAULT_HOTEL_PICKUP_FEE_CENTS,
@@ -105,6 +122,7 @@ export function useSiteBrand() {
     logoUrl: query.data?.logoUrl ?? DEFAULT_BRAND_LOGO,
     heroImageUrl: query.data?.heroImageUrl ?? null,
     aboutImageUrl: query.data?.aboutImageUrl ?? null,
+    heroSlides: query.data?.heroSlides ?? [],
     business: query.data?.business ?? DEFAULT_BUSINESS,
     customTour: query.data?.customTour ?? DEFAULT_CUSTOM_TOUR,
     hotelPickupFeeCents: query.data?.hotelPickupFeeCents ?? DEFAULT_HOTEL_PICKUP_FEE_CENTS,

@@ -72,6 +72,8 @@ function AdminDashboard() {
   const [heroImage, setHeroImage] = useState<string | null>(null);
   const [aboutImage, setAboutImage] = useState<string | null>(null);
   const [uploadingImage, setUploadingImage] = useState<string | null>(null);
+  type HeroSlideRow = { label: string; image_url: string | null };
+  const [heroSlides, setHeroSlides] = useState<HeroSlideRow[]>([]);
 
   const [biz, setBiz] = useState({
     contact_email: "",
@@ -98,6 +100,7 @@ function AdminDashboard() {
       setLogoUrl(d.logo_url ?? null);
       setHeroImage(d.hero_image_url ?? null);
       setAboutImage(d.about_image_url ?? null);
+      setHeroSlides(Array.isArray(d.hero_slides) ? (d.hero_slides as HeroSlideRow[]) : []);
       setBiz({
         contact_email: d.contact_email ?? "",
         contact_phone: d.contact_phone ?? "",
@@ -177,6 +180,29 @@ function AdminDashboard() {
       qc.invalidateQueries({ queryKey: ["site-brand"] });
       qc.invalidateQueries({ queryKey: ["site-brand-admin"] });
       toast.success(file ? "Image uploaded & saved" : "Reset to built-in image");
+    } catch (error) {
+      toast.error((error as Error).message);
+    } finally {
+      setUploadingImage(null);
+    }
+  };
+
+  const saveSlides = async (next: HeroSlideRow[]) => {
+    setHeroSlides(next);
+    const { error } = await supabase
+      .from("site_settings")
+      .upsert({ id: true, hero_slides: next } as any);
+    if (error) return toast.error(error.message);
+    qc.invalidateQueries({ queryKey: ["site-brand"] });
+    qc.invalidateQueries({ queryKey: ["site-brand-admin"] });
+    toast.success("Homepage slideshow updated");
+  };
+
+  const onSlideImage = async (index: number, file: File) => {
+    setUploadingImage(`slide-${index}`);
+    try {
+      const url = await uploadMediaFile("site", `hero-slide-${index}`, file);
+      await saveSlides(heroSlides.map((s, i) => (i === index ? { ...s, image_url: url } : s)));
     } catch (error) {
       toast.error((error as Error).message);
     } finally {
@@ -457,6 +483,95 @@ function AdminDashboard() {
             </div>
           ))}
         </div>
+      </section>
+
+      <section className="mt-8 rounded-xl border border-border bg-card p-5 space-y-5">
+        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
+          <div className="min-w-0">
+            <p className="text-sm font-semibold text-foreground">Homepage slideshow</p>
+            <p className="text-xs text-muted-foreground">
+              Each slide shows a destination name and its own photo. Slides rotate automatically every 5.5s.
+              With no slides, the homepage background image is used.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => saveSlides([...heroSlides, { label: "Lisboa", image_url: null }])}
+            className="shrink-0 rounded-md bg-primary px-3 py-2 text-xs font-semibold text-primary-foreground"
+          >
+            Add slide
+          </button>
+        </div>
+
+        {heroSlides.length === 0 ? (
+          <p className="text-xs text-muted-foreground">No slides yet — add one to start the slideshow.</p>
+        ) : (
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {heroSlides.map((s, i) => (
+              <div key={i} className="space-y-2 rounded-lg border border-border p-3">
+                <div className="h-32 rounded-md bg-background overflow-hidden flex items-center justify-center">
+                  {s.image_url ? (
+                    <img src={s.image_url} alt={s.label} className="w-full h-full object-cover" />
+                  ) : (
+                    <span className="text-xs text-muted-foreground">Using homepage background</span>
+                  )}
+                </div>
+                <input
+                  value={s.label}
+                  onChange={(e) =>
+                    setHeroSlides(heroSlides.map((x, j) => (j === i ? { ...x, label: e.target.value } : x)))
+                  }
+                  onBlur={() => saveSlides(heroSlides)}
+                  placeholder="Destination name"
+                  className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground"
+                />
+                <input
+                  type="file"
+                  accept="image/*"
+                  disabled={uploadingImage === `slide-${i}`}
+                  onChange={(e) => e.target.files?.[0] && onSlideImage(i, e.target.files[0])}
+                  className="block w-full text-xs text-muted-foreground"
+                />
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    disabled={i === 0}
+                    onClick={() => {
+                      const n = [...heroSlides];
+                      [n[i - 1], n[i]] = [n[i], n[i - 1]];
+                      saveSlides(n);
+                    }}
+                    className="rounded-md border border-border px-2 py-1 text-xs text-foreground disabled:opacity-40"
+                  >
+                    ↑
+                  </button>
+                  <button
+                    type="button"
+                    disabled={i === heroSlides.length - 1}
+                    onClick={() => {
+                      const n = [...heroSlides];
+                      [n[i + 1], n[i]] = [n[i], n[i + 1]];
+                      saveSlides(n);
+                    }}
+                    className="rounded-md border border-border px-2 py-1 text-xs text-foreground disabled:opacity-40"
+                  >
+                    ↓
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => saveSlides(heroSlides.filter((_, j) => j !== i))}
+                    className="rounded-md border border-border px-2 py-1 text-xs font-medium text-destructive"
+                  >
+                    Remove
+                  </button>
+                  {uploadingImage === `slide-${i}` && (
+                    <span className="text-xs text-muted-foreground self-center">Uploading…</span>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </section>
 
       <section className="mt-8 rounded-xl border border-border bg-card p-5 space-y-4">
