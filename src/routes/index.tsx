@@ -754,6 +754,7 @@ function SignupCard() {
           <button
             type="submit"
             disabled={submitting}
+            onClick={() => console.log("INLINE BUTTON CLICK")}
             className="w-full h-[46px] rounded-full bg-gold text-white text-[12px] font-semibold uppercase tracking-widest hover:bg-white hover:text-gold transition disabled:opacity-50"
           >
             {submitting ? "..." : "Sign up"}
