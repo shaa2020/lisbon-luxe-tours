@@ -391,11 +391,13 @@ export type ActiveGateway = {
 export async function getActiveGateway(
   supabase: SupabaseClient<Database>,
 ): Promise<ActiveGateway> {
+  await refreshGatewaySecretCache();
   const { data } = await supabase
     .from("payment_gateways")
     .select("provider, mode, installed")
     .eq("is_active", true)
     .maybeSingle();
+
 
   const provider = ((data?.provider as ProviderId) || "manual") as ProviderId;
   const adapter = GATEWAYS[provider] ?? manualAdapter;
