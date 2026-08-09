@@ -65,16 +65,34 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
     const proto = host.includes("localhost") ? "http" : "https";
     const origin = `${proto}://${host}`;
 
+    const { data: settings } = await supabaseAdmin
+      .from("site_settings")
+      .select("hotel_pickup_fee_cents")
+      .eq("id", true)
+      .maybeSingle();
+    const baseCents = await tourBaseCents(supabaseAdmin, data.tour_slug);
+    const lineItems = buildTourLineItems({
+      tourSlug: data.tour_slug,
+      tourTitle: data.tour_title,
+      guests: data.guests,
+      totalCents: data.amount,
+      baseCents,
+      pickupFeeCents: settings?.hotel_pickup_fee_cents ?? 0,
+      pickupRequested: /hotel pickup/i.test(data.notes || ""),
+    });
+
     const payment = await createPayment(supabaseAdmin, {
       amountCents: data.amount,
       description: `${data.tour_title} · ${data.guests} guest${data.guests === 1 ? "" : "s"}${data.travel_date ? ` · ${data.travel_date}` : ""}`,
       origin,
+      lineItems,
       metadata: {
         booking_id: booking.id,
         tour_slug: data.tour_slug,
         guests: String(data.guests),
       },
     });
+
 
     await supabaseAdmin.from("orders").insert({
       booking_id: booking.id,
