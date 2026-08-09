@@ -22,7 +22,12 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => checkoutInput.parse(data))
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { assertSlotAvailable, buildTourLineItems, tourBaseCents } = await import("./catalog.server");
     const payments = await paymentsStatus(supabaseAdmin);
+
+    // Hold the slot: refuse if it filled up while the customer was deciding.
+    await assertSlotAvailable(supabaseAdmin, data.travel_date, data.time);
+
 
     const { data: booking, error: bErr } = await supabaseAdmin
       .from("bookings")
