@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { redirectToCheckout } from "@/lib/redirect-to-checkout";
 import { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
@@ -78,7 +79,7 @@ function ManageBookingPage() {
         },
       });
       if (res.mode === "pay" && "url" in res && res.url) {
-        window.location.href = res.url;
+        redirectToCheckout(res.url);
       } else {
         toast.success(
           ("message" in res && res.message) || "Request sent. We'll be in touch within 24h.",

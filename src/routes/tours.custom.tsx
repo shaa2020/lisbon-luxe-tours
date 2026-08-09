@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { redirectToCheckout } from "@/lib/redirect-to-checkout";
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -147,7 +148,7 @@ function CustomBuilderPage() {
         },
       });
       if (res.mode === "pay" && "url" in res && res.url) {
-        window.location.href = res.url;
+        redirectToCheckout(res.url);
       } else {
         toast.success(
           ("message" in res && res.message) || "Quote request sent! We'll be in touch within 24h.",

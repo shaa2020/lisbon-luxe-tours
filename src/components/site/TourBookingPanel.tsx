@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { redirectToCheckout } from "@/lib/redirect-to-checkout";
 import { useQuery } from "@tanstack/react-query";
 import { getDayAvailability, requestBooking } from "@/lib/availability.functions";
 import { format } from "date-fns";
@@ -104,7 +105,7 @@ export function TourBookingPanel({ tour }: { tour: Tour; compact?: boolean }) {
         },
       });
       if (res.mode === "pay" && res.url) {
-        window.location.href = res.url;
+        redirectToCheckout(res.url);
       } else {
         setPaying(false);
         toast.success(res.message || "Request received — we'll confirm by email shortly.", {

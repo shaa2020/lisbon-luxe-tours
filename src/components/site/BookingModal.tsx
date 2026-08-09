@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { redirectToCheckout } from "@/lib/redirect-to-checkout";
 import { format } from "date-fns";
 import { CalendarIcon, Users, Clock, MapPin, Check, CreditCard, Loader2 } from "lucide-react";
 import { type Tour, tourPricing } from "@/lib/cms";
@@ -111,7 +112,7 @@ export function BookingModal({
         },
       });
       if (res.mode === "pay" && res.url) {
-        window.location.href = res.url;
+        redirectToCheckout(res.url);
       } else {
         setPaying(false);
         toast.success(res.message || "Request received — we'll confirm by email shortly.");
