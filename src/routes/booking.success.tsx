@@ -27,7 +27,8 @@ export const Route = createFileRoute("/booking/success")({
 });
 
 function SuccessPage() {
-  const { session_id } = Route.useSearch();
+  const search = Route.useSearch();
+  const session_id = search.session_id ?? search.token;
   const [state, setState] = useState<{
     loading: boolean;
     paid: boolean;
