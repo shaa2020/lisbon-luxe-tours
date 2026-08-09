@@ -16,7 +16,10 @@ const checkoutInput = z.object({
   notes: z.string().max(2000).optional().nullable(),
   amount: z.number().int().min(100).max(500000), // cents, €1–€5000
   image_url: z.string().url().optional().nullable(),
+  /** Share of the total charged now. 20–100 (%). Defaults to full payment. */
+  deposit_pct: z.number().int().min(20).max(100).optional().nullable(),
 });
+
 
 export const createCheckoutSession = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => checkoutInput.parse(data))
@@ -28,6 +31,14 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
     // Hold the slot: refuse if it filled up while the customer was deciding.
     await assertSlotAvailable(supabaseAdmin, data.travel_date, data.time);
 
+    // Deposit: charge a share now (min 20%), rest is due on the day.
+    const depositPct = Math.min(100, Math.max(20, data.deposit_pct ?? 100));
+    const chargeCents = depositPct >= 100 ? data.amount : Math.round((data.amount * depositPct) / 100);
+    const balanceCents = data.amount - chargeCents;
+    const depositNote =
+      balanceCents > 0
+        ? `Deposit ${depositPct}% — €${(chargeCents / 100).toFixed(2)} paid online, €${(balanceCents / 100).toFixed(2)} balance due on the day.`
+        : null;
 
     const { data: booking, error: bErr } = await supabaseAdmin
       .from("bookings")
@@ -40,7 +51,7 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
         travel_date: data.travel_date || null,
         travel_time: data.time || null,
         guests: data.guests,
-        notes: [data.time ? `Preferred time: ${data.time}` : null, data.notes]
+        notes: [data.time ? `Preferred time: ${data.time}` : null, depositNote, data.notes]
           .filter(Boolean)
           .join("\n\n") || null,
         total_estimate: Math.round(data.amount / 100),
@@ -48,6 +59,7 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
         status: "new",
         payment_status: payments.available ? "pending" : "request",
       })
+
       .select("id")
       .single();
     if (bErr || !booking) throw new Error(bErr?.message || "Booking insert failed");
@@ -71,25 +83,37 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
       .eq("id", true)
       .maybeSingle();
     const baseCents = await tourBaseCents(supabaseAdmin, data.tour_slug);
-    const lineItems = buildTourLineItems({
-      tourSlug: data.tour_slug,
-      tourTitle: data.tour_title,
-      guests: data.guests,
-      totalCents: data.amount,
-      baseCents,
-      pickupFeeCents: settings?.hotel_pickup_fee_cents ?? 0,
-      pickupRequested: /hotel pickup/i.test(data.notes || ""),
-    });
+    const lineItems =
+      balanceCents > 0
+        ? [
+            {
+              priceId: "tour_deposit",
+              name: `${data.tour_title} — ${depositPct}% deposit`,
+              unitAmountCents: chargeCents,
+              quantity: 1,
+            },
+          ]
+        : buildTourLineItems({
+            tourSlug: data.tour_slug,
+            tourTitle: data.tour_title,
+            guests: data.guests,
+            totalCents: data.amount,
+            baseCents,
+            pickupFeeCents: settings?.hotel_pickup_fee_cents ?? 0,
+            pickupRequested: /hotel pickup/i.test(data.notes || ""),
+          });
 
     const payment = await createPayment(supabaseAdmin, {
-      amountCents: data.amount,
-      description: `${data.tour_title} · ${data.guests} guest${data.guests === 1 ? "" : "s"}${data.travel_date ? ` · ${data.travel_date}` : ""}`,
+      amountCents: chargeCents,
+      description: `${data.tour_title} · ${data.guests} guest${data.guests === 1 ? "" : "s"}${data.travel_date ? ` · ${data.travel_date}` : ""}${balanceCents > 0 ? ` · ${depositPct}% deposit` : ""}`,
       origin,
       lineItems,
       metadata: {
         booking_id: booking.id,
         tour_slug: data.tour_slug,
         guests: String(data.guests),
+        deposit_pct: String(depositPct),
+        balance_cents: String(balanceCents),
       },
     });
 
@@ -98,7 +122,8 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
       booking_id: booking.id,
       stripe_session_id: payment.id,
       provider: payment.provider,
-      amount_total: data.amount,
+      amount_total: chargeCents,
+
       currency: "eur",
       payment_status: "pending",
       customer_name: data.customer_name,
@@ -140,10 +165,17 @@ export const confirmCheckout = createServerFn({ method: "POST" })
       .maybeSingle();
 
     if (order?.booking_id && paid) {
+      const { data: bk } = await supabaseAdmin
+        .from("bookings")
+        .select("amount_total")
+        .eq("id", order.booking_id)
+        .maybeSingle();
+      const isDeposit = !!bk?.amount_total && (order.amount_total ?? 0) < bk.amount_total;
       await supabaseAdmin
         .from("bookings")
-        .update({ payment_status: "paid", status: "confirmed" })
+        .update({ payment_status: isDeposit ? "deposit_paid" : "paid", status: "confirmed" })
         .eq("id", order.booking_id);
+
 
       const { data: mod } = await supabaseAdmin
         .from("booking_modifications")

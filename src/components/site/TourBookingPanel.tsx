@@ -29,6 +29,8 @@ export function TourBookingPanel({ tour }: { tour: Tour; compact?: boolean }) {
   const [showContact, setShowContact] = useState(false);
   const [paying, setPaying] = useState(false);
   const [pickup, setPickup] = useState(false);
+  const [depositPct, setDepositPct] = useState(100);
+
   const [requesting, setRequesting] = useState(false);
   const [reference, setReference] = useState<string | null>(null);
   const requestFn = useServerFn(requestBooking);
@@ -45,8 +47,11 @@ export function TourBookingPanel({ tour }: { tour: Tour; compact?: boolean }) {
   const extras = Math.max(0, guests - 2) * 35;
   const pickupCharge = pickup ? pickupFee : 0;
   const total = pricing.current + extras + pickupCharge;
+  const payNow = depositPct >= 100 ? total : Math.round((total * depositPct) / 100 * 100) / 100;
+  const balanceDue = Math.round((total - payNow) * 100) / 100;
   const isEmail = (s: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);
   const canContinue = !!date && !!time && guests > 0 && !slotInfo(time)?.full;
+
 
   const handleRequest = async () => {
     if (!date || !time) { toast.error("Pick a date and time first."); return; }
@@ -93,7 +98,9 @@ export function TourBookingPanel({ tour }: { tour: Tour; compact?: boolean }) {
           guests,
           notes: pickup ? `Hotel pickup & drop-off requested (+€${pickupFee})` : null,
           amount: total * 100,
+          deposit_pct: depositPct,
           image_url: tour.image?.startsWith("http") ? tour.image : null,
+
         },
       });
       if (res.mode === "pay" && res.url) {
@@ -343,6 +350,37 @@ export function TourBookingPanel({ tour }: { tour: Tour; compact?: boolean }) {
           <span className="font-display text-2xl text-ink leading-none">€{total.toFixed(2)}</span>
         </div>
 
+        {/* Pay in full or deposit */}
+        <div>
+          <label className="text-[10px] uppercase tracking-widest text-body font-bold block mb-2">Payment option</label>
+          <div className="grid grid-cols-4 gap-2">
+            {[100, 50, 30, 20].map((p) => (
+              <button
+                key={p}
+                type="button"
+                onClick={() => setDepositPct(p)}
+                className={cn(
+                  "py-2.5 min-h-[44px] text-[11px] rounded-[2px] border transition-colors",
+                  depositPct === p
+                    ? "border-gold bg-gold/5 text-ink font-medium"
+                    : "border-border text-ink hover:border-gold",
+                )}
+              >
+                {p === 100 ? "Full" : `${p}%`}
+              </button>
+            ))}
+          </div>
+          {balanceDue > 0 ? (
+            <div className="mt-2 flex justify-between text-[11px] text-body">
+              <span>Pay now <span className="text-ink font-medium">€{payNow.toFixed(2)}</span></span>
+              <span>Balance on the day €{balanceDue.toFixed(2)}</span>
+            </div>
+          ) : (
+            <p className="mt-2 text-[11px] text-body">Paying the full amount now. Minimum deposit is 20%.</p>
+          )}
+        </div>
+
+
         {reference ? (
           <div className="border border-gold/40 bg-gold/5 rounded-[2px] p-4 text-center">
             <p className="text-xs text-body">Slot held for 24 hours</p>
@@ -361,7 +399,7 @@ export function TourBookingPanel({ tour }: { tour: Tour; compact?: boolean }) {
               {paying ? (
                 <><Loader2 className="w-4 h-4 animate-spin" /> Redirecting…</>
               ) : showContact ? (
-                <>Pay €{total.toFixed(2)}</>
+                <>Pay €{payNow.toFixed(2)}{balanceDue > 0 ? ` now (${depositPct}%)` : ""}</>
               ) : (
                 <>Continue to Booking</>
               )}
