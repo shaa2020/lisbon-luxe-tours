@@ -124,6 +124,42 @@ export function TourBookingPanel({ tour }: { tour: Tour; compact?: boolean }) {
     }
   };
 
+  const contactValid = !!name.trim() && isEmail(email) && isPhone(phone);
+
+  /** Creates the booking + PayPal order for the on-site wallet buttons. */
+  const startWalletOrder = async (): Promise<string | null> => {
+    if (!canContinue || !contactValid) {
+      toast.error("Complete date, time and your contact details first.");
+      return null;
+    }
+    const res = await checkoutFn({
+      data: {
+        tour_slug: tour.slug,
+        tour_title: tour.title,
+        customer_name: name,
+        email,
+        phone: phone.trim(),
+        travel_date: date ? format(date, "yyyy-MM-dd") : null,
+        time,
+        guests,
+        notes: pickup ? `Hotel pickup & drop-off requested (+€${pickupFee})` : null,
+        amount: total * 100,
+        deposit_pct: depositPct,
+        image_url: tour.image?.startsWith("http") ? tour.image : null,
+      },
+    });
+    if (res.mode !== "pay") {
+      toast.success(res.message || "Request received — we'll confirm by email shortly.");
+      return null;
+    }
+    return res.sessionId ?? null;
+  };
+
+  const finishWalletOrder = (orderId: string) => {
+    window.location.assign(`/booking/success?session_id=${encodeURIComponent(orderId)}`);
+  };
+
+
 
   return (
     <div className="bg-paper border border-border shadow-[0_4px_24px_rgba(30,58,95,0.06)] rounded-[4px] overflow-hidden">
