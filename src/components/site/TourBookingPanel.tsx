@@ -399,7 +399,7 @@ export function TourBookingPanel({ tour }: { tour: Tour; compact?: boolean }) {
               {paying ? (
                 <><Loader2 className="w-4 h-4 animate-spin" /> Redirecting…</>
               ) : showContact ? (
-                <>Pay €{total.toFixed(2)}</>
+                <>Pay €{payNow.toFixed(2)}{balanceDue > 0 ? ` now (${depositPct}%)` : ""}</>
               ) : (
                 <>Continue to Booking</>
               )}
