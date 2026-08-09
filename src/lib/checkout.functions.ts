@@ -31,6 +31,14 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
     // Hold the slot: refuse if it filled up while the customer was deciding.
     await assertSlotAvailable(supabaseAdmin, data.travel_date, data.time);
 
+    // Deposit: charge a share now (min 20%), rest is due on the day.
+    const depositPct = Math.min(100, Math.max(20, data.deposit_pct ?? 100));
+    const chargeCents = depositPct >= 100 ? data.amount : Math.round((data.amount * depositPct) / 100);
+    const balanceCents = data.amount - chargeCents;
+    const depositNote =
+      balanceCents > 0
+        ? `Deposit ${depositPct}% — €${(chargeCents / 100).toFixed(2)} paid online, €${(balanceCents / 100).toFixed(2)} balance due on the day.`
+        : null;
 
     const { data: booking, error: bErr } = await supabaseAdmin
       .from("bookings")
@@ -43,7 +51,7 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
         travel_date: data.travel_date || null,
         travel_time: data.time || null,
         guests: data.guests,
-        notes: [data.time ? `Preferred time: ${data.time}` : null, data.notes]
+        notes: [data.time ? `Preferred time: ${data.time}` : null, depositNote, data.notes]
           .filter(Boolean)
           .join("\n\n") || null,
         total_estimate: Math.round(data.amount / 100),
@@ -51,6 +59,7 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
         status: "new",
         payment_status: payments.available ? "pending" : "request",
       })
+
       .select("id")
       .single();
     if (bErr || !booking) throw new Error(bErr?.message || "Booking insert failed");
