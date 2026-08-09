@@ -284,6 +284,14 @@ export function PaypalWallet({ amount, label, disabled, createOrder, onPaid }: P
           <Loader2 className="w-3 h-3 animate-spin" /> {busy ? "Processing…" : "Loading payment options…"}
         </p>
       )}
+      {ready && diag.length > 0 && typeof window !== "undefined" && window.location.search.includes("wallets=debug") && (
+        <ul className="text-[10px] text-body list-disc pl-4">
+          {diag.map((d, i) => (
+            <li key={i}>{d}</li>
+          ))}
+        </ul>
+      )}
+
     </div>
   );
 }
