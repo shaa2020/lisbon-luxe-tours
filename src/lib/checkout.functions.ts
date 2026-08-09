@@ -165,10 +165,17 @@ export const confirmCheckout = createServerFn({ method: "POST" })
       .maybeSingle();
 
     if (order?.booking_id && paid) {
+      const { data: bk } = await supabaseAdmin
+        .from("bookings")
+        .select("amount_total")
+        .eq("id", order.booking_id)
+        .maybeSingle();
+      const isDeposit = !!bk?.amount_total && (order.amount_total ?? 0) < bk.amount_total;
       await supabaseAdmin
         .from("bookings")
-        .update({ payment_status: "paid", status: "confirmed" })
+        .update({ payment_status: isDeposit ? "deposit_paid" : "paid", status: "confirmed" })
         .eq("id", order.booking_id);
+
 
       const { data: mod } = await supabaseAdmin
         .from("booking_modifications")
