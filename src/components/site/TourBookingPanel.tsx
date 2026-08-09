@@ -98,7 +98,9 @@ export function TourBookingPanel({ tour }: { tour: Tour; compact?: boolean }) {
           guests,
           notes: pickup ? `Hotel pickup & drop-off requested (+€${pickupFee})` : null,
           amount: total * 100,
+          deposit_pct: depositPct,
           image_url: tour.image?.startsWith("http") ? tour.image : null,
+
         },
       });
       if (res.mode === "pay" && res.url) {
