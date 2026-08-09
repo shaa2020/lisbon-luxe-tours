@@ -13,6 +13,7 @@ import { createCheckoutSession } from "@/lib/checkout.functions";
 import { toast } from "sonner";
 import { CANCELLATION_POLICY_FULL } from "@/lib/cancellation";
 import { useSiteBrand } from "@/lib/brand";
+import { PaypalWallet } from "@/components/site/PaypalWallet";
 
 const TIME_SLOTS = ["09:00", "10:30", "13:00", "15:00", "17:00", "18:30"];
 
