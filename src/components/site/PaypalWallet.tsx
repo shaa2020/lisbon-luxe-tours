@@ -50,6 +50,13 @@ export function PaypalWallet({ amount, label, disabled, createOrder, onPaid }: P
   const [ready, setReady] = useState(false);
   const [available, setAvailable] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [diag, setDiag] = useState<string[]>([]);
+  const log = (m: string) => {
+    // eslint-disable-next-line no-console
+    console.info("[wallets]", m);
+    setDiag((d) => [...d, m]);
+  };
+
 
   // Keep the latest props reachable from SDK callbacks without re-rendering buttons.
   const state = useRef({ amount, label, disabled, createOrder, onPaid });
@@ -100,10 +107,16 @@ export function PaypalWallet({ amount, label, disabled, createOrder, onPaid }: P
       /* ---------- Apple Pay ---------- */
       try {
         const AP = (window as any).ApplePaySession;
+        if (!AP) log("Apple Pay: browser not supported (needs Safari on iPhone/Mac)");
+        else if (!AP.supportsVersion(4)) log("Apple Pay: Safari version too old");
+        else if (!AP.canMakePayments()) log("Apple Pay: no card set up in Wallet");
+        else if (!paypal.Applepay) log("Apple Pay: SDK component missing");
         if (AP && AP.supportsVersion(4) && AP.canMakePayments() && paypal.Applepay) {
           const applepay = paypal.Applepay();
           const apCfg = await applepay.config();
+          if (!apCfg?.isEligible) log("Apple Pay: not enabled for this PayPal account / domain not registered");
           if (!cancelled && apCfg?.isEligible && applePayRef.current) {
+
             const btn = document.createElement("button");
             btn.type = "button";
             btn.setAttribute("aria-label", "Pay with Apple Pay");
@@ -165,15 +178,17 @@ export function PaypalWallet({ amount, label, disabled, createOrder, onPaid }: P
             applePayRef.current.appendChild(btn);
           }
         }
-      } catch {
-        /* Apple Pay simply stays hidden */
+      } catch (e) {
+        log("Apple Pay: " + ((e as Error).message || "unavailable"));
       }
 
       /* ---------- Google Pay ---------- */
       try {
+        if (!paypal.Googlepay) log("Google Pay: SDK component missing");
         if (paypal.Googlepay) {
           const googlepay = paypal.Googlepay();
           const gpCfg = await googlepay.config();
+          if (!gpCfg?.isEligible) log("Google Pay: not enabled for this PayPal account");
           if (!cancelled && gpCfg?.isEligible) {
             await loadScript("https://pay.google.com/gp/p/js/pay.js", "google-pay-sdk");
             const google = (window as any).google;
@@ -186,7 +201,9 @@ export function PaypalWallet({ amount, label, disabled, createOrder, onPaid }: P
                 apiVersionMinor: gpCfg.apiVersionMinor,
                 allowedPaymentMethods: gpCfg.allowedPaymentMethods,
               });
+              if (!isReady?.result) log("Google Pay: no card available in this browser");
               if (isReady?.result && googlePayRef.current) {
+
                 const onClick = async () => {
                   if (state.current.disabled) return;
                   try {
@@ -232,9 +249,10 @@ export function PaypalWallet({ amount, label, disabled, createOrder, onPaid }: P
             }
           }
         }
-      } catch {
-        /* Google Pay simply stays hidden */
+      } catch (e) {
+        log("Google Pay: " + ((e as Error).message || "unavailable"));
       }
+
 
       if (!cancelled) setReady(true);
     };
@@ -266,6 +284,14 @@ export function PaypalWallet({ amount, label, disabled, createOrder, onPaid }: P
           <Loader2 className="w-3 h-3 animate-spin" /> {busy ? "Processing…" : "Loading payment options…"}
         </p>
       )}
+      {ready && diag.length > 0 && typeof window !== "undefined" && window.location.search.includes("wallets=debug") && (
+        <ul className="text-[10px] text-body list-disc pl-4">
+          {diag.map((d, i) => (
+            <li key={i}>{d}</li>
+          ))}
+        </ul>
+      )}
+
     </div>
   );
 }
