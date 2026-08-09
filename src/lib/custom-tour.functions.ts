@@ -21,7 +21,7 @@ const selectionInput = z.object({
   component_ids: z.array(z.string().uuid()).min(1).max(30),
   customer_name: z.string().min(1).max(200),
   email: z.string().email().max(200),
-  phone: z.string().max(50).optional().nullable(),
+  phone: z.string().trim().min(6).max(50),
   travel_date: z.string().max(20).optional().nullable(),
   time: z.string().max(20).optional().nullable(),
   guests: z.number().int().min(1).max(20),

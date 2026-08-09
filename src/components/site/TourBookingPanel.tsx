@@ -27,6 +27,7 @@ export function TourBookingPanel({ tour }: { tour: Tour; compact?: boolean }) {
   const [guests, setGuests] = useState(2);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [showContact, setShowContact] = useState(false);
   const [paying, setPaying] = useState(false);
   const [pickup, setPickup] = useState(false);
@@ -51,6 +52,7 @@ export function TourBookingPanel({ tour }: { tour: Tour; compact?: boolean }) {
   const payNow = depositPct >= 100 ? total : Math.round((total * depositPct) / 100 * 100) / 100;
   const balanceDue = Math.round((total - payNow) * 100) / 100;
   const isEmail = (s: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);
+  const isPhone = (s: string) => s.replace(/[^\d]/g, "").length >= 8;
   const canContinue = !!date && !!time && guests > 0 && !slotInfo(time)?.full;
 
 
@@ -58,6 +60,7 @@ export function TourBookingPanel({ tour }: { tour: Tour; compact?: boolean }) {
     if (!date || !time) { toast.error("Pick a date and time first."); return; }
     if (!showContact) { setShowContact(true); return; }
     if (!name.trim() || !isEmail(email)) { toast.error("Enter your name and a valid email."); return; }
+    if (!isPhone(phone)) { toast.error("Enter your WhatsApp number with country code."); return; }
     setRequesting(true);
     try {
       const res = await requestFn({
@@ -66,6 +69,7 @@ export function TourBookingPanel({ tour }: { tour: Tour; compact?: boolean }) {
           tour_title: tour.title,
           customer_name: name,
           email,
+          phone: phone.trim(),
           travel_date: format(date, "yyyy-MM-dd"),
           time,
           guests,
@@ -86,6 +90,7 @@ export function TourBookingPanel({ tour }: { tour: Tour; compact?: boolean }) {
     if (!canContinue) { toast.error("Pick a date and time first."); return; }
     if (!showContact) { setShowContact(true); return; }
     if (!name.trim() || !isEmail(email)) { toast.error("Enter your name and a valid email."); return; }
+    if (!isPhone(phone)) { toast.error("Enter your WhatsApp number with country code."); return; }
     setPaying(true);
     try {
       const res = await checkoutFn({
@@ -94,6 +99,7 @@ export function TourBookingPanel({ tour }: { tour: Tour; compact?: boolean }) {
           tour_title: tour.title,
           customer_name: name,
           email,
+          phone: phone.trim(),
           travel_date: date ? format(date, "yyyy-MM-dd") : null,
           time,
           guests,
@@ -320,6 +326,16 @@ export function TourBookingPanel({ tour }: { tour: Tour; compact?: boolean }) {
               placeholder="Email for confirmation"
               className="w-full px-4 py-3 bg-paper border border-border rounded-[2px] text-sm text-ink placeholder:text-body focus:outline-none focus:border-gold transition-colors"
             />
+            <input
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              type="tel"
+              inputMode="tel"
+              placeholder="WhatsApp number (with country code)"
+              className="w-full px-4 py-3 bg-paper border border-border rounded-[2px] text-sm text-ink placeholder:text-body focus:outline-none focus:border-gold transition-colors"
+            />
+            <p className="text-[11px] text-body">We use WhatsApp for pickup details and day-of updates.</p>
+
           </div>
         )}
       </div>
