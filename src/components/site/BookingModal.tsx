@@ -358,6 +358,14 @@ export function BookingModal({
                     Reserve via WhatsApp
                   </button>
                 </div>
+                <PaypalWallet
+                  amount={total}
+                  label={tour.title}
+                  disabled={paying || !contactValid}
+                  createOrder={startWalletOrder}
+                  onPaid={finishWalletOrder}
+                />
+
               </div>
             </form>
           </div>
