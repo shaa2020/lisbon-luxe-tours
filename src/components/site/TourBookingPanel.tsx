@@ -45,8 +45,11 @@ export function TourBookingPanel({ tour }: { tour: Tour; compact?: boolean }) {
   const extras = Math.max(0, guests - 2) * 35;
   const pickupCharge = pickup ? pickupFee : 0;
   const total = pricing.current + extras + pickupCharge;
+  const payNow = depositPct >= 100 ? total : Math.round((total * depositPct) / 100 * 100) / 100;
+  const balanceDue = Math.round((total - payNow) * 100) / 100;
   const isEmail = (s: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);
   const canContinue = !!date && !!time && guests > 0 && !slotInfo(time)?.full;
+
 
   const handleRequest = async () => {
     if (!date || !time) { toast.error("Pick a date and time first."); return; }
