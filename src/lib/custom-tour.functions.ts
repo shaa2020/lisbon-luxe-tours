@@ -124,12 +124,21 @@ export const submitCustomTour = createServerFn({ method: "POST" })
       amountCents: total,
       description: `Custom Tour · ${data.guests} guest${data.guests === 1 ? "" : "s"}`,
       origin,
+      lineItems: [
+        {
+          priceId: "custom_tour_dynamic",
+          name: `Custom tuk-tuk tour · ${data.guests} guest${data.guests === 1 ? "" : "s"}`,
+          unitAmountCents: total,
+          quantity: 1,
+        },
+      ],
       metadata: {
         booking_id: booking.id,
         tour_slug: "custom",
         guests: String(data.guests),
       },
     });
+
 
     await supabaseAdmin.from("orders").insert({
       booking_id: booking.id,

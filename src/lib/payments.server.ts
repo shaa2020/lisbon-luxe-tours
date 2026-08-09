@@ -13,12 +13,27 @@ export type PaymentResult = {
   amountCents: number;
 };
 
+/**
+ * Optional itemised breakdown. Gateways that support a catalog (Stripe) use it
+ * so each tour / add-on shows up as its own product in reporting; gateways that
+ * only take a single amount ignore it. The sum of the items must equal
+ * `amountCents`, otherwise the flat amount is used.
+ */
+export type PaymentLineItem = {
+  /** Human-readable price id created in the payment provider, if any. */
+  priceId?: string;
+  name: string;
+  unitAmountCents: number;
+  quantity: number;
+};
+
 export type CreatePaymentInput = {
   amountCents: number;
   description: string;
   origin: string;
   metadata: Record<string, string>;
   redirectPath?: string;
+  lineItems?: PaymentLineItem[];
 };
 
 export type GatewayAdapter = {
@@ -205,12 +220,48 @@ const stripeAdapter: GatewayAdapter = {
       mode: "payment",
       success_url: `${input.origin}${redirectPath}?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${input.origin}/booking/cancelled`,
-      "line_items[0][quantity]": "1",
-      "line_items[0][price_data][currency]": "eur",
-      "line_items[0][price_data][unit_amount]": String(input.amountCents),
-      "line_items[0][price_data][product_data][name]": input.description.slice(0, 250),
       "payment_intent_data[description]": input.description.slice(0, 250),
     };
+
+    const items = (input.lineItems ?? []).filter((i) => i.unitAmountCents > 0 && i.quantity > 0);
+    const itemsTotal = items.reduce((sum, i) => sum + i.unitAmountCents * i.quantity, 0);
+    const useItems = items.length > 0 && itemsTotal === input.amountCents;
+
+    if (useItems) {
+      // Match each item to its catalog price when the amount still lines up, so
+      // reporting groups by tour; otherwise fall back to an inline price.
+      const lookupKeys = items.map((i) => i.priceId).filter(Boolean) as string[];
+      const catalog: Record<string, { id: string; unit_amount: number }> = {};
+      if (lookupKeys.length) {
+        try {
+          const qs = lookupKeys.map((k) => `lookup_keys[]=${encodeURIComponent(k)}`).join("&");
+          const res = await stripeFetch(`/v1/prices?limit=100&${qs}`, mode);
+          for (const p of res?.data ?? []) {
+            if (p?.lookup_key) catalog[p.lookup_key] = { id: p.id, unit_amount: Number(p.unit_amount || 0) };
+          }
+        } catch {
+          /* catalog lookup is best-effort — inline pricing still works */
+        }
+      }
+
+      items.forEach((item, index) => {
+        const match = item.priceId ? catalog[item.priceId] : undefined;
+        form[`line_items[${index}][quantity]`] = String(item.quantity);
+        if (match && match.unit_amount === item.unitAmountCents) {
+          form[`line_items[${index}][price]`] = match.id;
+        } else {
+          form[`line_items[${index}][price_data][currency]`] = "eur";
+          form[`line_items[${index}][price_data][unit_amount]`] = String(item.unitAmountCents);
+          form[`line_items[${index}][price_data][product_data][name]`] = item.name.slice(0, 250);
+        }
+      });
+    } else {
+      form["line_items[0][quantity]"] = "1";
+      form["line_items[0][price_data][currency]"] = "eur";
+      form["line_items[0][price_data][unit_amount]"] = String(input.amountCents);
+      form["line_items[0][price_data][product_data][name]"] = input.description.slice(0, 250);
+    }
+
     for (const [k, v] of Object.entries(input.metadata)) form[`metadata[${k}]`] = String(v);
     return normalizeStripe(await stripeFetch("/v1/checkout/sessions", mode, { method: "POST", form }));
   },

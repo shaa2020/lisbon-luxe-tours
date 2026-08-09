@@ -140,6 +140,14 @@ export async function createModificationPayment(
     amountCents: differenceCents,
     description: `Tour change · ${booking.tour_title || "Booking"} · ref ${booking.id.slice(0, 8)}`,
     origin,
+    lineItems: [
+      {
+        priceId: "booking_change_extra",
+        name: `Booking change · ${booking.tour_title || "Booking"}`,
+        unitAmountCents: differenceCents,
+        quantity: 1,
+      },
+    ],
     metadata: {
       booking_id: booking.id,
       tour_slug: booking.tour_slug || "",
@@ -147,6 +155,7 @@ export async function createModificationPayment(
       modification_id: modificationId,
     },
   });
+
 }
 
 
