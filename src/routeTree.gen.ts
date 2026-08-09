@@ -35,6 +35,7 @@ import { Route as JournalSlugRouteImport } from './routes/journal.$slug'
 import { Route as ToursIndexRouteImport } from './routes/tours.index'
 import { Route as ToursSlugRouteImport } from './routes/tours.$slug'
 import { Route as ToursCustomRouteImport } from './routes/tours.custom'
+import { Route as ToursPricingGuideRouteImport } from './routes/tours.pricing-guide'
 import { Route as AdminBlogIndexRouteImport } from './routes/admin.blog.index'
 import { Route as AdminBlogIdRouteImport } from './routes/admin.blog.$id'
 import { Route as AdminToursIndexRouteImport } from './routes/admin.tours.index'
@@ -173,6 +174,11 @@ const ToursCustomRoute = ToursCustomRouteImport.update({
   path: '/tours/custom',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ToursPricingGuideRoute = ToursPricingGuideRouteImport.update({
+  id: '/tours/pricing-guide',
+  path: '/tours/pricing-guide',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminBlogIndexRoute = AdminBlogIndexRouteImport.update({
   id: '/admin/blog/',
   path: '/admin/blog/',
@@ -235,6 +241,7 @@ export interface FileRoutesByFullPath {
   '/journal/$slug': typeof JournalSlugRoute
   '/tours/$slug': typeof ToursSlugRoute
   '/tours/custom': typeof ToursCustomRoute
+  '/tours/pricing-guide': typeof ToursPricingGuideRoute
   '/admin/': typeof AdminIndexRoute
   '/journal/': typeof JournalIndexRoute
   '/tours/': typeof ToursIndexRoute
@@ -270,6 +277,7 @@ export interface FileRoutesByTo {
   '/journal/$slug': typeof JournalSlugRoute
   '/tours/$slug': typeof ToursSlugRoute
   '/tours/custom': typeof ToursCustomRoute
+  '/tours/pricing-guide': typeof ToursPricingGuideRoute
   '/admin': typeof AdminIndexRoute
   '/journal': typeof JournalIndexRoute
   '/tours': typeof ToursIndexRoute
@@ -306,6 +314,7 @@ export interface FileRoutesById {
   '/journal/$slug': typeof JournalSlugRoute
   '/tours/$slug': typeof ToursSlugRoute
   '/tours/custom': typeof ToursCustomRoute
+  '/tours/pricing-guide': typeof ToursPricingGuideRoute
   '/admin/': typeof AdminIndexRoute
   '/journal/': typeof JournalIndexRoute
   '/tours/': typeof ToursIndexRoute
@@ -343,6 +352,7 @@ export interface FileRouteTypes {
     | '/journal/$slug'
     | '/tours/$slug'
     | '/tours/custom'
+    | '/tours/pricing-guide'
     | '/admin/'
     | '/journal/'
     | '/tours/'
@@ -378,6 +388,7 @@ export interface FileRouteTypes {
     | '/journal/$slug'
     | '/tours/$slug'
     | '/tours/custom'
+    | '/tours/pricing-guide'
     | '/admin'
     | '/journal'
     | '/tours'
@@ -413,6 +424,7 @@ export interface FileRouteTypes {
     | '/journal/$slug'
     | '/tours/$slug'
     | '/tours/custom'
+    | '/tours/pricing-guide'
     | '/admin/'
     | '/journal/'
     | '/tours/'
@@ -449,6 +461,7 @@ export interface RootRouteChildren {
   JournalSlugRoute: typeof JournalSlugRoute
   ToursSlugRoute: typeof ToursSlugRoute
   ToursCustomRoute: typeof ToursCustomRoute
+  ToursPricingGuideRoute: typeof ToursPricingGuideRoute
   AdminIndexRoute: typeof AdminIndexRoute
   JournalIndexRoute: typeof JournalIndexRoute
   ToursIndexRoute: typeof ToursIndexRoute
@@ -645,6 +658,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ToursCustomRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/tours/pricing-guide': {
+      id: '/tours/pricing-guide'
+      path: '/tours/pricing-guide'
+      fullPath: '/tours/pricing-guide'
+      preLoaderRoute: typeof ToursPricingGuideRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/blog/': {
       id: '/admin/blog/'
       path: '/admin/blog'
@@ -721,6 +741,7 @@ const rootRouteChildren: RootRouteChildren = {
   JournalSlugRoute: JournalSlugRoute,
   ToursSlugRoute: ToursSlugRoute,
   ToursCustomRoute: ToursCustomRoute,
+  ToursPricingGuideRoute: ToursPricingGuideRoute,
   AdminIndexRoute: AdminIndexRoute,
   JournalIndexRoute: JournalIndexRoute,
   ToursIndexRoute: ToursIndexRoute,
@@ -735,3 +756,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
