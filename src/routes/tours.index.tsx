@@ -352,9 +352,16 @@ function ToursPage() {
       <section className="container-x py-16 md:py-20 grid lg:grid-cols-2 gap-12">
         <div>
           <p className="eyebrow text-gold mb-3">Good to know</p>
-          <h2 className="font-display text-3xl md:text-4xl font-bold text-ink mb-6 leading-tight">
+          <h2 className="font-display text-3xl md:text-4xl font-bold text-ink mb-4 leading-tight">
             The practical stuff, before you book.
           </h2>
+          <p className="text-body/80 mb-6">
+            Want the full breakdown?{" "}
+            <Link to="/tours/pricing-guide" className="text-gold font-semibold hover:underline">
+              Read our guide to Lisbon tuk-tuk tour prices
+            </Link>
+            .
+          </p>
           <dl className="divide-y divide-border border-y border-border">
             {[
               {
