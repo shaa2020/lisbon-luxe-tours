@@ -249,9 +249,10 @@ export function PaypalWallet({ amount, label, disabled, createOrder, onPaid }: P
             }
           }
         }
-      } catch {
-        /* Google Pay simply stays hidden */
+      } catch (e) {
+        log("Google Pay: " + ((e as Error).message || "unavailable"));
       }
+
 
       if (!cancelled) setReady(true);
     };
