@@ -131,6 +131,40 @@ export function BookingModal({
     }
   };
 
+  const contactValid = !!date && !!time && !!name.trim() && isEmail(contact) && isPhone(phone);
+
+  const startWalletOrder = async (): Promise<string | null> => {
+    if (!contactValid) {
+      toast.error("Complete date, time and your contact details first.");
+      return null;
+    }
+    const res = await checkoutFn({
+      data: {
+        tour_slug: tour.slug,
+        tour_title: tour.title,
+        customer_name: name,
+        email: contact,
+        phone: phone.trim(),
+        travel_date: date ? format(date, "yyyy-MM-dd") : null,
+        time,
+        guests,
+        amount: total * 100,
+        image_url: tour.image?.startsWith("http") ? tour.image : null,
+      },
+    });
+    if (res.mode !== "pay") {
+      toast.success(res.message || "Request received — we'll confirm by email shortly.");
+      return null;
+    }
+    return res.sessionId ?? null;
+  };
+
+  const finishWalletOrder = (orderId: string) => {
+    window.location.assign(`/booking/success?session_id=${encodeURIComponent(orderId)}`);
+  };
+
+
+
   return (
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="max-w-2xl p-0 overflow-y-auto max-h-[92vh] bg-white border border-border text-ink">
