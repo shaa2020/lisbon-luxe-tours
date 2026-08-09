@@ -50,6 +50,13 @@ export function PaypalWallet({ amount, label, disabled, createOrder, onPaid }: P
   const [ready, setReady] = useState(false);
   const [available, setAvailable] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [diag, setDiag] = useState<string[]>([]);
+  const log = (m: string) => {
+    // eslint-disable-next-line no-console
+    console.info("[wallets]", m);
+    setDiag((d) => [...d, m]);
+  };
+
 
   // Keep the latest props reachable from SDK callbacks without re-rendering buttons.
   const state = useRef({ amount, label, disabled, createOrder, onPaid });
