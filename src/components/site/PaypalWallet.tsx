@@ -178,15 +178,17 @@ export function PaypalWallet({ amount, label, disabled, createOrder, onPaid }: P
             applePayRef.current.appendChild(btn);
           }
         }
-      } catch {
-        /* Apple Pay simply stays hidden */
+      } catch (e) {
+        log("Apple Pay: " + ((e as Error).message || "unavailable"));
       }
 
       /* ---------- Google Pay ---------- */
       try {
+        if (!paypal.Googlepay) log("Google Pay: SDK component missing");
         if (paypal.Googlepay) {
           const googlepay = paypal.Googlepay();
           const gpCfg = await googlepay.config();
+          if (!gpCfg?.isEligible) log("Google Pay: not enabled for this PayPal account");
           if (!cancelled && gpCfg?.isEligible) {
             await loadScript("https://pay.google.com/gp/p/js/pay.js", "google-pay-sdk");
             const google = (window as any).google;
@@ -199,7 +201,9 @@ export function PaypalWallet({ amount, label, disabled, createOrder, onPaid }: P
                 apiVersionMinor: gpCfg.apiVersionMinor,
                 allowedPaymentMethods: gpCfg.allowedPaymentMethods,
               });
+              if (!isReady?.result) log("Google Pay: no card available in this browser");
               if (isReady?.result && googlePayRef.current) {
+
                 const onClick = async () => {
                   if (state.current.disabled) return;
                   try {
