@@ -241,7 +241,7 @@ function PricingGuidePage() {
               card details are stored by us.
             </li>
             {CANCELLATION_POLICY_BULLETS.map((b) => (
-              <li key={b}>{b}</li>
+              <li key={b.text}>{b.text}</li>
             ))}
           </ul>
 
