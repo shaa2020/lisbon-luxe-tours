@@ -29,6 +29,8 @@ export function TourBookingPanel({ tour }: { tour: Tour; compact?: boolean }) {
   const [showContact, setShowContact] = useState(false);
   const [paying, setPaying] = useState(false);
   const [pickup, setPickup] = useState(false);
+  const [depositPct, setDepositPct] = useState(100);
+
   const [requesting, setRequesting] = useState(false);
   const [reference, setReference] = useState<string | null>(null);
   const requestFn = useServerFn(requestBooking);
