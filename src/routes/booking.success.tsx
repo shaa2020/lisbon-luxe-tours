@@ -5,7 +5,12 @@ import { z } from "zod";
 import { confirmCheckout } from "@/lib/checkout.functions";
 
 export const Route = createFileRoute("/booking/success")({
-  validateSearch: z.object({ session_id: z.string().optional() }),
+  // PayPal returns ?token=<order id>; Stripe/Mollie return ?session_id=
+  validateSearch: z.object({
+    session_id: z.string().optional(),
+    token: z.string().optional(),
+    PayerID: z.string().optional(),
+  }),
   component: SuccessPage,
   head: () => ({
     meta: [
@@ -22,7 +27,8 @@ export const Route = createFileRoute("/booking/success")({
 });
 
 function SuccessPage() {
-  const { session_id } = Route.useSearch();
+  const search = Route.useSearch();
+  const session_id = search.session_id ?? search.token;
   const [state, setState] = useState<{
     loading: boolean;
     paid: boolean;

@@ -321,9 +321,11 @@ function paypalBase(mode: GatewayMode) {
 }
 
 function paypalCreds(mode: GatewayMode) {
-  const id = secret("paypal", mode, "PAYPAL_CLIENT_ID") || env("PAYPAL_SANDBOX_CLIENT_ID");
+  const id =
+    secret("paypal", mode, "PAYPAL_CLIENT_ID") || (mode === "test" ? env("PAYPAL_SANDBOX_CLIENT_ID") : "");
   const clientSecret =
-    secret("paypal", mode, "PAYPAL_CLIENT_SECRET") || env("PAYPAL_SECRET") || env("PAYPAL_SANDBOX_SECRET");
+    secret("paypal", mode, "PAYPAL_CLIENT_SECRET") ||
+    (mode === "test" ? env("PAYPAL_SANDBOX_SECRET") : env("PAYPAL_SECRET"));
   return { id, secret: clientSecret };
 }
 
