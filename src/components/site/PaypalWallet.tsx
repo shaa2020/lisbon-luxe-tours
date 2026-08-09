@@ -202,7 +202,6 @@ export function PaypalWallet({ amount, label, disabled, createOrder, onPaid }: P
                         currencyCode: "EUR",
                         totalPriceStatus: "FINAL",
                         totalPrice: state.current.amount.toFixed(2),
-                secondary: undefined as never,
                       },
                     });
                     const res = await googlepay.confirmOrder({
