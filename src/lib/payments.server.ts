@@ -397,25 +397,37 @@ const paypalAdapter: GatewayAdapter = {
     return normalizePaypal(json);
   },
   async getPayment(id) {
-    const mode: GatewayMode = paypalCreds("live").id ? "live" : "test";
-    const token = await paypalToken(mode);
-    const res = await fetch(`${paypalBase(mode)}/v2/checkout/orders/${encodeURIComponent(id)}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    const json = await res.json();
-    if (!res.ok) throw new Error(JSON.stringify(json).slice(0, 300));
+    // An order id belongs to whichever environment created it, so try the mode
+    // that has credentials first and fall back to the other one on auth/404.
+    const modes: GatewayMode[] = paypalCreds("live").id ? ["live", "test"] : ["test", "live"];
+    let lastError: unknown = new Error("PayPal credentials not configured");
+    for (const mode of modes) {
+      const { id: cid } = paypalCreds(mode);
+      if (!cid) continue;
+      try {
+        const token = await paypalToken(mode);
+        const res = await fetch(`${paypalBase(mode)}/v2/checkout/orders/${encodeURIComponent(id)}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const json = await res.json();
+        if (!res.ok) throw new Error(JSON.stringify(json).slice(0, 300));
 
-    // PayPal only moves money once the approved order is captured.
-    if (json?.status === "APPROVED") {
-      const cap = await fetch(`${paypalBase(mode)}/v2/checkout/orders/${encodeURIComponent(id)}/capture`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-      });
-      const capJson = await cap.json();
-      if (cap.ok) return normalizePaypal(capJson);
+        // PayPal only moves money once the approved order is captured.
+        if (json?.status === "APPROVED") {
+          const cap = await fetch(`${paypalBase(mode)}/v2/checkout/orders/${encodeURIComponent(id)}/capture`, {
+            method: "POST",
+            headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+          });
+          const capJson = await cap.json();
+          if (cap.ok) return normalizePaypal(capJson);
+        }
+
+        return normalizePaypal(json);
+      } catch (e) {
+        lastError = e;
+      }
     }
-
-    return normalizePaypal(json);
+    throw lastError instanceof Error ? lastError : new Error(String(lastError));
   },
   async testConnection(mode) {
     const { id, secret } = paypalCreds(mode);
@@ -424,9 +436,32 @@ const paypalAdapter: GatewayAdapter = {
       await paypalToken(mode);
       return { ok: true, message: `Connected to PayPal (${mode} mode).` };
     } catch (e) {
+      if (mode === "live") {
+        // The most common cause: sandbox credentials pasted into Live mode.
+        try {
+          const probe = await fetch("https://api-m.sandbox.paypal.com/v1/oauth2/token", {
+            method: "POST",
+            headers: {
+              Authorization: `Basic ${btoa(`${id}:${secret}`)}`,
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: "grant_type=client_credentials",
+          });
+          if (probe.ok) {
+            return {
+              ok: false,
+              message:
+                "These are PayPal sandbox credentials, so they cannot be used in Live mode. In the PayPal Developer dashboard switch from Sandbox to Live, open your app there, and paste that Live client ID and secret here.",
+            };
+          }
+        } catch {
+          /* ignore probe failure, fall through to the raw error */
+        }
+      }
       return { ok: false, message: (e as Error).message };
     }
   },
+
 };
 
 /* ------------------------------------------------------------------ Manual */
