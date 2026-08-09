@@ -13,12 +13,27 @@ export type PaymentResult = {
   amountCents: number;
 };
 
+/**
+ * Optional itemised breakdown. Gateways that support a catalog (Stripe) use it
+ * so each tour / add-on shows up as its own product in reporting; gateways that
+ * only take a single amount ignore it. The sum of the items must equal
+ * `amountCents`, otherwise the flat amount is used.
+ */
+export type PaymentLineItem = {
+  /** Human-readable price id created in the payment provider, if any. */
+  priceId?: string;
+  name: string;
+  unitAmountCents: number;
+  quantity: number;
+};
+
 export type CreatePaymentInput = {
   amountCents: number;
   description: string;
   origin: string;
   metadata: Record<string, string>;
   redirectPath?: string;
+  lineItems?: PaymentLineItem[];
 };
 
 export type GatewayAdapter = {
