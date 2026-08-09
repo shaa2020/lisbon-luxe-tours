@@ -320,6 +320,16 @@ export function TourBookingPanel({ tour }: { tour: Tour; compact?: boolean }) {
               placeholder="Email for confirmation"
               className="w-full px-4 py-3 bg-paper border border-border rounded-[2px] text-sm text-ink placeholder:text-body focus:outline-none focus:border-gold transition-colors"
             />
+            <input
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              type="tel"
+              inputMode="tel"
+              placeholder="WhatsApp number (with country code)"
+              className="w-full px-4 py-3 bg-paper border border-border rounded-[2px] text-sm text-ink placeholder:text-body focus:outline-none focus:border-gold transition-colors"
+            />
+            <p className="text-[11px] text-body">We use WhatsApp for pickup details and day-of updates.</p>
+
           </div>
         )}
       </div>
