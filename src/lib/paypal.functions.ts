@@ -13,7 +13,7 @@ export const getPaypalPublicConfig = createServerFn({ method: "GET" }).handler(a
   if (!status.available || status.gateway.provider !== "paypal") {
     return { enabled: false, clientId: null as string | null, env: "test" as "test" | "live" };
   }
-  const clientId = paypalPublicClientId(status.gateway.mode);
+  const clientId = await paypalPublicClientId(status.gateway.mode);
   return {
     enabled: !!clientId,
     clientId: clientId || null,
