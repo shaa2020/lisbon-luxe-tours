@@ -16,7 +16,10 @@ const checkoutInput = z.object({
   notes: z.string().max(2000).optional().nullable(),
   amount: z.number().int().min(100).max(500000), // cents, €1–€5000
   image_url: z.string().url().optional().nullable(),
+  /** Share of the total charged now. 20–100 (%). Defaults to full payment. */
+  deposit_pct: z.number().int().min(20).max(100).optional().nullable(),
 });
+
 
 export const createCheckoutSession = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => checkoutInput.parse(data))
