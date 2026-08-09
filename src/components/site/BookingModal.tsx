@@ -21,6 +21,7 @@ import { useSiteBrand } from "@/lib/brand";
 import { useServerFn } from "@tanstack/react-start";
 import { createCheckoutSession } from "@/lib/checkout.functions";
 import { toast } from "sonner";
+import { PaypalWallet } from "@/components/site/PaypalWallet";
 
 const TIME_SLOTS = ["09:00", "10:30", "13:00", "15:00", "17:00", "18:30"];
 
