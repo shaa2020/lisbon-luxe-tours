@@ -13,6 +13,7 @@ import { createCheckoutSession } from "@/lib/checkout.functions";
 import { toast } from "sonner";
 import { CANCELLATION_POLICY_FULL } from "@/lib/cancellation";
 import { useSiteBrand } from "@/lib/brand";
+import { PaypalWallet } from "@/components/site/PaypalWallet";
 
 const TIME_SLOTS = ["09:00", "10:30", "13:00", "15:00", "17:00", "18:30"];
 
@@ -123,6 +124,42 @@ export function TourBookingPanel({ tour }: { tour: Tour; compact?: boolean }) {
       toast.error((err as Error).message || "Could not start checkout.");
     }
   };
+
+  const contactValid = !!name.trim() && isEmail(email) && isPhone(phone);
+
+  /** Creates the booking + PayPal order for the on-site wallet buttons. */
+  const startWalletOrder = async (): Promise<string | null> => {
+    if (!canContinue || !contactValid) {
+      toast.error("Complete date, time and your contact details first.");
+      return null;
+    }
+    const res = await checkoutFn({
+      data: {
+        tour_slug: tour.slug,
+        tour_title: tour.title,
+        customer_name: name,
+        email,
+        phone: phone.trim(),
+        travel_date: date ? format(date, "yyyy-MM-dd") : null,
+        time,
+        guests,
+        notes: pickup ? `Hotel pickup & drop-off requested (+€${pickupFee})` : null,
+        amount: total * 100,
+        deposit_pct: depositPct,
+        image_url: tour.image?.startsWith("http") ? tour.image : null,
+      },
+    });
+    if (res.mode !== "pay") {
+      toast.success(res.message || "Request received — we'll confirm by email shortly.");
+      return null;
+    }
+    return res.sessionId ?? null;
+  };
+
+  const finishWalletOrder = (orderId: string) => {
+    window.location.assign(`/booking/success?session_id=${encodeURIComponent(orderId)}`);
+  };
+
 
 
   return (
@@ -421,6 +458,18 @@ export function TourBookingPanel({ tour }: { tour: Tour; compact?: boolean }) {
                 <>Continue to Booking</>
               )}
             </button>
+
+            {showContact && (
+              <PaypalWallet
+                amount={payNow}
+                label={tour.title}
+                disabled={paying || requesting || !canContinue || !contactValid}
+                createOrder={startWalletOrder}
+                onPaid={finishWalletOrder}
+              />
+            )}
+
+
 
             <button
               onClick={handleRequest}
