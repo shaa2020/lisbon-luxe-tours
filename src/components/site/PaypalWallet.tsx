@@ -107,10 +107,16 @@ export function PaypalWallet({ amount, label, disabled, createOrder, onPaid }: P
       /* ---------- Apple Pay ---------- */
       try {
         const AP = (window as any).ApplePaySession;
+        if (!AP) log("Apple Pay: browser not supported (needs Safari on iPhone/Mac)");
+        else if (!AP.supportsVersion(4)) log("Apple Pay: Safari version too old");
+        else if (!AP.canMakePayments()) log("Apple Pay: no card set up in Wallet");
+        else if (!paypal.Applepay) log("Apple Pay: SDK component missing");
         if (AP && AP.supportsVersion(4) && AP.canMakePayments() && paypal.Applepay) {
           const applepay = paypal.Applepay();
           const apCfg = await applepay.config();
+          if (!apCfg?.isEligible) log("Apple Pay: not enabled for this PayPal account / domain not registered");
           if (!cancelled && apCfg?.isEligible && applePayRef.current) {
+
             const btn = document.createElement("button");
             btn.type = "button";
             btn.setAttribute("aria-label", "Pay with Apple Pay");
