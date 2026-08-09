@@ -386,7 +386,24 @@ const paypalAdapter: GatewayAdapter = {
             amount: { currency_code: "EUR", value: (input.amountCents / 100).toFixed(2) },
           },
         ],
+        payment_source: {
+          paypal: {
+            experience_context: {
+              brand_name: "Tuk Tuk 24 Lisbon",
+              locale: "en-GB",
+              landing_page: "NO_PREFERENCE", // shows guest card form + wallets
+              shipping_preference: "NO_SHIPPING",
+              user_action: "PAY_NOW",
+              payment_method_preference: "IMMEDIATE_PAYMENT_REQUIRED",
+              return_url: `${input.origin}${redirectPath}`,
+              cancel_url: `${input.origin}/booking/cancelled`,
+            },
+          },
+        },
         application_context: {
+          brand_name: "Tuk Tuk 24 Lisbon",
+          shipping_preference: "NO_SHIPPING",
+          user_action: "PAY_NOW",
           return_url: `${input.origin}${redirectPath}`,
           cancel_url: `${input.origin}/booking/cancelled`,
         },
