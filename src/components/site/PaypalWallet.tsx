@@ -117,12 +117,13 @@ export function PaypalWallet({ amount, label, disabled, createOrder, onPaid }: P
           if (!apCfg?.isEligible) log("Apple Pay: not enabled for this PayPal account / domain not registered");
           if (!cancelled && apCfg?.isEligible && applePayRef.current) {
 
-            const btn = document.createElement("button");
-            btn.type = "button";
-            btn.setAttribute("aria-label", "Pay with Apple Pay");
-            btn.className =
-              "w-full h-[46px] rounded-[2px] bg-black text-white text-sm font-medium tracking-wide";
-            btn.textContent = " Pay";
+            const btn = document.createElement("apple-pay-button");
+            btn.setAttribute("buttonstyle", "black");
+            btn.setAttribute("type", "pay");
+            btn.setAttribute("locale", "en");
+            btn.setAttribute("aria-label", "Apple Pay");
+            btn.style.cssText =
+              "display: inline-block; width: 100%; height: 46px; border-radius: 2px; -apple-pay-button-type: pay; -apple-pay-button-style: black;";
             btn.onclick = async () => {
               if (state.current.disabled) return;
               try {
