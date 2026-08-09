@@ -83,25 +83,37 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
       .eq("id", true)
       .maybeSingle();
     const baseCents = await tourBaseCents(supabaseAdmin, data.tour_slug);
-    const lineItems = buildTourLineItems({
-      tourSlug: data.tour_slug,
-      tourTitle: data.tour_title,
-      guests: data.guests,
-      totalCents: data.amount,
-      baseCents,
-      pickupFeeCents: settings?.hotel_pickup_fee_cents ?? 0,
-      pickupRequested: /hotel pickup/i.test(data.notes || ""),
-    });
+    const lineItems =
+      balanceCents > 0
+        ? [
+            {
+              priceId: "tour_deposit",
+              name: `${data.tour_title} — ${depositPct}% deposit`,
+              unitAmountCents: chargeCents,
+              quantity: 1,
+            },
+          ]
+        : buildTourLineItems({
+            tourSlug: data.tour_slug,
+            tourTitle: data.tour_title,
+            guests: data.guests,
+            totalCents: data.amount,
+            baseCents,
+            pickupFeeCents: settings?.hotel_pickup_fee_cents ?? 0,
+            pickupRequested: /hotel pickup/i.test(data.notes || ""),
+          });
 
     const payment = await createPayment(supabaseAdmin, {
-      amountCents: data.amount,
-      description: `${data.tour_title} · ${data.guests} guest${data.guests === 1 ? "" : "s"}${data.travel_date ? ` · ${data.travel_date}` : ""}`,
+      amountCents: chargeCents,
+      description: `${data.tour_title} · ${data.guests} guest${data.guests === 1 ? "" : "s"}${data.travel_date ? ` · ${data.travel_date}` : ""}${balanceCents > 0 ? ` · ${depositPct}% deposit` : ""}`,
       origin,
       lineItems,
       metadata: {
         booking_id: booking.id,
         tour_slug: data.tour_slug,
         guests: String(data.guests),
+        deposit_pct: String(depositPct),
+        balance_cents: String(balanceCents),
       },
     });
 
@@ -110,7 +122,8 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
       booking_id: booking.id,
       stripe_session_id: payment.id,
       provider: payment.provider,
-      amount_total: data.amount,
+      amount_total: chargeCents,
+
       currency: "eur",
       payment_status: "pending",
       customer_name: data.customer_name,
