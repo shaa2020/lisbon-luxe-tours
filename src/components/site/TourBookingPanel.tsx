@@ -458,6 +458,18 @@ export function TourBookingPanel({ tour }: { tour: Tour; compact?: boolean }) {
               )}
             </button>
 
+            {showContact && (
+              <PaypalWallet
+                amount={payNow}
+                label={tour.title}
+                disabled={paying || requesting || !canContinue || !contactValid}
+                createOrder={startWalletOrder}
+                onPaid={finishWalletOrder}
+              />
+            )}
+
+
+
             <button
               onClick={handleRequest}
               disabled={paying || requesting || !canContinue}
