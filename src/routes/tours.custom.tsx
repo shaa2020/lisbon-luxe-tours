@@ -116,6 +116,7 @@ function CustomBuilderPage() {
   function validate(): string | null {
     if (!form.customer_name.trim()) return "Please enter your name";
     if (!form.email.trim()) return "Please enter your email";
+    if (form.phone.replace(/[^\d]/g, "").length < 8) return "Please enter your WhatsApp number with country code";
     if (!hasVehicle) return "Pick a vehicle";
     if (!hasDuration)
       return "Pick a preferred duration — it sets the base price of your tour";
@@ -136,7 +137,7 @@ function CustomBuilderPage() {
           component_ids: Array.from(selected),
           customer_name: form.customer_name.trim(),
           email: form.email.trim(),
-          phone: form.phone.trim() || null,
+          phone: form.phone.trim(),
           travel_date: form.travel_date || null,
           time: form.time || null,
           guests: Number(form.guests) || 1,

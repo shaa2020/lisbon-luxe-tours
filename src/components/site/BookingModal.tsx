@@ -46,6 +46,7 @@ export function BookingModal({
   const [guests, setGuests] = useState(defaultGuests && defaultGuests > 0 ? defaultGuests : 2);
   const [name, setName] = useState("");
   const [contact, setContact] = useState("");
+  const [phone, setPhone] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [paying, setPaying] = useState(false);
 
@@ -57,7 +58,7 @@ export function BookingModal({
   const reset = () => {
     setDate(defaultDate ? new Date(`${defaultDate}T00:00:00`) : undefined);
     setTime(""); setGuests(defaultGuests && defaultGuests > 0 ? defaultGuests : 2);
-    setName(""); setContact(""); setSubmitted(false); setPaying(false);
+    setName(""); setContact(""); setPhone(""); setSubmitted(false); setPaying(false);
   };
 
   const handleClose = (v: boolean) => {
@@ -66,6 +67,7 @@ export function BookingModal({
   };
 
   const isEmail = (s: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);
+  const isPhone = (s: string) => s.replace(/[^\d]/g, "").length >= 8;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -81,6 +83,7 @@ export function BookingModal({
       ``,
       `Name: ${name}`,
       `Contact: ${contact}`,
+      `WhatsApp: ${phone}`,
     ].filter(Boolean).join("\n");
     const url = `https://wa.me/${waNumber}?text=${encodeURIComponent(lines)}`;
     window.open(url, "_blank", "noopener,noreferrer");
@@ -90,6 +93,10 @@ export function BookingModal({
   const handlePay = async () => {
     if (!date || !time || !name || !contact) {
       toast.error("Please complete date, time, name and email.");
+      return;
+    }
+    if (!isPhone(phone)) {
+      toast.error("Enter your WhatsApp number with country code.");
       return;
     }
     if (!isEmail(contact)) {
@@ -104,6 +111,7 @@ export function BookingModal({
           tour_title: tour.title,
           customer_name: name,
           email: contact,
+          phone: phone.trim(),
           travel_date: date ? format(date, "yyyy-MM-dd") : null,
           time,
           guests,
@@ -274,6 +282,14 @@ export function BookingModal({
                   placeholder="Email (required for card payment)"
                   className="px-4 py-3 rounded-lg bg-cloud/40 border border-border text-sm text-ink placeholder:text-ink/40 focus:outline-none focus:border-gold"
                 />
+                <input
+                  type="tel"
+                  inputMode="tel"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder="WhatsApp number (with country code)"
+                  className="col-span-2 px-4 py-3 rounded-lg bg-cloud/40 border border-border text-sm text-ink placeholder:text-ink/40 focus:outline-none focus:border-gold"
+                />
               </div>
 
               {/* Total + submit */}
@@ -291,7 +307,7 @@ export function BookingModal({
                   <button
                     type="button"
                     onClick={handlePay}
-                    disabled={paying || !date || !time || !name || !contact}
+                    disabled={paying || !date || !time || !name || !contact || !isPhone(phone)}
                     className="w-full px-5 py-3.5 rounded-full bg-ink text-white text-[12px] font-semibold uppercase tracking-widest hover:bg-gold transition disabled:opacity-40 disabled:cursor-not-allowed shadow-[0_6px_15px_rgba(30,58,95,0.25)] inline-flex items-center justify-center gap-2"
                   >
                     {paying ? (
@@ -302,7 +318,7 @@ export function BookingModal({
                   </button>
                   <button
                     type="submit"
-                    disabled={paying || !date || !time || !name || !contact}
+                    disabled={paying || !date || !time || !name || !contact || !isPhone(phone)}
                     className="w-full px-5 py-3.5 rounded-full bg-[#25D366] text-white text-[12px] font-semibold uppercase tracking-widest hover:bg-ink transition disabled:opacity-40 disabled:cursor-not-allowed shadow-[0_6px_15px_rgba(37,211,102,0.35)]"
                   >
                     Reserve via WhatsApp
