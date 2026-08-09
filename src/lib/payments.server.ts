@@ -184,19 +184,40 @@ async function stripeFetch(
   const key = stripeKey(mode);
   const lovableKey = env("LOVABLE_API_KEY");
   if (!key) throw new Error(`Stripe ${mode} key not configured`);
-  const res = await fetch(`${STRIPE_GATEWAY}${path}`, {
-    method: init?.method || "GET",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-      "X-Connection-Api-Key": key,
-      "Lovable-API-Key": lovableKey,
-    },
-    body: init?.form ? new URLSearchParams(init.form).toString() : undefined,
-  });
-  const text = await res.text();
-  if (!res.ok) throw new Error(`Stripe ${path} ${res.status}: ${text.slice(0, 300)}`);
-  return text ? JSON.parse(text) : {};
+
+  const method = init?.method || "GET";
+  const body = init?.form ? new URLSearchParams(init.form).toString() : undefined;
+  // Stable per-call key so a retried POST can never create a duplicate object.
+  const idempotencyKey = method === "POST" ? crypto.randomUUID() : undefined;
+
+  let lastError = "";
+  for (let attempt = 0; attempt < 3; attempt++) {
+    if (attempt > 0) await new Promise((r) => setTimeout(r, 400 * attempt));
+    try {
+      const res = await fetch(`${STRIPE_GATEWAY}${path}`, {
+        method,
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          "X-Connection-Api-Key": key,
+          "Lovable-API-Key": lovableKey,
+          ...(idempotencyKey ? { "Idempotency-Key": idempotencyKey } : {}),
+        },
+        body,
+      });
+      const text = await res.text();
+      if (res.ok) return text ? JSON.parse(text) : {};
+      lastError = `Stripe ${path} ${res.status}: ${text.slice(0, 300)}`;
+      // 4xx are real errors — surface immediately. 5xx are gateway blips: retry.
+      if (res.status < 500) throw new Error(lastError);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      if (message === lastError && !lastError.includes(" 5")) throw err;
+      lastError = message;
+    }
+  }
+  throw new Error(lastError || `Stripe ${path} failed`);
 }
+
 
 function normalizeStripe(session: any): PaymentResult {
   const metadata: Record<string, string> = {};
