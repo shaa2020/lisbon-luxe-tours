@@ -2,6 +2,12 @@ import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
 import { timingSafeEqual } from "crypto";
 
+const CORS_HEADERS = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, x-api-key",
+};
+
 const customerSchema = z.object({
   name: z.string().min(1).max(200),
   whatsapp: z.string().max(50).optional().nullable(),
@@ -45,30 +51,40 @@ function apiKeyMatches(provided: string, expected: string) {
 export const Route = createFileRoute("/api/public/bookings")({
   server: {
     handlers: {
+      OPTIONS: async () => new Response(null, { status: 204, headers: CORS_HEADERS }),
       POST: async ({ request }) => {
         const expectedKey = process.env["BOOKING_API_KEY"];
         if (!expectedKey) {
           console.error("BOOKING_API_KEY is not configured");
-          return Response.json({ ok: false, error: "Server misconfiguration" }, { status: 500 });
+          return Response.json(
+            { ok: false, error: "Server misconfiguration" },
+            { status: 500, headers: CORS_HEADERS },
+          );
         }
 
         const providedKey = request.headers.get("x-api-key") || "";
         if (!providedKey || !apiKeyMatches(providedKey, expectedKey)) {
-          return Response.json({ ok: false, error: "Unauthorized" }, { status: 401 });
+          return Response.json(
+            { ok: false, error: "Unauthorized" },
+            { status: 401, headers: CORS_HEADERS },
+          );
         }
 
         let body: unknown;
         try {
           body = await request.json();
         } catch {
-          return Response.json({ ok: false, error: "Invalid JSON" }, { status: 400 });
+          return Response.json(
+            { ok: false, error: "Invalid JSON" },
+            { status: 400, headers: CORS_HEADERS },
+          );
         }
 
         const parsed = bookingPayloadSchema.safeParse(body);
         if (!parsed.success) {
           return Response.json(
             { ok: false, error: "Validation failed", issues: parsed.error.issues },
-            { status: 400 },
+            { status: 400, headers: CORS_HEADERS },
           );
         }
 
@@ -116,7 +132,7 @@ export const Route = createFileRoute("/api/public/bookings")({
             console.error("Booking insert error:", error);
             return Response.json(
               { ok: false, error: error?.message || "Booking insert failed" },
-              { status: 500 },
+              { status: 500, headers: CORS_HEADERS },
             );
           }
 
@@ -126,16 +142,19 @@ export const Route = createFileRoute("/api/public/bookings")({
             .update({ notes: `${notesLines.join("\n\n")}\n\nReference: ${reference}` })
             .eq("id", booking.id);
 
-          return Response.json({
-            ok: true,
-            reference,
-            id: booking.id,
-          });
+          return Response.json(
+            {
+              ok: true,
+              reference,
+              id: booking.id,
+            },
+            { headers: CORS_HEADERS },
+          );
         } catch (e) {
           console.error("Unexpected booking API error:", e);
           return Response.json(
             { ok: false, error: (e as Error).message || "Internal error" },
-            { status: 500 },
+            { status: 500, headers: CORS_HEADERS },
           );
         }
       },
