@@ -51,30 +51,40 @@ function apiKeyMatches(provided: string, expected: string) {
 export const Route = createFileRoute("/api/public/bookings")({
   server: {
     handlers: {
+      OPTIONS: async () => new Response(null, { status: 204, headers: CORS_HEADERS }),
       POST: async ({ request }) => {
         const expectedKey = process.env["BOOKING_API_KEY"];
         if (!expectedKey) {
           console.error("BOOKING_API_KEY is not configured");
-          return Response.json({ ok: false, error: "Server misconfiguration" }, { status: 500 });
+          return Response.json(
+            { ok: false, error: "Server misconfiguration" },
+            { status: 500, headers: CORS_HEADERS },
+          );
         }
 
         const providedKey = request.headers.get("x-api-key") || "";
         if (!providedKey || !apiKeyMatches(providedKey, expectedKey)) {
-          return Response.json({ ok: false, error: "Unauthorized" }, { status: 401 });
+          return Response.json(
+            { ok: false, error: "Unauthorized" },
+            { status: 401, headers: CORS_HEADERS },
+          );
         }
 
         let body: unknown;
         try {
           body = await request.json();
         } catch {
-          return Response.json({ ok: false, error: "Invalid JSON" }, { status: 400 });
+          return Response.json(
+            { ok: false, error: "Invalid JSON" },
+            { status: 400, headers: CORS_HEADERS },
+          );
         }
 
         const parsed = bookingPayloadSchema.safeParse(body);
         if (!parsed.success) {
           return Response.json(
             { ok: false, error: "Validation failed", issues: parsed.error.issues },
-            { status: 400 },
+            { status: 400, headers: CORS_HEADERS },
           );
         }
 
