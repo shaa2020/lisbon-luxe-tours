@@ -40,6 +40,7 @@ import { Route as AdminBlogIndexRouteImport } from './routes/admin.blog.index'
 import { Route as AdminBlogIdRouteImport } from './routes/admin.blog.$id'
 import { Route as AdminToursIndexRouteImport } from './routes/admin.tours.index'
 import { Route as AdminToursIdRouteImport } from './routes/admin.tours.$id'
+import { Route as ApiPublicBookingsRouteImport } from './routes/api/public/bookings'
 import { Route as ApiPublicPaymentsMollieRouteImport } from './routes/api/public/payments/mollie'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
@@ -199,6 +200,11 @@ const AdminToursIdRoute = AdminToursIdRouteImport.update({
   path: '/admin/tours/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicBookingsRoute = ApiPublicBookingsRouteImport.update({
+  id: '/api/public/bookings',
+  path: '/api/public/bookings',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicPaymentsMollieRoute = ApiPublicPaymentsMollieRouteImport.update({
   id: '/api/public/payments/mollie',
   path: '/api/public/payments/mollie',
@@ -247,6 +253,7 @@ export interface FileRoutesByFullPath {
   '/tours/': typeof ToursIndexRoute
   '/admin/blog/$id': typeof AdminBlogIdRoute
   '/admin/tours/$id': typeof AdminToursIdRoute
+  '/api/public/bookings': typeof ApiPublicBookingsRoute
   '/admin/blog/': typeof AdminBlogIndexRoute
   '/admin/tours/': typeof AdminToursIndexRoute
   '/api/public/payments/mollie': typeof ApiPublicPaymentsMollieRoute
@@ -283,6 +290,7 @@ export interface FileRoutesByTo {
   '/tours': typeof ToursIndexRoute
   '/admin/blog/$id': typeof AdminBlogIdRoute
   '/admin/tours/$id': typeof AdminToursIdRoute
+  '/api/public/bookings': typeof ApiPublicBookingsRoute
   '/admin/blog': typeof AdminBlogIndexRoute
   '/admin/tours': typeof AdminToursIndexRoute
   '/api/public/payments/mollie': typeof ApiPublicPaymentsMollieRoute
@@ -320,6 +328,7 @@ export interface FileRoutesById {
   '/tours/': typeof ToursIndexRoute
   '/admin/blog/$id': typeof AdminBlogIdRoute
   '/admin/tours/$id': typeof AdminToursIdRoute
+  '/api/public/bookings': typeof ApiPublicBookingsRoute
   '/admin/blog/': typeof AdminBlogIndexRoute
   '/admin/tours/': typeof AdminToursIndexRoute
   '/api/public/payments/mollie': typeof ApiPublicPaymentsMollieRoute
@@ -358,6 +367,7 @@ export interface FileRouteTypes {
     | '/tours/'
     | '/admin/blog/$id'
     | '/admin/tours/$id'
+    | '/api/public/bookings'
     | '/admin/blog/'
     | '/admin/tours/'
     | '/api/public/payments/mollie'
@@ -394,6 +404,7 @@ export interface FileRouteTypes {
     | '/tours'
     | '/admin/blog/$id'
     | '/admin/tours/$id'
+    | '/api/public/bookings'
     | '/admin/blog'
     | '/admin/tours'
     | '/api/public/payments/mollie'
@@ -430,6 +441,7 @@ export interface FileRouteTypes {
     | '/tours/'
     | '/admin/blog/$id'
     | '/admin/tours/$id'
+    | '/api/public/bookings'
     | '/admin/blog/'
     | '/admin/tours/'
     | '/api/public/payments/mollie'
@@ -467,6 +479,7 @@ export interface RootRouteChildren {
   ToursIndexRoute: typeof ToursIndexRoute
   AdminBlogIdRoute: typeof AdminBlogIdRoute
   AdminToursIdRoute: typeof AdminToursIdRoute
+  ApiPublicBookingsRoute: typeof ApiPublicBookingsRoute
   AdminBlogIndexRoute: typeof AdminBlogIndexRoute
   AdminToursIndexRoute: typeof AdminToursIndexRoute
   ApiPublicPaymentsMollieRoute: typeof ApiPublicPaymentsMollieRoute
@@ -693,6 +706,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminToursIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/bookings': {
+      id: '/api/public/bookings'
+      path: '/api/public/bookings'
+      fullPath: '/api/public/bookings'
+      preLoaderRoute: typeof ApiPublicBookingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/payments/mollie': {
       id: '/api/public/payments/mollie'
       path: '/api/public/payments/mollie'
@@ -747,6 +767,7 @@ const rootRouteChildren: RootRouteChildren = {
   ToursIndexRoute: ToursIndexRoute,
   AdminBlogIdRoute: AdminBlogIdRoute,
   AdminToursIdRoute: AdminToursIdRoute,
+  ApiPublicBookingsRoute: ApiPublicBookingsRoute,
   AdminBlogIndexRoute: AdminBlogIndexRoute,
   AdminToursIndexRoute: AdminToursIndexRoute,
   ApiPublicPaymentsMollieRoute: ApiPublicPaymentsMollieRoute,
