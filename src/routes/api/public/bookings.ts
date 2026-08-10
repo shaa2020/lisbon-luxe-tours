@@ -132,7 +132,7 @@ export const Route = createFileRoute("/api/public/bookings")({
             console.error("Booking insert error:", error);
             return Response.json(
               { ok: false, error: error?.message || "Booking insert failed" },
-              { status: 500 },
+              { status: 500, headers: CORS_HEADERS },
             );
           }
 
@@ -142,16 +142,19 @@ export const Route = createFileRoute("/api/public/bookings")({
             .update({ notes: `${notesLines.join("\n\n")}\n\nReference: ${reference}` })
             .eq("id", booking.id);
 
-          return Response.json({
-            ok: true,
-            reference,
-            id: booking.id,
-          });
+          return Response.json(
+            {
+              ok: true,
+              reference,
+              id: booking.id,
+            },
+            { headers: CORS_HEADERS },
+          );
         } catch (e) {
           console.error("Unexpected booking API error:", e);
           return Response.json(
             { ok: false, error: (e as Error).message || "Internal error" },
-            { status: 500 },
+            { status: 500, headers: CORS_HEADERS },
           );
         }
       },
