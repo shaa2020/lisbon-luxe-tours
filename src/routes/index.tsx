@@ -309,65 +309,72 @@ function AboutSection() {
 
   return (
     <section className="container-x py-16 md:py-28">
-      <div className="max-w-3xl">
-        <p className="eyebrow text-gold mb-4">About us</p>
-        <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-ink leading-tight mb-6">
-          A small tuk-tuk crew, born and raised in Lisbon.
-        </h2>
-        <p className="text-body leading-relaxed mb-8">
-          We're a family-run team of Lisboeta drivers and guides. No coach buses, no scripted
-          headsets — just our tuk-tuks, the neighborhoods we grew up in, and the time to show
-          them properly. Tell us what you like and we'll build the route around it.
-        </p>
+      <div className="grid lg:grid-cols-[minmax(0,1fr)_minmax(0,0.85fr)] gap-12 lg:gap-16 items-start">
+        {/* Left column */}
+        <div className="max-w-2xl">
+          <p className="eyebrow text-gold mb-4">About us</p>
+          <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-ink leading-tight mb-6">
+            A small tuk-tuk crew, born and raised in Lisbon.
+          </h2>
+          <p className="text-body leading-relaxed mb-8">
+            We're a family-run team of Lisboeta drivers and guides. No coach buses, no scripted
+            headsets — just our tuk-tuks, the neighborhoods we grew up in, and the time to show
+            them properly. Tell us what you like and we'll build the route around it.
+          </p>
 
-        <dl className="divide-y divide-ink/10 border-y border-ink/10 mb-8">
-          {facts.map((f) => (
-            <div key={f.k} className="flex items-baseline justify-between gap-6 py-3">
-              <dt className="text-[11px] uppercase tracking-widest text-body/70 shrink-0">{f.k}</dt>
-              <dd className="text-[14px] text-ink text-right">{f.v}</dd>
-            </div>
-          ))}
-        </dl>
+          <dl className="divide-y divide-ink/10 border-y border-ink/10 mb-8">
+            {facts.map((f) => (
+              <div key={f.k} className="flex items-baseline justify-between gap-6 py-3">
+                <dt className="text-[11px] uppercase tracking-widest text-body/70 shrink-0">{f.k}</dt>
+                <dd className="text-[14px] text-ink text-right">{f.v}</dd>
+              </div>
+            ))}
+          </dl>
 
-        <div className="flex flex-wrap items-center gap-4 mb-10">
-          <Link
-            to="/tours"
-            className="inline-flex items-center px-7 py-4 rounded-full bg-gold text-white text-[12px] font-semibold uppercase tracking-widest shadow-[0_8px_20px_rgba(43,182,247,0.35)] hover:bg-ink hover:shadow-[0_8px_20px_rgba(30,58,95,0.35)] transition-all"
-          >
-            See our tours
-          </Link>
-          <Link
-            to="/about"
-            className="inline-flex items-center px-7 py-4 rounded-full border border-ink/15 text-ink text-[12px] font-semibold uppercase tracking-widest hover:border-ink/40 transition-all"
-          >
-            More about us
-          </Link>
-        </div>
-
-        <div className="rounded-2xl bg-white border border-ink/10 shadow-[0_18px_40px_rgba(30,58,95,0.12)] px-6 py-5 grid grid-cols-3 gap-4 text-center max-w-md">
-          {[
-            { n: "7", l: "Neighbourhoods" },
-            { n: "100%", l: "Electric fleet" },
-            { n: "24h", l: "Free cancellation" },
-          ].map((s) => (
-            <div key={s.l}>
-              <p className="font-display text-xl sm:text-2xl font-bold text-ink leading-none">{s.n}</p>
-              <p className="text-[10px] uppercase tracking-widest text-body/70 mt-1.5 leading-tight">{s.l}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="mt-16 md:mt-24 grid sm:grid-cols-3 gap-6">
-        {steps.map((s) => (
-          <div key={s.n} className="rounded-2xl border border-ink/10 bg-cloud/40 p-6">
-            <span className="font-display text-2xl text-gold">{s.n}</span>
-            <h3 className="font-display text-lg font-bold text-ink mt-2 mb-1.5">{s.t}</h3>
-            <p className="text-[14px] text-body leading-relaxed">{s.d}</p>
+          <div className="flex flex-wrap items-center gap-4">
+            <Link
+              to="/tours"
+              className="inline-flex items-center px-7 py-4 rounded-full bg-gold text-white text-[12px] font-semibold uppercase tracking-widest shadow-[0_8px_20px_rgba(43,182,247,0.35)] hover:bg-ink hover:shadow-[0_8px_20px_rgba(30,58,95,0.35)] transition-all"
+            >
+              See our tours
+            </Link>
+            <Link
+              to="/about"
+              className="inline-flex items-center px-7 py-4 rounded-full border border-ink/15 text-ink text-[12px] font-semibold uppercase tracking-widest hover:border-ink/40 transition-all"
+            >
+              More about us
+            </Link>
           </div>
-        ))}
+        </div>
+
+        {/* Right column */}
+        <div className="w-full grid gap-6">
+          <div className="rounded-2xl bg-white border border-ink/10 shadow-[0_18px_40px_rgba(30,58,95,0.12)] px-6 py-5 grid grid-cols-3 gap-4 text-center">
+            {[
+              { n: "7", l: "Neighbourhoods" },
+              { n: "100%", l: "Electric fleet" },
+              { n: "24h", l: "Free cancellation" },
+            ].map((s) => (
+              <div key={s.l}>
+                <p className="font-display text-xl sm:text-2xl font-bold text-ink leading-none">{s.n}</p>
+                <p className="text-[10px] uppercase tracking-widest text-body/70 mt-1.5 leading-tight">{s.l}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="grid sm:grid-cols-3 lg:grid-cols-1 gap-4">
+            {steps.map((s) => (
+              <div key={s.n} className="rounded-2xl border border-ink/10 bg-cloud/40 p-5">
+                <span className="font-display text-2xl text-gold">{s.n}</span>
+                <h3 className="font-display text-lg font-bold text-ink mt-2 mb-1.5">{s.t}</h3>
+                <p className="text-[14px] text-body leading-relaxed">{s.d}</p>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
+
   );
 }
 
