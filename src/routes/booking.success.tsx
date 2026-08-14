@@ -49,10 +49,12 @@ function SuccessPage() {
     }
     confirmCheckout({ data: { session_id } })
       .then((r) => {
-        if (r.paid) {
+        const key = `bc_${session_id}`;
+        if (r.paid && typeof window !== "undefined" && !sessionStorage.getItem(key)) {
+          sessionStorage.setItem(key, "1");
           trackBookingCompleted({
             transaction_id: r.booking_id || session_id,
-            tour_id: r.tour_slug || r.tour_title || "",
+            tour_id: r.tour_title || "",
             tour_name: r.tour_title || "",
             value: (r.amount_total ?? 0) / 100,
           });
