@@ -118,6 +118,7 @@ export function Footer() {
               <a
                 key={s.label}
                 href={s.href}
+                onClick={s.label === "Wa" ? () => trackWhatsappClick("footer_social") : undefined}
                 className="w-10 h-10 rounded-full bg-cloud text-ink flex items-center justify-center text-[11px] font-semibold hover:bg-gold hover:text-white transition-colors"
               >
                 {s.label}

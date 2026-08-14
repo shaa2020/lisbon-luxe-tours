@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Check, Loader2 } from "lucide-react";
 import { z } from "zod";
 import { confirmCheckout } from "@/lib/checkout.functions";
+import { trackBookingCompleted } from "@/lib/analytics";
 
 export const Route = createFileRoute("/booking/success")({
   // PayPal returns ?token=<order id>; Stripe/Mollie return ?session_id=
@@ -47,7 +48,15 @@ function SuccessPage() {
       return;
     }
     confirmCheckout({ data: { session_id } })
-      .then((r) =>
+      .then((r) => {
+        if (r.paid) {
+          trackBookingCompleted({
+            transaction_id: r.booking_id || session_id,
+            tour_id: r.tour_slug || r.tour_title || "",
+            tour_name: r.tour_title || "",
+            value: (r.amount_total ?? 0) / 100,
+          });
+        }
         setState({
           loading: false,
           paid: r.paid,
@@ -57,8 +66,8 @@ function SuccessPage() {
           bookingId: r.booking_id,
           travelDate: r.travel_date,
           guests: r.guests,
-        }),
-      )
+        });
+      })
       .catch(() => setState({ loading: false, paid: false }));
   }, [session_id]);
 

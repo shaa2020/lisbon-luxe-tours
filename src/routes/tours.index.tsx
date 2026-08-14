@@ -1,3 +1,4 @@
+import { trackWhatsappClick } from "@/lib/analytics";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { Nav } from "@/components/site/Nav";
@@ -431,6 +432,7 @@ function ToursPage() {
               </Link>
               <a
                 href={`https://wa.me/${business.whatsappPhone.replace(/[^\d]/g, "")}`}
+                onClick={() => trackWhatsappClick("tours_page")}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="px-6 py-3 rounded-full border border-ink/20 text-ink text-[11px] font-semibold uppercase tracking-widest hover:border-gold hover:text-gold transition"
