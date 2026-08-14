@@ -114,7 +114,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "icon", type: "image/png", sizes: "512x512", href: "/app-icon-512.png" },
     ],
     scripts: [
+      { src: gtagSrc, async: true },
+      { children: gtagInitScript },
       ...(gtmHeadScript ? [{ children: gtmHeadScript }] : []),
+
       {
         type: "application/ld+json",
         children: JSON.stringify({
