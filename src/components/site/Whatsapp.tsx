@@ -1,4 +1,5 @@
 import { useSiteBrand } from "@/lib/brand";
+import { trackWhatsappClick } from "@/lib/analytics";
 
 export function WhatsappFab() {
   const { business } = useSiteBrand();
@@ -9,6 +10,7 @@ export function WhatsappFab() {
       target="_blank"
       rel="noreferrer"
       aria-label="Chat on WhatsApp"
+      onClick={() => trackWhatsappClick("floating_button")}
       className="fixed bottom-24 lg:bottom-6 left-4 lg:left-auto lg:right-6 z-40 size-12 lg:size-14 rounded-full bg-[#25D366] text-white flex items-center justify-center shadow-[0_10px_30px_rgba(37,211,102,0.4)] hover:scale-110 transition-transform"
     >
       <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">

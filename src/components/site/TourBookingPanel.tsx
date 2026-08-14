@@ -14,6 +14,7 @@ import { toast } from "sonner";
 import { CANCELLATION_POLICY_FULL } from "@/lib/cancellation";
 import { useSiteBrand } from "@/lib/brand";
 import { PaypalWallet } from "@/components/site/PaypalWallet";
+import { trackBookingStart, trackBookingCtaClick } from "@/lib/analytics";
 
 const TIME_SLOTS = ["09:00", "10:30", "13:00", "15:00", "17:00", "18:30"];
 
@@ -63,6 +64,7 @@ export function TourBookingPanel({ tour }: { tour: Tour; compact?: boolean }) {
     if (!name.trim() || !isEmail(email)) { toast.error("Enter your name and a valid email."); return; }
     if (!isPhone(phone)) { toast.error("Enter your WhatsApp number with country code."); return; }
     setRequesting(true);
+    trackBookingStart(tour, total);
     try {
       const res = await requestFn({
         data: {
@@ -93,6 +95,7 @@ export function TourBookingPanel({ tour }: { tour: Tour; compact?: boolean }) {
     if (!name.trim() || !isEmail(email)) { toast.error("Enter your name and a valid email."); return; }
     if (!isPhone(phone)) { toast.error("Enter your WhatsApp number with country code."); return; }
     setPaying(true);
+    trackBookingStart(tour, total);
     try {
       const res = await checkoutFn({
         data: {
@@ -446,7 +449,7 @@ export function TourBookingPanel({ tour }: { tour: Tour; compact?: boolean }) {
         ) : (
           <>
             <button
-              onClick={handleContinue}
+              onClick={() => { trackBookingCtaClick("tour_booking_panel", tour); handleContinue(); }}
               disabled={paying || requesting || !canContinue}
               className="w-full bg-ink text-paper py-4 rounded-[2px] font-medium tracking-[0.2em] text-xs uppercase hover:bg-gold transition-colors shadow-[0_8px_20px_rgba(30,58,95,0.18)] disabled:opacity-40 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
             >
@@ -472,7 +475,7 @@ export function TourBookingPanel({ tour }: { tour: Tour; compact?: boolean }) {
 
 
             <button
-              onClick={handleRequest}
+              onClick={() => { trackBookingCtaClick("tour_booking_panel_reserve", tour); handleRequest(); }}
               disabled={paying || requesting || !canContinue}
               className="w-full border border-ink/20 text-ink py-3.5 rounded-[2px] font-medium tracking-[0.15em] text-[11px] uppercase hover:border-gold hover:text-gold transition-colors disabled:opacity-40 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
             >
