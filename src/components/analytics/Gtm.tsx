@@ -2,10 +2,18 @@ import { useEffect, useRef } from "react";
 import { useRouter } from "@tanstack/react-router";
 import { GTM_ID, trackPageView } from "@/lib/analytics";
 
+/** Google Ads (gtag.js) conversion tag. */
+export const GOOGLE_ADS_ID = "AW-18245500144";
+
+export const gtagSrc = `https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ADS_ID}`;
+
+export const gtagInitScript = `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${GOOGLE_ADS_ID}');`;
+
 /** Inline GTM loader snippet (only rendered when VITE_GTM_ID is configured). */
 export const gtmHeadScript = GTM_ID
   ? `(function(w,d,s,l,i){if(w.__gtmLoaded)return;w.__gtmLoaded=true;w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','${GTM_ID}');`
   : "";
+
 
 export function GtmNoScript() {
   if (!GTM_ID) return null;
