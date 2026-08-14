@@ -5,6 +5,7 @@ import { useSiteBrand } from "@/lib/brand";
 import { useServerFn } from "@tanstack/react-start";
 import { subscribeToNewsletter } from "@/lib/subscribers.functions";
 import { toast } from "sonner";
+import { trackEmailClick, trackPhoneClick, trackWhatsappClick } from "@/lib/analytics";
 
 export function Footer() {
   const { brandName, business } = useSiteBrand();
@@ -79,8 +80,8 @@ export function Footer() {
           <h4 className="font-display font-semibold text-ink mb-5">Address</h4>
           <address className="not-italic text-sm text-body leading-relaxed space-y-2">
             <div>{business.addressLine1}<br />{business.addressLine2}</div>
-            <div><a href={`mailto:${business.contactEmail}`} className="hover:text-gold transition-colors">{business.contactEmail}</a></div>
-            <div><a href={`tel:${business.contactPhone.replace(/\s+/g, "")}`} className="hover:text-gold transition-colors">{business.contactPhone}</a></div>
+            <div><a href={`mailto:${business.contactEmail}`} onClick={() => trackEmailClick("footer")} className="hover:text-gold transition-colors">{business.contactEmail}</a></div>
+            <div><a href={`tel:${business.contactPhone.replace(/\s+/g, "")}`} onClick={() => trackPhoneClick("footer")} className="hover:text-gold transition-colors">{business.contactPhone}</a></div>
           </address>
         </div>
 
