@@ -168,6 +168,7 @@ function RootShell({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body>
+        <GtmNoScript />
         {children}
         <Scripts />
       </body>
@@ -181,6 +182,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
+        <GtmPageViews />
         <Outlet />
         <Toaster />
       </AuthProvider>
