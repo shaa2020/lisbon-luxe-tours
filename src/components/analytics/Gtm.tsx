@@ -5,9 +5,12 @@ import { GTM_ID, trackPageView } from "@/lib/analytics";
 /** Google Ads (gtag.js) conversion tag. */
 export const GOOGLE_ADS_ID = "AW-18245500144";
 
-export const gtagSrc = `https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ADS_ID}`;
+/** Google Analytics 4 measurement ID. */
+export const GA4_ID = "G-E710D91QL7";
 
-export const gtagInitScript = `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${GOOGLE_ADS_ID}');`;
+export const gtagSrc = `https://www.googletagmanager.com/gtag/js?id=${GA4_ID}`;
+
+export const gtagInitScript = `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${GA4_ID}');gtag('config','${GOOGLE_ADS_ID}');`;
 
 /** Inline GTM loader snippet (only rendered when VITE_GTM_ID is configured). */
 export const gtmHeadScript = GTM_ID
