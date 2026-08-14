@@ -9,7 +9,7 @@ import {
 } from "@tanstack/react-router";
 import { AuthProvider } from "@/lib/auth";
 import { Toaster } from "@/components/ui/sonner";
-import { gtmHeadScript, GtmNoScript, GtmPageViews } from "@/components/analytics/Gtm";
+import { gtmHeadScript, GtmNoScript, GtmPageViews, gtagSrc, gtagInitScript } from "@/components/analytics/Gtm";
 
 import appCss from "../styles.css?url";
 
