@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { trackWhatsappClick, trackPhoneClick, trackEmailClick, trackContactFormSubmit } from "@/lib/analytics";
 import { useState } from "react";
 import { z } from "zod";
 import { Nav } from "@/components/site/Nav";
@@ -60,6 +61,7 @@ function ContactPage() {
       return;
     }
     setErrors({});
+    trackContactFormSubmit("contact_page");
     setSent(true);
   };
 
@@ -97,12 +99,14 @@ function ContactPage() {
               label="WhatsApp · fastest"
               value={business.contactPhone}
               href={waHref}
+              onClick={() => trackWhatsappClick("contact_page")}
             />
             <ContactRow
               icon={<MailIco />}
               label="Email"
               value={business.contactEmail}
               href={`mailto:${business.contactEmail}`}
+              onClick={() => trackEmailClick("contact_page")}
             />
             <ContactRow
               icon={<PinIco />}
@@ -114,6 +118,7 @@ function ContactPage() {
               label="Phone · Direct"
               value={business.contactPhone}
               href={telHref}
+              onClick={() => trackPhoneClick("contact_page")}
             />
           </div>
 
@@ -217,8 +222,8 @@ function ContactPage() {
 }
 
 function ContactRow({
-  icon, label, value, href,
-}: { icon: React.ReactNode; label: string; value: string; href?: string }) {
+  icon, label, value, href, onClick,
+}: { icon: React.ReactNode; label: string; value: string; href?: string; onClick?: () => void }) {
   const content = (
     <div className="flex items-center gap-4 p-4 rounded-xl bg-white border border-border hover:border-gold transition-colors group">
       <div className="w-11 h-11 rounded-full bg-gold/10 text-gold flex items-center justify-center shrink-0 group-hover:bg-gold group-hover:text-white transition-colors">
@@ -230,7 +235,7 @@ function ContactRow({
       </div>
     </div>
   );
-  return href ? <a href={href}>{content}</a> : content;
+  return href ? <a href={href} onClick={onClick}>{content}</a> : content;
 }
 
 function Field({

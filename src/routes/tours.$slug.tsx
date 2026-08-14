@@ -11,6 +11,16 @@ import { StarRating } from "@/components/site/StarRating";
 import { useTour, useTours, tourPricing, mapTour } from "@/lib/cms";
 import { getPublishedTourBySlug } from "@/lib/cms.functions";
 import { aggregateReviews, useTourReviews } from "@/lib/reviews";
+import { useEffect } from "react";
+import { trackTourView, trackBookingCtaClick, trackWhatsappClick } from "@/lib/analytics";
+
+function TourViewTracker({ tour, value }: { tour: { id?: string | null; slug?: string | null; title?: string | null }; value: number }) {
+  useEffect(() => {
+    trackTourView(tour, value);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tour.slug]);
+  return null;
+}
 
 export const Route = createFileRoute("/tours/$slug")({
   loader: async ({ params }) => {
@@ -125,6 +135,7 @@ function TourPage() {
   return (
     <div className="min-h-screen bg-paper text-ink overflow-x-clip pb-24 lg:pb-0">
       <a id="top" />
+      <TourViewTracker tour={tour} value={pricing.current} />
       <Nav overlay />
 
       {/* Hero */}
@@ -250,6 +261,7 @@ function TourPage() {
           <TourBookingPanel tour={tour} />
           <a
             href="https://wa.me/351922024690"
+            onClick={() => trackWhatsappClick("tour_detail_concierge")}
             className="mt-3 w-full block text-center border border-border text-ink py-3.5 rounded-full text-[12px] font-semibold uppercase tracking-widest hover:border-gold hover:text-gold transition"
           >
             WhatsApp Concierge
@@ -294,7 +306,7 @@ function TourPage() {
           </div>
         </div>
         <button
-          onClick={() => setSheetOpen(true)}
+          onClick={() => { trackBookingCtaClick("tour_detail_mobile_bar", tour); setSheetOpen(true); }}
           className="flex-1 max-w-[220px] bg-gold text-white py-3.5 rounded-full text-[12px] font-semibold uppercase tracking-widest hover:bg-ink transition shadow-[0_6px_15px_rgba(43,182,247,0.35)]"
         >
           Check Availability →

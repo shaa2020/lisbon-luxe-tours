@@ -9,6 +9,7 @@ import {
 } from "@tanstack/react-router";
 import { AuthProvider } from "@/lib/auth";
 import { Toaster } from "@/components/ui/sonner";
+import { gtmHeadScript, GtmNoScript, GtmPageViews } from "@/components/analytics/Gtm";
 
 import appCss from "../styles.css?url";
 
@@ -113,6 +114,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "icon", type: "image/png", sizes: "512x512", href: "/app-icon-512.png" },
     ],
     scripts: [
+      ...(gtmHeadScript ? [{ children: gtmHeadScript }] : []),
       {
         type: "application/ld+json",
         children: JSON.stringify({
@@ -166,6 +168,7 @@ function RootShell({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body>
+        <GtmNoScript />
         {children}
         <Scripts />
       </body>
@@ -179,6 +182,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
+        <GtmPageViews />
         <Outlet />
         <Toaster />
       </AuthProvider>

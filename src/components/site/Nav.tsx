@@ -1,3 +1,4 @@
+import { trackPhoneClick } from "@/lib/analytics";
 import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { BrandLogo } from "@/components/site/BrandLogo";
@@ -32,7 +33,8 @@ export function Nav({ overlay = false }: { overlay?: boolean }) {
       <div className="hidden md:block bg-ink text-white">
         <div className="container-x flex items-center justify-between h-9 text-[11px]">
           <div className="flex items-center gap-6">
-            <a href="tel:+351922024690" className="flex items-center gap-2 hover:text-gold transition-colors">
+            <a href="tel:+351922024690"
+              onClick={() => trackPhoneClick("nav")} className="flex items-center gap-2 hover:text-gold transition-colors">
               <PhoneIcon /> +351 922 024 690
             </a>
             <span className="flex items-center gap-2 text-white/70">
@@ -125,6 +127,7 @@ export function Nav({ overlay = false }: { overlay?: boolean }) {
             </Link>
             <a
               href="tel:+351922024690"
+              onClick={() => trackPhoneClick("nav")}
               className="mt-2 inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full border border-border text-ink text-[12px] font-semibold uppercase tracking-widest"
             >
               <PhoneIcon /> +351 922 024 690

@@ -21,6 +21,7 @@ import { useSiteBrand } from "@/lib/brand";
 import { useServerFn } from "@tanstack/react-start";
 import { createCheckoutSession } from "@/lib/checkout.functions";
 import { toast } from "sonner";
+import { trackBookingStart, trackWhatsappClick } from "@/lib/analytics";
 import { PaypalWallet } from "@/components/site/PaypalWallet";
 
 const TIME_SLOTS = ["09:00", "10:30", "13:00", "15:00", "17:00", "18:30"];
@@ -87,6 +88,7 @@ export function BookingModal({
       `WhatsApp: ${phone}`,
     ].filter(Boolean).join("\n");
     const url = `https://wa.me/${waNumber}?text=${encodeURIComponent(lines)}`;
+    trackWhatsappClick("booking_modal");
     window.open(url, "_blank", "noopener,noreferrer");
     setSubmitted(true);
   };
@@ -105,6 +107,7 @@ export function BookingModal({
       return;
     }
     setPaying(true);
+    trackBookingStart(tour, total);
     try {
       const res = await checkoutFn({
         data: {
