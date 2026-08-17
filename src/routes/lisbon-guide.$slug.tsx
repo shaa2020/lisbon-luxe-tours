@@ -306,9 +306,9 @@ function GuideArticlePage() {
                 </h3>
                 <ul className="mt-4 space-y-2 text-sm text-white/75">
                   {CANCELLATION_POLICY_BULLETS.slice(0, 2).map((b) => (
-                    <li key={b} className="flex gap-2">
+                    <li key={b.text} className="flex gap-2">
                       <span className="text-gold">•</span>
-                      <span>{b}</span>
+                      <span>{b.text}</span>
                     </li>
                   ))}
                 </ul>

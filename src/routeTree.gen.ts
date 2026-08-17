@@ -33,6 +33,7 @@ import { Route as BookingSuccessRouteImport } from './routes/booking.success'
 import { Route as JournalIndexRouteImport } from './routes/journal.index'
 import { Route as JournalSlugRouteImport } from './routes/journal.$slug'
 import { Route as LisbonGuideIndexRouteImport } from './routes/lisbon-guide.index'
+import { Route as LisbonGuideSlugRouteImport } from './routes/lisbon-guide.$slug'
 import { Route as ToursIndexRouteImport } from './routes/tours.index'
 import { Route as ToursSlugRouteImport } from './routes/tours.$slug'
 import { Route as ToursCustomRouteImport } from './routes/tours.custom'
@@ -167,6 +168,11 @@ const LisbonGuideIndexRoute = LisbonGuideIndexRouteImport.update({
   path: '/lisbon-guide/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LisbonGuideSlugRoute = LisbonGuideSlugRouteImport.update({
+  id: '/lisbon-guide/$slug',
+  path: '/lisbon-guide/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ToursIndexRoute = ToursIndexRouteImport.update({
   id: '/tours/',
   path: '/tours/',
@@ -257,6 +263,7 @@ export interface FileRoutesByFullPath {
   '/booking/manage': typeof BookingManageRoute
   '/booking/success': typeof BookingSuccessRoute
   '/journal/$slug': typeof JournalSlugRoute
+  '/lisbon-guide/$slug': typeof LisbonGuideSlugRoute
   '/tours/$slug': typeof ToursSlugRoute
   '/tours/custom': typeof ToursCustomRoute
   '/tours/pricing-guide': typeof ToursPricingGuideRoute
@@ -296,6 +303,7 @@ export interface FileRoutesByTo {
   '/booking/manage': typeof BookingManageRoute
   '/booking/success': typeof BookingSuccessRoute
   '/journal/$slug': typeof JournalSlugRoute
+  '/lisbon-guide/$slug': typeof LisbonGuideSlugRoute
   '/tours/$slug': typeof ToursSlugRoute
   '/tours/custom': typeof ToursCustomRoute
   '/tours/pricing-guide': typeof ToursPricingGuideRoute
@@ -336,6 +344,7 @@ export interface FileRoutesById {
   '/booking/manage': typeof BookingManageRoute
   '/booking/success': typeof BookingSuccessRoute
   '/journal/$slug': typeof JournalSlugRoute
+  '/lisbon-guide/$slug': typeof LisbonGuideSlugRoute
   '/tours/$slug': typeof ToursSlugRoute
   '/tours/custom': typeof ToursCustomRoute
   '/tours/pricing-guide': typeof ToursPricingGuideRoute
@@ -377,6 +386,7 @@ export interface FileRouteTypes {
     | '/booking/manage'
     | '/booking/success'
     | '/journal/$slug'
+    | '/lisbon-guide/$slug'
     | '/tours/$slug'
     | '/tours/custom'
     | '/tours/pricing-guide'
@@ -416,6 +426,7 @@ export interface FileRouteTypes {
     | '/booking/manage'
     | '/booking/success'
     | '/journal/$slug'
+    | '/lisbon-guide/$slug'
     | '/tours/$slug'
     | '/tours/custom'
     | '/tours/pricing-guide'
@@ -455,6 +466,7 @@ export interface FileRouteTypes {
     | '/booking/manage'
     | '/booking/success'
     | '/journal/$slug'
+    | '/lisbon-guide/$slug'
     | '/tours/$slug'
     | '/tours/custom'
     | '/tours/pricing-guide'
@@ -495,6 +507,7 @@ export interface RootRouteChildren {
   BookingManageRoute: typeof BookingManageRoute
   BookingSuccessRoute: typeof BookingSuccessRoute
   JournalSlugRoute: typeof JournalSlugRoute
+  LisbonGuideSlugRoute: typeof LisbonGuideSlugRoute
   ToursSlugRoute: typeof ToursSlugRoute
   ToursCustomRoute: typeof ToursCustomRoute
   ToursPricingGuideRoute: typeof ToursPricingGuideRoute
@@ -683,6 +696,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LisbonGuideIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/lisbon-guide/$slug': {
+      id: '/lisbon-guide/$slug'
+      path: '/lisbon-guide/$slug'
+      fullPath: '/lisbon-guide/$slug'
+      preLoaderRoute: typeof LisbonGuideSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/tours/': {
       id: '/tours/'
       path: '/tours'
@@ -799,6 +819,7 @@ const rootRouteChildren: RootRouteChildren = {
   BookingManageRoute: BookingManageRoute,
   BookingSuccessRoute: BookingSuccessRoute,
   JournalSlugRoute: JournalSlugRoute,
+  LisbonGuideSlugRoute: LisbonGuideSlugRoute,
   ToursSlugRoute: ToursSlugRoute,
   ToursCustomRoute: ToursCustomRoute,
   ToursPricingGuideRoute: ToursPricingGuideRoute,
