@@ -31,6 +31,7 @@ export const Route = createFileRoute("/sitemap.xml")({
           { path: "/", changefreq: "weekly", priority: "1.0" },
           { path: "/tours", changefreq: "weekly", priority: "0.9" },
           { path: "/journal", changefreq: "weekly", priority: "0.8" },
+          { path: "/lisbon-guide", changefreq: "weekly", priority: "0.9" },
           { path: "/about", changefreq: "monthly", priority: "0.7" },
           { path: "/faq", changefreq: "monthly", priority: "0.7" },
           { path: "/tours/custom", changefreq: "monthly", priority: "0.8" },
@@ -55,6 +56,17 @@ export const Route = createFileRoute("/sitemap.xml")({
             path: `/tours/${t.slug}`,
             changefreq: "monthly" as const,
             priority: "0.8",
+          })),
+          ...guideCategories.map((c) => ({
+            path: `/lisbon-guide/category/${c.slug}`,
+            changefreq: "weekly" as const,
+            priority: "0.7",
+          })),
+          ...guides.map((g) => ({
+            path: `/lisbon-guide/${g.slug}`,
+            changefreq: "monthly" as const,
+            priority: "0.8",
+            lastmod: formatDate(g.content_updated_at ?? g.updated_at),
           })),
           ...blogPosts.map((p) => ({
             path: `/journal/${p.slug}`,
