@@ -767,6 +767,331 @@ export type Database = {
         }
         Relationships: []
       }
+      travel_categories: {
+        Row: {
+          active: boolean
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string | null
+          meta_description: string | null
+          name: string
+          seo_title: string | null
+          slug: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          meta_description?: string | null
+          name: string
+          seo_title?: string | null
+          slug: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          meta_description?: string | null
+          name?: string
+          seo_title?: string | null
+          slug?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      travel_guide_faqs: {
+        Row: {
+          answer: string
+          created_at: string
+          guide_id: string
+          id: string
+          question: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          answer: string
+          created_at?: string
+          guide_id: string
+          id?: string
+          question: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          answer?: string
+          created_at?: string
+          guide_id?: string
+          id?: string
+          question?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "travel_guide_faqs_guide_id_fkey"
+            columns: ["guide_id"]
+            isOneToOne: false
+            referencedRelation: "travel_guides"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      travel_guide_redirects: {
+        Row: {
+          created_at: string
+          from_path: string
+          id: string
+          redirect_type: number
+          to_path: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          from_path: string
+          id?: string
+          redirect_type?: number
+          to_path: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          from_path?: string
+          id?: string
+          redirect_type?: number
+          to_path?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      travel_guide_related_articles: {
+        Row: {
+          guide_id: string
+          related_guide_id: string
+          sort_order: number
+        }
+        Insert: {
+          guide_id: string
+          related_guide_id: string
+          sort_order?: number
+        }
+        Update: {
+          guide_id?: string
+          related_guide_id?: string
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "travel_guide_related_articles_guide_id_fkey"
+            columns: ["guide_id"]
+            isOneToOne: false
+            referencedRelation: "travel_guides"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "travel_guide_related_articles_related_guide_id_fkey"
+            columns: ["related_guide_id"]
+            isOneToOne: false
+            referencedRelation: "travel_guides"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      travel_guide_related_tours: {
+        Row: {
+          guide_id: string
+          sort_order: number
+          tour_id: string
+        }
+        Insert: {
+          guide_id: string
+          sort_order?: number
+          tour_id: string
+        }
+        Update: {
+          guide_id?: string
+          sort_order?: number
+          tour_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "travel_guide_related_tours_guide_id_fkey"
+            columns: ["guide_id"]
+            isOneToOne: false
+            referencedRelation: "travel_guides"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "travel_guide_related_tours_tour_id_fkey"
+            columns: ["tour_id"]
+            isOneToOne: false
+            referencedRelation: "tours"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      travel_guide_tags: {
+        Row: {
+          guide_id: string
+          tag_id: string
+        }
+        Insert: {
+          guide_id: string
+          tag_id: string
+        }
+        Update: {
+          guide_id?: string
+          tag_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "travel_guide_tags_guide_id_fkey"
+            columns: ["guide_id"]
+            isOneToOne: false
+            referencedRelation: "travel_guides"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "travel_guide_tags_tag_id_fkey"
+            columns: ["tag_id"]
+            isOneToOne: false
+            referencedRelation: "travel_tags"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      travel_guides: {
+        Row: {
+          author: string
+          canonical_url: string | null
+          category_id: string | null
+          content: Json
+          content_updated_at: string | null
+          created_at: string
+          excerpt: string
+          featured: boolean
+          featured_order: number
+          hero_image_alt: string | null
+          hero_image_caption: string | null
+          hero_image_url: string | null
+          id: string
+          locale: string
+          meta_description: string | null
+          og_description: string | null
+          og_image: string | null
+          og_title: string | null
+          published_at: string | null
+          quick_answer: string | null
+          reading_time: number
+          robots: string
+          seo_title: string | null
+          slug: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          author?: string
+          canonical_url?: string | null
+          category_id?: string | null
+          content?: Json
+          content_updated_at?: string | null
+          created_at?: string
+          excerpt?: string
+          featured?: boolean
+          featured_order?: number
+          hero_image_alt?: string | null
+          hero_image_caption?: string | null
+          hero_image_url?: string | null
+          id?: string
+          locale?: string
+          meta_description?: string | null
+          og_description?: string | null
+          og_image?: string | null
+          og_title?: string | null
+          published_at?: string | null
+          quick_answer?: string | null
+          reading_time?: number
+          robots?: string
+          seo_title?: string | null
+          slug: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          author?: string
+          canonical_url?: string | null
+          category_id?: string | null
+          content?: Json
+          content_updated_at?: string | null
+          created_at?: string
+          excerpt?: string
+          featured?: boolean
+          featured_order?: number
+          hero_image_alt?: string | null
+          hero_image_caption?: string | null
+          hero_image_url?: string | null
+          id?: string
+          locale?: string
+          meta_description?: string | null
+          og_description?: string | null
+          og_image?: string | null
+          og_title?: string | null
+          published_at?: string | null
+          quick_answer?: string | null
+          reading_time?: number
+          robots?: string
+          seo_title?: string | null
+          slug?: string
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "travel_guides_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "travel_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      travel_tags: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string

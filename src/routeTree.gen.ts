@@ -32,6 +32,8 @@ import { Route as BookingManageRouteImport } from './routes/booking.manage'
 import { Route as BookingSuccessRouteImport } from './routes/booking.success'
 import { Route as JournalIndexRouteImport } from './routes/journal.index'
 import { Route as JournalSlugRouteImport } from './routes/journal.$slug'
+import { Route as LisbonGuideIndexRouteImport } from './routes/lisbon-guide.index'
+import { Route as LisbonGuideSlugRouteImport } from './routes/lisbon-guide.$slug'
 import { Route as ToursIndexRouteImport } from './routes/tours.index'
 import { Route as ToursSlugRouteImport } from './routes/tours.$slug'
 import { Route as ToursCustomRouteImport } from './routes/tours.custom'
@@ -41,6 +43,7 @@ import { Route as AdminBlogIdRouteImport } from './routes/admin.blog.$id'
 import { Route as AdminToursIndexRouteImport } from './routes/admin.tours.index'
 import { Route as AdminToursIdRouteImport } from './routes/admin.tours.$id'
 import { Route as ApiPublicBookingsRouteImport } from './routes/api/public/bookings'
+import { Route as LisbonGuideCategorySlugRouteImport } from './routes/lisbon-guide.category.$slug'
 import { Route as ApiPublicPaymentsMollieRouteImport } from './routes/api/public/payments/mollie'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
@@ -160,6 +163,16 @@ const JournalSlugRoute = JournalSlugRouteImport.update({
   path: '/journal/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LisbonGuideIndexRoute = LisbonGuideIndexRouteImport.update({
+  id: '/lisbon-guide/',
+  path: '/lisbon-guide/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LisbonGuideSlugRoute = LisbonGuideSlugRouteImport.update({
+  id: '/lisbon-guide/$slug',
+  path: '/lisbon-guide/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ToursIndexRoute = ToursIndexRouteImport.update({
   id: '/tours/',
   path: '/tours/',
@@ -205,6 +218,11 @@ const ApiPublicBookingsRoute = ApiPublicBookingsRouteImport.update({
   path: '/api/public/bookings',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LisbonGuideCategorySlugRoute = LisbonGuideCategorySlugRouteImport.update({
+  id: '/lisbon-guide/category/$slug',
+  path: '/lisbon-guide/category/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicPaymentsMollieRoute = ApiPublicPaymentsMollieRouteImport.update({
   id: '/api/public/payments/mollie',
   path: '/api/public/payments/mollie',
@@ -245,15 +263,18 @@ export interface FileRoutesByFullPath {
   '/booking/manage': typeof BookingManageRoute
   '/booking/success': typeof BookingSuccessRoute
   '/journal/$slug': typeof JournalSlugRoute
+  '/lisbon-guide/$slug': typeof LisbonGuideSlugRoute
   '/tours/$slug': typeof ToursSlugRoute
   '/tours/custom': typeof ToursCustomRoute
   '/tours/pricing-guide': typeof ToursPricingGuideRoute
   '/admin/': typeof AdminIndexRoute
   '/journal/': typeof JournalIndexRoute
+  '/lisbon-guide/': typeof LisbonGuideIndexRoute
   '/tours/': typeof ToursIndexRoute
   '/admin/blog/$id': typeof AdminBlogIdRoute
   '/admin/tours/$id': typeof AdminToursIdRoute
   '/api/public/bookings': typeof ApiPublicBookingsRoute
+  '/lisbon-guide/category/$slug': typeof LisbonGuideCategorySlugRoute
   '/admin/blog/': typeof AdminBlogIndexRoute
   '/admin/tours/': typeof AdminToursIndexRoute
   '/api/public/payments/mollie': typeof ApiPublicPaymentsMollieRoute
@@ -282,15 +303,18 @@ export interface FileRoutesByTo {
   '/booking/manage': typeof BookingManageRoute
   '/booking/success': typeof BookingSuccessRoute
   '/journal/$slug': typeof JournalSlugRoute
+  '/lisbon-guide/$slug': typeof LisbonGuideSlugRoute
   '/tours/$slug': typeof ToursSlugRoute
   '/tours/custom': typeof ToursCustomRoute
   '/tours/pricing-guide': typeof ToursPricingGuideRoute
   '/admin': typeof AdminIndexRoute
   '/journal': typeof JournalIndexRoute
+  '/lisbon-guide': typeof LisbonGuideIndexRoute
   '/tours': typeof ToursIndexRoute
   '/admin/blog/$id': typeof AdminBlogIdRoute
   '/admin/tours/$id': typeof AdminToursIdRoute
   '/api/public/bookings': typeof ApiPublicBookingsRoute
+  '/lisbon-guide/category/$slug': typeof LisbonGuideCategorySlugRoute
   '/admin/blog': typeof AdminBlogIndexRoute
   '/admin/tours': typeof AdminToursIndexRoute
   '/api/public/payments/mollie': typeof ApiPublicPaymentsMollieRoute
@@ -320,15 +344,18 @@ export interface FileRoutesById {
   '/booking/manage': typeof BookingManageRoute
   '/booking/success': typeof BookingSuccessRoute
   '/journal/$slug': typeof JournalSlugRoute
+  '/lisbon-guide/$slug': typeof LisbonGuideSlugRoute
   '/tours/$slug': typeof ToursSlugRoute
   '/tours/custom': typeof ToursCustomRoute
   '/tours/pricing-guide': typeof ToursPricingGuideRoute
   '/admin/': typeof AdminIndexRoute
   '/journal/': typeof JournalIndexRoute
+  '/lisbon-guide/': typeof LisbonGuideIndexRoute
   '/tours/': typeof ToursIndexRoute
   '/admin/blog/$id': typeof AdminBlogIdRoute
   '/admin/tours/$id': typeof AdminToursIdRoute
   '/api/public/bookings': typeof ApiPublicBookingsRoute
+  '/lisbon-guide/category/$slug': typeof LisbonGuideCategorySlugRoute
   '/admin/blog/': typeof AdminBlogIndexRoute
   '/admin/tours/': typeof AdminToursIndexRoute
   '/api/public/payments/mollie': typeof ApiPublicPaymentsMollieRoute
@@ -359,15 +386,18 @@ export interface FileRouteTypes {
     | '/booking/manage'
     | '/booking/success'
     | '/journal/$slug'
+    | '/lisbon-guide/$slug'
     | '/tours/$slug'
     | '/tours/custom'
     | '/tours/pricing-guide'
     | '/admin/'
     | '/journal/'
+    | '/lisbon-guide/'
     | '/tours/'
     | '/admin/blog/$id'
     | '/admin/tours/$id'
     | '/api/public/bookings'
+    | '/lisbon-guide/category/$slug'
     | '/admin/blog/'
     | '/admin/tours/'
     | '/api/public/payments/mollie'
@@ -396,15 +426,18 @@ export interface FileRouteTypes {
     | '/booking/manage'
     | '/booking/success'
     | '/journal/$slug'
+    | '/lisbon-guide/$slug'
     | '/tours/$slug'
     | '/tours/custom'
     | '/tours/pricing-guide'
     | '/admin'
     | '/journal'
+    | '/lisbon-guide'
     | '/tours'
     | '/admin/blog/$id'
     | '/admin/tours/$id'
     | '/api/public/bookings'
+    | '/lisbon-guide/category/$slug'
     | '/admin/blog'
     | '/admin/tours'
     | '/api/public/payments/mollie'
@@ -433,15 +466,18 @@ export interface FileRouteTypes {
     | '/booking/manage'
     | '/booking/success'
     | '/journal/$slug'
+    | '/lisbon-guide/$slug'
     | '/tours/$slug'
     | '/tours/custom'
     | '/tours/pricing-guide'
     | '/admin/'
     | '/journal/'
+    | '/lisbon-guide/'
     | '/tours/'
     | '/admin/blog/$id'
     | '/admin/tours/$id'
     | '/api/public/bookings'
+    | '/lisbon-guide/category/$slug'
     | '/admin/blog/'
     | '/admin/tours/'
     | '/api/public/payments/mollie'
@@ -471,15 +507,18 @@ export interface RootRouteChildren {
   BookingManageRoute: typeof BookingManageRoute
   BookingSuccessRoute: typeof BookingSuccessRoute
   JournalSlugRoute: typeof JournalSlugRoute
+  LisbonGuideSlugRoute: typeof LisbonGuideSlugRoute
   ToursSlugRoute: typeof ToursSlugRoute
   ToursCustomRoute: typeof ToursCustomRoute
   ToursPricingGuideRoute: typeof ToursPricingGuideRoute
   AdminIndexRoute: typeof AdminIndexRoute
   JournalIndexRoute: typeof JournalIndexRoute
+  LisbonGuideIndexRoute: typeof LisbonGuideIndexRoute
   ToursIndexRoute: typeof ToursIndexRoute
   AdminBlogIdRoute: typeof AdminBlogIdRoute
   AdminToursIdRoute: typeof AdminToursIdRoute
   ApiPublicBookingsRoute: typeof ApiPublicBookingsRoute
+  LisbonGuideCategorySlugRoute: typeof LisbonGuideCategorySlugRoute
   AdminBlogIndexRoute: typeof AdminBlogIndexRoute
   AdminToursIndexRoute: typeof AdminToursIndexRoute
   ApiPublicPaymentsMollieRoute: typeof ApiPublicPaymentsMollieRoute
@@ -650,6 +689,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof JournalSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/lisbon-guide/': {
+      id: '/lisbon-guide/'
+      path: '/lisbon-guide'
+      fullPath: '/lisbon-guide/'
+      preLoaderRoute: typeof LisbonGuideIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lisbon-guide/$slug': {
+      id: '/lisbon-guide/$slug'
+      path: '/lisbon-guide/$slug'
+      fullPath: '/lisbon-guide/$slug'
+      preLoaderRoute: typeof LisbonGuideSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/tours/': {
       id: '/tours/'
       path: '/tours'
@@ -713,6 +766,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicBookingsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/lisbon-guide/category/$slug': {
+      id: '/lisbon-guide/category/$slug'
+      path: '/lisbon-guide/category/$slug'
+      fullPath: '/lisbon-guide/category/$slug'
+      preLoaderRoute: typeof LisbonGuideCategorySlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/payments/mollie': {
       id: '/api/public/payments/mollie'
       path: '/api/public/payments/mollie'
@@ -759,15 +819,18 @@ const rootRouteChildren: RootRouteChildren = {
   BookingManageRoute: BookingManageRoute,
   BookingSuccessRoute: BookingSuccessRoute,
   JournalSlugRoute: JournalSlugRoute,
+  LisbonGuideSlugRoute: LisbonGuideSlugRoute,
   ToursSlugRoute: ToursSlugRoute,
   ToursCustomRoute: ToursCustomRoute,
   ToursPricingGuideRoute: ToursPricingGuideRoute,
   AdminIndexRoute: AdminIndexRoute,
   JournalIndexRoute: JournalIndexRoute,
+  LisbonGuideIndexRoute: LisbonGuideIndexRoute,
   ToursIndexRoute: ToursIndexRoute,
   AdminBlogIdRoute: AdminBlogIdRoute,
   AdminToursIdRoute: AdminToursIdRoute,
   ApiPublicBookingsRoute: ApiPublicBookingsRoute,
+  LisbonGuideCategorySlugRoute: LisbonGuideCategorySlugRoute,
   AdminBlogIndexRoute: AdminBlogIndexRoute,
   AdminToursIndexRoute: AdminToursIndexRoute,
   ApiPublicPaymentsMollieRoute: ApiPublicPaymentsMollieRoute,
