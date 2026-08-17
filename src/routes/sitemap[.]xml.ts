@@ -15,11 +15,17 @@ export const Route = createFileRoute("/sitemap.xml")({
     handlers: {
       GET: async () => {
         const { fetchPublishedTours, fetchPublishedBlogPosts } = await import("@/lib/cms.server");
+        const { fetchPublishedGuideSlugs, fetchGuideCategories } = await import(
+          "@/lib/travel-guide.server"
+        );
 
-        const [tours, blogPosts] = await Promise.all([
+        const [tours, blogPosts, guides, guideCategories] = await Promise.all([
           fetchPublishedTours(),
           fetchPublishedBlogPosts(),
+          fetchPublishedGuideSlugs(),
+          fetchGuideCategories(),
         ]);
+
 
         const entries: SitemapEntry[] = [
           { path: "/", changefreq: "weekly", priority: "1.0" },
