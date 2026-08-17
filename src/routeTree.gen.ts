@@ -32,6 +32,7 @@ import { Route as BookingManageRouteImport } from './routes/booking.manage'
 import { Route as BookingSuccessRouteImport } from './routes/booking.success'
 import { Route as JournalIndexRouteImport } from './routes/journal.index'
 import { Route as JournalSlugRouteImport } from './routes/journal.$slug'
+import { Route as LisbonGuideIndexRouteImport } from './routes/lisbon-guide.index'
 import { Route as ToursIndexRouteImport } from './routes/tours.index'
 import { Route as ToursSlugRouteImport } from './routes/tours.$slug'
 import { Route as ToursCustomRouteImport } from './routes/tours.custom'
@@ -160,6 +161,11 @@ const JournalSlugRoute = JournalSlugRouteImport.update({
   path: '/journal/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LisbonGuideIndexRoute = LisbonGuideIndexRouteImport.update({
+  id: '/lisbon-guide/',
+  path: '/lisbon-guide/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ToursIndexRoute = ToursIndexRouteImport.update({
   id: '/tours/',
   path: '/tours/',
@@ -250,6 +256,7 @@ export interface FileRoutesByFullPath {
   '/tours/pricing-guide': typeof ToursPricingGuideRoute
   '/admin/': typeof AdminIndexRoute
   '/journal/': typeof JournalIndexRoute
+  '/lisbon-guide/': typeof LisbonGuideIndexRoute
   '/tours/': typeof ToursIndexRoute
   '/admin/blog/$id': typeof AdminBlogIdRoute
   '/admin/tours/$id': typeof AdminToursIdRoute
@@ -287,6 +294,7 @@ export interface FileRoutesByTo {
   '/tours/pricing-guide': typeof ToursPricingGuideRoute
   '/admin': typeof AdminIndexRoute
   '/journal': typeof JournalIndexRoute
+  '/lisbon-guide': typeof LisbonGuideIndexRoute
   '/tours': typeof ToursIndexRoute
   '/admin/blog/$id': typeof AdminBlogIdRoute
   '/admin/tours/$id': typeof AdminToursIdRoute
@@ -325,6 +333,7 @@ export interface FileRoutesById {
   '/tours/pricing-guide': typeof ToursPricingGuideRoute
   '/admin/': typeof AdminIndexRoute
   '/journal/': typeof JournalIndexRoute
+  '/lisbon-guide/': typeof LisbonGuideIndexRoute
   '/tours/': typeof ToursIndexRoute
   '/admin/blog/$id': typeof AdminBlogIdRoute
   '/admin/tours/$id': typeof AdminToursIdRoute
@@ -364,6 +373,7 @@ export interface FileRouteTypes {
     | '/tours/pricing-guide'
     | '/admin/'
     | '/journal/'
+    | '/lisbon-guide/'
     | '/tours/'
     | '/admin/blog/$id'
     | '/admin/tours/$id'
@@ -401,6 +411,7 @@ export interface FileRouteTypes {
     | '/tours/pricing-guide'
     | '/admin'
     | '/journal'
+    | '/lisbon-guide'
     | '/tours'
     | '/admin/blog/$id'
     | '/admin/tours/$id'
@@ -438,6 +449,7 @@ export interface FileRouteTypes {
     | '/tours/pricing-guide'
     | '/admin/'
     | '/journal/'
+    | '/lisbon-guide/'
     | '/tours/'
     | '/admin/blog/$id'
     | '/admin/tours/$id'
@@ -476,6 +488,7 @@ export interface RootRouteChildren {
   ToursPricingGuideRoute: typeof ToursPricingGuideRoute
   AdminIndexRoute: typeof AdminIndexRoute
   JournalIndexRoute: typeof JournalIndexRoute
+  LisbonGuideIndexRoute: typeof LisbonGuideIndexRoute
   ToursIndexRoute: typeof ToursIndexRoute
   AdminBlogIdRoute: typeof AdminBlogIdRoute
   AdminToursIdRoute: typeof AdminToursIdRoute
@@ -650,6 +663,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof JournalSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/lisbon-guide/': {
+      id: '/lisbon-guide/'
+      path: '/lisbon-guide'
+      fullPath: '/lisbon-guide/'
+      preLoaderRoute: typeof LisbonGuideIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/tours/': {
       id: '/tours/'
       path: '/tours'
@@ -764,6 +784,7 @@ const rootRouteChildren: RootRouteChildren = {
   ToursPricingGuideRoute: ToursPricingGuideRoute,
   AdminIndexRoute: AdminIndexRoute,
   JournalIndexRoute: JournalIndexRoute,
+  LisbonGuideIndexRoute: LisbonGuideIndexRoute,
   ToursIndexRoute: ToursIndexRoute,
   AdminBlogIdRoute: AdminBlogIdRoute,
   AdminToursIdRoute: AdminToursIdRoute,
