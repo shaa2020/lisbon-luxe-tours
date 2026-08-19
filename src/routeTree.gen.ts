@@ -40,6 +40,7 @@ import { Route as ToursCustomRouteImport } from './routes/tours.custom'
 import { Route as ToursPricingGuideRouteImport } from './routes/tours.pricing-guide'
 import { Route as AdminBlogIndexRouteImport } from './routes/admin.blog.index'
 import { Route as AdminBlogIdRouteImport } from './routes/admin.blog.$id'
+import { Route as AdminGuideIndexRouteImport } from './routes/admin.guide.index'
 import { Route as AdminToursIndexRouteImport } from './routes/admin.tours.index'
 import { Route as AdminToursIdRouteImport } from './routes/admin.tours.$id'
 import { Route as ApiPublicBookingsRouteImport } from './routes/api/public/bookings'
@@ -203,6 +204,11 @@ const AdminBlogIdRoute = AdminBlogIdRouteImport.update({
   path: '/admin/blog/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminGuideIndexRoute = AdminGuideIndexRouteImport.update({
+  id: '/admin/guide/',
+  path: '/admin/guide/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminToursIndexRoute = AdminToursIndexRouteImport.update({
   id: '/admin/tours/',
   path: '/admin/tours/',
@@ -276,6 +282,7 @@ export interface FileRoutesByFullPath {
   '/api/public/bookings': typeof ApiPublicBookingsRoute
   '/lisbon-guide/category/$slug': typeof LisbonGuideCategorySlugRoute
   '/admin/blog/': typeof AdminBlogIndexRoute
+  '/admin/guide/': typeof AdminGuideIndexRoute
   '/admin/tours/': typeof AdminToursIndexRoute
   '/api/public/payments/mollie': typeof ApiPublicPaymentsMollieRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
@@ -316,6 +323,7 @@ export interface FileRoutesByTo {
   '/api/public/bookings': typeof ApiPublicBookingsRoute
   '/lisbon-guide/category/$slug': typeof LisbonGuideCategorySlugRoute
   '/admin/blog': typeof AdminBlogIndexRoute
+  '/admin/guide': typeof AdminGuideIndexRoute
   '/admin/tours': typeof AdminToursIndexRoute
   '/api/public/payments/mollie': typeof ApiPublicPaymentsMollieRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
@@ -357,6 +365,7 @@ export interface FileRoutesById {
   '/api/public/bookings': typeof ApiPublicBookingsRoute
   '/lisbon-guide/category/$slug': typeof LisbonGuideCategorySlugRoute
   '/admin/blog/': typeof AdminBlogIndexRoute
+  '/admin/guide/': typeof AdminGuideIndexRoute
   '/admin/tours/': typeof AdminToursIndexRoute
   '/api/public/payments/mollie': typeof ApiPublicPaymentsMollieRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
@@ -399,6 +408,7 @@ export interface FileRouteTypes {
     | '/api/public/bookings'
     | '/lisbon-guide/category/$slug'
     | '/admin/blog/'
+    | '/admin/guide/'
     | '/admin/tours/'
     | '/api/public/payments/mollie'
     | '/api/public/payments/webhook'
@@ -439,6 +449,7 @@ export interface FileRouteTypes {
     | '/api/public/bookings'
     | '/lisbon-guide/category/$slug'
     | '/admin/blog'
+    | '/admin/guide'
     | '/admin/tours'
     | '/api/public/payments/mollie'
     | '/api/public/payments/webhook'
@@ -479,6 +490,7 @@ export interface FileRouteTypes {
     | '/api/public/bookings'
     | '/lisbon-guide/category/$slug'
     | '/admin/blog/'
+    | '/admin/guide/'
     | '/admin/tours/'
     | '/api/public/payments/mollie'
     | '/api/public/payments/webhook'
@@ -520,6 +532,7 @@ export interface RootRouteChildren {
   ApiPublicBookingsRoute: typeof ApiPublicBookingsRoute
   LisbonGuideCategorySlugRoute: typeof LisbonGuideCategorySlugRoute
   AdminBlogIndexRoute: typeof AdminBlogIndexRoute
+  AdminGuideIndexRoute: typeof AdminGuideIndexRoute
   AdminToursIndexRoute: typeof AdminToursIndexRoute
   ApiPublicPaymentsMollieRoute: typeof ApiPublicPaymentsMollieRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
@@ -745,6 +758,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminBlogIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/guide/': {
+      id: '/admin/guide/'
+      path: '/admin/guide'
+      fullPath: '/admin/guide/'
+      preLoaderRoute: typeof AdminGuideIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/tours/': {
       id: '/admin/tours/'
       path: '/admin/tours'
@@ -832,6 +852,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicBookingsRoute: ApiPublicBookingsRoute,
   LisbonGuideCategorySlugRoute: LisbonGuideCategorySlugRoute,
   AdminBlogIndexRoute: AdminBlogIndexRoute,
+  AdminGuideIndexRoute: AdminGuideIndexRoute,
   AdminToursIndexRoute: AdminToursIndexRoute,
   ApiPublicPaymentsMollieRoute: ApiPublicPaymentsMollieRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,

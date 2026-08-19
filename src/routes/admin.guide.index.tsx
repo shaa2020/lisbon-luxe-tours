@@ -119,7 +119,9 @@ function AdminGuideListPage() {
       featured: false,
       published_at: null,
     };
-    const { error: insErr } = await supabase.from("travel_guides").insert(copy as never);
+    const { error: insErr } = await supabase
+      .from("travel_guides")
+      .insert(copy as unknown as never);
     if (insErr) return toast.error(insErr.message);
     toast.success("Duplicated");
     refresh();
