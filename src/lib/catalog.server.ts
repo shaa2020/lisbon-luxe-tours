@@ -2,8 +2,8 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
 import type { PaymentLineItem } from "./payments.server";
 
-/** Surcharge per guest above the first two, mirrored by the "Extra guest" product. */
-export const EXTRA_GUEST_FEE_CENTS = 3500;
+/** Every booking is priced per person and needs at least this many guests. */
+export const MIN_GUESTS = 2;
 
 /** Human-readable price id for a tour's base price in the payment provider. */
 export function tourPriceId(slug: string): string {
@@ -11,25 +11,25 @@ export function tourPriceId(slug: string): string {
 }
 
 /**
- * Split a booking total into catalog line items (base tour + add-ons) so each
- * one is reported against its own product. Falls back to a single line when the
- * numbers don't add up, e.g. after a manual price override.
+ * Split a booking total into catalog line items (per-person tour + add-ons) so
+ * each one is reported against its own product. Falls back to a single line when
+ * the numbers don't add up, e.g. after a manual price override.
  */
 export function buildTourLineItems(input: {
   tourSlug: string;
   tourTitle: string;
   guests: number;
   totalCents: number;
+  /** Per-person rate in cents. */
   baseCents: number | null;
   pickupFeeCents: number;
   pickupRequested: boolean;
 }): PaymentLineItem[] {
-  const extrasQty = Math.max(0, input.guests - 2);
-  const extrasCents = extrasQty * EXTRA_GUEST_FEE_CENTS;
+  const guests = Math.max(MIN_GUESTS, input.guests);
   const pickupCents = input.pickupRequested ? Math.max(0, input.pickupFeeCents) : 0;
-  const base = input.baseCents ?? input.totalCents - extrasCents - pickupCents;
+  const perPerson = input.baseCents ?? Math.round((input.totalCents - pickupCents) / guests);
 
-  if (base <= 0 || base + extrasCents + pickupCents !== input.totalCents) {
+  if (perPerson <= 0 || perPerson * guests + pickupCents !== input.totalCents) {
     return [
       {
         priceId: tourPriceId(input.tourSlug),
@@ -41,16 +41,13 @@ export function buildTourLineItems(input: {
   }
 
   const items: PaymentLineItem[] = [
-    { priceId: tourPriceId(input.tourSlug), name: input.tourTitle, unitAmountCents: base, quantity: 1 },
+    {
+      priceId: tourPriceId(input.tourSlug),
+      name: `${input.tourTitle} (per person)`,
+      unitAmountCents: perPerson,
+      quantity: guests,
+    },
   ];
-  if (extrasQty > 0) {
-    items.push({
-      priceId: "tour_extra_guest_fee",
-      name: "Extra guest",
-      unitAmountCents: EXTRA_GUEST_FEE_CENTS,
-      quantity: extrasQty,
-    });
-  }
   if (pickupCents > 0) {
     items.push({
       priceId: "tour_hotel_pickup_fee",
