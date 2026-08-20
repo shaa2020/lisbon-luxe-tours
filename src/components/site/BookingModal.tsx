@@ -351,8 +351,14 @@ export function BookingModal({
                       ? `€${pricing.current} per person × ${q.guests} guests`
                       : "Private transfer"}
                   </span>
-                  <span>€{total}</span>
+                  <span>€{q.guestsSubtotal.toFixed(2)}</span>
                 </div>
+                {q.groupDiscount > 0 && (
+                  <div className="flex justify-between text-xs text-gold">
+                    <span>Group discount ({q.guests} guests, −{q.tierPct}%)</span>
+                    <span>−€{q.groupDiscount.toFixed(2)}</span>
+                  </div>
+                )}
                 <div className="flex items-end justify-between">
                   <div>
                     <p className="text-[10px] uppercase tracking-widest text-body">Est. total</p>
