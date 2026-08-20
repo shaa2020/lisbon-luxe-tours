@@ -225,7 +225,25 @@ export function ReviewsSection({
                 {r.travel_date && (
                   <span className="text-body"> · travelled {format(new Date(r.travel_date), "MMM yyyy")}</span>
                 )}
+                {r.source && r.source !== "direct" && (
+                  <span className="text-body">
+                    {" "}·{" "}
+                    {r.source_url ? (
+                      <a
+                        href={r.source_url}
+                        target="_blank"
+                        rel="noreferrer nofollow"
+                        className="underline hover:text-gold"
+                      >
+                        via {r.source === "tripadvisor" ? "TripAdvisor" : r.source === "getyourguide" ? "GetYourGuide" : "Google"}
+                      </a>
+                    ) : (
+                      <>via {r.source === "tripadvisor" ? "TripAdvisor" : r.source === "getyourguide" ? "GetYourGuide" : "Google"}</>
+                    )}
+                  </span>
+                )}
               </p>
+
             </article>
           ))}
         </div>

@@ -31,6 +31,24 @@ export const DEFAULT_CUSTOM_TOUR = {
 
 export const DEFAULT_HOTEL_PICKUP_FEE_CENTS = 2000;
 
+export const DEFAULT_OFFER_BAR = {
+  enabled: false,
+  text: "Book direct and save",
+  code: null as string | null,
+};
+
+export const DEFAULT_WHATSAPP_REPLY_LINE = "We usually reply within minutes";
+
+export type OfferBar = typeof DEFAULT_OFFER_BAR;
+
+function mapOfferBar(d: any): OfferBar {
+  return {
+    enabled: d?.offer_bar_enabled === true,
+    text: d?.offer_bar_text || DEFAULT_OFFER_BAR.text,
+    code: (d?.offer_bar_code || "").trim() || null,
+  };
+}
+
 export type BusinessInfo = typeof DEFAULT_BUSINESS;
 export type CustomTourHero = typeof DEFAULT_CUSTOM_TOUR;
 
@@ -57,6 +75,9 @@ export type SiteBrand = {
   business: BusinessInfo;
   customTour: CustomTourHero;
   hotelPickupFeeCents: number;
+  offerBar: OfferBar;
+  whatsappReplyLine: string;
+  googleReviewUrl: string | null;
 };
 
 function mapBusiness(d: any): BusinessInfo {
@@ -102,6 +123,10 @@ export function useSiteBrand() {
         customTour: mapCustomTour(data),
         hotelPickupFeeCents:
           Number((data as any)?.hotel_pickup_fee_cents ?? DEFAULT_HOTEL_PICKUP_FEE_CENTS) || 0,
+        offerBar: mapOfferBar(data),
+        whatsappReplyLine:
+          (data as any)?.whatsapp_reply_line || DEFAULT_WHATSAPP_REPLY_LINE,
+        googleReviewUrl: (data as any)?.google_review_url || null,
       };
     },
     placeholderData: {
@@ -113,6 +138,9 @@ export function useSiteBrand() {
       business: DEFAULT_BUSINESS,
       customTour: DEFAULT_CUSTOM_TOUR,
       hotelPickupFeeCents: DEFAULT_HOTEL_PICKUP_FEE_CENTS,
+      offerBar: DEFAULT_OFFER_BAR,
+      whatsappReplyLine: DEFAULT_WHATSAPP_REPLY_LINE,
+      googleReviewUrl: null,
     },
   });
 
@@ -126,5 +154,8 @@ export function useSiteBrand() {
     business: query.data?.business ?? DEFAULT_BUSINESS,
     customTour: query.data?.customTour ?? DEFAULT_CUSTOM_TOUR,
     hotelPickupFeeCents: query.data?.hotelPickupFeeCents ?? DEFAULT_HOTEL_PICKUP_FEE_CENTS,
+    offerBar: query.data?.offerBar ?? DEFAULT_OFFER_BAR,
+    whatsappReplyLine: query.data?.whatsappReplyLine ?? DEFAULT_WHATSAPP_REPLY_LINE,
+    googleReviewUrl: query.data?.googleReviewUrl ?? null,
   };
 }

@@ -20,13 +20,14 @@ export const Route = createFileRoute("/admin/settings")({
   head: () => ({ meta: [{ title: "Settings · Admin" }] }),
 });
 
-type TabId = "brand" | "contact" | "homepage" | "booking" | "payments";
+type TabId = "brand" | "contact" | "homepage" | "booking" | "marketing" | "payments";
 
 const TABS: { id: TabId; label: string; desc: string }[] = [
   { id: "brand", label: "Brand", desc: "Name and logo" },
   { id: "contact", label: "Contact", desc: "Email, phone, socials" },
   { id: "homepage", label: "Homepage", desc: "Images and slideshow" },
   { id: "booking", label: "Booking rules", desc: "Fees and capacity" },
+  { id: "marketing", label: "Marketing", desc: "Offer bar and WhatsApp" },
   { id: "payments", label: "Payments", desc: "Gateways and maintenance" },
 ];
 
@@ -75,6 +76,11 @@ function AdminSettings() {
     daily_slot_capacity: 3,
     payments_enabled: true,
     payments_maintenance_message: "",
+    offer_bar_enabled: false,
+    offer_bar_text: "Book direct and save",
+    offer_bar_code: "",
+    whatsapp_reply_line: "We usually reply within minutes",
+    google_review_url: "",
   });
 
   useEffect(() => {
@@ -101,6 +107,11 @@ function AdminSettings() {
       daily_slot_capacity: Number(d.daily_slot_capacity ?? 3) || 1,
       payments_enabled: d.payments_enabled !== false,
       payments_maintenance_message: d.payments_maintenance_message ?? "",
+      offer_bar_enabled: d.offer_bar_enabled === true,
+      offer_bar_text: d.offer_bar_text ?? "Book direct and save",
+      offer_bar_code: d.offer_bar_code ?? "",
+      whatsapp_reply_line: d.whatsapp_reply_line ?? "We usually reply within minutes",
+      google_review_url: d.google_review_url ?? "",
     });
   }, [brand.data]);
 
@@ -463,6 +474,66 @@ function AdminSettings() {
           </label>
           <button type="button" onClick={saveBiz} disabled={savingBiz} className={btn}>
             {savingBiz ? "Saving…" : "Save booking rules"}
+          </button>
+        </section>
+      )}
+
+      {tab === "marketing" && (
+        <section className={`${card} max-w-xl`}>
+          <div>
+            <p className="text-sm font-semibold text-foreground">Conversion tools</p>
+            <p className="text-xs text-muted-foreground">
+              The offer bar appears at the bottom of every public page. Create the code first in Discounts.
+            </p>
+          </div>
+          <label className="flex items-center gap-2 text-sm">
+            <input
+              type="checkbox"
+              checked={biz.offer_bar_enabled}
+              onChange={(e) => setBiz((b) => ({ ...b, offer_bar_enabled: e.target.checked }))}
+            />
+            Show the book-direct offer bar
+          </label>
+          <label className="block space-y-1">
+            <span className="text-xs font-medium text-foreground">Offer message</span>
+            <input
+              value={biz.offer_bar_text}
+              onChange={(e) => setBiz((b) => ({ ...b, offer_bar_text: e.target.value }))}
+              className={input}
+              placeholder="Book direct and save 10% — no booking fees"
+            />
+          </label>
+          <label className="block space-y-1">
+            <span className="text-xs font-medium text-foreground">Promo code shown in the bar</span>
+            <input
+              value={biz.offer_bar_code}
+              onChange={(e) => setBiz((b) => ({ ...b, offer_bar_code: e.target.value.toUpperCase() }))}
+              className={input}
+              placeholder="WELCOME10"
+            />
+          </label>
+          <label className="block space-y-1">
+            <span className="text-xs font-medium text-foreground">WhatsApp reply-time line</span>
+            <input
+              value={biz.whatsapp_reply_line}
+              onChange={(e) => setBiz((b) => ({ ...b, whatsapp_reply_line: e.target.value }))}
+              className={input}
+            />
+          </label>
+          <label className="block space-y-1">
+            <span className="text-xs font-medium text-foreground">Google review link</span>
+            <input
+              value={biz.google_review_url}
+              onChange={(e) => setBiz((b) => ({ ...b, google_review_url: e.target.value }))}
+              className={input}
+              placeholder="https://g.page/r/…/review"
+            />
+            <span className="block text-[11px] text-muted-foreground">
+              Used in follow-up messages asking happy guests for a review.
+            </span>
+          </label>
+          <button type="button" onClick={saveBiz} disabled={savingBiz} className={btn}>
+            {savingBiz ? "Saving…" : "Save marketing settings"}
           </button>
         </section>
       )}

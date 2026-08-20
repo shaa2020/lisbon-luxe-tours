@@ -20,6 +20,7 @@ import {
   HelpCircle,
   Settings,
   Compass,
+  Tag,
 } from "lucide-react";
 
 type NavItem = {
@@ -41,6 +42,7 @@ const MORE: NavItem[] = [
   { to: "/admin/blog", label: "Journal", icon: BookOpen },
   { to: "/admin/guide", label: "Travel Guide", icon: Compass },
   { to: "/admin/reviews", label: "Reviews", icon: Star },
+  { to: "/admin/discounts", label: "Discounts", icon: Tag },
   { to: "/admin/messages", label: "Messages", icon: MessageSquare },
   { to: "/admin/settings", label: "Settings", icon: Settings },
 ];

@@ -21,6 +21,7 @@ import { Route as TermsRouteImport } from './routes/terms'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminBookingsRouteImport } from './routes/admin.bookings'
 import { Route as AdminCustomBuilderRouteImport } from './routes/admin.custom-builder'
+import { Route as AdminDiscountsRouteImport } from './routes/admin.discounts'
 import { Route as AdminFaqsRouteImport } from './routes/admin.faqs'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AdminMessagesRouteImport } from './routes/admin.messages'
@@ -109,6 +110,11 @@ const AdminBookingsRoute = AdminBookingsRouteImport.update({
 const AdminCustomBuilderRoute = AdminCustomBuilderRouteImport.update({
   id: '/admin/custom-builder',
   path: '/admin/custom-builder',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminDiscountsRoute = AdminDiscountsRouteImport.update({
+  id: '/admin/discounts',
+  path: '/admin/discounts',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminFaqsRoute = AdminFaqsRouteImport.update({
@@ -271,6 +277,7 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/admin/bookings': typeof AdminBookingsRoute
   '/admin/custom-builder': typeof AdminCustomBuilderRoute
+  '/admin/discounts': typeof AdminDiscountsRoute
   '/admin/faqs': typeof AdminFaqsRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/messages': typeof AdminMessagesRoute
@@ -314,6 +321,7 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/admin/bookings': typeof AdminBookingsRoute
   '/admin/custom-builder': typeof AdminCustomBuilderRoute
+  '/admin/discounts': typeof AdminDiscountsRoute
   '/admin/faqs': typeof AdminFaqsRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/messages': typeof AdminMessagesRoute
@@ -358,6 +366,7 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/admin/bookings': typeof AdminBookingsRoute
   '/admin/custom-builder': typeof AdminCustomBuilderRoute
+  '/admin/discounts': typeof AdminDiscountsRoute
   '/admin/faqs': typeof AdminFaqsRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/messages': typeof AdminMessagesRoute
@@ -403,6 +412,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/admin/bookings'
     | '/admin/custom-builder'
+    | '/admin/discounts'
     | '/admin/faqs'
     | '/admin/login'
     | '/admin/messages'
@@ -446,6 +456,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/admin/bookings'
     | '/admin/custom-builder'
+    | '/admin/discounts'
     | '/admin/faqs'
     | '/admin/login'
     | '/admin/messages'
@@ -489,6 +500,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/admin/bookings'
     | '/admin/custom-builder'
+    | '/admin/discounts'
     | '/admin/faqs'
     | '/admin/login'
     | '/admin/messages'
@@ -533,6 +545,7 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   AdminBookingsRoute: typeof AdminBookingsRoute
   AdminCustomBuilderRoute: typeof AdminCustomBuilderRoute
+  AdminDiscountsRoute: typeof AdminDiscountsRoute
   AdminFaqsRoute: typeof AdminFaqsRoute
   AdminLoginRoute: typeof AdminLoginRoute
   AdminMessagesRoute: typeof AdminMessagesRoute
@@ -649,6 +662,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/custom-builder'
       fullPath: '/admin/custom-builder'
       preLoaderRoute: typeof AdminCustomBuilderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/discounts': {
+      id: '/admin/discounts'
+      path: '/admin/discounts'
+      fullPath: '/admin/discounts'
+      preLoaderRoute: typeof AdminDiscountsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/faqs': {
@@ -869,6 +889,7 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   AdminBookingsRoute: AdminBookingsRoute,
   AdminCustomBuilderRoute: AdminCustomBuilderRoute,
+  AdminDiscountsRoute: AdminDiscountsRoute,
   AdminFaqsRoute: AdminFaqsRoute,
   AdminLoginRoute: AdminLoginRoute,
   AdminMessagesRoute: AdminMessagesRoute,

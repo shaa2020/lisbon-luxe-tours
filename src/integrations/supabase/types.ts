@@ -124,6 +124,8 @@ export type Database = {
           created_at: string
           custom_selections: Json | null
           customer_name: string
+          discount_cents: number
+          discount_code: string | null
           email: string
           guests: number
           id: string
@@ -142,6 +144,8 @@ export type Database = {
           created_at?: string
           custom_selections?: Json | null
           customer_name: string
+          discount_cents?: number
+          discount_code?: string | null
           email: string
           guests?: number
           id?: string
@@ -160,6 +164,8 @@ export type Database = {
           created_at?: string
           custom_selections?: Json | null
           customer_name?: string
+          discount_cents?: number
+          discount_code?: string | null
           email?: string
           guests?: number
           id?: string
@@ -246,6 +252,96 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      discount_codes: {
+        Row: {
+          active: boolean
+          code: string
+          created_at: string
+          description: string | null
+          discount_type: string
+          expires_at: string | null
+          id: string
+          max_uses: number | null
+          min_guests: number
+          starts_at: string | null
+          updated_at: string
+          used_count: number
+          value: number
+        }
+        Insert: {
+          active?: boolean
+          code: string
+          created_at?: string
+          description?: string | null
+          discount_type?: string
+          expires_at?: string | null
+          id?: string
+          max_uses?: number | null
+          min_guests?: number
+          starts_at?: string | null
+          updated_at?: string
+          used_count?: number
+          value?: number
+        }
+        Update: {
+          active?: boolean
+          code?: string
+          created_at?: string
+          description?: string | null
+          discount_type?: string
+          expires_at?: string | null
+          id?: string
+          max_uses?: number | null
+          min_guests?: number
+          starts_at?: string | null
+          updated_at?: string
+          used_count?: number
+          value?: number
+        }
+        Relationships: []
+      }
+      discount_redemptions: {
+        Row: {
+          amount_cents: number
+          booking_id: string | null
+          code: string
+          code_id: string
+          created_at: string
+          id: string
+        }
+        Insert: {
+          amount_cents?: number
+          booking_id?: string | null
+          code: string
+          code_id: string
+          created_at?: string
+          id?: string
+        }
+        Update: {
+          amount_cents?: number
+          booking_id?: string | null
+          code?: string
+          code_id?: string
+          created_at?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "discount_redemptions_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "discount_redemptions_code_id_fkey"
+            columns: ["code_id"]
+            isOneToOne: false
+            referencedRelation: "discount_codes"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       email_send_log: {
         Row: {
@@ -511,11 +607,14 @@ export type Database = {
         Row: {
           author_email: string | null
           author_name: string
+          author_photo_url: string | null
           body: string
           created_at: string
           featured: boolean
           id: string
           rating: number
+          source: string
+          source_url: string | null
           status: string
           title: string | null
           tour_id: string | null
@@ -526,11 +625,14 @@ export type Database = {
         Insert: {
           author_email?: string | null
           author_name: string
+          author_photo_url?: string | null
           body: string
           created_at?: string
           featured?: boolean
           id?: string
           rating: number
+          source?: string
+          source_url?: string | null
           status?: string
           title?: string | null
           tour_id?: string | null
@@ -541,11 +643,14 @@ export type Database = {
         Update: {
           author_email?: string | null
           author_name?: string
+          author_photo_url?: string | null
           body?: string
           created_at?: string
           featured?: boolean
           id?: string
           rating?: number
+          source?: string
+          source_url?: string | null
           status?: string
           title?: string | null
           tour_id?: string | null
@@ -581,18 +686,23 @@ export type Database = {
           facebook_url: string | null
           footer_legal: string | null
           footer_tagline: string | null
+          google_review_url: string | null
           hero_image_url: string | null
           hero_slides: Json
           hotel_pickup_fee_cents: number
           id: boolean
           instagram_url: string | null
           logo_url: string | null
+          offer_bar_code: string | null
+          offer_bar_enabled: boolean
+          offer_bar_text: string
           payment_provider: string
           payments_enabled: boolean
           payments_maintenance_message: string
           twitter_url: string | null
           updated_at: string
           whatsapp_phone: string | null
+          whatsapp_reply_line: string
         }
         Insert: {
           about_image_url?: string | null
@@ -611,18 +721,23 @@ export type Database = {
           facebook_url?: string | null
           footer_legal?: string | null
           footer_tagline?: string | null
+          google_review_url?: string | null
           hero_image_url?: string | null
           hero_slides?: Json
           hotel_pickup_fee_cents?: number
           id?: boolean
           instagram_url?: string | null
           logo_url?: string | null
+          offer_bar_code?: string | null
+          offer_bar_enabled?: boolean
+          offer_bar_text?: string
           payment_provider?: string
           payments_enabled?: boolean
           payments_maintenance_message?: string
           twitter_url?: string | null
           updated_at?: string
           whatsapp_phone?: string | null
+          whatsapp_reply_line?: string
         }
         Update: {
           about_image_url?: string | null
@@ -641,18 +756,23 @@ export type Database = {
           facebook_url?: string | null
           footer_legal?: string | null
           footer_tagline?: string | null
+          google_review_url?: string | null
           hero_image_url?: string | null
           hero_slides?: Json
           hotel_pickup_fee_cents?: number
           id?: boolean
           instagram_url?: string | null
           logo_url?: string | null
+          offer_bar_code?: string | null
+          offer_bar_enabled?: boolean
+          offer_bar_text?: string
           payment_provider?: string
           payments_enabled?: boolean
           payments_maintenance_message?: string
           twitter_url?: string | null
           updated_at?: string
           whatsapp_phone?: string | null
+          whatsapp_reply_line?: string
         }
         Relationships: []
       }
@@ -1118,11 +1238,14 @@ export type Database = {
       reviews_public: {
         Row: {
           author_name: string | null
+          author_photo_url: string | null
           body: string | null
           created_at: string | null
           featured: boolean | null
           id: string | null
           rating: number | null
+          source: string | null
+          source_url: string | null
           status: string | null
           title: string | null
           tour_id: string | null
@@ -1132,11 +1255,14 @@ export type Database = {
         }
         Insert: {
           author_name?: string | null
+          author_photo_url?: string | null
           body?: string | null
           created_at?: string | null
           featured?: boolean | null
           id?: string | null
           rating?: number | null
+          source?: string | null
+          source_url?: string | null
           status?: string | null
           title?: string | null
           tour_id?: string | null
@@ -1146,11 +1272,14 @@ export type Database = {
         }
         Update: {
           author_name?: string | null
+          author_photo_url?: string | null
           body?: string | null
           created_at?: string | null
           featured?: boolean | null
           id?: string | null
           rating?: number | null
+          source?: string | null
+          source_url?: string | null
           status?: string | null
           title?: string | null
           tour_id?: string | null

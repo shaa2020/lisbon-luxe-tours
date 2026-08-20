@@ -14,7 +14,11 @@ import { toast } from "sonner";
 import { CANCELLATION_POLICY_FULL } from "@/lib/cancellation";
 import { useSiteBrand } from "@/lib/brand";
 import { PaypalWallet } from "@/components/site/PaypalWallet";
-import { trackBookingStart, trackBookingCtaClick } from "@/lib/analytics";
+import { trackBookingStart, trackBookingCtaClick, trackDiscountApplied, trackDiscountRejected } from "@/lib/analytics";
+import { checkDiscountCode } from "@/lib/discounts.functions";
+import { WhatsappInline } from "@/components/site/Whatsapp";
+import { StarRating } from "@/components/site/StarRating";
+import { useReviewStatsBySlug } from "@/lib/reviews";
 
 const TIME_SLOTS = ["09:00", "10:30", "13:00", "15:00", "17:00", "18:30"];
 
@@ -34,6 +38,12 @@ export function TourBookingPanel({ tour }: { tour: Tour; compact?: boolean }) {
   const [paying, setPaying] = useState(false);
   const [pickup, setPickup] = useState(false);
   const [depositPct, setDepositPct] = useState(100);
+  const [promoInput, setPromoInput] = useState("");
+  const [promo, setPromo] = useState<{ code: string; cents: number } | null>(null);
+  const [checkingPromo, setCheckingPromo] = useState(false);
+  const checkPromoFn = useServerFn(checkDiscountCode);
+  const { data: reviewStats } = useReviewStatsBySlug();
+  const rating = reviewStats?.[tour.slug];
 
   const [requesting, setRequesting] = useState(false);
   const [reference, setReference] = useState<string | null>(null);
@@ -50,7 +60,9 @@ export function TourBookingPanel({ tour }: { tour: Tour; compact?: boolean }) {
 
   const extras = Math.max(0, guests - 2) * 35;
   const pickupCharge = pickup ? pickupFee : 0;
-  const total = pricing.current + extras + pickupCharge;
+  const subtotal = pricing.current + extras + pickupCharge;
+  const discount = promo ? Math.min(promo.cents / 100, subtotal - 1) : 0;
+  const total = Math.max(1, Math.round((subtotal - discount) * 100) / 100);
   const payNow = depositPct >= 100 ? total : Math.round((total * depositPct) / 100 * 100) / 100;
   const balanceDue = Math.round((total - payNow) * 100) / 100;
   const isEmail = (s: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);
@@ -108,8 +120,9 @@ export function TourBookingPanel({ tour }: { tour: Tour; compact?: boolean }) {
           time,
           guests,
           notes: pickup ? `Hotel pickup & drop-off requested (+€${pickupFee})` : null,
-          amount: total * 100,
+          amount: Math.round(subtotal * 100),
           deposit_pct: depositPct,
+          discount_code: promo?.code ?? null,
           image_url: tour.image?.startsWith("http") ? tour.image : null,
 
         },
@@ -125,6 +138,30 @@ export function TourBookingPanel({ tour }: { tour: Tour; compact?: boolean }) {
     } catch (err) {
       setPaying(false);
       toast.error((err as Error).message || "Could not start checkout.");
+    }
+  };
+
+  const applyPromo = async () => {
+    const code = promoInput.trim().toUpperCase();
+    if (!code) return;
+    setCheckingPromo(true);
+    try {
+      const res = await checkPromoFn({
+        data: { code, amount_cents: Math.round(subtotal * 100), guests },
+      });
+      if (res.valid) {
+        setPromo({ code: res.code, cents: res.discount_cents });
+        trackDiscountApplied(res.code, res.discount_cents / 100);
+        toast.success(res.message);
+      } else {
+        setPromo(null);
+        trackDiscountRejected(code);
+        toast.error(res.message);
+      }
+    } catch {
+      toast.error("Could not check that code.");
+    } finally {
+      setCheckingPromo(false);
     }
   };
 
@@ -147,8 +184,9 @@ export function TourBookingPanel({ tour }: { tour: Tour; compact?: boolean }) {
         time,
         guests,
         notes: pickup ? `Hotel pickup & drop-off requested (+€${pickupFee})` : null,
-        amount: total * 100,
+        amount: Math.round(subtotal * 100),
         deposit_pct: depositPct,
+        discount_code: promo?.code ?? null,
         image_url: tour.image?.startsWith("http") ? tour.image : null,
       },
     });
@@ -183,6 +221,14 @@ export function TourBookingPanel({ tour }: { tour: Tour; compact?: boolean }) {
           )}
         </div>
         <p className="text-body text-xs tracking-tight">per private group · up to 7 guests</p>
+        {rating && rating.count > 0 && (
+          <div className="mt-2 flex items-center gap-2">
+            <StarRating value={rating.average} size={14} />
+            <span className="text-[11px] text-body">
+              {rating.average.toFixed(1)} · {rating.count} {rating.count === 1 ? "review" : "reviews"}
+            </span>
+          </div>
+        )}
       </div>
 
       <div className="px-6"><div className="h-px bg-border/60" /></div>
@@ -402,6 +448,42 @@ export function TourBookingPanel({ tour }: { tour: Tour; compact?: boolean }) {
             )}
           </div>
         )}
+        <div>
+          <label className="text-[10px] uppercase tracking-widest text-body font-bold block mb-2">Promo code</label>
+          <div className="flex gap-2">
+            <input
+              value={promoInput}
+              onChange={(e) => setPromoInput(e.target.value.toUpperCase())}
+              placeholder="Enter code"
+              className="flex-1 px-4 py-2.5 bg-paper border border-border rounded-[2px] text-sm text-ink placeholder:text-body focus:outline-none focus:border-gold transition-colors"
+            />
+            <button
+              type="button"
+              onClick={applyPromo}
+              disabled={checkingPromo || !promoInput.trim()}
+              className="px-4 py-2.5 border border-ink/20 text-ink text-[11px] uppercase tracking-[0.15em] rounded-[2px] hover:border-gold hover:text-gold transition-colors disabled:opacity-40"
+            >
+              {checkingPromo ? "…" : "Apply"}
+            </button>
+          </div>
+          {promo && (
+            <button
+              type="button"
+              onClick={() => { setPromo(null); setPromoInput(""); }}
+              className="mt-1.5 text-[11px] text-gold underline"
+            >
+              Remove code {promo.code}
+            </button>
+          )}
+        </div>
+
+        {discount > 0 && (
+          <div className="flex justify-between text-[11px] text-gold">
+            <span>Promo {promo?.code}</span>
+            <span>−€{discount.toFixed(2)}</span>
+          </div>
+        )}
+
         <div className="flex justify-between items-baseline">
           <span className="text-xs text-body">Total Amount</span>
           <span className="font-display text-2xl text-ink leading-none">€{total.toFixed(2)}</span>
@@ -485,6 +567,11 @@ export function TourBookingPanel({ tour }: { tour: Tour; compact?: boolean }) {
                 <>Reserve now, pay later</>
               )}
             </button>
+
+            <WhatsappInline
+              location="tour_booking_panel"
+              message={`Hi! I'd like to ask about the ${tour.title} tuk-tuk tour.`}
+            />
 
             <p className="text-[10px] text-center text-body italic">
               {showContact

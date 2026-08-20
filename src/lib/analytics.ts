@@ -123,3 +123,15 @@ export function trackEmailClick(location: string): void {
 export function trackContactFormSubmit(formName: string): void {
   trackEvent("contact_form_submit", { form_name: formName, page_path: pagePath() });
 }
+
+export function trackDiscountApplied(code: string, discountEur: number): void {
+  trackEvent("discount_applied", { coupon: code, discount: discountEur, currency: "EUR" });
+}
+
+export function trackDiscountRejected(code: string): void {
+  trackEvent("discount_rejected", { coupon: code });
+}
+
+export function trackReviewImport(count: number): void {
+  trackEvent("review_import", { count });
+}
