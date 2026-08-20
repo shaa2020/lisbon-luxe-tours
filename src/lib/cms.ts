@@ -17,6 +17,8 @@ export type Tour = {
   duration: string;
   priceFrom: number;
   salePrice?: number | null;
+  /** False for flat-rate services (airport transfer) priced per vehicle. */
+  perPersonPricing?: boolean;
   image: string;
   image_url?: string | null;
   tagline: string;
@@ -77,6 +79,7 @@ type TourRow = {
   featured: boolean;
   published: boolean;
   sort_order: number;
+  per_person_pricing?: boolean | null;
 };
 
 type BlogRow = {
@@ -104,6 +107,7 @@ export function mapTour(row: TourRow): Tour {
     duration: row.duration,
     priceFrom: row.price_from,
     salePrice: row.sale_price,
+    perPersonPricing: row.per_person_pricing !== false,
     image_url: row.image_url,
     image: tourImage(row.slug, row.image_url),
     tagline: row.tagline ?? "",

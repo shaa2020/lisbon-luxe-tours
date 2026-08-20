@@ -12,12 +12,14 @@ const checkoutInput = z.object({
   phone: z.string().trim().min(6).max(50),
   travel_date: z.string().max(20).optional().nullable(),
   time: z.string().max(20).optional().nullable(),
-  guests: z.number().int().min(2).max(20),
+  guests: z.number().int().min(1).max(20),
   notes: z.string().max(2000).optional().nullable(),
   amount: z.number().int().min(100).max(500000), // cents, €1–€5000
   image_url: z.string().url().optional().nullable(),
   /** Share of the total charged now. 20–100 (%). Defaults to full payment. */
   deposit_pct: z.number().int().min(20).max(100).optional().nullable(),
+  /** Hotel pickup & drop-off requested — priced from the fee stored in Admin. */
+  pickup: z.boolean().optional().nullable(),
   /** Optional promo code — always re-validated and re-priced on the server. */
   discount_code: z.string().trim().max(40).optional().nullable(),
 });
@@ -27,11 +29,20 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => checkoutInput.parse(data))
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { assertSlotAvailable, buildTourLineItems, tourBaseCents } = await import("./catalog.server");
+    const { assertSlotAvailable, buildTourLineItems, tourBaseCents, quoteTourCents } = await import("./catalog.server");
     const payments = await paymentsStatus(supabaseAdmin);
 
     // Hold the slot: refuse if it filled up while the customer was deciding.
     await assertSlotAvailable(supabaseAdmin, data.travel_date, data.time);
+
+    // Re-price from the catalog: never trust the amount sent by the browser.
+    const serverQuote = await quoteTourCents(supabaseAdmin, {
+      slug: data.tour_slug,
+      guests: data.guests,
+      pickupRequested: data.pickup === true,
+    });
+    const amountCents = serverQuote?.totalCents ?? data.amount;
+    const guestCount = serverQuote?.guests ?? data.guests;
 
     // Promo code: re-validate server-side and reduce the payable amount.
     const { validateDiscount, recordRedemption } = await import("./discounts.server");
@@ -41,8 +52,8 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
     let discountUsedCount = 0;
     if (data.discount_code) {
       const res = await validateDiscount(supabaseAdmin as never, data.discount_code, {
-        amountCents: data.amount,
-        guests: data.guests,
+        amountCents,
+        guests: guestCount,
       });
       if (res.valid && res.code_id) {
         discountCents = res.discount_cents;
@@ -56,7 +67,7 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
         discountUsedCount = row?.used_count ?? 0;
       }
     }
-    const payableCents = Math.max(100, data.amount - discountCents);
+    const payableCents = Math.max(100, amountCents - discountCents);
 
     // Deposit: charge a share now (min 20%), rest is due on the day.
     const depositPct = Math.min(100, Math.max(20, data.deposit_pct ?? 100));
@@ -77,7 +88,7 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
         phone: data.phone ?? null,
         travel_date: data.travel_date || null,
         travel_time: data.time || null,
-        guests: data.guests,
+        guests: guestCount,
         notes: [
           data.time ? `Preferred time: ${data.time}` : null,
           discountCode ? `Promo code ${discountCode} applied (−€${(discountCents / 100).toFixed(2)})` : null,
@@ -144,22 +155,22 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
         : buildTourLineItems({
             tourSlug: data.tour_slug,
             tourTitle: data.tour_title,
-            guests: data.guests,
+            guests: guestCount,
             totalCents: payableCents,
-            baseCents,
+            baseCents: serverQuote?.perPersonCents ?? baseCents,
             pickupFeeCents: settings?.hotel_pickup_fee_cents ?? 0,
-            pickupRequested: /hotel pickup/i.test(data.notes || ""),
+            pickupRequested: data.pickup === true || /hotel pickup/i.test(data.notes || ""),
           });
 
     const payment = await createPayment(supabaseAdmin, {
       amountCents: chargeCents,
-      description: `${data.tour_title} · ${data.guests} guest${data.guests === 1 ? "" : "s"}${data.travel_date ? ` · ${data.travel_date}` : ""}${balanceCents > 0 ? ` · ${depositPct}% deposit` : ""}`,
+      description: `${data.tour_title} · ${guestCount} guest${guestCount === 1 ? "" : "s"}${data.travel_date ? ` · ${data.travel_date}` : ""}${balanceCents > 0 ? ` · ${depositPct}% deposit` : ""}`,
       origin,
       lineItems,
       metadata: {
         booking_id: booking.id,
         tour_slug: data.tour_slug,
-        guests: String(data.guests),
+        guests: String(guestCount),
         deposit_pct: String(depositPct),
         balance_cents: String(balanceCents),
       },

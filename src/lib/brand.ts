@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getPublicSiteSettings } from "./cms.functions";
 import defaultLogoAsset from "@/assets/tuktuk24-logo-new.png.asset.json";
+import { DEFAULT_GROUP_TIERS, parseGroupTiers, type GroupTier } from "./pricing";
 
 export const DEFAULT_BRAND_NAME = "Tuk Tuk 24";
 export const DEFAULT_BRAND_TAGLINE = "Lisbon Tours";
@@ -76,6 +77,8 @@ export type SiteBrand = {
   customTour: CustomTourHero;
   hotelPickupFeeCents: number;
   offerBar: OfferBar;
+  groupTiers: GroupTier[];
+  groupDiscountEnabled: boolean;
   whatsappReplyLine: string;
   googleReviewUrl: string | null;
 };
@@ -124,6 +127,8 @@ export function useSiteBrand() {
         hotelPickupFeeCents:
           Number((data as any)?.hotel_pickup_fee_cents ?? DEFAULT_HOTEL_PICKUP_FEE_CENTS) || 0,
         offerBar: mapOfferBar(data),
+        groupTiers: parseGroupTiers((data as any)?.group_discount_tiers),
+        groupDiscountEnabled: (data as any)?.group_discount_enabled !== false,
         whatsappReplyLine:
           (data as any)?.whatsapp_reply_line || DEFAULT_WHATSAPP_REPLY_LINE,
         googleReviewUrl: (data as any)?.google_review_url || null,
@@ -139,6 +144,8 @@ export function useSiteBrand() {
       customTour: DEFAULT_CUSTOM_TOUR,
       hotelPickupFeeCents: DEFAULT_HOTEL_PICKUP_FEE_CENTS,
       offerBar: DEFAULT_OFFER_BAR,
+      groupTiers: DEFAULT_GROUP_TIERS,
+      groupDiscountEnabled: true,
       whatsappReplyLine: DEFAULT_WHATSAPP_REPLY_LINE,
       googleReviewUrl: null,
     },
@@ -155,6 +162,8 @@ export function useSiteBrand() {
     customTour: query.data?.customTour ?? DEFAULT_CUSTOM_TOUR,
     hotelPickupFeeCents: query.data?.hotelPickupFeeCents ?? DEFAULT_HOTEL_PICKUP_FEE_CENTS,
     offerBar: query.data?.offerBar ?? DEFAULT_OFFER_BAR,
+    groupTiers: query.data?.groupTiers ?? DEFAULT_GROUP_TIERS,
+    groupDiscountEnabled: query.data?.groupDiscountEnabled ?? true,
     whatsappReplyLine: query.data?.whatsappReplyLine ?? DEFAULT_WHATSAPP_REPLY_LINE,
     googleReviewUrl: query.data?.googleReviewUrl ?? null,
   };
