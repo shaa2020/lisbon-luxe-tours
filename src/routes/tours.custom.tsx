@@ -101,12 +101,10 @@ function CustomBuilderPage() {
     () => (components as Component[]).filter((c) => selected.has(c.id)),
     [components, selected],
   );
-  const baseTotal = selectedComponents.reduce((s, c) => s + c.price_cents, 0);
-  const extraPerGuest = selectedComponents.reduce((s, c) => s + (c.extra_per_guest_cents || 0), 0);
-  const guestsNum = Math.max(1, Number(form.guests) || 1);
-  const extraGuests = Math.max(0, guestsNum - 2);
+  const perPerson = selectedComponents.reduce((s, c) => s + c.price_cents, 0);
+  const guestsNum = Math.max(2, Number(form.guests) || 2);
   const pickupCharge = pickup ? pickupFee * 100 : 0;
-  const total = baseTotal + extraPerGuest * extraGuests + pickupCharge;
+  const total = perPerson * guestsNum + pickupCharge;
 
   const hasVehicle = grouped.vehicle?.some((c) => selected.has(c.id));
   const hasDuration = grouped.duration?.some((c) => selected.has(c.id));
@@ -117,6 +115,7 @@ function CustomBuilderPage() {
     if (!form.customer_name.trim()) return "Please enter your name";
     if (!form.email.trim()) return "Please enter your email";
     if (form.phone.replace(/[^\d]/g, "").length < 8) return "Please enter your WhatsApp number with country code";
+    if (guestsNum < 2) return "Minimum 2 guests per booking";
     if (!hasVehicle) return "Pick a vehicle";
     if (!hasDuration)
       return "Pick a preferred duration — it sets the base price of your tour";
@@ -309,17 +308,11 @@ function CustomBuilderPage() {
 
                 <div className="border-t border-border pt-3 mb-5 space-y-1">
                   <div className="flex justify-between text-xs text-muted-foreground">
-                    <span>Base (up to 2 guests)</span>
-                    <span>€{(baseTotal / 100).toFixed(0)}</span>
+                    <span>
+                      €{(perPerson / 100).toFixed(0)} per person × {guestsNum}
+                    </span>
+                    <span>€{((perPerson * guestsNum) / 100).toFixed(0)}</span>
                   </div>
-                  {extraGuests > 0 && (
-                    <div className="flex justify-between text-xs text-muted-foreground">
-                      <span>
-                        Extra guests ({extraGuests} × €{(extraPerGuest / 100).toFixed(0)})
-                      </span>
-                      <span>€{((extraPerGuest * extraGuests) / 100).toFixed(0)}</span>
-                    </div>
-                  )}
                   {pickup && pickupFee > 0 && (
                     <div className="flex justify-between text-xs text-muted-foreground">
                       <span>Hotel pickup &amp; drop-off</span>
@@ -328,7 +321,7 @@ function CustomBuilderPage() {
                   )}
                   <div className="flex justify-between items-baseline pt-1">
                     <span className="text-[11px] uppercase tracking-wider text-muted-foreground">
-                      Estimated total ({guestsNum} guest{guestsNum === 1 ? "" : "s"})
+                      Estimated total ({guestsNum} guests · min 2)
                     </span>
                     <span className="font-display text-2xl font-bold text-gold">
                       €{(total / 100).toFixed(0)}
@@ -376,7 +369,7 @@ function CustomBuilderPage() {
                     <label className="text-sm text-muted-foreground">Guests</label>
                     <input
                       type="number"
-                      min={1}
+                      min={2}
                       max={20}
                       value={form.guests}
                       onChange={(e) => setForm({ ...form, guests: Number(e.target.value) })}
