@@ -79,6 +79,7 @@ type TourRow = {
   featured: boolean;
   published: boolean;
   sort_order: number;
+  per_person_pricing?: boolean | null;
 };
 
 type BlogRow = {
