@@ -38,9 +38,10 @@ function ContactPage() {
   const waHref = `https://wa.me/${(business.whatsappPhone || "").replace(/[^\d]/g, "")}`;
   const telHref = `tel:${business.contactPhone.replace(/\s+/g, "")}`;
   const [sent, setSent] = useState(false);
+  const [sending, setSending] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
     const data = {
@@ -61,9 +62,26 @@ function ContactPage() {
       return;
     }
     setErrors({});
+    setSending(true);
+    const subjectParts = [
+      data.date ? `Date: ${data.date}` : null,
+      data.guests ? `Guests: ${data.guests}` : null,
+    ].filter(Boolean);
+    const { error } = await supabase.from("contact_messages").insert({
+      name: data.name,
+      email: data.email,
+      subject: subjectParts.length ? subjectParts.join(" · ") : "Website enquiry",
+      message: data.message,
+    });
+    setSending(false);
+    if (error) {
+      toast.error("We couldn't send your message. Please try WhatsApp or email us directly.");
+      return;
+    }
     trackContactFormSubmit("contact_page");
     setSent(true);
   };
+
 
   return (
     <div className="min-h-screen bg-paper text-ink overflow-x-clip">
