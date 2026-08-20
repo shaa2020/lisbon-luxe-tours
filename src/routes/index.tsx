@@ -141,19 +141,25 @@ function Hero() {
 
         {/* Centered headline */}
         <div className="relative h-full container-x flex flex-col items-center justify-center text-center pt-[68px] md:pt-[110px] pb-28 md:pb-32">
-          <p
-            className="text-white text-3xl sm:text-4xl md:text-6xl -mb-3 sm:-mb-5 md:-mb-8"
-            style={{ fontFamily: '"Yellowtail", cursive' }}
-          >
-            Explore Beautiful
-          </p>
-          <h1
-            key={current.label}
-            className="font-sans font-bold uppercase text-white leading-[0.92] tracking-tight animate-[fade-up_0.8s_var(--ease-out-expo)_both]"
-            style={{ fontSize: "clamp(46px, 12vw, 170px)" }}
-          >
-            {current.label}
+          <h1 className="flex flex-col items-center">
+            <span
+              className="text-white text-3xl sm:text-4xl md:text-6xl -mb-3 sm:-mb-5 md:-mb-8 font-normal"
+              style={{ fontFamily: '"Yellowtail", cursive' }}
+            >
+              Explore Beautiful
+            </span>
+            <span
+              key={current.label}
+              className="block font-sans font-bold uppercase text-white leading-[0.92] tracking-tight animate-[fade-up_0.8s_var(--ease-out-expo)_both]"
+              style={{ fontSize: "clamp(46px, 12vw, 170px)" }}
+            >
+              {current.label}
+            </span>
+            <span className="mt-2 text-white/90 text-[13px] md:text-[15px] uppercase tracking-[0.28em]">
+              Private Tuk-Tuk Tours in Lisbon
+            </span>
           </h1>
+
           <p className="mt-4 md:mt-5 max-w-xl text-white/85 text-[14px] md:text-[16px] leading-relaxed px-4">
             Private tuk-tuk tours with local drivers. Small groups, flat prices, your pace.
           </p>
