@@ -332,6 +332,10 @@ export function BookingModal({
 
               {/* Total + submit */}
               <div className="mt-2 pt-5 border-t border-border flex flex-col gap-3">
+                <div className="flex justify-between text-xs text-body">
+                  <span>€{pricing.current} per person × {Math.max(2, guests)} guests</span>
+                  <span>€{total}</span>
+                </div>
                 <div className="flex items-end justify-between">
                   <div>
                     <p className="text-[10px] uppercase tracking-widest text-body">Est. total</p>
