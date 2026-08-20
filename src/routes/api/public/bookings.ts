@@ -90,6 +90,12 @@ export const Route = createFileRoute("/api/public/bookings")({
 
         const data = parsed.data;
         const guests = (data.adults ?? 1) + (data.children ?? 0);
+        if (guests < 2) {
+          return Response.json(
+            { ok: false, error: "Bookings require a minimum of 2 guests" },
+            { status: 400, headers: CORS_HEADERS },
+          );
+        }
         const total = data.total ?? data.base_price ?? 0;
 
         const notesLines = [
