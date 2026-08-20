@@ -20,6 +20,7 @@ export function Nav({ overlay = false }: { overlay?: boolean }) {
     { to: "/", label: "Home" },
     { to: "/tours", label: "Tours" },
     { to: "/tours/custom", label: "Build Your Tour" },
+    { to: "/lisbon-guide", label: "Explore Lisbon" },
     { to: "/about", label: "About" },
     { to: "/reviews", label: "Reviews" },
     { to: "/faq", label: "FAQ" },
