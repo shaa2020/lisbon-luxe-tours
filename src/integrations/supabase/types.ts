@@ -687,6 +687,8 @@ export type Database = {
           footer_legal: string | null
           footer_tagline: string | null
           google_review_url: string | null
+          group_discount_enabled: boolean
+          group_discount_tiers: Json
           hero_image_url: string | null
           hero_slides: Json
           hotel_pickup_fee_cents: number
@@ -722,6 +724,8 @@ export type Database = {
           footer_legal?: string | null
           footer_tagline?: string | null
           google_review_url?: string | null
+          group_discount_enabled?: boolean
+          group_discount_tiers?: Json
           hero_image_url?: string | null
           hero_slides?: Json
           hotel_pickup_fee_cents?: number
@@ -757,6 +761,8 @@ export type Database = {
           footer_legal?: string | null
           footer_tagline?: string | null
           google_review_url?: string | null
+          group_discount_enabled?: boolean
+          group_discount_tiers?: Json
           hero_image_url?: string | null
           hero_slides?: Json
           hotel_pickup_fee_cents?: number
@@ -832,6 +838,7 @@ export type Database = {
           included: Json
           itinerary: Json
           not_included: Json
+          per_person_pricing: boolean
           price_from: number
           published: boolean
           sale_price: number | null
@@ -854,6 +861,7 @@ export type Database = {
           included?: Json
           itinerary?: Json
           not_included?: Json
+          per_person_pricing?: boolean
           price_from?: number
           published?: boolean
           sale_price?: number | null
@@ -876,6 +884,7 @@ export type Database = {
           included?: Json
           itinerary?: Json
           not_included?: Json
+          per_person_pricing?: boolean
           price_from?: number
           published?: boolean
           sale_price?: number | null
