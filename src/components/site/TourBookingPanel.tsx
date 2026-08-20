@@ -19,18 +19,21 @@ import { checkDiscountCode } from "@/lib/discounts.functions";
 import { WhatsappInline } from "@/components/site/Whatsapp";
 import { StarRating } from "@/components/site/StarRating";
 import { useReviewStatsBySlug } from "@/lib/reviews";
+import { quote, MIN_GUESTS, MAX_GUESTS } from "@/lib/pricing";
 
 const TIME_SLOTS = ["09:00", "10:30", "13:00", "15:00", "17:00", "18:30"];
 
 export function TourBookingPanel({ tour }: { tour: Tour; compact?: boolean }) {
   const checkoutFn = useServerFn(createCheckoutSession);
   const pricing = tourPricing(tour);
-  const { hotelPickupFeeCents } = useSiteBrand();
+  const { hotelPickupFeeCents, groupTiers, groupDiscountEnabled } = useSiteBrand();
+  const perPersonPricing = tour.perPersonPricing !== false;
+  const minGuests = perPersonPricing ? MIN_GUESTS : 1;
   const pickupFee = Math.max(0, Math.round((hotelPickupFeeCents || 0) / 100));
 
   const [date, setDate] = useState<Date | undefined>();
   const [time, setTime] = useState<string>(TIME_SLOTS[1]);
-  const [guests, setGuests] = useState(2);
+  const [guests, setGuests] = useState(tour.perPersonPricing === false ? 1 : MIN_GUESTS);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -58,16 +61,25 @@ export function TourBookingPanel({ tour }: { tour: Tour; compact?: boolean }) {
   });
   const slotInfo = (t: string) => availability?.slots.find((s) => s.time === t);
 
-  const guestsTotal = pricing.current * guests;
-  const pickupCharge = pickup ? pickupFee : 0;
-  const subtotal = guestsTotal + pickupCharge;
+  const q = quote({
+    perPerson: pricing.current,
+    guests,
+    perPersonPricing,
+    pickupFee,
+    pickupRequested: pickup,
+    tiers: groupTiers,
+    tiersEnabled: groupDiscountEnabled,
+  });
+  const guestsTotal = q.guestsSubtotal;
+  const pickupCharge = q.pickup;
+  const subtotal = q.total;
   const discount = promo ? Math.min(promo.cents / 100, subtotal - 1) : 0;
   const total = Math.max(1, Math.round((subtotal - discount) * 100) / 100);
   const payNow = depositPct >= 100 ? total : Math.round((total * depositPct) / 100 * 100) / 100;
   const balanceDue = Math.round((total - payNow) * 100) / 100;
   const isEmail = (s: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);
   const isPhone = (s: string) => s.replace(/[^\d]/g, "").length >= 8;
-  const canContinue = !!date && !!time && guests >= 2 && !slotInfo(time)?.full;
+  const canContinue = !!date && !!time && guests >= minGuests && !slotInfo(time)?.full;
 
 
   const handleRequest = async () => {
@@ -220,7 +232,9 @@ export function TourBookingPanel({ tour }: { tour: Tour; compact?: boolean }) {
             </span>
           )}
         </div>
-        <p className="text-body text-xs tracking-tight">per person · minimum 2 guests · up to 7</p>
+        <p className="text-body text-xs tracking-tight">
+          {perPersonPricing ? "per person · minimum 2 guests · up to 7" : "per transfer · up to 7 guests"}
+        </p>
         {rating && rating.count > 0 && (
           <div className="mt-2 flex items-center gap-2">
             <StarRating value={rating.average} size={14} />
@@ -345,7 +359,7 @@ export function TourBookingPanel({ tour }: { tour: Tour; compact?: boolean }) {
             <div className="flex items-center gap-4">
               <button
                 type="button"
-                onClick={() => setGuests(Math.max(2, guests - 1))}
+                onClick={() => setGuests(Math.max(minGuests, guests - 1))}
                 aria-label="Decrease guests"
                 className="w-6 h-6 flex items-center justify-center text-body hover:text-ink transition-colors"
               >
@@ -354,7 +368,7 @@ export function TourBookingPanel({ tour }: { tour: Tour; compact?: boolean }) {
               <span className="text-sm font-medium text-ink w-4 text-center">{guests}</span>
               <button
                 type="button"
-                onClick={() => setGuests(Math.min(7, guests + 1))}
+                onClick={() => setGuests(Math.min(MAX_GUESTS, guests + 1))}
                 aria-label="Increase guests"
                 className="w-6 h-6 flex items-center justify-center text-body hover:text-ink transition-colors"
               >
@@ -362,9 +376,12 @@ export function TourBookingPanel({ tour }: { tour: Tour; compact?: boolean }) {
               </button>
             </div>
           </div>
-          <p className="text-[11px] text-body mt-1.5">
-            €{pricing.current} per person × {guests} = €{guestsTotal.toFixed(2)} · minimum 2 guests
-          </p>
+          {perPersonPricing && (
+            <p className="text-[11px] text-body mt-1.5">
+              €{pricing.current} per person × {guests} = €{guestsTotal.toFixed(2)} · minimum 2 guests
+              {q.tierPct > 0 && ` · group saving −${q.tierPct}%`}
+            </p>
+          )}
         </div>
 
         {/* Hotel pickup */}
@@ -431,9 +448,17 @@ export function TourBookingPanel({ tour }: { tour: Tour; compact?: boolean }) {
         {(guestsTotal > 0 || pickupCharge > 0) && (
           <div className="space-y-1 text-[11px] text-body">
             <div className="flex justify-between">
-              <span>€{pricing.current} per person × {guests}</span>
+              <span>
+                {perPersonPricing ? `€${pricing.current} per person × ${guests}` : "Private transfer"}
+              </span>
               <span>€{guestsTotal.toFixed(2)}</span>
             </div>
+            {q.groupDiscount > 0 && (
+              <div className="flex justify-between text-gold">
+                <span>Group discount ({guests} guests, −{q.tierPct}%)</span>
+                <span>−€{q.groupDiscount.toFixed(2)}</span>
+              </div>
+            )}
             {pickupCharge > 0 && (
               <div className="flex justify-between">
                 <span>Hotel pickup &amp; drop-off</span>
