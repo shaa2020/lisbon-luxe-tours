@@ -58,9 +58,9 @@ export function TourBookingPanel({ tour }: { tour: Tour; compact?: boolean }) {
   });
   const slotInfo = (t: string) => availability?.slots.find((s) => s.time === t);
 
-  const extras = Math.max(0, guests - 2) * 35;
+  const guestsTotal = pricing.current * guests;
   const pickupCharge = pickup ? pickupFee : 0;
-  const subtotal = pricing.current + extras + pickupCharge;
+  const subtotal = guestsTotal + pickupCharge;
   const discount = promo ? Math.min(promo.cents / 100, subtotal - 1) : 0;
   const total = Math.max(1, Math.round((subtotal - discount) * 100) / 100);
   const payNow = depositPct >= 100 ? total : Math.round((total * depositPct) / 100 * 100) / 100;
