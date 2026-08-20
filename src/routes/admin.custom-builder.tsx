@@ -136,8 +136,7 @@ function AdminCustomBuilder() {
                         <tr>
                           <th className="text-left px-3 py-2 w-14">Image</th>
                           <th className="text-left px-3 py-2">Name</th>
-                          <th className="text-right px-3 py-2">Base €</th>
-                          <th className="text-right px-3 py-2">+ guest €</th>
+                          <th className="text-right px-3 py-2">€ / person</th>
                           <th className="text-center px-3 py-2 hidden md:table-cell">Order</th>
                           <th className="text-center px-3 py-2">Active</th>
                           <th className="px-3 py-2"></th>
@@ -170,9 +169,6 @@ function AdminCustomBuilder() {
                             </td>
                             <td className="px-3 py-2 text-right tabular-nums">
                               {(r.price_cents / 100).toFixed(0)}
-                            </td>
-                            <td className="px-3 py-2 text-right tabular-nums text-muted-foreground">
-                              {((r.extra_per_guest_cents || 0) / 100).toFixed(0)}
                             </td>
                             <td className="px-3 py-2 text-center hidden md:table-cell">
                               {r.sort_order}
@@ -301,7 +297,7 @@ function EditModal({
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-xs font-medium text-muted-foreground">Base price (€)</label>
+              <label className="text-xs font-medium text-muted-foreground">Price per person (€)</label>
               <input
                 type="number"
                 min={0}
@@ -314,24 +310,9 @@ function EditModal({
                 }
                 className="w-full mt-1 px-3 py-2 rounded-lg border border-border bg-background text-sm"
               />
-              <p className="text-[10px] text-muted-foreground mt-1">Covers up to 2 guests</p>
+              <p className="text-[10px] text-muted-foreground mt-1">Charged per guest · minimum 2 guests</p>
             </div>
-            <div>
-              <label className="text-xs font-medium text-muted-foreground">Extra per guest (€)</label>
-              <input
-                type="number"
-                min={0}
-                value={((editing.extra_per_guest_cents || 0) / 100).toString()}
-                onChange={(e) =>
-                  onChange({
-                    ...editing,
-                    extra_per_guest_cents: Math.round((Number(e.target.value) || 0) * 100),
-                  })
-                }
-                className="w-full mt-1 px-3 py-2 rounded-lg border border-border bg-background text-sm"
-              />
-              <p className="text-[10px] text-muted-foreground mt-1">Added per guest above 2</p>
-            </div>
+            
             <div className="col-span-2">
               <label className="text-xs font-medium text-muted-foreground">Sort order</label>
               <input
