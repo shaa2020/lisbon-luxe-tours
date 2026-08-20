@@ -1,7 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
 
-const EXTRA_GUEST_CENTS = 3500;
 
 type BookingRow = Database["public"]["Tables"]["bookings"]["Row"];
 
