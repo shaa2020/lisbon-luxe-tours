@@ -6,6 +6,9 @@ import { Nav } from "@/components/site/Nav";
 import { Footer } from "@/components/site/Footer";
 import { WhatsappFab } from "@/components/site/Whatsapp";
 import { useSiteBrand } from "@/lib/brand";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
@@ -38,9 +41,10 @@ function ContactPage() {
   const waHref = `https://wa.me/${(business.whatsappPhone || "").replace(/[^\d]/g, "")}`;
   const telHref = `tel:${business.contactPhone.replace(/\s+/g, "")}`;
   const [sent, setSent] = useState(false);
+  const [sending, setSending] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
     const data = {
@@ -61,9 +65,26 @@ function ContactPage() {
       return;
     }
     setErrors({});
+    setSending(true);
+    const subjectParts = [
+      data.date ? `Date: ${data.date}` : null,
+      data.guests ? `Guests: ${data.guests}` : null,
+    ].filter(Boolean);
+    const { error } = await supabase.from("contact_messages").insert({
+      name: data.name,
+      email: data.email,
+      subject: subjectParts.length ? subjectParts.join(" · ") : "Website enquiry",
+      message: data.message,
+    });
+    setSending(false);
+    if (error) {
+      toast.error("We couldn't send your message. Please try WhatsApp or email us directly.");
+      return;
+    }
     trackContactFormSubmit("contact_page");
     setSent(true);
   };
+
 
   return (
     <div className="min-h-screen bg-paper text-ink overflow-x-clip">
@@ -189,10 +210,12 @@ function ContactPage() {
               </Field>
               <button
                 type="submit"
-                className="w-full bg-gold text-white py-4 rounded-full text-[12px] font-semibold uppercase tracking-widest shadow-[0_8px_20px_rgba(43,182,247,0.35)] hover:bg-ink hover:shadow-[0_8px_20px_rgba(30,58,95,0.35)] transition-all"
+                disabled={sending}
+                className="w-full bg-gold text-white py-4 rounded-full text-[12px] font-semibold uppercase tracking-widest shadow-[0_8px_20px_rgba(43,182,247,0.35)] hover:bg-ink hover:shadow-[0_8px_20px_rgba(30,58,95,0.35)] transition-all disabled:opacity-60"
               >
-                Send Inquiry →
+                {sending ? "Sending…" : "Send Inquiry →"}
               </button>
+
               <p className="text-[11px] text-body text-center">We typically reply within 4 hours.</p>
             </form>
           )}

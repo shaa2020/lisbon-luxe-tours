@@ -75,22 +75,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Tuk Tuk 24 — Private Tuk-Tuk Tours in Lisbon" },
+      { title: "Tuk Tuk 24" },
       {
         name: "description",
         content:
-          "Private tuk-tuk tours in Lisbon with local drivers. Alfama, Belém, Sintra and the coast — small groups, flat prices, easy WhatsApp booking.",
+          "Tuk Tuk 24 — family-run tuk-tuk and minivan tours in Lisbon, Sintra, Cascais and Belém.",
       },
-      { property: "og:title", content: "Tuk Tuk 24 — Private Tuk-Tuk Tours in Lisbon" },
-      {
-        property: "og:description",
-        content:
-          "Small, family-run tuk-tuk tours around Lisbon with local drivers.",
-      },
+      { property: "og:site_name", content: "Tuk Tuk 24" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Tuk Tuk 24 — Private Tuk-Tuk Tours in Lisbon" },
-      { name: "twitter:description", content: "Small, family-run tuk-tuk tours around Lisbon with local drivers." },
+
       { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/76264757-16b0-4de3-8741-88f13d8b4088" },
       { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/76264757-16b0-4de3-8741-88f13d8b4088" },
       { name: "theme-color", content: "#1e3a5f" },

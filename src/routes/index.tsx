@@ -27,21 +27,28 @@ const lockedHeroImg = `${aboutImg}?v=locked-20260616-hero`;
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Tuk Tuk 24 — Private Tuk-Tuk Tours in Lisbon" },
+      { title: "Private Tuk-Tuk Tours in Lisbon — Tuk Tuk 24" },
       {
         name: "description",
         content:
           "Private tuk-tuk tours around Lisbon with local drivers. Alfama, Belém, Sintra, sunset rides — small groups, flat prices, easy booking.",
       },
-      { property: "og:title", content: "Tuk Tuk 24 — Private Tuk-Tuk Tours in Lisbon" },
+      { property: "og:title", content: "Private Tuk-Tuk Tours in Lisbon — Tuk Tuk 24" },
       {
         property: "og:description",
         content:
-          "Small, family-run tuk-tuk tours around Lisbon with local drivers.",
+          "Ride through Alfama, Belém and Sintra with a local driver. Small groups, per-person prices, book in minutes.",
       },
-      { property: "og:url", content: "/" },
+      { name: "twitter:title", content: "Private Tuk-Tuk Tours in Lisbon — Tuk Tuk 24" },
+      {
+        name: "twitter:description",
+        content:
+          "Ride through Alfama, Belém and Sintra with a local driver. Small groups, per-person prices, book in minutes.",
+      },
+      { property: "og:url", content: "https://tuktuk24lisbon.com/" },
     ],
-    links: [{ rel: "canonical", href: "/" }],
+    links: [{ rel: "canonical", href: "https://tuktuk24lisbon.com/" }],
+
   }),
   component: Index,
 });
@@ -141,19 +148,25 @@ function Hero() {
 
         {/* Centered headline */}
         <div className="relative h-full container-x flex flex-col items-center justify-center text-center pt-[68px] md:pt-[110px] pb-28 md:pb-32">
-          <p
-            className="text-white text-3xl sm:text-4xl md:text-6xl -mb-3 sm:-mb-5 md:-mb-8"
-            style={{ fontFamily: '"Yellowtail", cursive' }}
-          >
-            Explore Beautiful
-          </p>
-          <h1
-            key={current.label}
-            className="font-sans font-bold uppercase text-white leading-[0.92] tracking-tight animate-[fade-up_0.8s_var(--ease-out-expo)_both]"
-            style={{ fontSize: "clamp(46px, 12vw, 170px)" }}
-          >
-            {current.label}
+          <h1 className="flex flex-col items-center">
+            <span
+              className="text-white text-3xl sm:text-4xl md:text-6xl -mb-3 sm:-mb-5 md:-mb-8 font-normal"
+              style={{ fontFamily: '"Yellowtail", cursive' }}
+            >
+              Explore Beautiful
+            </span>
+            <span
+              key={current.label}
+              className="block font-sans font-bold uppercase text-white leading-[0.92] tracking-tight animate-[fade-up_0.8s_var(--ease-out-expo)_both]"
+              style={{ fontSize: "clamp(46px, 12vw, 170px)" }}
+            >
+              {current.label}
+            </span>
+            <span className="mt-2 text-white/90 text-[13px] md:text-[15px] uppercase tracking-[0.28em]">
+              Private Tuk-Tuk Tours in Lisbon
+            </span>
           </h1>
+
           <p className="mt-4 md:mt-5 max-w-xl text-white/85 text-[14px] md:text-[16px] leading-relaxed px-4">
             Private tuk-tuk tours with local drivers. Small groups, flat prices, your pace.
           </p>

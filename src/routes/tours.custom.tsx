@@ -20,8 +20,17 @@ export const Route = createFileRoute("/tours/custom")({
         content:
           "Design your own private Lisbon experience. Choose vehicle, destinations, duration, and add-ons — see live pricing and book instantly.",
       },
+      { property: "og:title", content: "Build Your Custom Lisbon Tour | Tuk Tuk 24" },
+      {
+        property: "og:description",
+        content:
+          "Pick your vehicle, stops, duration and extras — live pricing as you build your own private Lisbon tour.",
+      },
+      { property: "og:url", content: "https://tuktuk24lisbon.com/tours/custom" },
     ],
+    links: [{ rel: "canonical", href: "https://tuktuk24lisbon.com/tours/custom" }],
   }),
+
 });
 
 type Component = {
