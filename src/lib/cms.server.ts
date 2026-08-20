@@ -18,7 +18,8 @@ const TOUR_SELECT = `
   not_included,
   featured,
   published,
-  sort_order
+  sort_order,
+  per_person_pricing
 `;
 
 const BLOG_SELECT = `
