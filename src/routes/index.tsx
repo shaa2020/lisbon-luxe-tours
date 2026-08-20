@@ -27,21 +27,28 @@ const lockedHeroImg = `${aboutImg}?v=locked-20260616-hero`;
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Tuk Tuk 24 — Private Tuk-Tuk Tours in Lisbon" },
+      { title: "Private Tuk-Tuk Tours in Lisbon — Tuk Tuk 24" },
       {
         name: "description",
         content:
           "Private tuk-tuk tours around Lisbon with local drivers. Alfama, Belém, Sintra, sunset rides — small groups, flat prices, easy booking.",
       },
-      { property: "og:title", content: "Tuk Tuk 24 — Private Tuk-Tuk Tours in Lisbon" },
+      { property: "og:title", content: "Private Tuk-Tuk Tours in Lisbon — Tuk Tuk 24" },
       {
         property: "og:description",
         content:
-          "Small, family-run tuk-tuk tours around Lisbon with local drivers.",
+          "Ride through Alfama, Belém and Sintra with a local driver. Small groups, per-person prices, book in minutes.",
       },
-      { property: "og:url", content: "/" },
+      { name: "twitter:title", content: "Private Tuk-Tuk Tours in Lisbon — Tuk Tuk 24" },
+      {
+        name: "twitter:description",
+        content:
+          "Ride through Alfama, Belém and Sintra with a local driver. Small groups, per-person prices, book in minutes.",
+      },
+      { property: "og:url", content: "https://tuktuk24lisbon.com/" },
     ],
-    links: [{ rel: "canonical", href: "/" }],
+    links: [{ rel: "canonical", href: "https://tuktuk24lisbon.com/" }],
+
   }),
   component: Index,
 });
