@@ -67,7 +67,7 @@ export function TourBookingPanel({ tour }: { tour: Tour; compact?: boolean }) {
   const balanceDue = Math.round((total - payNow) * 100) / 100;
   const isEmail = (s: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);
   const isPhone = (s: string) => s.replace(/[^\d]/g, "").length >= 8;
-  const canContinue = !!date && !!time && guests > 0 && !slotInfo(time)?.full;
+  const canContinue = !!date && !!time && guests >= 2 && !slotInfo(time)?.full;
 
 
   const handleRequest = async () => {
@@ -220,7 +220,7 @@ export function TourBookingPanel({ tour }: { tour: Tour; compact?: boolean }) {
             </span>
           )}
         </div>
-        <p className="text-body text-xs tracking-tight">per private group · up to 7 guests</p>
+        <p className="text-body text-xs tracking-tight">per person · minimum 2 guests · up to 7</p>
         {rating && rating.count > 0 && (
           <div className="mt-2 flex items-center gap-2">
             <StarRating value={rating.average} size={14} />
@@ -345,7 +345,7 @@ export function TourBookingPanel({ tour }: { tour: Tour; compact?: boolean }) {
             <div className="flex items-center gap-4">
               <button
                 type="button"
-                onClick={() => setGuests(Math.max(1, guests - 1))}
+                onClick={() => setGuests(Math.max(2, guests - 1))}
                 aria-label="Decrease guests"
                 className="w-6 h-6 flex items-center justify-center text-body hover:text-ink transition-colors"
               >
