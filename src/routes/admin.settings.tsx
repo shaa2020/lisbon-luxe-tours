@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { DEFAULT_GROUP_TIERS, parseGroupTiers, type GroupTier } from "@/lib/pricing";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { AdminShell } from "@/components/admin/AdminShell";
@@ -81,6 +82,8 @@ function AdminSettings() {
     offer_bar_code: "",
     whatsapp_reply_line: "We usually reply within minutes",
     google_review_url: "",
+    group_discount_enabled: true,
+    group_discount_tiers: DEFAULT_GROUP_TIERS as GroupTier[],
   });
 
   useEffect(() => {
@@ -112,6 +115,8 @@ function AdminSettings() {
       offer_bar_code: d.offer_bar_code ?? "",
       whatsapp_reply_line: d.whatsapp_reply_line ?? "We usually reply within minutes",
       google_review_url: d.google_review_url ?? "",
+      group_discount_enabled: d.group_discount_enabled !== false,
+      group_discount_tiers: parseGroupTiers(d.group_discount_tiers),
     });
   }, [brand.data]);
 
@@ -472,6 +477,82 @@ function AdminSettings() {
               Controls the live availability shown on tour pages.
             </span>
           </label>
+          <div className="space-y-3 pt-2 border-t border-border">
+            <label className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={biz.group_discount_enabled}
+                onChange={(e) => setBiz((b) => ({ ...b, group_discount_enabled: e.target.checked }))}
+              />
+              <span className="text-xs font-medium text-foreground">
+                Automatic group discounts (per-person tours only)
+              </span>
+            </label>
+            <p className="text-[11px] text-muted-foreground">
+              Larger groups get a percentage off the per-person price automatically. The highest
+              matching tier wins.
+            </p>
+            {biz.group_discount_tiers.map((t, i) => (
+              <div key={i} className="flex items-center gap-2">
+                <span className="text-[11px] text-muted-foreground">From</span>
+                <input
+                  type="number"
+                  min={2}
+                  value={t.min_guests}
+                  onChange={(e) =>
+                    setBiz((b) => ({
+                      ...b,
+                      group_discount_tiers: b.group_discount_tiers.map((x, j) =>
+                        j === i ? { ...x, min_guests: Math.max(2, Math.round(Number(e.target.value) || 2)) } : x,
+                      ),
+                    }))
+                  }
+                  className={`${input} w-20`}
+                />
+                <span className="text-[11px] text-muted-foreground">guests →</span>
+                <input
+                  type="number"
+                  min={0}
+                  max={50}
+                  value={t.percent}
+                  onChange={(e) =>
+                    setBiz((b) => ({
+                      ...b,
+                      group_discount_tiers: b.group_discount_tiers.map((x, j) =>
+                        j === i ? { ...x, percent: Math.min(50, Math.max(0, Number(e.target.value) || 0)) } : x,
+                      ),
+                    }))
+                  }
+                  className={`${input} w-20`}
+                />
+                <span className="text-[11px] text-muted-foreground">% off</span>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setBiz((b) => ({
+                      ...b,
+                      group_discount_tiers: b.group_discount_tiers.filter((_, j) => j !== i),
+                    }))
+                  }
+                  className="text-[11px] text-destructive underline"
+                >
+                  Remove
+                </button>
+              </div>
+            ))}
+            <button
+              type="button"
+              onClick={() =>
+                setBiz((b) => ({
+                  ...b,
+                  group_discount_tiers: [...b.group_discount_tiers, { min_guests: 3, percent: 5 }],
+                }))
+              }
+              className="text-xs underline text-muted-foreground"
+            >
+              + Add tier
+            </button>
+          </div>
           <button type="button" onClick={saveBiz} disabled={savingBiz} className={btn}>
             {savingBiz ? "Saving…" : "Save booking rules"}
           </button>
