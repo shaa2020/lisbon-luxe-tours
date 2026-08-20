@@ -304,6 +304,7 @@ function TourPage() {
               <p className="text-sm text-body/60 line-through leading-none">€{pricing.original}</p>
             )}
           </div>
+          <p className="text-[10px] text-body mt-1 leading-none">minimum 2 guests</p>
         </div>
         <button
           onClick={() => { trackBookingCtaClick("tour_detail_mobile_bar", tour); setSheetOpen(true); }}
