@@ -155,22 +155,22 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
         : buildTourLineItems({
             tourSlug: data.tour_slug,
             tourTitle: data.tour_title,
-            guests: data.guests,
+            guests: guestCount,
             totalCents: payableCents,
-            baseCents,
+            baseCents: serverQuote?.perPersonCents ?? baseCents,
             pickupFeeCents: settings?.hotel_pickup_fee_cents ?? 0,
-            pickupRequested: /hotel pickup/i.test(data.notes || ""),
+            pickupRequested: data.pickup === true || /hotel pickup/i.test(data.notes || ""),
           });
 
     const payment = await createPayment(supabaseAdmin, {
       amountCents: chargeCents,
-      description: `${data.tour_title} · ${data.guests} guest${data.guests === 1 ? "" : "s"}${data.travel_date ? ` · ${data.travel_date}` : ""}${balanceCents > 0 ? ` · ${depositPct}% deposit` : ""}`,
+      description: `${data.tour_title} · ${guestCount} guest${guestCount === 1 ? "" : "s"}${data.travel_date ? ` · ${data.travel_date}` : ""}${balanceCents > 0 ? ` · ${depositPct}% deposit` : ""}`,
       origin,
       lineItems,
       metadata: {
         booking_id: booking.id,
         tour_slug: data.tour_slug,
-        guests: String(data.guests),
+        guests: String(guestCount),
         deposit_pct: String(depositPct),
         balance_cents: String(balanceCents),
       },
