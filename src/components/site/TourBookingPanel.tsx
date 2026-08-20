@@ -58,16 +58,16 @@ export function TourBookingPanel({ tour }: { tour: Tour; compact?: boolean }) {
   });
   const slotInfo = (t: string) => availability?.slots.find((s) => s.time === t);
 
-  const extras = Math.max(0, guests - 2) * 35;
+  const guestsTotal = pricing.current * guests;
   const pickupCharge = pickup ? pickupFee : 0;
-  const subtotal = pricing.current + extras + pickupCharge;
+  const subtotal = guestsTotal + pickupCharge;
   const discount = promo ? Math.min(promo.cents / 100, subtotal - 1) : 0;
   const total = Math.max(1, Math.round((subtotal - discount) * 100) / 100);
   const payNow = depositPct >= 100 ? total : Math.round((total * depositPct) / 100 * 100) / 100;
   const balanceDue = Math.round((total - payNow) * 100) / 100;
   const isEmail = (s: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);
   const isPhone = (s: string) => s.replace(/[^\d]/g, "").length >= 8;
-  const canContinue = !!date && !!time && guests > 0 && !slotInfo(time)?.full;
+  const canContinue = !!date && !!time && guests >= 2 && !slotInfo(time)?.full;
 
 
   const handleRequest = async () => {
@@ -220,7 +220,7 @@ export function TourBookingPanel({ tour }: { tour: Tour; compact?: boolean }) {
             </span>
           )}
         </div>
-        <p className="text-body text-xs tracking-tight">per private group · up to 7 guests</p>
+        <p className="text-body text-xs tracking-tight">per person · minimum 2 guests · up to 7</p>
         {rating && rating.count > 0 && (
           <div className="mt-2 flex items-center gap-2">
             <StarRating value={rating.average} size={14} />
@@ -345,7 +345,7 @@ export function TourBookingPanel({ tour }: { tour: Tour; compact?: boolean }) {
             <div className="flex items-center gap-4">
               <button
                 type="button"
-                onClick={() => setGuests(Math.max(1, guests - 1))}
+                onClick={() => setGuests(Math.max(2, guests - 1))}
                 aria-label="Decrease guests"
                 className="w-6 h-6 flex items-center justify-center text-body hover:text-ink transition-colors"
               >
@@ -362,9 +362,9 @@ export function TourBookingPanel({ tour }: { tour: Tour; compact?: boolean }) {
               </button>
             </div>
           </div>
-          {extras > 0 && (
-            <p className="text-[11px] text-body mt-1.5">+€{extras} for {guests - 2} extra {guests - 2 === 1 ? "guest" : "guests"}</p>
-          )}
+          <p className="text-[11px] text-body mt-1.5">
+            €{pricing.current} per person × {guests} = €{guestsTotal.toFixed(2)} · minimum 2 guests
+          </p>
         </div>
 
         {/* Hotel pickup */}
@@ -428,18 +428,12 @@ export function TourBookingPanel({ tour }: { tour: Tour; compact?: boolean }) {
 
       {/* Total + CTA */}
       <div className="bg-cloud/40 border-t border-border p-6 space-y-4">
-        {(extras > 0 || pickupCharge > 0) && (
+        {(guestsTotal > 0 || pickupCharge > 0) && (
           <div className="space-y-1 text-[11px] text-body">
             <div className="flex justify-between">
-              <span>Base</span>
-              <span>€{pricing.current.toFixed(2)}</span>
+              <span>€{pricing.current} per person × {guests}</span>
+              <span>€{guestsTotal.toFixed(2)}</span>
             </div>
-            {extras > 0 && (
-              <div className="flex justify-between">
-                <span>Extra guests</span>
-                <span>+€{extras.toFixed(2)}</span>
-              </div>
-            )}
             {pickupCharge > 0 && (
               <div className="flex justify-between">
                 <span>Hotel pickup &amp; drop-off</span>

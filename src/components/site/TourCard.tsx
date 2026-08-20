@@ -47,6 +47,7 @@ export function TourCard({ tour }: { tour: Tour; offset?: boolean }) {
             ) : (
               <span className="text-gold font-display font-bold text-xl">€{pricing.current}</span>
             )}
+            <span className="block text-[10px] text-body mt-0.5">per person · min 2</span>
           </div>
           <span className="text-[11px] font-semibold uppercase tracking-widest text-ink/60 group-hover:text-gold transition">View →</span>
         </div>

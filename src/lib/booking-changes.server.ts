@@ -1,7 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
 
-const EXTRA_GUEST_CENTS = 3500;
 
 type BookingRow = Database["public"]["Tables"]["bookings"]["Row"];
 
@@ -82,10 +81,9 @@ export async function calculateModificationAmount(
         price_cents: number;
         extra_per_guest_cents: number;
       }[];
-      const baseTotal = selections.reduce((s, c) => s + (c.price_cents || 0), 0);
-      const extraPerGuest = selections.reduce((s, c) => s + (c.extra_per_guest_cents || 0), 0);
-      const extraGuests = Math.max(0, options.newGuests - 2);
-      const newAmount = baseTotal + extraPerGuest * extraGuests + pickupCents;
+      const perPerson = selections.reduce((s, c) => s + (c.price_cents || 0), 0);
+      const guests = Math.max(2, options.newGuests);
+      const newAmount = perPerson * guests + pickupCents;
       return {
         newGuests: options.newGuests,
         newAmountCents: newAmount,
@@ -107,8 +105,8 @@ export async function calculateModificationAmount(
         typeof salePrice === "number" && salePrice > 0 && salePrice < priceFrom
           ? salePrice * 100
           : priceFrom * 100;
-      const newExtras = Math.max(0, options.newGuests - 2) * EXTRA_GUEST_CENTS;
-      const newAmount = baseCents + newExtras + pickupCents;
+      const guests = Math.max(2, options.newGuests);
+      const newAmount = baseCents * guests + pickupCents;
       return {
         newGuests: options.newGuests,
         newAmountCents: newAmount,

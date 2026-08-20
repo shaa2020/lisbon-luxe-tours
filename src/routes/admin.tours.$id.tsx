@@ -249,7 +249,7 @@ function TourEditPage() {
                 className={input}
               />
             </Field>
-            <Field label="Price from (€)">
+            <Field label="Price per person (€)">
               <input
                 type="number"
                 min={0}
@@ -268,7 +268,7 @@ function TourEditPage() {
             </Field>
           </div>
 
-          <Field label="Sale price (€) — leave empty for no sale">
+          <Field label="Sale price per person (€) — leave empty for no sale">
             <input
               type="number"
               min={0}

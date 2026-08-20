@@ -45,7 +45,7 @@ export function BookingModal({
     defaultDate ? new Date(`${defaultDate}T00:00:00`) : undefined,
   );
   const [time, setTime] = useState<string>("");
-  const [guests, setGuests] = useState(defaultGuests && defaultGuests > 0 ? defaultGuests : 2);
+  const [guests, setGuests] = useState(defaultGuests && defaultGuests >= 2 ? defaultGuests : 2);
   const [name, setName] = useState("");
   const [contact, setContact] = useState("");
   const [phone, setPhone] = useState("");
@@ -55,7 +55,7 @@ export function BookingModal({
   if (!tour) return null;
 
   const pricing = tourPricing(tour);
-  const total = pricing.current + Math.max(0, guests - 2) * 35;
+  const total = pricing.current * Math.max(2, guests);
 
   const reset = () => {
     setDate(defaultDate ? new Date(`${defaultDate}T00:00:00`) : undefined);
@@ -215,7 +215,7 @@ export function BookingModal({
                 <div className="mt-auto space-y-2.5 text-sm text-white/85">
                   <div className="flex items-center gap-2.5"><Clock className="w-4 h-4 text-gold" />{tour.duration}</div>
                   <div className="flex items-center gap-2.5"><MapPin className="w-4 h-4 text-gold" />{tour.tagline}</div>
-                  <div className="flex items-center gap-2.5"><span className="text-gold text-base">★</span>4.9 · private group</div>
+                  <div className="flex items-center gap-2.5"><span className="text-gold text-base">★</span>4.9 · private tour</div>
                 </div>
               </div>
             </div>
@@ -291,7 +291,7 @@ export function BookingModal({
                   <div className="flex items-center gap-2">
                     <button
                       type="button"
-                      onClick={() => setGuests(Math.max(1, guests - 1))}
+                      onClick={() => setGuests(Math.max(2, guests - 1))}
                       className="w-8 h-8 rounded-full border border-border text-ink hover:border-gold hover:text-gold transition"
                     >−</button>
                     <button
