@@ -42,6 +42,7 @@ import { Route as AdminBlogIndexRouteImport } from './routes/admin.blog.index'
 import { Route as AdminBlogIdRouteImport } from './routes/admin.blog.$id'
 import { Route as AdminGuideIndexRouteImport } from './routes/admin.guide.index'
 import { Route as AdminGuideIdRouteImport } from './routes/admin.guide.$id'
+import { Route as AdminGuideTaxonomyRouteImport } from './routes/admin.guide.taxonomy'
 import { Route as AdminToursIndexRouteImport } from './routes/admin.tours.index'
 import { Route as AdminToursIdRouteImport } from './routes/admin.tours.$id'
 import { Route as ApiPublicBookingsRouteImport } from './routes/api/public/bookings'
@@ -215,6 +216,11 @@ const AdminGuideIdRoute = AdminGuideIdRouteImport.update({
   path: '/admin/guide/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminGuideTaxonomyRoute = AdminGuideTaxonomyRouteImport.update({
+  id: '/admin/guide/taxonomy',
+  path: '/admin/guide/taxonomy',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminToursIndexRoute = AdminToursIndexRouteImport.update({
   id: '/admin/tours/',
   path: '/admin/tours/',
@@ -285,6 +291,7 @@ export interface FileRoutesByFullPath {
   '/tours/': typeof ToursIndexRoute
   '/admin/blog/$id': typeof AdminBlogIdRoute
   '/admin/guide/$id': typeof AdminGuideIdRoute
+  '/admin/guide/taxonomy': typeof AdminGuideTaxonomyRoute
   '/admin/tours/$id': typeof AdminToursIdRoute
   '/api/public/bookings': typeof ApiPublicBookingsRoute
   '/lisbon-guide/category/$slug': typeof LisbonGuideCategorySlugRoute
@@ -327,6 +334,7 @@ export interface FileRoutesByTo {
   '/tours': typeof ToursIndexRoute
   '/admin/blog/$id': typeof AdminBlogIdRoute
   '/admin/guide/$id': typeof AdminGuideIdRoute
+  '/admin/guide/taxonomy': typeof AdminGuideTaxonomyRoute
   '/admin/tours/$id': typeof AdminToursIdRoute
   '/api/public/bookings': typeof ApiPublicBookingsRoute
   '/lisbon-guide/category/$slug': typeof LisbonGuideCategorySlugRoute
@@ -370,6 +378,7 @@ export interface FileRoutesById {
   '/tours/': typeof ToursIndexRoute
   '/admin/blog/$id': typeof AdminBlogIdRoute
   '/admin/guide/$id': typeof AdminGuideIdRoute
+  '/admin/guide/taxonomy': typeof AdminGuideTaxonomyRoute
   '/admin/tours/$id': typeof AdminToursIdRoute
   '/api/public/bookings': typeof ApiPublicBookingsRoute
   '/lisbon-guide/category/$slug': typeof LisbonGuideCategorySlugRoute
@@ -414,6 +423,7 @@ export interface FileRouteTypes {
     | '/tours/'
     | '/admin/blog/$id'
     | '/admin/guide/$id'
+    | '/admin/guide/taxonomy'
     | '/admin/tours/$id'
     | '/api/public/bookings'
     | '/lisbon-guide/category/$slug'
@@ -456,6 +466,7 @@ export interface FileRouteTypes {
     | '/tours'
     | '/admin/blog/$id'
     | '/admin/guide/$id'
+    | '/admin/guide/taxonomy'
     | '/admin/tours/$id'
     | '/api/public/bookings'
     | '/lisbon-guide/category/$slug'
@@ -498,6 +509,7 @@ export interface FileRouteTypes {
     | '/tours/'
     | '/admin/blog/$id'
     | '/admin/guide/$id'
+    | '/admin/guide/taxonomy'
     | '/admin/tours/$id'
     | '/api/public/bookings'
     | '/lisbon-guide/category/$slug'
@@ -541,6 +553,7 @@ export interface RootRouteChildren {
   ToursIndexRoute: typeof ToursIndexRoute
   AdminBlogIdRoute: typeof AdminBlogIdRoute
   AdminGuideIdRoute: typeof AdminGuideIdRoute
+  AdminGuideTaxonomyRoute: typeof AdminGuideTaxonomyRoute
   AdminToursIdRoute: typeof AdminToursIdRoute
   ApiPublicBookingsRoute: typeof ApiPublicBookingsRoute
   LisbonGuideCategorySlugRoute: typeof LisbonGuideCategorySlugRoute
@@ -785,6 +798,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminGuideIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/guide/taxonomy': {
+      id: '/admin/guide/taxonomy'
+      path: '/admin/guide/taxonomy'
+      fullPath: '/admin/guide/taxonomy'
+      preLoaderRoute: typeof AdminGuideTaxonomyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/tours/': {
       id: '/admin/tours/'
       path: '/admin/tours'
@@ -869,6 +889,7 @@ const rootRouteChildren: RootRouteChildren = {
   ToursIndexRoute: ToursIndexRoute,
   AdminBlogIdRoute: AdminBlogIdRoute,
   AdminGuideIdRoute: AdminGuideIdRoute,
+  AdminGuideTaxonomyRoute: AdminGuideTaxonomyRoute,
   AdminToursIdRoute: AdminToursIdRoute,
   ApiPublicBookingsRoute: ApiPublicBookingsRoute,
   LisbonGuideCategorySlugRoute: LisbonGuideCategorySlugRoute,
