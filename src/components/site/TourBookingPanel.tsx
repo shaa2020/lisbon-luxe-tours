@@ -362,9 +362,9 @@ export function TourBookingPanel({ tour }: { tour: Tour; compact?: boolean }) {
               </button>
             </div>
           </div>
-          {extras > 0 && (
-            <p className="text-[11px] text-body mt-1.5">+€{extras} for {guests - 2} extra {guests - 2 === 1 ? "guest" : "guests"}</p>
-          )}
+          <p className="text-[11px] text-body mt-1.5">
+            €{pricing.current} per person × {guests} = €{guestsTotal.toFixed(2)} · minimum 2 guests
+          </p>
         </div>
 
         {/* Hotel pickup */}
