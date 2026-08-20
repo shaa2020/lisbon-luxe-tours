@@ -88,7 +88,10 @@ function AdminGuideListPage() {
   const setStatus = async (id: string, status: string) => {
     const patch: Record<string, unknown> = { status };
     if (status === "published") patch.published_at = new Date().toISOString();
-    const { error } = await supabase.from("travel_guides").update(patch).eq("id", id);
+    const { error } = await supabase
+      .from("travel_guides")
+      .update(patch as unknown as never)
+      .eq("id", id);
     if (error) return toast.error(error.message);
     toast.success(`Moved to ${status}`);
     refresh();
