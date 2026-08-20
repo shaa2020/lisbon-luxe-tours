@@ -12,7 +12,7 @@ const checkoutInput = z.object({
   phone: z.string().trim().min(6).max(50),
   travel_date: z.string().max(20).optional().nullable(),
   time: z.string().max(20).optional().nullable(),
-  guests: z.number().int().min(1).max(20),
+  guests: z.number().int().min(2).max(20),
   notes: z.string().max(2000).optional().nullable(),
   amount: z.number().int().min(100).max(500000), // cents, €1–€5000
   image_url: z.string().url().optional().nullable(),
