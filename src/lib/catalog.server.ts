@@ -1,6 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
 import type { PaymentLineItem } from "./payments.server";
+import { quote, parseGroupTiers } from "./pricing";
 
 /** Every booking is priced per person and needs at least this many guests. */
 export const MIN_GUESTS = 2;
@@ -98,4 +99,48 @@ export async function assertSlotAvailable(
   if ((count ?? 0) >= capacity) {
     throw new Error("That time slot has just been taken. Please choose another time.");
   }
+}
+
+/**
+ * Authoritative price for a tour booking. The client's number is display only —
+ * checkout always re-prices from the tour row, the group discount tiers and the
+ * hotel pickup fee stored in the database.
+ */
+export async function quoteTourCents(
+  supabase: SupabaseClient<Database>,
+  input: { slug: string; guests: number; pickupRequested: boolean },
+): Promise<{ totalCents: number; perPersonCents: number; pickupFeeCents: number; guests: number } | null> {
+  const { data: tour } = await supabase
+    .from("tours")
+    .select("price_from, sale_price, per_person_pricing")
+    .eq("slug", input.slug)
+    .maybeSingle();
+  if (!tour) return null;
+
+  const { data: settings } = await supabase
+    .from("site_settings")
+    .select("hotel_pickup_fee_cents, group_discount_tiers, group_discount_enabled")
+    .eq("id", true)
+    .maybeSingle();
+
+  const pickupFeeCents = Math.max(0, Number((settings as never as { hotel_pickup_fee_cents?: number })?.hotel_pickup_fee_cents ?? 0));
+  const perPersonEuros = Number(tour.sale_price ?? tour.price_from) || 0;
+  if (perPersonEuros <= 0) return null;
+
+  const q = quote({
+    perPerson: perPersonEuros,
+    guests: input.guests,
+    perPersonPricing: (tour as never as { per_person_pricing?: boolean }).per_person_pricing !== false,
+    pickupFee: pickupFeeCents / 100,
+    pickupRequested: input.pickupRequested,
+    tiers: parseGroupTiers((settings as never as { group_discount_tiers?: unknown })?.group_discount_tiers),
+    tiersEnabled: (settings as never as { group_discount_enabled?: boolean })?.group_discount_enabled !== false,
+  });
+
+  return {
+    totalCents: Math.round(q.total * 100),
+    perPersonCents: Math.round(q.effectivePerPerson * 100),
+    pickupFeeCents: Math.round(q.pickup * 100),
+    guests: q.guests,
+  };
 }
