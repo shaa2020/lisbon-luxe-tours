@@ -424,7 +424,7 @@ function FlashCard({ tour }: { tour: Tour }) {
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
         />
         <span className="absolute top-3 left-3 bg-gold text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-sm shadow">
-          €{pricing.current}
+          €{pricing.current} <span className="normal-case tracking-normal font-semibold">pp</span>
         </span>
         {pricing.onSale && (
           <span className="absolute top-3 right-3 bg-red-600 text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-sm shadow">
@@ -571,6 +571,7 @@ function PopularCard({ tour, onBook }: { tour: Tour; onBook: () => void }) {
             {pricing.onSale && (
               <span className="ml-2 text-sm text-body/60 line-through">€{pricing.original}</span>
             )}
+            <span className="block text-[11px] text-body">per person · minimum 2 guests</span>
           </div>
           <button
             type="button"

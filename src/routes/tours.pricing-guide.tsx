@@ -111,8 +111,8 @@ function PricingGuidePage() {
             Our current price list
           </h2>
           <p className="text-body leading-relaxed mb-5">
-            Prices are per tuk-tuk for a private group — not per person. The
-            same route costs the same whether you are two or four people.
+            Prices are per person, with a minimum of 2 guests per booking. A
+            two-person booking pays twice the listed rate.
           </p>
 
           {isLoading ? (
@@ -133,7 +133,7 @@ function PricingGuidePage() {
                     <th className="p-3 font-semibold">Tour</th>
                     <th className="p-3 font-semibold">Duration</th>
                     <th className="p-3 font-semibold whitespace-nowrap">
-                      Price (per tuk-tuk)
+                      Price (per person)
                     </th>
                   </tr>
                 </thead>

@@ -364,7 +364,7 @@ function GuideArticlePage() {
                         <h3 className="font-display text-lg font-bold group-hover:text-gold transition-colors">
                           {t.title}
                         </h3>
-                        <p className="mt-3 font-semibold text-ink">From €{price.current}</p>
+                        <p className="mt-3 font-semibold text-ink">From €{price.current} <span className="font-normal text-body text-xs">per person</span></p>
                       </div>
                     </Link>
                   );

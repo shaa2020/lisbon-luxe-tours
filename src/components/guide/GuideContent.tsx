@@ -86,7 +86,7 @@ function InlineTourCard({ slug }: { slug: string }) {
                 <span className="text-body/60 line-through text-sm mr-2">€{price.original}</span>€{price.current}
               </>
             ) : (
-              <>From €{price.current}</>
+              <>From €{price.current} pp</>
             )}
           </p>
           <Link

@@ -383,7 +383,7 @@ function ToursPage() {
               },
               {
                 q: "Payment",
-                a: "Card and the usual local methods at checkout. The price you see is the total for your private group — no per-person surcharge, no booking fee at the end.",
+                a: "Card and the usual local methods at checkout. Prices are per person with a minimum of 2 guests — no hidden booking fee at the end.",
               },
               {
                 q: "Languages",
@@ -583,7 +583,7 @@ function TourGridCard({
 
         <ul className="space-y-1.5 mb-4 flex-1">
           <li className="flex gap-2 text-[12px] text-body">
-            <span className="text-gold">·</span> {tour.duration} · private group, no strangers
+            <span className="text-gold">·</span> {tour.duration} · private tour, minimum 2 guests
           </li>
           {included.map((i) => (
             <li key={i} className="flex gap-2 text-[12px] text-body">
@@ -597,13 +597,14 @@ function TourGridCard({
 
         <div className="flex items-end justify-between pt-5 border-t border-border">
           <div>
-            <p className="text-[10px] uppercase tracking-widest text-body mb-1">Total for your group</p>
+            <p className="text-[10px] uppercase tracking-widest text-body mb-1">Price per person</p>
             <div className="flex items-baseline gap-2 flex-wrap">
               <p className="font-display font-bold text-2xl text-gold leading-none">€{pricing.current}</p>
               {pricing.onSale && (
                 <p className="text-sm text-body/60 line-through leading-none">€{pricing.original}</p>
               )}
             </div>
+            <p className="text-[11px] text-body mt-1">per person · minimum 2 guests</p>
             <p className="text-[10px] text-body/70 mt-1">Free cancellation up to 24h before</p>
           </div>
           <div className="flex gap-2 shrink-0">
