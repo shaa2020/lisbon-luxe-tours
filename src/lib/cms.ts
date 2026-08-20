@@ -107,6 +107,7 @@ export function mapTour(row: TourRow): Tour {
     duration: row.duration,
     priceFrom: row.price_from,
     salePrice: row.sale_price,
+    perPersonPricing: row.per_person_pricing !== false,
     image_url: row.image_url,
     image: tourImage(row.slug, row.image_url),
     tagline: row.tagline ?? "",
