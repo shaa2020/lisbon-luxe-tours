@@ -19,6 +19,7 @@ import {
   Sparkles,
   HelpCircle,
   Settings,
+  Compass,
 } from "lucide-react";
 
 type NavItem = {
