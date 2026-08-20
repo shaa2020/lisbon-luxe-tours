@@ -17,6 +17,8 @@ export type Tour = {
   duration: string;
   priceFrom: number;
   salePrice?: number | null;
+  /** False for flat-rate services (airport transfer) priced per vehicle. */
+  perPersonPricing?: boolean;
   image: string;
   image_url?: string | null;
   tagline: string;
