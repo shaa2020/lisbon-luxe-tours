@@ -19,6 +19,7 @@ type TourForm = {
   duration: string;
   price_from: number;
   sale_price: number | null;
+  per_person_pricing: boolean;
   image_url: string | null;
   tagline: string;
   description: string;
@@ -39,6 +40,7 @@ const empty: TourForm = {
   duration: "",
   price_from: 0,
   sale_price: null,
+  per_person_pricing: true,
   image_url: null,
   tagline: "",
   description: "",
@@ -94,6 +96,7 @@ function TourEditPage() {
         duration: data.duration,
         price_from: data.price_from,
         sale_price: data.sale_price ?? null,
+        per_person_pricing: (data as { per_person_pricing?: boolean }).per_person_pricing !== false,
         image_url: data.image_url,
         tagline: data.tagline ?? "",
         description: data.description ?? "",
@@ -154,6 +157,7 @@ function TourEditPage() {
         form.sale_price === null || form.sale_price === undefined || Number(form.sale_price) <= 0
           ? null
           : Number(form.sale_price),
+      per_person_pricing: form.per_person_pricing !== false,
       image_url: form.image_url,
       tagline: form.tagline,
       description: form.description,
@@ -299,6 +303,23 @@ function TourEditPage() {
                 </p>
               )}
           </Field>
+
+          <label className="flex items-start gap-3 p-4 rounded-xl border border-border bg-muted/30 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={form.per_person_pricing !== false}
+              onChange={(e) => update("per_person_pricing", e.target.checked)}
+              className="mt-1"
+            />
+            <span className="text-sm">
+              <span className="font-medium">Priced per person</span>
+              <span className="block text-xs text-muted-foreground mt-0.5">
+                On: the price above is charged for each guest, with a 2-guest minimum and any
+                group discount tiers applied automatically. Off: the price is a flat rate for
+                the whole vehicle (use this for airport transfers).
+              </span>
+            </span>
+          </label>
 
           <Field label="Tagline">
             <input
