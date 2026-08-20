@@ -17,6 +17,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+import { quote } from "@/lib/pricing";
 import { useSiteBrand } from "@/lib/brand";
 import { useServerFn } from "@tanstack/react-start";
 import { createCheckoutSession } from "@/lib/checkout.functions";
@@ -39,7 +40,7 @@ export function BookingModal({
   defaultDate?: string | undefined;
   defaultGuests?: number | undefined;
 }) {
-  const { business } = useSiteBrand();
+  const { business, groupTiers, groupDiscountEnabled } = useSiteBrand();
   const checkoutFn = useServerFn(createCheckoutSession);
   const [date, setDate] = useState<Date | undefined>(
     defaultDate ? new Date(`${defaultDate}T00:00:00`) : undefined,
@@ -55,7 +56,15 @@ export function BookingModal({
   if (!tour) return null;
 
   const pricing = tourPricing(tour);
-  const total = pricing.current * Math.max(2, guests);
+  const perPersonPricing = tour.perPersonPricing !== false;
+  const q = quote({
+    perPerson: pricing.current,
+    guests,
+    perPersonPricing,
+    tiers: groupTiers,
+    tiersEnabled: groupDiscountEnabled,
+  });
+  const total = q.total;
 
   const reset = () => {
     setDate(defaultDate ? new Date(`${defaultDate}T00:00:00`) : undefined);
@@ -301,7 +310,11 @@ export function BookingModal({
                     >+</button>
                   </div>
                 </div>
-                <p className="text-[11px] text-body mt-2">€{pricing.current} per person · minimum 2 guests · up to 7</p>
+                <p className="text-[11px] text-body mt-2">
+                  {perPersonPricing
+                    ? `€${pricing.current} per person · minimum 2 guests · up to 7`
+                    : `€${pricing.current} per transfer · up to 7 guests`}
+                </p>
               </div>
 
               {/* Contact */}
@@ -333,7 +346,11 @@ export function BookingModal({
               {/* Total + submit */}
               <div className="mt-2 pt-5 border-t border-border flex flex-col gap-3">
                 <div className="flex justify-between text-xs text-body">
-                  <span>€{pricing.current} per person × {Math.max(2, guests)} guests</span>
+                  <span>
+                    {perPersonPricing
+                      ? `€${pricing.current} per person × ${q.guests} guests`
+                      : "Private transfer"}
+                  </span>
                   <span>€{total}</span>
                 </div>
                 <div className="flex items-end justify-between">
