@@ -15,6 +15,9 @@ export type Review = {
   travel_date: string | null;
   status: "pending" | "approved" | "hidden";
   featured: boolean;
+  source?: string | null;
+  source_url?: string | null;
+  author_photo_url?: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -135,6 +138,61 @@ export function useSubmitReview() {
     },
     onSuccess: (_d, vars) => {
       qc.invalidateQueries({ queryKey: ["reviews", "tour", vars.tour_slug] });
+    },
+  });
+}
+
+export type ImportReviewInput = {
+  author_name: string;
+  rating: number;
+  body: string;
+  title?: string | null;
+  travel_date?: string | null;
+  tour_slug?: string | null;
+  source: string;
+  source_url?: string | null;
+  author_photo_url?: string | null;
+  featured?: boolean;
+};
+
+/** Admin-only: adds an existing Google/TripAdvisor review, already approved. */
+export function useImportReview() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (input: ImportReviewInput) => {
+      const name = input.author_name.trim();
+      const body = input.body.trim();
+      if (name.length < 2) throw new Error("Reviewer name is required.");
+      if (body.length < 5) throw new Error("Review text is required.");
+      const { data, error } = await supabase
+        .from("reviews" as never)
+        .insert({
+          author_name: name,
+          rating: Math.max(1, Math.min(5, Math.round(input.rating))),
+          body,
+          title: (input.title ?? "").trim() || null,
+          travel_date: input.travel_date || null,
+          tour_slug: input.tour_slug || null,
+        } as never)
+        .select("id")
+        .single();
+      if (error) throw error;
+      const id = (data as unknown as { id: string }).id;
+      const { error: uErr } = await supabase
+        .from("reviews" as never)
+        .update({
+          status: "approved",
+          featured: input.featured ?? true,
+          source: input.source,
+          source_url: input.source_url || null,
+          author_photo_url: input.author_photo_url || null,
+        } as never)
+        .eq("id", id);
+      if (uErr) throw uErr;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["admin-reviews"] });
+      qc.invalidateQueries({ queryKey: ["reviews"] });
     },
   });
 }

@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { StarRating } from "@/components/site/StarRating";
 import {
+  useImportReview,
   useAllReviewsAdmin,
   useDeleteReview,
   useModerateReview,
@@ -26,6 +27,131 @@ function statusBadge(s: Review["status"]) {
     hidden: "bg-muted/60 text-muted-foreground border-border",
   };
   return map[s];
+}
+
+const fld =
+  "w-full rounded-md border border-border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary";
+
+function ReviewImporter() {
+  const importReview = useImportReview();
+  const [open, setOpen] = useState(false);
+  const [form, setForm] = useState({
+    author_name: "",
+    rating: 5,
+    title: "",
+    body: "",
+    travel_date: "",
+    tour_slug: "",
+    source: "google",
+    source_url: "",
+    featured: true,
+  });
+
+  const submit = async () => {
+    try {
+      await importReview.mutateAsync({
+        author_name: form.author_name,
+        rating: form.rating,
+        title: form.title,
+        body: form.body,
+        travel_date: form.travel_date || null,
+        tour_slug: form.tour_slug || null,
+        source: form.source,
+        source_url: form.source_url || null,
+        featured: form.featured,
+      });
+      toast.success("Review imported and published");
+      setForm({ ...form, author_name: "", title: "", body: "", source_url: "", travel_date: "" });
+    } catch (e) {
+      toast.error((e as Error).message);
+    }
+  };
+
+  return (
+    <div className="mb-6 rounded-xl border border-border bg-card p-5">
+      <button
+        onClick={() => setOpen((v) => !v)}
+        className="text-sm font-semibold text-primary underline"
+      >
+        {open ? "Hide importer" : "Import a Google / TripAdvisor review"}
+      </button>
+      {open && (
+        <div className="mt-4 grid gap-3 md:grid-cols-2">
+          <input
+            className={fld}
+            placeholder="Reviewer name"
+            value={form.author_name}
+            onChange={(e) => setForm({ ...form, author_name: e.target.value })}
+          />
+          <div className="flex items-center gap-3">
+            <span className="text-xs text-muted-foreground">Rating</span>
+            <StarRating value={form.rating} onChange={(v) => setForm({ ...form, rating: v })} />
+          </div>
+          <input
+            className={fld}
+            placeholder="Headline (optional)"
+            value={form.title}
+            onChange={(e) => setForm({ ...form, title: e.target.value })}
+          />
+          <input
+            className={fld}
+            placeholder="Tour slug (optional, e.g. alfama-classic)"
+            value={form.tour_slug}
+            onChange={(e) => setForm({ ...form, tour_slug: e.target.value })}
+          />
+          <textarea
+            className={`${fld} md:col-span-2`}
+            rows={4}
+            placeholder="Review text (copy it exactly as written)"
+            value={form.body}
+            onChange={(e) => setForm({ ...form, body: e.target.value })}
+          />
+          <select
+            className={fld}
+            value={form.source}
+            onChange={(e) => setForm({ ...form, source: e.target.value })}
+          >
+            <option value="google">Google</option>
+            <option value="tripadvisor">TripAdvisor</option>
+            <option value="getyourguide">GetYourGuide</option>
+            <option value="direct">Direct / email</option>
+          </select>
+          <input
+            className={fld}
+            placeholder="Link to the original review (optional)"
+            value={form.source_url}
+            onChange={(e) => setForm({ ...form, source_url: e.target.value })}
+          />
+          <input
+            className={fld}
+            type="date"
+            value={form.travel_date}
+            onChange={(e) => setForm({ ...form, travel_date: e.target.value })}
+          />
+          <label className="flex items-center gap-2 text-sm">
+            <input
+              type="checkbox"
+              checked={form.featured}
+              onChange={(e) => setForm({ ...form, featured: e.target.checked })}
+            />
+            Feature on homepage
+          </label>
+          <div className="md:col-span-2">
+            <button
+              onClick={submit}
+              disabled={importReview.isPending}
+              className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground disabled:opacity-50"
+            >
+              {importReview.isPending ? "Importing…" : "Import & publish"}
+            </button>
+            <p className="mt-2 text-xs text-muted-foreground">
+              Only copy real reviews you actually received. Imported reviews show their source on the site.
+            </p>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
 
 function AdminReviewsPage() {
@@ -81,6 +207,8 @@ function AdminReviewsPage() {
           Approve, hide, or feature customer reviews. Pending reviews are invisible to the public.
         </p>
       </div>
+
+      <ReviewImporter />
 
       <div className="flex flex-wrap gap-2 mb-6">
         {STATUSES.map((s) => (
