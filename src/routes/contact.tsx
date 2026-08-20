@@ -210,10 +210,12 @@ function ContactPage() {
               </Field>
               <button
                 type="submit"
-                className="w-full bg-gold text-white py-4 rounded-full text-[12px] font-semibold uppercase tracking-widest shadow-[0_8px_20px_rgba(43,182,247,0.35)] hover:bg-ink hover:shadow-[0_8px_20px_rgba(30,58,95,0.35)] transition-all"
+                disabled={sending}
+                className="w-full bg-gold text-white py-4 rounded-full text-[12px] font-semibold uppercase tracking-widest shadow-[0_8px_20px_rgba(43,182,247,0.35)] hover:bg-ink hover:shadow-[0_8px_20px_rgba(30,58,95,0.35)] transition-all disabled:opacity-60"
               >
-                Send Inquiry →
+                {sending ? "Sending…" : "Send Inquiry →"}
               </button>
+
               <p className="text-[11px] text-body text-center">We typically reply within 4 hours.</p>
             </form>
           )}
