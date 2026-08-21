@@ -15,6 +15,7 @@ import { Route as BookATourRouteImport } from './routes/book-a-tour'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CookiesRouteImport } from './routes/cookies'
 import { Route as FaqRouteImport } from './routes/faq'
+import { Route as LisbonPrivateToursRouteImport } from './routes/lisbon-private-tours'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ReviewsRouteImport } from './routes/reviews'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
@@ -81,6 +82,11 @@ const CookiesRoute = CookiesRouteImport.update({
 const FaqRoute = FaqRouteImport.update({
   id: '/faq',
   path: '/faq',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LisbonPrivateToursRoute = LisbonPrivateToursRouteImport.update({
+  id: '/lisbon-private-tours',
+  path: '/lisbon-private-tours',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivacyRoute = PrivacyRouteImport.update({
@@ -278,6 +284,7 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/cookies': typeof CookiesRoute
   '/faq': typeof FaqRoute
+  '/lisbon-private-tours': typeof LisbonPrivateToursRoute
   '/privacy': typeof PrivacyRoute
   '/reviews': typeof ReviewsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -323,6 +330,7 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/cookies': typeof CookiesRoute
   '/faq': typeof FaqRoute
+  '/lisbon-private-tours': typeof LisbonPrivateToursRoute
   '/privacy': typeof PrivacyRoute
   '/reviews': typeof ReviewsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -369,6 +377,7 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/cookies': typeof CookiesRoute
   '/faq': typeof FaqRoute
+  '/lisbon-private-tours': typeof LisbonPrivateToursRoute
   '/privacy': typeof PrivacyRoute
   '/reviews': typeof ReviewsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -416,6 +425,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/cookies'
     | '/faq'
+    | '/lisbon-private-tours'
     | '/privacy'
     | '/reviews'
     | '/sitemap.xml'
@@ -461,6 +471,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/cookies'
     | '/faq'
+    | '/lisbon-private-tours'
     | '/privacy'
     | '/reviews'
     | '/sitemap.xml'
@@ -506,6 +517,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/cookies'
     | '/faq'
+    | '/lisbon-private-tours'
     | '/privacy'
     | '/reviews'
     | '/sitemap.xml'
@@ -552,6 +564,7 @@ export interface RootRouteChildren {
   ContactRoute: typeof ContactRoute
   CookiesRoute: typeof CookiesRoute
   FaqRoute: typeof FaqRoute
+  LisbonPrivateToursRoute: typeof LisbonPrivateToursRoute
   PrivacyRoute: typeof PrivacyRoute
   ReviewsRoute: typeof ReviewsRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
@@ -633,6 +646,13 @@ declare module '@tanstack/react-router' {
       path: '/faq'
       fullPath: '/faq'
       preLoaderRoute: typeof FaqRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lisbon-private-tours': {
+      id: '/lisbon-private-tours'
+      path: '/lisbon-private-tours'
+      fullPath: '/lisbon-private-tours'
+      preLoaderRoute: typeof LisbonPrivateToursRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/privacy': {
@@ -904,6 +924,7 @@ const rootRouteChildren: RootRouteChildren = {
   ContactRoute: ContactRoute,
   CookiesRoute: CookiesRoute,
   FaqRoute: FaqRoute,
+  LisbonPrivateToursRoute: LisbonPrivateToursRoute,
   PrivacyRoute: PrivacyRoute,
   ReviewsRoute: ReviewsRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
