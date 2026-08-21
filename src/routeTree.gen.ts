@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as BookATourRouteImport } from './routes/book-a-tour'
+import { Route as BuildYourOwnTourRouteImport } from './routes/build-your-own-tour'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CookiesRouteImport } from './routes/cookies'
 import { Route as FaqRouteImport } from './routes/faq'
@@ -68,6 +69,11 @@ const AboutRoute = AboutRouteImport.update({
 const BookATourRoute = BookATourRouteImport.update({
   id: '/book-a-tour',
   path: '/book-a-tour',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BuildYourOwnTourRoute = BuildYourOwnTourRouteImport.update({
+  id: '/build-your-own-tour',
+  path: '/build-your-own-tour',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContactRoute = ContactRouteImport.update({
@@ -287,6 +293,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/book-a-tour': typeof BookATourRoute
+  '/build-your-own-tour': typeof BuildYourOwnTourRoute
   '/contact': typeof ContactRoute
   '/cookies': typeof CookiesRoute
   '/faq': typeof FaqRoute
@@ -334,6 +341,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/book-a-tour': typeof BookATourRoute
+  '/build-your-own-tour': typeof BuildYourOwnTourRoute
   '/contact': typeof ContactRoute
   '/cookies': typeof CookiesRoute
   '/faq': typeof FaqRoute
@@ -382,6 +390,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/book-a-tour': typeof BookATourRoute
+  '/build-your-own-tour': typeof BuildYourOwnTourRoute
   '/contact': typeof ContactRoute
   '/cookies': typeof CookiesRoute
   '/faq': typeof FaqRoute
@@ -431,6 +440,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/book-a-tour'
+    | '/build-your-own-tour'
     | '/contact'
     | '/cookies'
     | '/faq'
@@ -478,6 +488,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/book-a-tour'
+    | '/build-your-own-tour'
     | '/contact'
     | '/cookies'
     | '/faq'
@@ -525,6 +536,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/book-a-tour'
+    | '/build-your-own-tour'
     | '/contact'
     | '/cookies'
     | '/faq'
@@ -573,6 +585,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   BookATourRoute: typeof BookATourRoute
+  BuildYourOwnTourRoute: typeof BuildYourOwnTourRoute
   ContactRoute: typeof ContactRoute
   CookiesRoute: typeof CookiesRoute
   FaqRoute: typeof FaqRoute
@@ -638,6 +651,13 @@ declare module '@tanstack/react-router' {
       path: '/book-a-tour'
       fullPath: '/book-a-tour'
       preLoaderRoute: typeof BookATourRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/build-your-own-tour': {
+      id: '/build-your-own-tour'
+      path: '/build-your-own-tour'
+      fullPath: '/build-your-own-tour'
+      preLoaderRoute: typeof BuildYourOwnTourRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contact': {
@@ -941,6 +961,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   BookATourRoute: BookATourRoute,
+  BuildYourOwnTourRoute: BuildYourOwnTourRoute,
   ContactRoute: ContactRoute,
   CookiesRoute: CookiesRoute,
   FaqRoute: FaqRoute,

@@ -13,17 +13,23 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
-      { title: "Contact — Tuk Tuk 24 Lisbon" },
+      { title: "Contact & WhatsApp — Tuk Tuk 24 Lisbon" },
       {
         name: "description",
         content:
-          "Plan a private tuk-tuk tour in Lisbon. Reach us by form, email or WhatsApp — we usually reply within a few hours.",
+          "Talk to our Lisbon tuk-tuk team by WhatsApp, phone, email or the form below. We reply to most enquiries within a few hours.",
       },
-      { property: "og:title", content: "Contact Tuk Tuk 24" },
-      { property: "og:description", content: "Get in touch with our Lisbon tuk-tuk team." },
-      { property: "og:url", content: "/contact" },
+      { property: "og:title", content: "Contact & WhatsApp — Tuk Tuk 24 Lisbon" },
+      {
+        property: "og:description",
+        content:
+          "WhatsApp, phone, email or form — reach our Lisbon tuk-tuk team and get a reply within hours.",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { property: "og:url", content: "https://tuktuk24lisbon.com/contact" },
     ],
-    links: [{ rel: "canonical", href: "/contact" }],
+    links: [{ rel: "canonical", href: "https://tuktuk24lisbon.com/contact" }],
   }),
   component: ContactPage,
 });
