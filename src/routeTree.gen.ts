@@ -11,11 +11,15 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AboutRouteImport } from './routes/about'
+import { Route as BookATourRouteImport } from './routes/book-a-tour'
+import { Route as BuildYourOwnTourRouteImport } from './routes/build-your-own-tour'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CookiesRouteImport } from './routes/cookies'
 import { Route as FaqRouteImport } from './routes/faq'
+import { Route as LisbonPrivateToursRouteImport } from './routes/lisbon-private-tours'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ReviewsRouteImport } from './routes/reviews'
+import { Route as SintraPrivateToursRouteImport } from './routes/sintra-private-tours'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
@@ -62,6 +66,16 @@ const AboutRoute = AboutRouteImport.update({
   path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BookATourRoute = BookATourRouteImport.update({
+  id: '/book-a-tour',
+  path: '/book-a-tour',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BuildYourOwnTourRoute = BuildYourOwnTourRouteImport.update({
+  id: '/build-your-own-tour',
+  path: '/build-your-own-tour',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ContactRoute = ContactRouteImport.update({
   id: '/contact',
   path: '/contact',
@@ -77,6 +91,11 @@ const FaqRoute = FaqRouteImport.update({
   path: '/faq',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LisbonPrivateToursRoute = LisbonPrivateToursRouteImport.update({
+  id: '/lisbon-private-tours',
+  path: '/lisbon-private-tours',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
@@ -85,6 +104,11 @@ const PrivacyRoute = PrivacyRouteImport.update({
 const ReviewsRoute = ReviewsRouteImport.update({
   id: '/reviews',
   path: '/reviews',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SintraPrivateToursRoute = SintraPrivateToursRouteImport.update({
+  id: '/sintra-private-tours',
+  path: '/sintra-private-tours',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -268,11 +292,15 @@ const LovableEmailQueueProcessRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/book-a-tour': typeof BookATourRoute
+  '/build-your-own-tour': typeof BuildYourOwnTourRoute
   '/contact': typeof ContactRoute
   '/cookies': typeof CookiesRoute
   '/faq': typeof FaqRoute
+  '/lisbon-private-tours': typeof LisbonPrivateToursRoute
   '/privacy': typeof PrivacyRoute
   '/reviews': typeof ReviewsRoute
+  '/sintra-private-tours': typeof SintraPrivateToursRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/admin/bookings': typeof AdminBookingsRoute
@@ -312,11 +340,15 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/book-a-tour': typeof BookATourRoute
+  '/build-your-own-tour': typeof BuildYourOwnTourRoute
   '/contact': typeof ContactRoute
   '/cookies': typeof CookiesRoute
   '/faq': typeof FaqRoute
+  '/lisbon-private-tours': typeof LisbonPrivateToursRoute
   '/privacy': typeof PrivacyRoute
   '/reviews': typeof ReviewsRoute
+  '/sintra-private-tours': typeof SintraPrivateToursRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/admin/bookings': typeof AdminBookingsRoute
@@ -357,11 +389,15 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/book-a-tour': typeof BookATourRoute
+  '/build-your-own-tour': typeof BuildYourOwnTourRoute
   '/contact': typeof ContactRoute
   '/cookies': typeof CookiesRoute
   '/faq': typeof FaqRoute
+  '/lisbon-private-tours': typeof LisbonPrivateToursRoute
   '/privacy': typeof PrivacyRoute
   '/reviews': typeof ReviewsRoute
+  '/sintra-private-tours': typeof SintraPrivateToursRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/admin/bookings': typeof AdminBookingsRoute
@@ -403,11 +439,15 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
+    | '/book-a-tour'
+    | '/build-your-own-tour'
     | '/contact'
     | '/cookies'
     | '/faq'
+    | '/lisbon-private-tours'
     | '/privacy'
     | '/reviews'
+    | '/sintra-private-tours'
     | '/sitemap.xml'
     | '/terms'
     | '/admin/bookings'
@@ -447,11 +487,15 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/about'
+    | '/book-a-tour'
+    | '/build-your-own-tour'
     | '/contact'
     | '/cookies'
     | '/faq'
+    | '/lisbon-private-tours'
     | '/privacy'
     | '/reviews'
+    | '/sintra-private-tours'
     | '/sitemap.xml'
     | '/terms'
     | '/admin/bookings'
@@ -491,11 +535,15 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/about'
+    | '/book-a-tour'
+    | '/build-your-own-tour'
     | '/contact'
     | '/cookies'
     | '/faq'
+    | '/lisbon-private-tours'
     | '/privacy'
     | '/reviews'
+    | '/sintra-private-tours'
     | '/sitemap.xml'
     | '/terms'
     | '/admin/bookings'
@@ -536,11 +584,15 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  BookATourRoute: typeof BookATourRoute
+  BuildYourOwnTourRoute: typeof BuildYourOwnTourRoute
   ContactRoute: typeof ContactRoute
   CookiesRoute: typeof CookiesRoute
   FaqRoute: typeof FaqRoute
+  LisbonPrivateToursRoute: typeof LisbonPrivateToursRoute
   PrivacyRoute: typeof PrivacyRoute
   ReviewsRoute: typeof ReviewsRoute
+  SintraPrivateToursRoute: typeof SintraPrivateToursRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
   AdminBookingsRoute: typeof AdminBookingsRoute
@@ -594,6 +646,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/book-a-tour': {
+      id: '/book-a-tour'
+      path: '/book-a-tour'
+      fullPath: '/book-a-tour'
+      preLoaderRoute: typeof BookATourRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/build-your-own-tour': {
+      id: '/build-your-own-tour'
+      path: '/build-your-own-tour'
+      fullPath: '/build-your-own-tour'
+      preLoaderRoute: typeof BuildYourOwnTourRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/contact': {
       id: '/contact'
       path: '/contact'
@@ -615,6 +681,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FaqRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/lisbon-private-tours': {
+      id: '/lisbon-private-tours'
+      path: '/lisbon-private-tours'
+      fullPath: '/lisbon-private-tours'
+      preLoaderRoute: typeof LisbonPrivateToursRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/privacy': {
       id: '/privacy'
       path: '/privacy'
@@ -627,6 +700,13 @@ declare module '@tanstack/react-router' {
       path: '/reviews'
       fullPath: '/reviews'
       preLoaderRoute: typeof ReviewsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sintra-private-tours': {
+      id: '/sintra-private-tours'
+      path: '/sintra-private-tours'
+      fullPath: '/sintra-private-tours'
+      preLoaderRoute: typeof SintraPrivateToursRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sitemap.xml': {
@@ -880,11 +960,15 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  BookATourRoute: BookATourRoute,
+  BuildYourOwnTourRoute: BuildYourOwnTourRoute,
   ContactRoute: ContactRoute,
   CookiesRoute: CookiesRoute,
   FaqRoute: FaqRoute,
+  LisbonPrivateToursRoute: LisbonPrivateToursRoute,
   PrivacyRoute: PrivacyRoute,
   ReviewsRoute: ReviewsRoute,
+  SintraPrivateToursRoute: SintraPrivateToursRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
   AdminBookingsRoute: AdminBookingsRoute,
