@@ -18,6 +18,7 @@ import { Route as FaqRouteImport } from './routes/faq'
 import { Route as LisbonPrivateToursRouteImport } from './routes/lisbon-private-tours'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ReviewsRouteImport } from './routes/reviews'
+import { Route as SintraPrivateToursRouteImport } from './routes/sintra-private-tours'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
@@ -97,6 +98,11 @@ const PrivacyRoute = PrivacyRouteImport.update({
 const ReviewsRoute = ReviewsRouteImport.update({
   id: '/reviews',
   path: '/reviews',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SintraPrivateToursRoute = SintraPrivateToursRouteImport.update({
+  id: '/sintra-private-tours',
+  path: '/sintra-private-tours',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -287,6 +293,7 @@ export interface FileRoutesByFullPath {
   '/lisbon-private-tours': typeof LisbonPrivateToursRoute
   '/privacy': typeof PrivacyRoute
   '/reviews': typeof ReviewsRoute
+  '/sintra-private-tours': typeof SintraPrivateToursRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/admin/bookings': typeof AdminBookingsRoute
@@ -333,6 +340,7 @@ export interface FileRoutesByTo {
   '/lisbon-private-tours': typeof LisbonPrivateToursRoute
   '/privacy': typeof PrivacyRoute
   '/reviews': typeof ReviewsRoute
+  '/sintra-private-tours': typeof SintraPrivateToursRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/admin/bookings': typeof AdminBookingsRoute
@@ -380,6 +388,7 @@ export interface FileRoutesById {
   '/lisbon-private-tours': typeof LisbonPrivateToursRoute
   '/privacy': typeof PrivacyRoute
   '/reviews': typeof ReviewsRoute
+  '/sintra-private-tours': typeof SintraPrivateToursRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/admin/bookings': typeof AdminBookingsRoute
@@ -428,6 +437,7 @@ export interface FileRouteTypes {
     | '/lisbon-private-tours'
     | '/privacy'
     | '/reviews'
+    | '/sintra-private-tours'
     | '/sitemap.xml'
     | '/terms'
     | '/admin/bookings'
@@ -474,6 +484,7 @@ export interface FileRouteTypes {
     | '/lisbon-private-tours'
     | '/privacy'
     | '/reviews'
+    | '/sintra-private-tours'
     | '/sitemap.xml'
     | '/terms'
     | '/admin/bookings'
@@ -520,6 +531,7 @@ export interface FileRouteTypes {
     | '/lisbon-private-tours'
     | '/privacy'
     | '/reviews'
+    | '/sintra-private-tours'
     | '/sitemap.xml'
     | '/terms'
     | '/admin/bookings'
@@ -567,6 +579,7 @@ export interface RootRouteChildren {
   LisbonPrivateToursRoute: typeof LisbonPrivateToursRoute
   PrivacyRoute: typeof PrivacyRoute
   ReviewsRoute: typeof ReviewsRoute
+  SintraPrivateToursRoute: typeof SintraPrivateToursRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
   AdminBookingsRoute: typeof AdminBookingsRoute
@@ -667,6 +680,13 @@ declare module '@tanstack/react-router' {
       path: '/reviews'
       fullPath: '/reviews'
       preLoaderRoute: typeof ReviewsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sintra-private-tours': {
+      id: '/sintra-private-tours'
+      path: '/sintra-private-tours'
+      fullPath: '/sintra-private-tours'
+      preLoaderRoute: typeof SintraPrivateToursRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sitemap.xml': {
@@ -927,6 +947,7 @@ const rootRouteChildren: RootRouteChildren = {
   LisbonPrivateToursRoute: LisbonPrivateToursRoute,
   PrivacyRoute: PrivacyRoute,
   ReviewsRoute: ReviewsRoute,
+  SintraPrivateToursRoute: SintraPrivateToursRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
   AdminBookingsRoute: AdminBookingsRoute,
