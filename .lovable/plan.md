@@ -1,32 +1,41 @@
-# Google Ads Sitelinks — ready to paste
+# AI Tour Builder (inside existing Tours admin)
 
-All six landing pages are live in the project. Below is the exact set of sitelinks to add in Google Ads (Assets > Sitelinks). Google Ads allows a 25-character sitelink text and two optional 35-character description lines.
+Add an AI assistant that turns a pasted, rough itinerary into a filled-in tour form. No new admin panel, no new tours table, no change to existing pricing, publishing or auth.
 
-## The six sitelinks
+## Flow
 
-| # | Sitelink text (max 25) | Description line 1 (max 35) | Description line 2 (max 35) | Final URL |
-|---|---|---|---|---|
-| 1 | Book a Tour | Instant online confirmation | Free cancellation 24h before | https://tuktuk24lisbon.com/book-a-tour |
-| 2 | Lisbon Private Tours | Alfama, Belem & viewpoints | Private group, local driver | https://tuktuk24lisbon.com/lisbon-private-tours |
-| 3 | Sintra Private Tours | Pena Palace & Cabo da Roca | Hotel pick-up from Lisbon | https://tuktuk24lisbon.com/sintra-private-tours |
-| 4 | Build Your Own Tour | Choose duration and stops | Live pricing before you book | https://tuktuk24lisbon.com/build-your-own-tour |
-| 5 | Our Tours | Every tour, real prices | Durations, pick-up, whats included | https://tuktuk24lisbon.com/tours |
-| 6 | Contact & WhatsApp | WhatsApp, phone or email | Most replies within a few hours | https://tuktuk24lisbon.com/contact |
+```text
+Admin > Tours  ->  [+ Create Tour with AI]
+   -> opens the existing "New tour" page with the AI panel open
+   -> paste rough itinerary  ->  Generate Tour
+   -> review the AI output (editable preview)
+   -> Import into Tour  ->  fields land in the existing form
+   -> existing Save / Publish controls
+```
 
-Note: row 5, description line 2 is 34 characters without the apostrophe in "what's" — keep it as written to stay within the limit.
+## What gets added
 
-## Page metadata already in place
+1. **Button on the Tours list** — "+ Create Tour with AI" next to the existing "+ New tour" button. It opens `/admin/tours/new` with the AI panel expanded.
+2. **AI panel inside the existing tour form** (collapsible card at the top of the New/Edit page, not a separate form):
+   - Large "Paste your itinerary" textarea, plus optional duration hint.
+   - "Generate Tour" button with a loading state.
+   - Result preview: title, slug, category, duration, tagline, description, highlights (add/edit/delete/reorder), itinerary rows (time | title | detail, with a MANDATORY STOP badge), included / not included.
+   - Buttons: Regenerate, Import into Tour, Cancel. Saving/publishing stays with the form's existing buttons — no duplicates.
+3. **"Tell AI what to change" box** in the preview — a one-line command ("make the description shorter", "fit exactly 90 minutes"). It re-runs the model with the current draft and only alters the section asked for.
+4. **Import into Tour** maps every generated field onto the existing form state (title, slug, category, duration, tagline, description, highlights, itinerary, included, not included). Price fields are never touched by AI.
 
-Each URL has a unique H1, SEO title, meta description, self-referencing canonical, FAQ structured data, Book Now + WhatsApp CTAs, and analytics tracking. All six are listed in https://tuktuk24lisbon.com/sitemap.xml.
+## Rules encoded in the prompt
 
-## Before running ads
+- Understand misspellings and informal notes; never invent attractions.
+- Never invent a price — price and sale price stay untouched; "Priced per person" keeps its existing default.
+- No "private" or "hotel pickup" claims unless the input says so.
+- Category suggested from the existing category list only; admin can change it in the existing dropdown.
+- Timing distributed realistically: starts at `00:00`, ends exactly at the stated duration (1h -> 01:00, 90 min -> 01:30, 2h -> 02:00).
+- Mandatory stops flagged from phrases like "Senhora do Monte mandatory stop".
 
-- Publish the project so the four new URLs resolve on the live domain (they currently exist in the preview build only).
-- After publishing, open each URL once to confirm it returns 200 on tuktuk24lisbon.com.
+## Technical notes
 
-## Optional follow-ups
-
-- Add tracking parameters (for example `?utm_source=google&utm_medium=cpc&utm_campaign=sitelinks`) at the Google Ads account level rather than in the final URLs.
-- Add two spare sitelinks (`/tours/pricing-guide` — Prices & What's Included, `/reviews` — Guest Reviews) so Google can rotate the best performers.
-
-Approve if you want the optional follow-ups implemented; otherwise this list is ready to copy into Google Ads as is.
+- New server function `src/lib/ai-tour.functions.ts` (`generateTourDraft`, `reviseTourDraft`) using `createServerFn` with the existing `requireSupabaseAuth` middleware plus an admin-role check, calling Lovable AI on the server with structured JSON output. The API key stays server-side; no key in browser code.
+- Reuses the existing `TourForm` state, `tourCategories`, `slugify`, and the existing save handler in `src/routes/admin.tours.$id.tsx`. Nothing about the current save payload changes except itinerary rows may carry an optional `mandatory` flag.
+- Itinerary text format stays `time | title | detail`; a mandatory stop is stored with an extra `mandatory` flag in the existing `itinerary` JSON and shown as a badge. Existing tours without the flag are unaffected.
+- No database migration required.
