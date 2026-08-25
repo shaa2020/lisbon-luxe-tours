@@ -46,7 +46,8 @@ export const Route = createFileRoute("/api/public/cron/booking-emails")({
             .in("status", ["new", "quoted", "confirmed"]);
           for (const b of rows ?? []) {
             try {
-              await sendBookingEmail(supabaseAdmin, b as any, "tour_reminder");
+              const result = await sendBookingEmail(supabaseAdmin, b as any, "tour_reminder");
+              if (!result.queued) continue;
               await supabaseAdmin
                 .from("bookings")
                 .update({ reminder_sent_at: new Date().toISOString() })
@@ -68,7 +69,8 @@ export const Route = createFileRoute("/api/public/cron/booking-emails")({
             .neq("status", "cancelled");
           for (const b of rows ?? []) {
             try {
-              await sendBookingEmail(supabaseAdmin, b as any, "review_request");
+              const result = await sendBookingEmail(supabaseAdmin, b as any, "review_request");
+              if (!result.queued) continue;
               await supabaseAdmin
                 .from("bookings")
                 .update({ review_request_sent_at: new Date().toISOString() })

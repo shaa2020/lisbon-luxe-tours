@@ -10,6 +10,8 @@ import {
   Preview,
   Section,
   Text,
+  Row,
+  Column,
 } from '@react-email/components'
 import type { TemplateEntry } from './registry'
 
@@ -27,29 +29,30 @@ export interface BookingNoticeProps {
   addressLine?: string
 }
 
-const main = { backgroundColor: '#ffffff', fontFamily: 'Helvetica, Arial, sans-serif' }
-const container = { maxWidth: '560px', margin: '0 auto', padding: '28px 24px 40px' }
+const main = { backgroundColor: '#ffffff', fontFamily: 'Arial, Helvetica, sans-serif', margin: 0 }
+const container = { maxWidth: '600px', margin: '0 auto', padding: '32px 20px 44px' }
 const brandBar = {
   backgroundColor: '#1e3a5f',
-  borderRadius: '10px',
-  padding: '18px 22px',
-  marginBottom: '26px',
+  borderRadius: '8px 8px 0 0',
+  padding: '22px 24px',
 }
-const brandText = { color: '#ffffff', fontSize: '18px', fontWeight: 700, margin: 0 }
-const brandSub = { color: '#c9d3e0', fontSize: '11px', margin: '4px 0 0', letterSpacing: '1px' }
-const h1 = { color: '#1e3a5f', fontSize: '23px', lineHeight: '30px', margin: '0 0 14px' }
+const brandText = { color: '#ffffff', fontSize: '20px', fontWeight: 700, margin: 0 }
+const brandSub = { color: '#b9e7fb', fontSize: '11px', margin: '5px 0 0', letterSpacing: '1px' }
+const content = { border: '1px solid #e2e8f0', borderTop: '0', borderRadius: '0 0 8px 8px', padding: '30px 24px' }
+const h1 = { color: '#1e3a5f', fontSize: '25px', lineHeight: '32px', margin: '0 0 16px' }
 const p = { color: '#3c465a', fontSize: '15px', lineHeight: '24px', margin: '0 0 16px' }
 const small = { color: '#6e7887', fontSize: '12px', lineHeight: '19px', margin: '0 0 6px' }
 const card = {
-  border: '1px solid #e2e6ec',
-  borderRadius: '10px',
-  padding: '4px 18px',
-  margin: '0 0 22px',
+  backgroundColor: '#f5f7fa',
+  borderLeft: '4px solid #2bb6f7',
+  borderRadius: '6px',
+  padding: '8px 18px',
+  margin: '6px 0 24px',
 }
 const rowLabel = { color: '#6e7887', fontSize: '11px', letterSpacing: '1px', margin: '14px 0 2px' }
 const rowValue = { color: '#1e3a5f', fontSize: '15px', fontWeight: 600, margin: '0 0 12px' }
 const btn = {
-  backgroundColor: '#bf953f',
+  backgroundColor: '#2bb6f7',
   color: '#ffffff',
   borderRadius: '999px',
   display: 'inline-block',
@@ -80,11 +83,18 @@ const BookingNotice = ({
     <Body style={main}>
       <Container style={container}>
         <Section style={brandBar}>
-          <Text style={brandText}>{brandName}</Text>
-          <Text style={brandSub}>PRIVATE TUK TUK TOURS · LISBON</Text>
+          <Row>
+            <Column>
+              <Text style={brandText}>{brandName}</Text>
+              <Text style={brandSub}>PRIVATE TUK-TUK TOURS · LISBON</Text>
+            </Column>
+            <Column align="right">
+              <Text style={{ color: '#ffffff', fontSize: '12px', margin: 0 }}>Local team · Electric fleet</Text>
+            </Column>
+          </Row>
         </Section>
-
-        <Heading style={h1}>{heading}</Heading>
+        <Section style={content}>
+          <Heading style={h1}>{heading}</Heading>
         {intro
           ? intro.split('\n\n').map((block, i) => (
               <Text key={i} style={p}>
@@ -120,14 +130,16 @@ const BookingNotice = ({
             ))
           : null}
 
-        <Hr style={{ borderColor: '#e2e6ec', margin: '26px 0 16px' }} />
-        <Text style={small}>{brandName}</Text>
-        {addressLine ? <Text style={small}>{addressLine}</Text> : null}
+          <Hr style={{ borderColor: '#e2e6ec', margin: '26px 0 16px' }} />
+          <Text style={{ ...small, color: '#1e3a5f', fontWeight: 700 }}>{brandName}</Text>
+          {addressLine ? <Text style={small}>{addressLine}</Text> : null}
         {contactEmail || contactPhone ? (
           <Text style={small}>
             {[contactEmail, contactPhone].filter(Boolean).join(' · ')}
           </Text>
-        ) : null}
+          ) : null}
+          <Text style={{ ...small, marginTop: '10px' }}>Reply to this email if you need help with your booking.</Text>
+        </Section>
       </Container>
     </Body>
   </Html>

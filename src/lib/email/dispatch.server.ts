@@ -80,6 +80,7 @@ export function bookingVars(b: BookingRecord, extra: Record<string, string> = {}
         })
       : "",
     guests: String(b.guests),
+    time: b.travel_time || "",
     total: money(totalCents),
     refund_amount: money(b.refund_cents ?? 0),
     site_url: SITE_URL,
