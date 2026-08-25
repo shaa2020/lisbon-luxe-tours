@@ -54,6 +54,7 @@ import { Route as AdminOpsPaymentsRouteImport } from './routes/admin.ops.payment
 import { Route as AdminOpsRequestsRouteImport } from './routes/admin.ops.requests'
 import { Route as AdminOpsSettingsRouteImport } from './routes/admin.ops.settings'
 import { Route as AdminOpsTeamRouteImport } from './routes/admin.ops.team'
+import { Route as AdminOpsTodayRouteImport } from './routes/admin.ops.today'
 import { Route as AdminOpsToursRouteImport } from './routes/admin.ops.tours'
 import { Route as AdminOpsVehiclesRouteImport } from './routes/admin.ops.vehicles'
 import { Route as AdminToursIndexRouteImport } from './routes/admin.tours.index'
@@ -291,6 +292,11 @@ const AdminOpsTeamRoute = AdminOpsTeamRouteImport.update({
   path: '/admin/ops/team',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminOpsTodayRoute = AdminOpsTodayRouteImport.update({
+  id: '/admin/ops/today',
+  path: '/admin/ops/today',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminOpsToursRoute = AdminOpsToursRouteImport.update({
   id: '/admin/ops/tours',
   path: '/admin/ops/tours',
@@ -393,6 +399,7 @@ export interface FileRoutesByFullPath {
   '/admin/ops/requests': typeof AdminOpsRequestsRoute
   '/admin/ops/settings': typeof AdminOpsSettingsRoute
   '/admin/ops/team': typeof AdminOpsTeamRoute
+  '/admin/ops/today': typeof AdminOpsTodayRoute
   '/admin/ops/tours': typeof AdminOpsToursRoute
   '/admin/ops/vehicles': typeof AdminOpsVehiclesRoute
   '/admin/tours/$id': typeof AdminToursIdRoute
@@ -451,6 +458,7 @@ export interface FileRoutesByTo {
   '/admin/ops/requests': typeof AdminOpsRequestsRoute
   '/admin/ops/settings': typeof AdminOpsSettingsRoute
   '/admin/ops/team': typeof AdminOpsTeamRoute
+  '/admin/ops/today': typeof AdminOpsTodayRoute
   '/admin/ops/tours': typeof AdminOpsToursRoute
   '/admin/ops/vehicles': typeof AdminOpsVehiclesRoute
   '/admin/tours/$id': typeof AdminToursIdRoute
@@ -510,6 +518,7 @@ export interface FileRoutesById {
   '/admin/ops/requests': typeof AdminOpsRequestsRoute
   '/admin/ops/settings': typeof AdminOpsSettingsRoute
   '/admin/ops/team': typeof AdminOpsTeamRoute
+  '/admin/ops/today': typeof AdminOpsTodayRoute
   '/admin/ops/tours': typeof AdminOpsToursRoute
   '/admin/ops/vehicles': typeof AdminOpsVehiclesRoute
   '/admin/tours/$id': typeof AdminToursIdRoute
@@ -570,6 +579,7 @@ export interface FileRouteTypes {
     | '/admin/ops/requests'
     | '/admin/ops/settings'
     | '/admin/ops/team'
+    | '/admin/ops/today'
     | '/admin/ops/tours'
     | '/admin/ops/vehicles'
     | '/admin/tours/$id'
@@ -628,6 +638,7 @@ export interface FileRouteTypes {
     | '/admin/ops/requests'
     | '/admin/ops/settings'
     | '/admin/ops/team'
+    | '/admin/ops/today'
     | '/admin/ops/tours'
     | '/admin/ops/vehicles'
     | '/admin/tours/$id'
@@ -686,6 +697,7 @@ export interface FileRouteTypes {
     | '/admin/ops/requests'
     | '/admin/ops/settings'
     | '/admin/ops/team'
+    | '/admin/ops/today'
     | '/admin/ops/tours'
     | '/admin/ops/vehicles'
     | '/admin/tours/$id'
@@ -745,6 +757,7 @@ export interface RootRouteChildren {
   AdminOpsRequestsRoute: typeof AdminOpsRequestsRoute
   AdminOpsSettingsRoute: typeof AdminOpsSettingsRoute
   AdminOpsTeamRoute: typeof AdminOpsTeamRoute
+  AdminOpsTodayRoute: typeof AdminOpsTodayRoute
   AdminOpsToursRoute: typeof AdminOpsToursRoute
   AdminOpsVehiclesRoute: typeof AdminOpsVehiclesRoute
   AdminToursIdRoute: typeof AdminToursIdRoute
@@ -1077,6 +1090,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminOpsTeamRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/ops/today': {
+      id: '/admin/ops/today'
+      path: '/admin/ops/today'
+      fullPath: '/admin/ops/today'
+      preLoaderRoute: typeof AdminOpsTodayRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/ops/tours': {
       id: '/admin/ops/tours'
       path: '/admin/ops/tours'
@@ -1201,6 +1221,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminOpsRequestsRoute: AdminOpsRequestsRoute,
   AdminOpsSettingsRoute: AdminOpsSettingsRoute,
   AdminOpsTeamRoute: AdminOpsTeamRoute,
+  AdminOpsTodayRoute: AdminOpsTodayRoute,
   AdminOpsToursRoute: AdminOpsToursRoute,
   AdminOpsVehiclesRoute: AdminOpsVehiclesRoute,
   AdminToursIdRoute: AdminToursIdRoute,
