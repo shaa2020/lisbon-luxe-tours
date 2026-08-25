@@ -5,7 +5,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { useSiteBrand } from "@/lib/brand";
 import { toast } from "sonner";
-import { MessageCircle, Mail, Phone, Calendar, Users, Trash2, Edit3, Copy, Check, Loader2, Clock, Star } from "lucide-react";
+import { MessageCircle, Mail, Phone, Calendar, Users, Trash2, Edit3, Copy, Check, Loader2, Clock, Star, Link2 } from "lucide-react";
+import { adminSendBookingEmail } from "@/lib/bookings-admin.functions";
 import { useServerFn } from "@tanstack/react-start";
 import {
   adminCreateModificationCheckout,
@@ -79,12 +80,14 @@ function BookingsInbox() {
   const [editAmount, setEditAmount] = useState<number | "">("");
   const [editNote, setEditNote] = useState("");
   const [generating, setGenerating] = useState(false);
+  const [sendingKey, setSendingKey] = useState<string | null>(null);
 
   const createCheckout = useServerFn(adminCreateModificationCheckout);
   const listMods = useServerFn(adminListModifications);
   const applyMod = useServerFn(adminApplyModification);
   const waiveMod = useServerFn(adminWaiveModification);
   const getPaymentUrl = useServerFn(getMolliePaymentUrl);
+  const sendBookingEmail = useServerFn(adminSendBookingEmail);
 
   const { data: bookings = [], isLoading } = useQuery({
     queryKey: ["admin-bookings"],
@@ -202,20 +205,25 @@ function BookingsInbox() {
     return `https://wa.me/${num}?text=${encodeURIComponent(msg)}`;
   };
 
-  const mailto = (b: Booking) => {
-    const subject = `Your booking${b.tour_title ? ` — ${b.tour_title}` : ""}`;
-    const body = `Hi ${b.customer_name},\n\nThanks for your booking request${
-      b.tour_title ? ` for "${b.tour_title}"` : ""
-    }${b.travel_date ? ` on ${b.travel_date}` : ""}.\n\nWe'd love to confirm the details with you.\n\nBest,\nThe team`;
-    return `mailto:${b.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-  };
+  const customerMessage = (b: Booking) =>
+    `Hi ${b.customer_name}, thanks for your booking${b.tour_title ? ` for "${b.tour_title}"` : ""}${
+      b.travel_date ? ` on ${new Date(b.travel_date).toLocaleDateString("en-GB")}` : ""
+    } for ${b.guests} guest${b.guests === 1 ? "" : "s"}. Your reference is #${b.id
+      .slice(0, 8)
+      .toUpperCase()}. See you soon — Tuk Tuk 24`;
 
-  const reviewRequestMailto = (b: Booking) => {
-    const subject = `How was your Lisbon tour${b.tour_title ? ` — ${b.tour_title}` : ""}?`;
-    const body = `Hi ${b.customer_name},\n\nThanks again for riding with us${
-      b.tour_title ? ` on the "${b.tour_title}"` : ""
-    }${b.travel_date ? ` on ${b.travel_date}` : ""}. We hope you enjoyed Lisbon!\n\nIf you have a minute, we'd really appreciate a short review — it helps other travellers find us:\nhttps://tuktuk24lisbon.com/reviews\n\nThank you,\nThe Tuk Tuk 24 team`;
-    return `mailto:${b.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  const sendDirect = async (b: Booking, templateKey: string, label: string) => {
+    setSendingKey(`${b.id}:${templateKey}`);
+    try {
+      const res: any = await sendBookingEmail({ data: { bookingId: b.id, templateKey, overrides: {} } });
+      if (res?.sent) toast.success(`${label} sent to ${b.email}`);
+      else toast.error("Recipient is unsubscribed or blocked");
+      qc.invalidateQueries({ queryKey: ["admin-bookings"] });
+    } catch (err) {
+      toast.error((err as Error).message || "Could not send the email");
+    } finally {
+      setSendingKey(null);
+    }
   };
 
   const reviewRequestWa = (b: Booking) => {
@@ -461,13 +469,18 @@ function BookingsInbox() {
               </div>
 
               <div className="grid sm:grid-cols-2 gap-2 text-sm text-foreground mb-4">
-                <a
-                  href={`mailto:${b.email}`}
-                  className="flex items-center gap-2 hover:text-primary"
+                <button
+                  type="button"
+                  title="Click to copy the email address"
+                  onClick={() => {
+                    navigator.clipboard?.writeText(b.email);
+                    toast.success("Email copied");
+                  }}
+                  className="flex items-center gap-2 text-left hover:text-primary"
                 >
                   <Mail className="w-4 h-4 text-muted-foreground" />
                   {b.email}
-                </a>
+                </button>
                 {b.phone && (
                   <a
                     href={`tel:${b.phone}`}
@@ -543,20 +556,62 @@ function BookingsInbox() {
                     WhatsApp customer
                   </a>
                 )}
-                <a
-                  href={mailto(b)}
-                  className="inline-flex items-center gap-1.5 rounded-md bg-primary text-primary-foreground px-3 py-2 text-sm font-semibold hover:bg-primary/90"
+                <button
+                  onClick={() => sendDirect(b, "booking_confirmation", "Confirmation")}
+                  disabled={sendingKey === `${b.id}:booking_confirmation`}
+                  className="inline-flex items-center gap-1.5 rounded-md bg-primary text-primary-foreground px-3 py-2 text-sm font-semibold hover:bg-primary/90 disabled:opacity-50"
                 >
-                  <Mail className="w-4 h-4" />
-                  Email customer
-                </a>
-                <a
-                  href={reviewRequestMailto(b)}
+                  {sendingKey === `${b.id}:booking_confirmation` ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Mail className="w-4 h-4" />
+                  )}
+                  Send confirmation
+                </button>
+                <button
+                  onClick={() => sendDirect(b, "tour_reminder", "Reminder")}
+                  disabled={sendingKey === `${b.id}:tour_reminder`}
+                  className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-2 text-sm font-semibold hover:border-primary hover:text-primary disabled:opacity-50"
+                >
+                  {sendingKey === `${b.id}:tour_reminder` ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Clock className="w-4 h-4" />
+                  )}
+                  Send reminder
+                </button>
+                <button
+                  onClick={() => sendDirect(b, "review_request", "Review request")}
+                  disabled={sendingKey === `${b.id}:review_request`}
+                  className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-2 text-sm font-semibold hover:border-primary hover:text-primary disabled:opacity-50"
+                >
+                  {sendingKey === `${b.id}:review_request` ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Star className="w-4 h-4" />
+                  )}
+                  Ask for review
+                </button>
+                <button
+                  onClick={() => {
+                    navigator.clipboard?.writeText(customerMessage(b));
+                    toast.success("Message copied");
+                  }}
                   className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-2 text-sm font-semibold hover:border-primary hover:text-primary"
                 >
-                  <Star className="w-4 h-4" />
-                  Ask for review
-                </a>
+                  <Copy className="w-4 h-4" />
+                  Copy message
+                </button>
+                <button
+                  onClick={() => {
+                    navigator.clipboard?.writeText(`${window.location.origin}/booking/manage`);
+                    toast.success("Booking link copied");
+                  }}
+                  className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-2 text-sm font-semibold hover:border-primary hover:text-primary"
+                >
+                  <Link2 className="w-4 h-4" />
+                  Copy link
+                </button>
                 {reviewRequestWa(b) && (
                   <a
                     href={reviewRequestWa(b)!}
