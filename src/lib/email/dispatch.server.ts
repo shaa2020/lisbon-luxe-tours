@@ -2,6 +2,7 @@ import * as React from "react";
 import { render } from "@react-email/render";
 import BookingNotice from "@/lib/email-templates/booking-notice";
 import { fromHeader } from "./mailboxes";
+import { getOrCreateUnsubscribeToken } from "./unsubscribe-token.server";
 
 const SITE_NAME = "Tuk Tuk 24";
 const SENDER_DOMAIN = "notify.tuktuk24lisbon.com";
@@ -133,6 +134,17 @@ export async function sendBrandedEmail(
     return { sent: false, reason: "email_suppressed" as const };
   }
 
+  const preferences = await getOrCreateUnsubscribeToken(supabase, to);
+  if (preferences.suppressed || !preferences.token) {
+    await supabase.from("email_send_log").insert({
+      message_id: messageId,
+      template_name: input.label || "booking-notice",
+      recipient_email: to,
+      status: "suppressed",
+    });
+    return { sent: false, reason: "email_suppressed" as const };
+  }
+
   const element = React.createElement(BookingNotice, {
     brandName: input.brandName || SITE_NAME,
     heading: input.heading,
@@ -169,6 +181,7 @@ export async function sendBrandedEmail(
       purpose: "transactional",
       label: input.label || "booking-notice",
       idempotency_key: input.idempotencyKey || messageId,
+      unsubscribe_token: preferences.token,
       queued_at: new Date().toISOString(),
     },
   });
@@ -184,5 +197,5 @@ export async function sendBrandedEmail(
     throw new Error("Could not queue the email");
   }
 
-  return { sent: true as const, messageId };
+  return { sent: true as const, queued: true as const, messageId };
 }

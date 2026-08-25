@@ -112,10 +112,10 @@ export async function sendBookingEmail(
     addressLine: resolved.brand.addressLine,
   });
 
-  await logEvent(admin, booking.id, "email", `Sent "${resolved.label}" email to ${booking.email}`, {
+  await logEvent(admin, booking.id, "email", `Queued "${resolved.label}" email to ${booking.email}`, {
     template: templateKey,
     subject: resolved.subject,
-    delivered: result.sent,
+    queued: result.sent,
     reason: "reason" in result ? result.reason : null,
   }, actor);
 

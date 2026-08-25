@@ -108,7 +108,7 @@ export function BookingManagePanel({ booking }: { booking: Booking }) {
     try {
       const res: any = await sendEmail({ data: { bookingId: booking.id, templateKey, overrides: overrides() } });
       toast[res?.sent ? "success" : "error"](
-        res?.sent ? `Email queued to ${booking.email}` : "Recipient is unsubscribed or blocked",
+        res?.queued ? `Email queued to ${booking.email}` : "Recipient is unsubscribed or blocked",
       );
       refresh();
     } catch (err) {
@@ -141,7 +141,7 @@ export function BookingManagePanel({ booking }: { booking: Booking }) {
           },
         },
       });
-      toast.success(d.notify ? "Saved and customer notified" : "Booking saved");
+      toast.success(d.notify ? "Saved and customer email queued" : "Booking saved");
       refresh();
     } catch (err) {
       toast.error((err as Error).message);
@@ -180,7 +180,7 @@ export function BookingManagePanel({ booking }: { booking: Booking }) {
     setBusy(true);
     try {
       await refund({ data: { id: booking.id, refundCents: cents, notify: true, note: null } });
-      toast.success("Refund recorded and customer emailed");
+      toast.success("Refund recorded and customer email queued");
       refresh();
     } catch (err) {
       toast.error((err as Error).message);

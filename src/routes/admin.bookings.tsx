@@ -216,7 +216,7 @@ function BookingsInbox() {
     setSendingKey(`${b.id}:${templateKey}`);
     try {
       const res: any = await sendBookingEmail({ data: { bookingId: b.id, templateKey, overrides: {} } });
-      if (res?.sent) toast.success(`${label} sent to ${b.email}`);
+      if (res?.queued) toast.success(`${label} queued for ${b.email}`);
       else toast.error("Recipient is unsubscribed or blocked");
       qc.invalidateQueries({ queryKey: ["admin-bookings"] });
     } catch (err) {
