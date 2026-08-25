@@ -11,6 +11,7 @@ export function StickyBookBar() {
   const { business } = useSiteBrand();
   const [show, setShow] = useState(false);
   const [offset, setOffset] = useState(0);
+  const barRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const onScroll = () => setShow(window.scrollY > 520);
