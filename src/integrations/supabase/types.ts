@@ -460,6 +460,535 @@ export type Database = {
         }
         Relationships: []
       }
+      ops_booking_activities: {
+        Row: {
+          action: string
+          actor: string | null
+          booking_id: string
+          created_at: string
+          detail: string | null
+          id: string
+        }
+        Insert: {
+          action: string
+          actor?: string | null
+          booking_id: string
+          created_at?: string
+          detail?: string | null
+          id?: string
+        }
+        Update: {
+          action?: string
+          actor?: string | null
+          booking_id?: string
+          created_at?: string
+          detail?: string | null
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ops_booking_activities_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "ops_bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ops_bookings: {
+        Row: {
+          adults: number
+          base_price: number
+          children: number
+          created_at: string
+          created_by: string | null
+          currency: string
+          customer_id: string | null
+          deposit_paid: number
+          deposit_required: number
+          discount: number
+          driver_id: string | null
+          dropoff_location: string | null
+          duration_hours: number
+          extra_charges: number
+          guests: number
+          guide_id: string | null
+          id: string
+          internal_notes: string | null
+          partner_id: string | null
+          payment_method: string | null
+          payment_status: string
+          pickup_location: string | null
+          reference: string
+          source_booking_id: string | null
+          special_requests: string | null
+          start_time: string
+          status: string
+          total: number
+          tour_date: string
+          tour_id: string | null
+          tour_name: string
+          updated_at: string
+          vehicle_charges: number
+          vehicle_id: string | null
+          vehicle_qty: number
+          vehicle_type: string
+        }
+        Insert: {
+          adults?: number
+          base_price?: number
+          children?: number
+          created_at?: string
+          created_by?: string | null
+          currency?: string
+          customer_id?: string | null
+          deposit_paid?: number
+          deposit_required?: number
+          discount?: number
+          driver_id?: string | null
+          dropoff_location?: string | null
+          duration_hours?: number
+          extra_charges?: number
+          guests?: number
+          guide_id?: string | null
+          id?: string
+          internal_notes?: string | null
+          partner_id?: string | null
+          payment_method?: string | null
+          payment_status?: string
+          pickup_location?: string | null
+          reference: string
+          source_booking_id?: string | null
+          special_requests?: string | null
+          start_time?: string
+          status?: string
+          total?: number
+          tour_date: string
+          tour_id?: string | null
+          tour_name: string
+          updated_at?: string
+          vehicle_charges?: number
+          vehicle_id?: string | null
+          vehicle_qty?: number
+          vehicle_type?: string
+        }
+        Update: {
+          adults?: number
+          base_price?: number
+          children?: number
+          created_at?: string
+          created_by?: string | null
+          currency?: string
+          customer_id?: string | null
+          deposit_paid?: number
+          deposit_required?: number
+          discount?: number
+          driver_id?: string | null
+          dropoff_location?: string | null
+          duration_hours?: number
+          extra_charges?: number
+          guests?: number
+          guide_id?: string | null
+          id?: string
+          internal_notes?: string | null
+          partner_id?: string | null
+          payment_method?: string | null
+          payment_status?: string
+          pickup_location?: string | null
+          reference?: string
+          source_booking_id?: string | null
+          special_requests?: string | null
+          start_time?: string
+          status?: string
+          total?: number
+          tour_date?: string
+          tour_id?: string | null
+          tour_name?: string
+          updated_at?: string
+          vehicle_charges?: number
+          vehicle_id?: string | null
+          vehicle_qty?: number
+          vehicle_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ops_bookings_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "ops_customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ops_bookings_driver_id_fkey"
+            columns: ["driver_id"]
+            isOneToOne: false
+            referencedRelation: "ops_staff"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ops_bookings_guide_id_fkey"
+            columns: ["guide_id"]
+            isOneToOne: false
+            referencedRelation: "ops_staff"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ops_bookings_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "ops_partners"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ops_bookings_source_booking_id_fkey"
+            columns: ["source_booking_id"]
+            isOneToOne: true
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ops_bookings_tour_id_fkey"
+            columns: ["tour_id"]
+            isOneToOne: false
+            referencedRelation: "ops_tours"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ops_bookings_vehicle_id_fkey"
+            columns: ["vehicle_id"]
+            isOneToOne: false
+            referencedRelation: "ops_vehicles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ops_change_requests: {
+        Row: {
+          booking_id: string | null
+          created_at: string
+          id: string
+          message: string
+          request_type: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          booking_id?: string | null
+          created_at?: string
+          id?: string
+          message: string
+          request_type?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          booking_id?: string | null
+          created_at?: string
+          id?: string
+          message?: string
+          request_type?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ops_change_requests_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "ops_bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ops_customers: {
+        Row: {
+          country: string | null
+          created_at: string
+          email: string | null
+          id: string
+          name: string
+          notes: string | null
+          updated_at: string
+          whatsapp: string | null
+        }
+        Insert: {
+          country?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          name: string
+          notes?: string | null
+          updated_at?: string
+          whatsapp?: string | null
+        }
+        Update: {
+          country?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          name?: string
+          notes?: string | null
+          updated_at?: string
+          whatsapp?: string | null
+        }
+        Relationships: []
+      }
+      ops_partners: {
+        Row: {
+          commission_percent: number
+          company: string
+          contact_person: string | null
+          created_at: string
+          email: string | null
+          id: string
+          notes: string | null
+          partner_type: string
+          status: string
+          updated_at: string
+          whatsapp: string | null
+        }
+        Insert: {
+          commission_percent?: number
+          company: string
+          contact_person?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          notes?: string | null
+          partner_type?: string
+          status?: string
+          updated_at?: string
+          whatsapp?: string | null
+        }
+        Update: {
+          commission_percent?: number
+          company?: string
+          contact_person?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          notes?: string | null
+          partner_type?: string
+          status?: string
+          updated_at?: string
+          whatsapp?: string | null
+        }
+        Relationships: []
+      }
+      ops_payments: {
+        Row: {
+          amount: number
+          booking_id: string
+          created_at: string
+          id: string
+          method: string
+          notes: string | null
+          paid_at: string
+        }
+        Insert: {
+          amount: number
+          booking_id: string
+          created_at?: string
+          id?: string
+          method?: string
+          notes?: string | null
+          paid_at?: string
+        }
+        Update: {
+          amount?: number
+          booking_id?: string
+          created_at?: string
+          id?: string
+          method?: string
+          notes?: string | null
+          paid_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ops_payments_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "ops_bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ops_settings: {
+        Row: {
+          business_email: string | null
+          business_name: string
+          business_phone: string | null
+          created_at: string
+          currency: string
+          default_duration_hours: number
+          default_start_time: string
+          deposit_percent: number
+          id: boolean
+          updated_at: string
+        }
+        Insert: {
+          business_email?: string | null
+          business_name?: string
+          business_phone?: string | null
+          created_at?: string
+          currency?: string
+          default_duration_hours?: number
+          default_start_time?: string
+          deposit_percent?: number
+          id?: boolean
+          updated_at?: string
+        }
+        Update: {
+          business_email?: string | null
+          business_name?: string
+          business_phone?: string | null
+          created_at?: string
+          currency?: string
+          default_duration_hours?: number
+          default_start_time?: string
+          deposit_percent?: number
+          id?: boolean
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      ops_staff: {
+        Row: {
+          created_at: string
+          id: string
+          languages: string[]
+          name: string
+          notes: string | null
+          phone: string | null
+          role: string
+          status: string
+          updated_at: string
+          whatsapp: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          languages?: string[]
+          name: string
+          notes?: string | null
+          phone?: string | null
+          role?: string
+          status?: string
+          updated_at?: string
+          whatsapp?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          languages?: string[]
+          name?: string
+          notes?: string | null
+          phone?: string | null
+          role?: string
+          status?: string
+          updated_at?: string
+          whatsapp?: string | null
+        }
+        Relationships: []
+      }
+      ops_tours: {
+        Row: {
+          active: boolean
+          base_price: number
+          created_at: string
+          duration_hours: number
+          excluded: string[]
+          full_description: string | null
+          id: string
+          image_url: string | null
+          included: string[]
+          max_guests: number
+          name: string
+          pickup_available: boolean
+          short_description: string | null
+          updated_at: string
+          vehicle_type: string
+        }
+        Insert: {
+          active?: boolean
+          base_price?: number
+          created_at?: string
+          duration_hours?: number
+          excluded?: string[]
+          full_description?: string | null
+          id?: string
+          image_url?: string | null
+          included?: string[]
+          max_guests?: number
+          name: string
+          pickup_available?: boolean
+          short_description?: string | null
+          updated_at?: string
+          vehicle_type?: string
+        }
+        Update: {
+          active?: boolean
+          base_price?: number
+          created_at?: string
+          duration_hours?: number
+          excluded?: string[]
+          full_description?: string | null
+          id?: string
+          image_url?: string | null
+          included?: string[]
+          max_guests?: number
+          name?: string
+          pickup_available?: boolean
+          short_description?: string | null
+          updated_at?: string
+          vehicle_type?: string
+        }
+        Relationships: []
+      }
+      ops_vehicles: {
+        Row: {
+          capacity: number
+          created_at: string
+          driver_id: string | null
+          id: string
+          name: string
+          notes: string | null
+          status: string
+          updated_at: string
+          vehicle_type: string
+        }
+        Insert: {
+          capacity?: number
+          created_at?: string
+          driver_id?: string | null
+          id?: string
+          name: string
+          notes?: string | null
+          status?: string
+          updated_at?: string
+          vehicle_type?: string
+        }
+        Update: {
+          capacity?: number
+          created_at?: string
+          driver_id?: string | null
+          id?: string
+          name?: string
+          notes?: string | null
+          status?: string
+          updated_at?: string
+          vehicle_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ops_vehicles_driver_id_fkey"
+            columns: ["driver_id"]
+            isOneToOne: false
+            referencedRelation: "ops_staff"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       orders: {
         Row: {
           amount_total: number
