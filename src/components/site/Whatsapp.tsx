@@ -57,6 +57,24 @@ export function WhatsappFab() {
   const { business, whatsappReplyLine } = useSiteBrand();
   const [showPrompt, setShowPrompt] = useState(false);
 
+  // Publish the stack height so the page can reserve space instead of being covered.
+  useEffect(() => {
+    const el = document.getElementById("tt24-bottom-stack");
+    if (!el) return;
+    const apply = () =>
+      document.documentElement.style.setProperty(
+        "--tt24-bottom-stack",
+        `${Math.round(el.getBoundingClientRect().height)}px`,
+      );
+    apply();
+    const ro = new ResizeObserver(apply);
+    ro.observe(el);
+    return () => {
+      ro.disconnect();
+      document.documentElement.style.setProperty("--tt24-bottom-stack", "0px");
+    };
+  }, []);
+
   useEffect(() => {
     if (typeof window === "undefined") return;
     if (sessionStorage.getItem(PROMPT_KEY)) return;

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useTours, tourPricing } from "@/lib/cms";
 import { useSiteBrand } from "@/lib/brand";
@@ -11,6 +11,7 @@ export function StickyBookBar() {
   const { business } = useSiteBrand();
   const [show, setShow] = useState(false);
   const [offset, setOffset] = useState(0);
+  const barRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const onScroll = () => setShow(window.scrollY > 520);
@@ -30,6 +31,26 @@ export function StickyBookBar() {
     return () => ro.disconnect();
   }, []);
 
+  // Publish own height so the page reserves space instead of hiding content behind it.
+  useEffect(() => {
+    const el = barRef.current;
+    const setVar = (v: string) =>
+      document.documentElement.style.setProperty("--tt24-sticky-bar", v);
+    if (!el) {
+      setVar("0px");
+      return;
+    }
+    const apply = () => setVar(`${Math.round(el.getBoundingClientRect().height)}px`);
+    apply();
+    const ro = new ResizeObserver(apply);
+    ro.observe(el);
+    return () => {
+      ro.disconnect();
+      setVar("0px");
+    };
+  }, [show]);
+
+
   const prices = tours.map((t) => tourPricing(t).current).filter((n) => n > 0);
   const from = prices.length ? Math.min(...prices) : null;
 
@@ -37,6 +58,7 @@ export function StickyBookBar() {
 
   return (
     <div
+      ref={barRef}
       className="lg:hidden fixed inset-x-0 z-40 border-t border-ink/10 bg-white/95 backdrop-blur shadow-[0_-8px_24px_rgba(30,58,95,0.12)]"
       style={{ bottom: offset }}
     >
