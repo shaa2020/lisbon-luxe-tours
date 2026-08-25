@@ -78,15 +78,12 @@ function ManageBookingPage() {
           note: note.trim() || null,
         },
       });
-      if (res.mode === "pay" && "url" in res && res.url) {
-        redirectToCheckout(res.url);
-      } else {
-        toast.success(
-          ("message" in res && res.message) || "Request sent. We'll be in touch within 24h.",
-          { duration: 8000 },
-        );
-        setStep("view");
-      }
+      toast.success(
+        ("message" in res && res.message) || "Request sent. We'll confirm and send you a payment option within 24h.",
+        { duration: 8000 },
+      );
+      setStep("view");
+
     } catch (err) {
       toast.error((err as Error).message || "Could not send request.");
     } finally {
