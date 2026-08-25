@@ -170,7 +170,39 @@ function Hero() {
           <p className="mt-4 md:mt-5 max-w-xl text-white/85 text-[14px] md:text-[16px] leading-relaxed px-4">
             Private tuk-tuk tours with local drivers. Small groups, flat prices, your pace.
           </p>
+
+          <div className="mt-6 flex flex-col sm:flex-row items-center gap-3">
+            <Link
+              to="/tours"
+              onClick={() => trackBookingCtaClick("home_hero")}
+              className="inline-flex items-center justify-center px-8 py-4 rounded-full bg-gold text-white text-[12px] font-semibold uppercase tracking-widest shadow-[0_10px_26px_rgba(43,182,247,0.4)] hover:bg-white hover:text-ink transition-colors"
+            >
+              Book a tour →
+            </Link>
+            <WhatsappInline
+              location="home_hero"
+              message="Hi Tuk Tuk 24! I'd like to book a private tuk-tuk tour in Lisbon."
+              className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full border border-[#25D366] text-white text-[12px] font-semibold uppercase tracking-widest hover:bg-[#25D366]/20 transition-colors"
+            >
+              WhatsApp us
+            </WhatsappInline>
+          </div>
+
+          <ul className="mt-5 flex flex-wrap justify-center gap-x-5 gap-y-1.5 text-[12px] text-white/80 px-4">
+            {[
+              fromPrice ? `From €${fromPrice} per person` : "Private groups only",
+              "Free cancellation up to 24h",
+              "Instant confirmation",
+              "Licensed local drivers",
+            ].map((b) => (
+              <li key={b} className="flex items-center gap-1.5">
+                <span className="text-gold">✓</span>
+                {b}
+              </li>
+            ))}
+          </ul>
         </div>
+
 
         {/* Slide index */}
         {count > 1 && (
