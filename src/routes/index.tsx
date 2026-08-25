@@ -459,43 +459,24 @@ function WhyTravel() {
     },
   ];
   return (
-    <section className="container-x py-20 md:py-28 relative">
-      <svg
-        className="absolute left-0 right-0 top-1/2 -translate-y-1/2 w-full hidden md:block"
-        height="120"
-        viewBox="0 0 1200 120"
-        fill="none"
-      >
-        <path
-          d="M0 80 Q 300 0, 600 80 T 1200 80"
-          stroke="#2bb6f7"
-          strokeWidth="1"
-          strokeDasharray="2 6"
-          opacity="0.4"
-        />
-      </svg>
-
-      <div className="text-center mb-14">
-        <p className="eyebrow text-gold mb-3">Why ride with us</p>
-        <h2 className="font-display text-3xl md:text-4xl font-bold text-ink">
-          Small tuk-tuks, big city, no rush.
-        </h2>
-      </div>
-
-      <div className="relative grid md:grid-cols-3 gap-8">
+    <section className="container-x py-12 md:py-16">
+      <div className="grid md:grid-cols-3 gap-6 md:gap-8">
         {features.map((f) => (
-          <div key={f.title} className="text-center px-4">
-            <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-white border-2 border-gold/20 flex items-center justify-center text-gold shadow-[0_10px_30px_rgba(30,58,95,0.08)]">
+          <div key={f.title} className="flex gap-4 items-start">
+            <div className="w-12 h-12 shrink-0 rounded-full bg-white border border-gold/25 flex items-center justify-center text-gold [&_svg]:w-6 [&_svg]:h-6">
               {f.icon}
             </div>
-            <h3 className="font-display text-xl font-semibold text-ink mb-3">{f.title}</h3>
-            <p className="text-body text-sm leading-relaxed max-w-xs mx-auto">{f.body}</p>
+            <div>
+              <h3 className="font-display text-[17px] font-semibold text-ink mb-1">{f.title}</h3>
+              <p className="text-body text-[13px] leading-relaxed">{f.body}</p>
+            </div>
           </div>
         ))}
       </div>
     </section>
   );
 }
+
 
 /* ============================== POPULAR TOURS ============================== */
 
