@@ -50,6 +50,7 @@ import { Route as AdminGuideIdRouteImport } from './routes/admin.guide.$id'
 import { Route as AdminGuideTaxonomyRouteImport } from './routes/admin.guide.taxonomy'
 import { Route as AdminOpsCustomersRouteImport } from './routes/admin.ops.customers'
 import { Route as AdminOpsPartnersRouteImport } from './routes/admin.ops.partners'
+import { Route as AdminOpsRequestsRouteImport } from './routes/admin.ops.requests'
 import { Route as AdminOpsTeamRouteImport } from './routes/admin.ops.team'
 import { Route as AdminOpsToursRouteImport } from './routes/admin.ops.tours'
 import { Route as AdminOpsVehiclesRouteImport } from './routes/admin.ops.vehicles'
@@ -266,6 +267,11 @@ const AdminOpsPartnersRoute = AdminOpsPartnersRouteImport.update({
   path: '/admin/ops/partners',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminOpsRequestsRoute = AdminOpsRequestsRouteImport.update({
+  id: '/admin/ops/requests',
+  path: '/admin/ops/requests',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminOpsTeamRoute = AdminOpsTeamRouteImport.update({
   id: '/admin/ops/team',
   path: '/admin/ops/team',
@@ -359,6 +365,7 @@ export interface FileRoutesByFullPath {
   '/admin/guide/taxonomy': typeof AdminGuideTaxonomyRoute
   '/admin/ops/customers': typeof AdminOpsCustomersRoute
   '/admin/ops/partners': typeof AdminOpsPartnersRoute
+  '/admin/ops/requests': typeof AdminOpsRequestsRoute
   '/admin/ops/team': typeof AdminOpsTeamRoute
   '/admin/ops/tours': typeof AdminOpsToursRoute
   '/admin/ops/vehicles': typeof AdminOpsVehiclesRoute
@@ -412,6 +419,7 @@ export interface FileRoutesByTo {
   '/admin/guide/taxonomy': typeof AdminGuideTaxonomyRoute
   '/admin/ops/customers': typeof AdminOpsCustomersRoute
   '/admin/ops/partners': typeof AdminOpsPartnersRoute
+  '/admin/ops/requests': typeof AdminOpsRequestsRoute
   '/admin/ops/team': typeof AdminOpsTeamRoute
   '/admin/ops/tours': typeof AdminOpsToursRoute
   '/admin/ops/vehicles': typeof AdminOpsVehiclesRoute
@@ -466,6 +474,7 @@ export interface FileRoutesById {
   '/admin/guide/taxonomy': typeof AdminGuideTaxonomyRoute
   '/admin/ops/customers': typeof AdminOpsCustomersRoute
   '/admin/ops/partners': typeof AdminOpsPartnersRoute
+  '/admin/ops/requests': typeof AdminOpsRequestsRoute
   '/admin/ops/team': typeof AdminOpsTeamRoute
   '/admin/ops/tours': typeof AdminOpsToursRoute
   '/admin/ops/vehicles': typeof AdminOpsVehiclesRoute
@@ -521,6 +530,7 @@ export interface FileRouteTypes {
     | '/admin/guide/taxonomy'
     | '/admin/ops/customers'
     | '/admin/ops/partners'
+    | '/admin/ops/requests'
     | '/admin/ops/team'
     | '/admin/ops/tours'
     | '/admin/ops/vehicles'
@@ -574,6 +584,7 @@ export interface FileRouteTypes {
     | '/admin/guide/taxonomy'
     | '/admin/ops/customers'
     | '/admin/ops/partners'
+    | '/admin/ops/requests'
     | '/admin/ops/team'
     | '/admin/ops/tours'
     | '/admin/ops/vehicles'
@@ -627,6 +638,7 @@ export interface FileRouteTypes {
     | '/admin/guide/taxonomy'
     | '/admin/ops/customers'
     | '/admin/ops/partners'
+    | '/admin/ops/requests'
     | '/admin/ops/team'
     | '/admin/ops/tours'
     | '/admin/ops/vehicles'
@@ -681,6 +693,7 @@ export interface RootRouteChildren {
   AdminGuideTaxonomyRoute: typeof AdminGuideTaxonomyRoute
   AdminOpsCustomersRoute: typeof AdminOpsCustomersRoute
   AdminOpsPartnersRoute: typeof AdminOpsPartnersRoute
+  AdminOpsRequestsRoute: typeof AdminOpsRequestsRoute
   AdminOpsTeamRoute: typeof AdminOpsTeamRoute
   AdminOpsToursRoute: typeof AdminOpsToursRoute
   AdminOpsVehiclesRoute: typeof AdminOpsVehiclesRoute
@@ -984,6 +997,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminOpsPartnersRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/ops/requests': {
+      id: '/admin/ops/requests'
+      path: '/admin/ops/requests'
+      fullPath: '/admin/ops/requests'
+      preLoaderRoute: typeof AdminOpsRequestsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/ops/team': {
       id: '/admin/ops/team'
       path: '/admin/ops/team'
@@ -1097,6 +1117,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminGuideTaxonomyRoute: AdminGuideTaxonomyRoute,
   AdminOpsCustomersRoute: AdminOpsCustomersRoute,
   AdminOpsPartnersRoute: AdminOpsPartnersRoute,
+  AdminOpsRequestsRoute: AdminOpsRequestsRoute,
   AdminOpsTeamRoute: AdminOpsTeamRoute,
   AdminOpsToursRoute: AdminOpsToursRoute,
   AdminOpsVehiclesRoute: AdminOpsVehiclesRoute,
