@@ -7,7 +7,7 @@ const KEY = "tt24_offer_bar_dismissed";
 
 /** Slim, dismissible book-direct offer strip. Managed from Admin → Settings → Marketing. */
 export function OfferBar() {
-  const { offerBar } = useSiteBrand();
+  const { offerBar, promoBanner } = useSiteBrand();
   const [visible, setVisible] = useState(false);
   const [copied, setCopied] = useState(false);
 

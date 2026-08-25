@@ -80,8 +80,11 @@ export function WhatsappFab() {
 
   return (
     <>
-      <PromoBanner />
-      <OfferBar />
+      {/* Single fixed bottom stack — promo banner and offer bar never overlap. */}
+      <div id="tt24-bottom-stack" className="fixed bottom-0 inset-x-0 z-40 flex flex-col">
+        <PromoBanner />
+        <OfferBar />
+      </div>
 
       {showPrompt && (
         <div className="hidden lg:block fixed bottom-24 right-6 z-40 max-w-[240px] rounded-xl bg-white border border-border shadow-[0_12px_40px_rgba(30,58,95,0.18)] p-3 animate-fade-in">
