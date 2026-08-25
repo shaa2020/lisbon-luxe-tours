@@ -592,6 +592,23 @@ function AdminSettings() {
             >
               + Add tier
             </button>
+            {biz.group_discount_enabled && biz.group_discount_tiers.length > 0 && (
+              <div className="rounded-lg border border-border bg-muted/30 p-3 space-y-1">
+                <p className="text-[11px] font-medium text-foreground">Example — €35 per person</p>
+                {[...biz.group_discount_tiers]
+                  .sort((a, b) => a.min_guests - b.min_guests)
+                  .map((t, i) => {
+                    const gross = 35 * t.min_guests;
+                    const net = gross * (1 - (t.percent || 0) / 100);
+                    return (
+                      <p key={i} className="text-[11px] text-muted-foreground">
+                        {t.min_guests}+ guests → {t.percent}% off · {t.min_guests} guests pay €
+                        {net.toFixed(2)} instead of €{gross.toFixed(2)}
+                      </p>
+                    );
+                  })}
+              </div>
+            )}
           </div>
           <button type="button" onClick={saveBiz} disabled={savingBiz} className={btn}>
             {savingBiz ? "Saving…" : "Save booking rules"}
