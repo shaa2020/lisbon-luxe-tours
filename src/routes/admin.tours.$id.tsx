@@ -144,7 +144,12 @@ function TourEditPage() {
         description: data.description ?? "",
         highlights: arr(data.highlights).join("\n"),
         itinerary: serializeItinerary(
-          arr(data.itinerary) as { time: string; title: string; detail: string }[],
+          arr(data.itinerary) as {
+            time: string;
+            title: string;
+            detail: string;
+            mandatory?: boolean;
+          }[],
         ),
         included: arr(data.included).join("\n"),
         not_included: arr(data.not_included).join("\n"),
