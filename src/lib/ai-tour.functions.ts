@@ -155,11 +155,29 @@ async function callGateway(messages: { role: string; content: string }[]) {
   return draftSchema.parse(parsed) as AiTourDraft;
 }
 
-async function assertAdmin(context: { supabase: { rpc: (fn: string, args: Record<string, unknown>) => Promise<{ data: unknown }> }; userId: string }) {
-  const { data } = await context.supabase.rpc("has_role", {
-    _user_id: context.userId,
-    _role: "admin",
-  });
+type AdminCtx = {
+  supabase: {
+    from: (t: string) => {
+      select: (c: string) => {
+        eq: (
+          c: string,
+          v: string,
+        ) => {
+          eq: (c: string, v: string) => { maybeSingle: () => Promise<{ data: unknown }> };
+        };
+      };
+    };
+  };
+  userId: string;
+};
+
+async function assertAdmin(context: AdminCtx) {
+  const { data } = await context.supabase
+    .from("user_roles")
+    .select("role")
+    .eq("user_id", context.userId)
+    .eq("role", "admin")
+    .maybeSingle();
   if (!data) throw new Error("Forbidden");
 }
 
