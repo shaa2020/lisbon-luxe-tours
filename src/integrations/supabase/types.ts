@@ -1336,6 +1336,7 @@ export type Database = {
           offer_bar_code: string | null
           offer_bar_enabled: boolean
           offer_bar_text: string
+          owner_notification_email: string
           payment_provider: string
           payments_enabled: boolean
           payments_maintenance_message: string
@@ -1384,6 +1385,7 @@ export type Database = {
           offer_bar_code?: string | null
           offer_bar_enabled?: boolean
           offer_bar_text?: string
+          owner_notification_email?: string
           payment_provider?: string
           payments_enabled?: boolean
           payments_maintenance_message?: string
@@ -1432,6 +1434,7 @@ export type Database = {
           offer_bar_code?: string | null
           offer_bar_enabled?: boolean
           offer_bar_text?: string
+          owner_notification_email?: string
           payment_provider?: string
           payments_enabled?: boolean
           payments_maintenance_message?: string

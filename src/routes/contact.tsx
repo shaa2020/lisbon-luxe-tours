@@ -6,7 +6,7 @@ import { Nav } from "@/components/site/Nav";
 import { Footer } from "@/components/site/Footer";
 import { WhatsappFab } from "@/components/site/Whatsapp";
 import { useSiteBrand } from "@/lib/brand";
-import { supabase } from "@/integrations/supabase/client";
+import { submitContactMessage } from "@/lib/contact.functions";
 import { toast } from "sonner";
 
 
@@ -76,14 +76,22 @@ function ContactPage() {
       data.date ? `Date: ${data.date}` : null,
       data.guests ? `Guests: ${data.guests}` : null,
     ].filter(Boolean);
-    const { error } = await supabase.from("contact_messages").insert({
-      name: data.name,
-      email: data.email,
-      subject: subjectParts.length ? subjectParts.join(" · ") : "Website enquiry",
-      message: data.message,
-    });
+    let failed = false;
+    try {
+      await submitContactMessage({
+        data: {
+          name: data.name,
+          email: data.email,
+          subject: subjectParts.length ? subjectParts.join(" · ") : "Website enquiry",
+          message: data.message,
+          source: "Contact page",
+        },
+      });
+    } catch {
+      failed = true;
+    }
     setSending(false);
-    if (error) {
+    if (failed) {
       toast.error("We couldn't send your message. Please try WhatsApp or email us directly.");
       return;
     }

@@ -77,6 +77,7 @@ function AdminSettings() {
   const [savingBiz, setSavingBiz] = useState(false);
   const [biz, setBiz] = useState({
     contact_email: "",
+    owner_notification_email: "",
     contact_phone: "",
     whatsapp_phone: "",
     address_line1: "",
@@ -119,6 +120,7 @@ function AdminSettings() {
     setHeroSlides(Array.isArray(d.hero_slides) ? (d.hero_slides as HeroSlideRow[]) : []);
     setBiz({
       contact_email: d.contact_email ?? "",
+      owner_notification_email: (d as { owner_notification_email?: string }).owner_notification_email ?? "",
       contact_phone: d.contact_phone ?? "",
       whatsapp_phone: d.whatsapp_phone ?? "",
       address_line1: d.address_line1 ?? "",
@@ -318,6 +320,7 @@ function AdminSettings() {
           <div className="grid sm:grid-cols-2 gap-3">
             {[
               { k: "contact_email", label: "Contact email" },
+              { k: "owner_notification_email", label: "Alerts inbox (you receive all customer messages & bookings here)" },
               { k: "contact_phone", label: "Phone (displayed)" },
               { k: "whatsapp_phone", label: "WhatsApp number (digits only ok)" },
               { k: "address_line1", label: "Address line 1" },

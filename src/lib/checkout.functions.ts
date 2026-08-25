@@ -109,6 +109,29 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
       .single();
     if (bErr || !booking) throw new Error(bErr?.message || "Booking insert failed");
 
+    // Copy the business inbox on every new booking.
+    {
+      const { notifyOwner } = await import("./email/owner-notify.server");
+      await notifyOwner(supabaseAdmin as never, {
+        subject: `New booking — ${data.tour_title}`,
+        heading: "New booking received",
+        intro: `${data.customer_name} just booked ${data.tour_title}.`,
+        replyTo: data.email,
+        label: "owner_alert",
+        idempotencyKey: `booking-new-${booking.id}`,
+        rows: [
+          { label: "Customer", value: data.customer_name },
+          { label: "Email", value: data.email },
+          { label: "Phone / WhatsApp", value: data.phone || "—" },
+          { label: "Date", value: `${data.travel_date || "—"}${data.time ? ` · ${data.time}` : ""}` },
+          { label: "Guests", value: String(guestCount) },
+          { label: "Total", value: `€${(payableCents / 100).toFixed(2)}` },
+        ],
+        ctaLabel: "Open bookings",
+        ctaUrl: "https://tuktuk24lisbon.com/admin/bookings",
+      });
+    }
+
     if (discountCodeId && discountCode) {
       await recordRedemption(supabaseAdmin as never, {
         code_id: discountCodeId,
