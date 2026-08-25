@@ -35,6 +35,7 @@ import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
 import { Route as BookingCancelledRouteImport } from './routes/booking.cancelled'
 import { Route as BookingManageRouteImport } from './routes/booking.manage'
 import { Route as BookingSuccessRouteImport } from './routes/booking.success'
+import { Route as EmailUnsubscribeRouteImport } from './routes/email/unsubscribe'
 import { Route as JournalIndexRouteImport } from './routes/journal.index'
 import { Route as JournalSlugRouteImport } from './routes/journal.$slug'
 import { Route as LisbonGuideIndexRouteImport } from './routes/lisbon-guide.index'
@@ -63,11 +64,14 @@ import { Route as AdminToursIndexRouteImport } from './routes/admin.tours.index'
 import { Route as AdminToursIdRouteImport } from './routes/admin.tours.$id'
 import { Route as ApiPublicBookingsRouteImport } from './routes/api/public/bookings'
 import { Route as LisbonGuideCategorySlugRouteImport } from './routes/lisbon-guide.category.$slug'
+import { Route as LovableEmailSuppressionRouteImport } from './routes/lovable/email/suppression'
 import { Route as AdminOpsJobsIndexRouteImport } from './routes/admin.ops.jobs.index'
 import { Route as AdminOpsJobsIdRouteImport } from './routes/admin.ops.jobs.$id'
 import { Route as ApiPublicPaymentsMollieRouteImport } from './routes/api/public/payments/mollie'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
+import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
+import { Route as LovableEmailTransactionalSendRouteImport } from './routes/lovable/email/transactional/send'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -197,6 +201,11 @@ const BookingManageRoute = BookingManageRouteImport.update({
 const BookingSuccessRoute = BookingSuccessRouteImport.update({
   id: '/booking/success',
   path: '/booking/success',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EmailUnsubscribeRoute = EmailUnsubscribeRouteImport.update({
+  id: '/email/unsubscribe',
+  path: '/email/unsubscribe',
   getParentRoute: () => rootRouteImport,
 } as any)
 const JournalIndexRoute = JournalIndexRouteImport.update({
@@ -339,6 +348,11 @@ const LisbonGuideCategorySlugRoute = LisbonGuideCategorySlugRouteImport.update({
   path: '/lisbon-guide/category/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LovableEmailSuppressionRoute = LovableEmailSuppressionRouteImport.update({
+  id: '/lovable/email/suppression',
+  path: '/lovable/email/suppression',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminOpsJobsIndexRoute = AdminOpsJobsIndexRouteImport.update({
   id: '/admin/ops/jobs/',
   path: '/admin/ops/jobs/',
@@ -364,6 +378,18 @@ const LovableEmailQueueProcessRoute =
   LovableEmailQueueProcessRouteImport.update({
     id: '/lovable/email/queue/process',
     path: '/lovable/email/queue/process',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const LovableEmailTransactionalPreviewRoute =
+  LovableEmailTransactionalPreviewRouteImport.update({
+    id: '/lovable/email/transactional/preview',
+    path: '/lovable/email/transactional/preview',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const LovableEmailTransactionalSendRoute =
+  LovableEmailTransactionalSendRouteImport.update({
+    id: '/lovable/email/transactional/send',
+    path: '/lovable/email/transactional/send',
     getParentRoute: () => rootRouteImport,
   } as any)
 
@@ -393,6 +419,7 @@ export interface FileRoutesByFullPath {
   '/booking/cancelled': typeof BookingCancelledRoute
   '/booking/manage': typeof BookingManageRoute
   '/booking/success': typeof BookingSuccessRoute
+  '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/journal/$slug': typeof JournalSlugRoute
   '/lisbon-guide/$slug': typeof LisbonGuideSlugRoute
   '/tours/$slug': typeof ToursSlugRoute
@@ -418,6 +445,7 @@ export interface FileRoutesByFullPath {
   '/admin/tours/$id': typeof AdminToursIdRoute
   '/api/public/bookings': typeof ApiPublicBookingsRoute
   '/lisbon-guide/category/$slug': typeof LisbonGuideCategorySlugRoute
+  '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/admin/blog/': typeof AdminBlogIndexRoute
   '/admin/guide/': typeof AdminGuideIndexRoute
   '/admin/ops/': typeof AdminOpsIndexRoute
@@ -426,6 +454,8 @@ export interface FileRoutesByFullPath {
   '/api/public/payments/mollie': typeof ApiPublicPaymentsMollieRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
+  '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
+  '/lovable/email/transactional/send': typeof LovableEmailTransactionalSendRoute
   '/admin/ops/jobs/': typeof AdminOpsJobsIndexRoute
 }
 export interface FileRoutesByTo {
@@ -454,6 +484,7 @@ export interface FileRoutesByTo {
   '/booking/cancelled': typeof BookingCancelledRoute
   '/booking/manage': typeof BookingManageRoute
   '/booking/success': typeof BookingSuccessRoute
+  '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/journal/$slug': typeof JournalSlugRoute
   '/lisbon-guide/$slug': typeof LisbonGuideSlugRoute
   '/tours/$slug': typeof ToursSlugRoute
@@ -479,6 +510,7 @@ export interface FileRoutesByTo {
   '/admin/tours/$id': typeof AdminToursIdRoute
   '/api/public/bookings': typeof ApiPublicBookingsRoute
   '/lisbon-guide/category/$slug': typeof LisbonGuideCategorySlugRoute
+  '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/admin/blog': typeof AdminBlogIndexRoute
   '/admin/guide': typeof AdminGuideIndexRoute
   '/admin/ops': typeof AdminOpsIndexRoute
@@ -487,6 +519,8 @@ export interface FileRoutesByTo {
   '/api/public/payments/mollie': typeof ApiPublicPaymentsMollieRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
+  '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
+  '/lovable/email/transactional/send': typeof LovableEmailTransactionalSendRoute
   '/admin/ops/jobs': typeof AdminOpsJobsIndexRoute
 }
 export interface FileRoutesById {
@@ -516,6 +550,7 @@ export interface FileRoutesById {
   '/booking/cancelled': typeof BookingCancelledRoute
   '/booking/manage': typeof BookingManageRoute
   '/booking/success': typeof BookingSuccessRoute
+  '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/journal/$slug': typeof JournalSlugRoute
   '/lisbon-guide/$slug': typeof LisbonGuideSlugRoute
   '/tours/$slug': typeof ToursSlugRoute
@@ -541,6 +576,7 @@ export interface FileRoutesById {
   '/admin/tours/$id': typeof AdminToursIdRoute
   '/api/public/bookings': typeof ApiPublicBookingsRoute
   '/lisbon-guide/category/$slug': typeof LisbonGuideCategorySlugRoute
+  '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/admin/blog/': typeof AdminBlogIndexRoute
   '/admin/guide/': typeof AdminGuideIndexRoute
   '/admin/ops/': typeof AdminOpsIndexRoute
@@ -549,6 +585,8 @@ export interface FileRoutesById {
   '/api/public/payments/mollie': typeof ApiPublicPaymentsMollieRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
+  '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
+  '/lovable/email/transactional/send': typeof LovableEmailTransactionalSendRoute
   '/admin/ops/jobs/': typeof AdminOpsJobsIndexRoute
 }
 export interface FileRouteTypes {
@@ -579,6 +617,7 @@ export interface FileRouteTypes {
     | '/booking/cancelled'
     | '/booking/manage'
     | '/booking/success'
+    | '/email/unsubscribe'
     | '/journal/$slug'
     | '/lisbon-guide/$slug'
     | '/tours/$slug'
@@ -604,6 +643,7 @@ export interface FileRouteTypes {
     | '/admin/tours/$id'
     | '/api/public/bookings'
     | '/lisbon-guide/category/$slug'
+    | '/lovable/email/suppression'
     | '/admin/blog/'
     | '/admin/guide/'
     | '/admin/ops/'
@@ -612,6 +652,8 @@ export interface FileRouteTypes {
     | '/api/public/payments/mollie'
     | '/api/public/payments/webhook'
     | '/lovable/email/queue/process'
+    | '/lovable/email/transactional/preview'
+    | '/lovable/email/transactional/send'
     | '/admin/ops/jobs/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -640,6 +682,7 @@ export interface FileRouteTypes {
     | '/booking/cancelled'
     | '/booking/manage'
     | '/booking/success'
+    | '/email/unsubscribe'
     | '/journal/$slug'
     | '/lisbon-guide/$slug'
     | '/tours/$slug'
@@ -665,6 +708,7 @@ export interface FileRouteTypes {
     | '/admin/tours/$id'
     | '/api/public/bookings'
     | '/lisbon-guide/category/$slug'
+    | '/lovable/email/suppression'
     | '/admin/blog'
     | '/admin/guide'
     | '/admin/ops'
@@ -673,6 +717,8 @@ export interface FileRouteTypes {
     | '/api/public/payments/mollie'
     | '/api/public/payments/webhook'
     | '/lovable/email/queue/process'
+    | '/lovable/email/transactional/preview'
+    | '/lovable/email/transactional/send'
     | '/admin/ops/jobs'
   id:
     | '__root__'
@@ -701,6 +747,7 @@ export interface FileRouteTypes {
     | '/booking/cancelled'
     | '/booking/manage'
     | '/booking/success'
+    | '/email/unsubscribe'
     | '/journal/$slug'
     | '/lisbon-guide/$slug'
     | '/tours/$slug'
@@ -726,6 +773,7 @@ export interface FileRouteTypes {
     | '/admin/tours/$id'
     | '/api/public/bookings'
     | '/lisbon-guide/category/$slug'
+    | '/lovable/email/suppression'
     | '/admin/blog/'
     | '/admin/guide/'
     | '/admin/ops/'
@@ -734,6 +782,8 @@ export interface FileRouteTypes {
     | '/api/public/payments/mollie'
     | '/api/public/payments/webhook'
     | '/lovable/email/queue/process'
+    | '/lovable/email/transactional/preview'
+    | '/lovable/email/transactional/send'
     | '/admin/ops/jobs/'
   fileRoutesById: FileRoutesById
 }
@@ -763,6 +813,7 @@ export interface RootRouteChildren {
   BookingCancelledRoute: typeof BookingCancelledRoute
   BookingManageRoute: typeof BookingManageRoute
   BookingSuccessRoute: typeof BookingSuccessRoute
+  EmailUnsubscribeRoute: typeof EmailUnsubscribeRoute
   JournalSlugRoute: typeof JournalSlugRoute
   LisbonGuideSlugRoute: typeof LisbonGuideSlugRoute
   ToursSlugRoute: typeof ToursSlugRoute
@@ -788,6 +839,7 @@ export interface RootRouteChildren {
   AdminToursIdRoute: typeof AdminToursIdRoute
   ApiPublicBookingsRoute: typeof ApiPublicBookingsRoute
   LisbonGuideCategorySlugRoute: typeof LisbonGuideCategorySlugRoute
+  LovableEmailSuppressionRoute: typeof LovableEmailSuppressionRoute
   AdminBlogIndexRoute: typeof AdminBlogIndexRoute
   AdminGuideIndexRoute: typeof AdminGuideIndexRoute
   AdminOpsIndexRoute: typeof AdminOpsIndexRoute
@@ -796,6 +848,8 @@ export interface RootRouteChildren {
   ApiPublicPaymentsMollieRoute: typeof ApiPublicPaymentsMollieRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
   LovableEmailQueueProcessRoute: typeof LovableEmailQueueProcessRoute
+  LovableEmailTransactionalPreviewRoute: typeof LovableEmailTransactionalPreviewRoute
+  LovableEmailTransactionalSendRoute: typeof LovableEmailTransactionalSendRoute
   AdminOpsJobsIndexRoute: typeof AdminOpsJobsIndexRoute
 }
 
@@ -981,6 +1035,13 @@ declare module '@tanstack/react-router' {
       path: '/booking/success'
       fullPath: '/booking/success'
       preLoaderRoute: typeof BookingSuccessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/email/unsubscribe': {
+      id: '/email/unsubscribe'
+      path: '/email/unsubscribe'
+      fullPath: '/email/unsubscribe'
+      preLoaderRoute: typeof EmailUnsubscribeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/journal/': {
@@ -1179,6 +1240,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LisbonGuideCategorySlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/lovable/email/suppression': {
+      id: '/lovable/email/suppression'
+      path: '/lovable/email/suppression'
+      fullPath: '/lovable/email/suppression'
+      preLoaderRoute: typeof LovableEmailSuppressionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/ops/jobs/': {
       id: '/admin/ops/jobs/'
       path: '/admin/ops/jobs'
@@ -1214,6 +1282,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LovableEmailQueueProcessRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/lovable/email/transactional/preview': {
+      id: '/lovable/email/transactional/preview'
+      path: '/lovable/email/transactional/preview'
+      fullPath: '/lovable/email/transactional/preview'
+      preLoaderRoute: typeof LovableEmailTransactionalPreviewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lovable/email/transactional/send': {
+      id: '/lovable/email/transactional/send'
+      path: '/lovable/email/transactional/send'
+      fullPath: '/lovable/email/transactional/send'
+      preLoaderRoute: typeof LovableEmailTransactionalSendRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -1243,6 +1325,7 @@ const rootRouteChildren: RootRouteChildren = {
   BookingCancelledRoute: BookingCancelledRoute,
   BookingManageRoute: BookingManageRoute,
   BookingSuccessRoute: BookingSuccessRoute,
+  EmailUnsubscribeRoute: EmailUnsubscribeRoute,
   JournalSlugRoute: JournalSlugRoute,
   LisbonGuideSlugRoute: LisbonGuideSlugRoute,
   ToursSlugRoute: ToursSlugRoute,
@@ -1268,6 +1351,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminToursIdRoute: AdminToursIdRoute,
   ApiPublicBookingsRoute: ApiPublicBookingsRoute,
   LisbonGuideCategorySlugRoute: LisbonGuideCategorySlugRoute,
+  LovableEmailSuppressionRoute: LovableEmailSuppressionRoute,
   AdminBlogIndexRoute: AdminBlogIndexRoute,
   AdminGuideIndexRoute: AdminGuideIndexRoute,
   AdminOpsIndexRoute: AdminOpsIndexRoute,
@@ -1276,6 +1360,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicPaymentsMollieRoute: ApiPublicPaymentsMollieRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
   LovableEmailQueueProcessRoute: LovableEmailQueueProcessRoute,
+  LovableEmailTransactionalPreviewRoute: LovableEmailTransactionalPreviewRoute,
+  LovableEmailTransactionalSendRoute: LovableEmailTransactionalSendRoute,
   AdminOpsJobsIndexRoute: AdminOpsJobsIndexRoute,
 }
 export const routeTree = rootRouteImport
