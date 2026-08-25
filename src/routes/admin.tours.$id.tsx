@@ -11,9 +11,8 @@ import { Sparkles } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/admin/tours/$id")({
-  validateSearch: (search: Record<string, unknown>) => ({
-    ai: search['ai'] === true || search['ai'] === "1" || search['ai'] === 1 ? true : undefined,
-  }),
+  validateSearch: (search: Record<string, unknown>): { ai?: true } =>
+    search['ai'] === true || search['ai'] === "1" || search['ai'] === 1 ? { ai: true } : {},
   component: TourEditPage,
 });
 
