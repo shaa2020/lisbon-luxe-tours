@@ -31,11 +31,17 @@ export function PromoBanner() {
   const [copied, setCopied] = useState(false);
 
   const signature = `${promoBanner.headline}|${promoBanner.code ?? ""}`;
+  // Dismissals only last a day, so returning visitors see the current offer again.
+  const DISMISS_TTL_MS = 24 * 60 * 60 * 1000;
 
   useEffect(() => {
     if (typeof window === "undefined") return;
     try {
-      setDismissed(localStorage.getItem(KEY) === signature);
+      const raw = localStorage.getItem(KEY);
+      if (!raw) return setDismissed(false);
+      const [sig, ts] = raw.split("@@");
+      const fresh = ts ? Date.now() - Number(ts) < DISMISS_TTL_MS : false;
+      setDismissed(sig === signature && fresh);
     } catch {
       setDismissed(false);
     }
