@@ -173,6 +173,7 @@ export const Route = createFileRoute("/lovable/email/transactional/send")({
             message_id: messageId,
             to: effectiveRecipient,
             from: fromHeader(SITE_NAME, templateName),
+            reply_to: REPLY_TO,
             sender_domain: SENDER_DOMAIN,
             subject: resolvedSubject,
             html,
