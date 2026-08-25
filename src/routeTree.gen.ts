@@ -49,6 +49,7 @@ import { Route as AdminGuideIndexRouteImport } from './routes/admin.guide.index'
 import { Route as AdminGuideIdRouteImport } from './routes/admin.guide.$id'
 import { Route as AdminGuideTaxonomyRouteImport } from './routes/admin.guide.taxonomy'
 import { Route as AdminOpsCustomersRouteImport } from './routes/admin.ops.customers'
+import { Route as AdminOpsTeamRouteImport } from './routes/admin.ops.team'
 import { Route as AdminOpsToursRouteImport } from './routes/admin.ops.tours'
 import { Route as AdminOpsVehiclesRouteImport } from './routes/admin.ops.vehicles'
 import { Route as AdminToursIndexRouteImport } from './routes/admin.tours.index'
@@ -259,6 +260,11 @@ const AdminOpsCustomersRoute = AdminOpsCustomersRouteImport.update({
   path: '/admin/ops/customers',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminOpsTeamRoute = AdminOpsTeamRouteImport.update({
+  id: '/admin/ops/team',
+  path: '/admin/ops/team',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminOpsToursRoute = AdminOpsToursRouteImport.update({
   id: '/admin/ops/tours',
   path: '/admin/ops/tours',
@@ -346,6 +352,7 @@ export interface FileRoutesByFullPath {
   '/admin/guide/$id': typeof AdminGuideIdRoute
   '/admin/guide/taxonomy': typeof AdminGuideTaxonomyRoute
   '/admin/ops/customers': typeof AdminOpsCustomersRoute
+  '/admin/ops/team': typeof AdminOpsTeamRoute
   '/admin/ops/tours': typeof AdminOpsToursRoute
   '/admin/ops/vehicles': typeof AdminOpsVehiclesRoute
   '/admin/tours/$id': typeof AdminToursIdRoute
@@ -397,6 +404,7 @@ export interface FileRoutesByTo {
   '/admin/guide/$id': typeof AdminGuideIdRoute
   '/admin/guide/taxonomy': typeof AdminGuideTaxonomyRoute
   '/admin/ops/customers': typeof AdminOpsCustomersRoute
+  '/admin/ops/team': typeof AdminOpsTeamRoute
   '/admin/ops/tours': typeof AdminOpsToursRoute
   '/admin/ops/vehicles': typeof AdminOpsVehiclesRoute
   '/admin/tours/$id': typeof AdminToursIdRoute
@@ -449,6 +457,7 @@ export interface FileRoutesById {
   '/admin/guide/$id': typeof AdminGuideIdRoute
   '/admin/guide/taxonomy': typeof AdminGuideTaxonomyRoute
   '/admin/ops/customers': typeof AdminOpsCustomersRoute
+  '/admin/ops/team': typeof AdminOpsTeamRoute
   '/admin/ops/tours': typeof AdminOpsToursRoute
   '/admin/ops/vehicles': typeof AdminOpsVehiclesRoute
   '/admin/tours/$id': typeof AdminToursIdRoute
@@ -502,6 +511,7 @@ export interface FileRouteTypes {
     | '/admin/guide/$id'
     | '/admin/guide/taxonomy'
     | '/admin/ops/customers'
+    | '/admin/ops/team'
     | '/admin/ops/tours'
     | '/admin/ops/vehicles'
     | '/admin/tours/$id'
@@ -553,6 +563,7 @@ export interface FileRouteTypes {
     | '/admin/guide/$id'
     | '/admin/guide/taxonomy'
     | '/admin/ops/customers'
+    | '/admin/ops/team'
     | '/admin/ops/tours'
     | '/admin/ops/vehicles'
     | '/admin/tours/$id'
@@ -604,6 +615,7 @@ export interface FileRouteTypes {
     | '/admin/guide/$id'
     | '/admin/guide/taxonomy'
     | '/admin/ops/customers'
+    | '/admin/ops/team'
     | '/admin/ops/tours'
     | '/admin/ops/vehicles'
     | '/admin/tours/$id'
@@ -656,6 +668,7 @@ export interface RootRouteChildren {
   AdminGuideIdRoute: typeof AdminGuideIdRoute
   AdminGuideTaxonomyRoute: typeof AdminGuideTaxonomyRoute
   AdminOpsCustomersRoute: typeof AdminOpsCustomersRoute
+  AdminOpsTeamRoute: typeof AdminOpsTeamRoute
   AdminOpsToursRoute: typeof AdminOpsToursRoute
   AdminOpsVehiclesRoute: typeof AdminOpsVehiclesRoute
   AdminToursIdRoute: typeof AdminToursIdRoute
@@ -951,6 +964,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminOpsCustomersRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/ops/team': {
+      id: '/admin/ops/team'
+      path: '/admin/ops/team'
+      fullPath: '/admin/ops/team'
+      preLoaderRoute: typeof AdminOpsTeamRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/ops/tours': {
       id: '/admin/ops/tours'
       path: '/admin/ops/tours'
@@ -1056,6 +1076,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminGuideIdRoute: AdminGuideIdRoute,
   AdminGuideTaxonomyRoute: AdminGuideTaxonomyRoute,
   AdminOpsCustomersRoute: AdminOpsCustomersRoute,
+  AdminOpsTeamRoute: AdminOpsTeamRoute,
   AdminOpsToursRoute: AdminOpsToursRoute,
   AdminOpsVehiclesRoute: AdminOpsVehiclesRoute,
   AdminToursIdRoute: AdminToursIdRoute,
