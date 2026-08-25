@@ -61,7 +61,11 @@ export async function resolveBookingEmail(
   if (!tpl) throw new Error(`Email template "${templateKey}" not found`);
 
   const brand = await loadBrand(admin);
-  const vars = bookingVars(booking, { brand_name: brand.brandName, review_url: brand.reviewUrl, ...(overrides.extra || {}) });
+  const vars = bookingVars(booking, {
+    brand_name: brand.brandName,
+    review_url: brand.reviewUrl,
+    ...(overrides.extra || {}),
+  });
 
   const pick = (o: string | null | undefined, fallback: string) =>
     fillPlaceholders(o != null && o !== "" ? o : fallback, vars);
@@ -112,12 +116,19 @@ export async function sendBookingEmail(
     addressLine: resolved.brand.addressLine,
   });
 
-  await logEvent(admin, booking.id, "email", `Sent "${resolved.label}" email to ${booking.email}`, {
-    template: templateKey,
-    subject: resolved.subject,
-    delivered: result.sent,
-    reason: "reason" in result ? result.reason : null,
-  }, actor);
+  await logEvent(
+    admin,
+    booking.id,
+    "email",
+    `Queued "${resolved.label}" email to ${booking.email}`,
+    {
+      template: templateKey,
+      subject: resolved.subject,
+      queued: result.sent,
+      reason: "reason" in result ? result.reason : null,
+    },
+    actor,
+  );
 
   return { ...result, subject: resolved.subject };
 }

@@ -5,7 +5,21 @@ import { supabase } from "@/integrations/supabase/client";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { useSiteBrand } from "@/lib/brand";
 import { toast } from "sonner";
-import { MessageCircle, Mail, Phone, Calendar, Users, Trash2, Edit3, Copy, Check, Loader2, Clock, Star, Link2 } from "lucide-react";
+import {
+  MessageCircle,
+  Mail,
+  Phone,
+  Calendar,
+  Users,
+  Trash2,
+  Edit3,
+  Copy,
+  Check,
+  Loader2,
+  Clock,
+  Star,
+  Link2,
+} from "lucide-react";
 import { adminSendBookingEmail } from "@/lib/bookings-admin.functions";
 import { useServerFn } from "@tanstack/react-start";
 import {
@@ -215,8 +229,10 @@ function BookingsInbox() {
   const sendDirect = async (b: Booking, templateKey: string, label: string) => {
     setSendingKey(`${b.id}:${templateKey}`);
     try {
-      const res: any = await sendBookingEmail({ data: { bookingId: b.id, templateKey, overrides: {} } });
-      if (res?.sent) toast.success(`${label} sent to ${b.email}`);
+      const res: any = await sendBookingEmail({
+        data: { bookingId: b.id, templateKey, overrides: {} },
+      });
+      if (res?.queued) toast.success(`${label} queued for ${b.email}`);
       else toast.error("Recipient is unsubscribed or blocked");
       qc.invalidateQueries({ queryKey: ["admin-bookings"] });
     } catch (err) {
@@ -256,11 +272,15 @@ function BookingsInbox() {
     setEditNote("");
   };
 
-  const generatePaymentLink = async (b: Booking, changeType: "add_guests" | "extend_duration" | "admin_adjustment") => {
+  const generatePaymentLink = async (
+    b: Booking,
+    changeType: "add_guests" | "extend_duration" | "admin_adjustment",
+  ) => {
     setGenerating(true);
     try {
       const newGuests = typeof editGuests === "number" ? editGuests : undefined;
-      const newAmountCents = typeof editAmount === "number" ? Math.round(editAmount * 100) : undefined;
+      const newAmountCents =
+        typeof editAmount === "number" ? Math.round(editAmount * 100) : undefined;
       const res = await createCheckout({
         data: {
           bookingId: b.id,
@@ -321,7 +341,9 @@ function BookingsInbox() {
     <AdminShell>
       <div className="mb-8 flex flex-wrap items-start justify-between gap-3">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary mb-2">Inbox</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary mb-2">
+            Inbox
+          </p>
           <h1 className="text-3xl font-display font-bold">Bookings</h1>
           <p className="text-sm text-muted-foreground mt-1">
             Add bookings from any source, edit them, and email your guests.
@@ -365,8 +387,7 @@ function BookingsInbox() {
                 : "bg-card text-foreground border-border hover:border-primary"
             }`}
           >
-            {s[0].toUpperCase() + s.slice(1)}{" "}
-            <span className="opacity-70">({counts[s] ?? 0})</span>
+            {s[0].toUpperCase() + s.slice(1)} <span className="opacity-70">({counts[s] ?? 0})</span>
           </button>
         ))}
       </div>
@@ -400,7 +421,11 @@ function BookingsInbox() {
           </label>
           {(search || dateFrom || dateTo) && (
             <button
-              onClick={() => { setSearch(""); setDateFrom(""); setDateTo(""); }}
+              onClick={() => {
+                setSearch("");
+                setDateFrom("");
+                setDateTo("");
+              }}
               className="rounded-md border border-border px-3 py-2 text-xs text-muted-foreground hover:text-foreground"
             >
               Clear
@@ -415,9 +440,6 @@ function BookingsInbox() {
           </button>
         </div>
       </div>
-
-
-
 
       {isLoading ? (
         <p className="text-sm text-muted-foreground">Loading…</p>
@@ -482,10 +504,7 @@ function BookingsInbox() {
                   {b.email}
                 </button>
                 {b.phone && (
-                  <a
-                    href={`tel:${b.phone}`}
-                    className="flex items-center gap-2 hover:text-primary"
-                  >
+                  <a href={`tel:${b.phone}`} className="flex items-center gap-2 hover:text-primary">
                     <Phone className="w-4 h-4 text-muted-foreground" />
                     {b.phone}
                   </a>
@@ -504,39 +523,44 @@ function BookingsInbox() {
                 </p>
               </div>
 
-              {b.tour_slug === "custom" && Array.isArray(b.custom_selections) && b.custom_selections.length > 0 && (
-                <div className="rounded-md border border-primary/20 bg-primary/5 p-3 mb-4">
-                  <p className="text-[10px] uppercase tracking-wider text-primary font-semibold mb-2">
-                    Custom tour selections
-                    {b.payment_status && (
-                      <span className="ml-2 normal-case tracking-normal text-muted-foreground font-normal">
-                        · {b.payment_status === "request" ? "Quote request" : `Payment: ${b.payment_status}`}
-                      </span>
-                    )}
-                  </p>
-                  <div className="grid sm:grid-cols-2 gap-x-4 gap-y-1 text-sm">
-                    {CAT_ORDER.flatMap((cat) => {
-                      const items = b.custom_selections!.filter((s) => s.category === cat);
-                      if (items.length === 0) return [];
-                      return [
-                        <div key={cat} className="col-span-full mt-1 first:mt-0">
-                          <p className="text-[11px] uppercase tracking-wider text-muted-foreground">
-                            {CAT_LABEL[cat] ?? cat}
-                          </p>
-                        </div>,
-                        ...items.map((s) => (
-                          <div key={s.id} className="flex justify-between gap-3 pl-1">
-                            <span className="text-foreground">{s.name}</span>
-                            <span className="text-muted-foreground tabular-nums">
-                              {s.price_cents === 0 ? "—" : `€${(s.price_cents / 100).toFixed(0)}`}
-                            </span>
-                          </div>
-                        )),
-                      ];
-                    })}
+              {b.tour_slug === "custom" &&
+                Array.isArray(b.custom_selections) &&
+                b.custom_selections.length > 0 && (
+                  <div className="rounded-md border border-primary/20 bg-primary/5 p-3 mb-4">
+                    <p className="text-[10px] uppercase tracking-wider text-primary font-semibold mb-2">
+                      Custom tour selections
+                      {b.payment_status && (
+                        <span className="ml-2 normal-case tracking-normal text-muted-foreground font-normal">
+                          ·{" "}
+                          {b.payment_status === "request"
+                            ? "Quote request"
+                            : `Payment: ${b.payment_status}`}
+                        </span>
+                      )}
+                    </p>
+                    <div className="grid sm:grid-cols-2 gap-x-4 gap-y-1 text-sm">
+                      {CAT_ORDER.flatMap((cat) => {
+                        const items = b.custom_selections!.filter((s) => s.category === cat);
+                        if (items.length === 0) return [];
+                        return [
+                          <div key={cat} className="col-span-full mt-1 first:mt-0">
+                            <p className="text-[11px] uppercase tracking-wider text-muted-foreground">
+                              {CAT_LABEL[cat] ?? cat}
+                            </p>
+                          </div>,
+                          ...items.map((s) => (
+                            <div key={s.id} className="flex justify-between gap-3 pl-1">
+                              <span className="text-foreground">{s.name}</span>
+                              <span className="text-muted-foreground tabular-nums">
+                                {s.price_cents === 0 ? "—" : `€${(s.price_cents / 100).toFixed(0)}`}
+                              </span>
+                            </div>
+                          )),
+                        ];
+                      })}
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
 
               {b.notes && (
                 <div className="rounded-md bg-muted/40 border border-border p-3 text-sm text-foreground mb-4 whitespace-pre-wrap">
@@ -659,24 +683,32 @@ function BookingsInbox() {
                   </p>
                   <div className="grid sm:grid-cols-2 gap-4 mb-4">
                     <div>
-                      <label className="block text-xs text-muted-foreground mb-1">New guest count</label>
+                      <label className="block text-xs text-muted-foreground mb-1">
+                        New guest count
+                      </label>
                       <input
                         type="number"
                         min={1}
                         max={20}
                         value={editGuests}
-                        onChange={(e) => setEditGuests(e.target.value === "" ? "" : Number(e.target.value))}
+                        onChange={(e) =>
+                          setEditGuests(e.target.value === "" ? "" : Number(e.target.value))
+                        }
                         className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs text-muted-foreground mb-1">New total amount (€)</label>
+                      <label className="block text-xs text-muted-foreground mb-1">
+                        New total amount (€)
+                      </label>
                       <input
                         type="number"
                         min={0}
                         step="0.01"
                         value={editAmount}
-                        onChange={(e) => setEditAmount(e.target.value === "" ? "" : Number(e.target.value))}
+                        onChange={(e) =>
+                          setEditAmount(e.target.value === "" ? "" : Number(e.target.value))
+                        }
                         placeholder="Leave blank to auto-calculate"
                         className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
                       />
@@ -698,7 +730,11 @@ function BookingsInbox() {
                       disabled={generating}
                       className="inline-flex items-center gap-1.5 rounded-md bg-primary text-primary-foreground px-3 py-2 text-sm font-semibold hover:bg-primary/90 disabled:opacity-50"
                     >
-                      {generating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Copy className="w-4 h-4" />}
+                      {generating ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <Copy className="w-4 h-4" />
+                      )}
                       Generate guest-change link
                     </button>
                     <button
@@ -706,7 +742,11 @@ function BookingsInbox() {
                       disabled={generating || typeof editAmount !== "number"}
                       className="inline-flex items-center gap-1.5 rounded-md bg-amber-600 text-white px-3 py-2 text-sm font-semibold hover:bg-amber-700 disabled:opacity-50"
                     >
-                      {generating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Clock className="w-4 h-4" />}
+                      {generating ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <Clock className="w-4 h-4" />
+                      )}
                       Generate extension link
                     </button>
                     <button
@@ -730,42 +770,54 @@ function BookingsInbox() {
                             className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border bg-muted/30 p-3 text-sm"
                           >
                             <div>
-                              <p className="font-medium capitalize">{m.change_type.replace(/_/g, " ")}</p>
-                              <p className="text-xs text-muted-foreground">
-                                Diff: €{(m.difference_cents / 100).toFixed(2)} · Status: {m.status} · Payment: {m.payment_status}
+                              <p className="font-medium capitalize">
+                                {m.change_type.replace(/_/g, " ")}
                               </p>
-                              {m.notes && <p className="text-xs text-muted-foreground mt-1">{m.notes}</p>}
+                              <p className="text-xs text-muted-foreground">
+                                Diff: €{(m.difference_cents / 100).toFixed(2)} · Status: {m.status}{" "}
+                                · Payment: {m.payment_status}
+                              </p>
+                              {m.notes && (
+                                <p className="text-xs text-muted-foreground mt-1">{m.notes}</p>
+                              )}
                             </div>
                             <div className="flex flex-wrap gap-2">
-                              {m.status !== "applied" && m.payment_status === "pending" && m.difference_cents > 0 && m.stripe_session_id && (
-                                <>
-                              <button
-                                    onClick={async () => {
-                                      const { url } = await getPaymentUrl({ data: { sessionId: m.stripe_session_id } });
-                                      if (url) {
-                                        await navigator.clipboard.writeText(url);
-                                        toast.success("Link copied");
-                                      }
-                                    }}
-                                    className="inline-flex items-center gap-1 rounded-md border border-border bg-background px-2 py-1 text-xs hover:bg-muted"
-                                  >
-                                    <Copy className="w-3 h-3" /> Copy link
-                                  </button>
-                                  <button
-                                    onClick={async () => {
-                                      const { url } = await getPaymentUrl({ data: { sessionId: m.stripe_session_id } });
-                                      if (url) {
-                                        window.location.href = paymentLinkMailto(b, url);
-                                      } else {
-                                        toast.error("Payment link not available");
-                                      }
-                                    }}
-                                    className="inline-flex items-center gap-1 rounded-md bg-primary text-primary-foreground px-2 py-1 text-xs hover:bg-primary/90"
-                                  >
-                                    <Mail className="w-3 h-3" /> Email link
-                                  </button>
-                                </>
-                              )}
+                              {m.status !== "applied" &&
+                                m.payment_status === "pending" &&
+                                m.difference_cents > 0 &&
+                                m.stripe_session_id && (
+                                  <>
+                                    <button
+                                      onClick={async () => {
+                                        const { url } = await getPaymentUrl({
+                                          data: { sessionId: m.stripe_session_id },
+                                        });
+                                        if (url) {
+                                          await navigator.clipboard.writeText(url);
+                                          toast.success("Link copied");
+                                        }
+                                      }}
+                                      className="inline-flex items-center gap-1 rounded-md border border-border bg-background px-2 py-1 text-xs hover:bg-muted"
+                                    >
+                                      <Copy className="w-3 h-3" /> Copy link
+                                    </button>
+                                    <button
+                                      onClick={async () => {
+                                        const { url } = await getPaymentUrl({
+                                          data: { sessionId: m.stripe_session_id },
+                                        });
+                                        if (url) {
+                                          window.location.href = paymentLinkMailto(b, url);
+                                        } else {
+                                          toast.error("Payment link not available");
+                                        }
+                                      }}
+                                      className="inline-flex items-center gap-1 rounded-md bg-primary text-primary-foreground px-2 py-1 text-xs hover:bg-primary/90"
+                                    >
+                                      <Mail className="w-3 h-3" /> Email link
+                                    </button>
+                                  </>
+                                )}
                               {m.status !== "applied" && m.payment_status === "paid" && (
                                 <button
                                   onClick={() => applyWithoutPayment(m.id)}
@@ -798,7 +850,6 @@ function BookingsInbox() {
   );
 }
 
-
 function BookingsCalendar({ bookings }: { bookings: Booking[] }) {
   const [cursor, setCursor] = useState(() => {
     const d = new Date();
@@ -827,9 +878,9 @@ function BookingsCalendar({ bookings }: { bookings: Booking[] }) {
   const key = (day: number) =>
     `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
 
-  const monthTotal = Object.entries(byDate).filter(([d]) =>
-    d.startsWith(`${year}-${String(month + 1).padStart(2, "0")}`),
-  ).reduce((n, [, list]) => n + list.length, 0);
+  const monthTotal = Object.entries(byDate)
+    .filter(([d]) => d.startsWith(`${year}-${String(month + 1).padStart(2, "0")}`))
+    .reduce((n, [, list]) => n + list.length, 0);
 
   return (
     <div className="mb-6 rounded-2xl border border-border bg-card p-4">
@@ -837,7 +888,8 @@ function BookingsCalendar({ bookings }: { bookings: Booking[] }) {
         <div>
           <h2 className="text-sm font-semibold">Tour calendar</h2>
           <p className="text-xs text-muted-foreground">
-            {first.toLocaleDateString(undefined, { month: "long", year: "numeric" })} · {monthTotal} booking{monthTotal === 1 ? "" : "s"}
+            {first.toLocaleDateString(undefined, { month: "long", year: "numeric" })} · {monthTotal}{" "}
+            booking{monthTotal === 1 ? "" : "s"}
           </p>
         </div>
         <div className="flex gap-1">
@@ -860,7 +912,9 @@ function BookingsCalendar({ bookings }: { bookings: Booking[] }) {
 
       <div className="grid grid-cols-7 gap-1 text-[10px] uppercase tracking-wider text-muted-foreground mb-1">
         {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((d) => (
-          <div key={d} className="text-center py-1">{d}</div>
+          <div key={d} className="text-center py-1">
+            {d}
+          </div>
         ))}
       </div>
 

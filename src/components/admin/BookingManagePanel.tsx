@@ -57,7 +57,14 @@ export function BookingManagePanel({ booking }: { booking: Booking }) {
   });
 
   const [templateKey, setTemplateKey] = useState("booking_confirmation");
-  const [ov, setOv] = useState({ subject: "", heading: "", intro: "", outro: "", ctaLabel: "", ctaUrl: "" });
+  const [ov, setOv] = useState({
+    subject: "",
+    heading: "",
+    intro: "",
+    outro: "",
+    ctaLabel: "",
+    ctaUrl: "",
+  });
   const [preview, setPreview] = useState<any>(null);
 
   const { data: templates = [] } = useQuery({
@@ -95,7 +102,11 @@ export function BookingManagePanel({ booking }: { booking: Booking }) {
   const doPreview = async () => {
     setBusy(true);
     try {
-      setPreview(await previewEmail({ data: { bookingId: booking.id, templateKey, overrides: overrides() } }));
+      setPreview(
+        await previewEmail({
+          data: { bookingId: booking.id, templateKey, overrides: overrides() },
+        }),
+      );
     } catch (err) {
       toast.error((err as Error).message);
     } finally {
@@ -106,9 +117,11 @@ export function BookingManagePanel({ booking }: { booking: Booking }) {
   const doSend = async () => {
     setBusy(true);
     try {
-      const res: any = await sendEmail({ data: { bookingId: booking.id, templateKey, overrides: overrides() } });
+      const res: any = await sendEmail({
+        data: { bookingId: booking.id, templateKey, overrides: overrides() },
+      });
       toast[res?.sent ? "success" : "error"](
-        res?.sent ? `Email queued to ${booking.email}` : "Recipient is unsubscribed or blocked",
+        res?.queued ? `Email queued to ${booking.email}` : "Recipient is unsubscribed or blocked",
       );
       refresh();
     } catch (err) {
@@ -141,7 +154,7 @@ export function BookingManagePanel({ booking }: { booking: Booking }) {
           },
         },
       });
-      toast.success(d.notify ? "Saved and customer notified" : "Booking saved");
+      toast.success(d.notify ? "Saved and customer email queued" : "Booking saved");
       refresh();
     } catch (err) {
       toast.error((err as Error).message);
@@ -180,7 +193,7 @@ export function BookingManagePanel({ booking }: { booking: Booking }) {
     setBusy(true);
     try {
       await refund({ data: { id: booking.id, refundCents: cents, notify: true, note: null } });
-      toast.success("Refund recorded and customer emailed");
+      toast.success("Refund recorded and customer email queued");
       refresh();
     } catch (err) {
       toast.error((err as Error).message);
@@ -192,11 +205,13 @@ export function BookingManagePanel({ booking }: { booking: Booking }) {
   return (
     <div className="mt-5 pt-5 border-t border-border">
       <div className="flex flex-wrap gap-2 mb-4">
-        {([
-          ["details", "Booking details", Save],
-          ["email", "Email customer", Mail],
-          ["history", "History", History],
-        ] as const).map(([id, label, Icon]) => (
+        {(
+          [
+            ["details", "Booking details", Save],
+            ["email", "Email customer", Mail],
+            ["history", "History", History],
+          ] as const
+        ).map(([id, label, Icon]) => (
           <button
             key={id}
             onClick={() => setTab(id)}
@@ -214,33 +229,121 @@ export function BookingManagePanel({ booking }: { booking: Booking }) {
       {tab === "details" && (
         <>
           <div className="grid sm:grid-cols-2 gap-4">
-            <div><label className={lbl}>Name</label><input className={field} value={d.customer_name} onChange={(e) => setD({ ...d, customer_name: e.target.value })} /></div>
-            <div><label className={lbl}>Email</label><input className={field} value={d.email} onChange={(e) => setD({ ...d, email: e.target.value })} /></div>
-            <div><label className={lbl}>WhatsApp / phone</label><input className={field} value={d.phone} onChange={(e) => setD({ ...d, phone: e.target.value })} /></div>
-            <div><label className={lbl}>Tour</label><input className={field} value={d.tour_title} onChange={(e) => setD({ ...d, tour_title: e.target.value })} /></div>
-            <div><label className={lbl}>Date</label><input className={field} type="date" value={d.travel_date} onChange={(e) => setD({ ...d, travel_date: e.target.value })} /></div>
-            <div><label className={lbl}>Guests</label><input className={field} type="number" min={1} max={40} value={d.guests} onChange={(e) => setD({ ...d, guests: Number(e.target.value) })} /></div>
-            <div><label className={lbl}>Total (€)</label><input className={field} type="number" min={0} value={d.total} onChange={(e) => setD({ ...d, total: e.target.value })} /></div>
+            <div>
+              <label className={lbl}>Name</label>
+              <input
+                className={field}
+                value={d.customer_name}
+                onChange={(e) => setD({ ...d, customer_name: e.target.value })}
+              />
+            </div>
+            <div>
+              <label className={lbl}>Email</label>
+              <input
+                className={field}
+                value={d.email}
+                onChange={(e) => setD({ ...d, email: e.target.value })}
+              />
+            </div>
+            <div>
+              <label className={lbl}>WhatsApp / phone</label>
+              <input
+                className={field}
+                value={d.phone}
+                onChange={(e) => setD({ ...d, phone: e.target.value })}
+              />
+            </div>
+            <div>
+              <label className={lbl}>Tour</label>
+              <input
+                className={field}
+                value={d.tour_title}
+                onChange={(e) => setD({ ...d, tour_title: e.target.value })}
+              />
+            </div>
+            <div>
+              <label className={lbl}>Date</label>
+              <input
+                className={field}
+                type="date"
+                value={d.travel_date}
+                onChange={(e) => setD({ ...d, travel_date: e.target.value })}
+              />
+            </div>
+            <div>
+              <label className={lbl}>Guests</label>
+              <input
+                className={field}
+                type="number"
+                min={1}
+                max={40}
+                value={d.guests}
+                onChange={(e) => setD({ ...d, guests: Number(e.target.value) })}
+              />
+            </div>
+            <div>
+              <label className={lbl}>Total (€)</label>
+              <input
+                className={field}
+                type="number"
+                min={0}
+                value={d.total}
+                onChange={(e) => setD({ ...d, total: e.target.value })}
+              />
+            </div>
             <div>
               <label className={lbl}>Payment status</label>
-              <select className={field} value={d.payment_status} onChange={(e) => setD({ ...d, payment_status: e.target.value })}>
-                {["unpaid", "deposit", "paid", "refunded", "request"].map((s) => <option key={s} value={s}>{s}</option>)}
+              <select
+                className={field}
+                value={d.payment_status}
+                onChange={(e) => setD({ ...d, payment_status: e.target.value })}
+              >
+                {["unpaid", "deposit", "paid", "refunded", "request"].map((s) => (
+                  <option key={s} value={s}>
+                    {s}
+                  </option>
+                ))}
               </select>
             </div>
-            <div className="sm:col-span-2"><label className={lbl}>Customer notes</label><textarea rows={2} className={field} value={d.notes} onChange={(e) => setD({ ...d, notes: e.target.value })} /></div>
+            <div className="sm:col-span-2">
+              <label className={lbl}>Customer notes</label>
+              <textarea
+                rows={2}
+                className={field}
+                value={d.notes}
+                onChange={(e) => setD({ ...d, notes: e.target.value })}
+              />
+            </div>
           </div>
           <label className="mt-3 flex items-center gap-2 text-sm">
-            <input type="checkbox" checked={d.notify} onChange={(e) => setD({ ...d, notify: e.target.checked })} />
+            <input
+              type="checkbox"
+              checked={d.notify}
+              onChange={(e) => setD({ ...d, notify: e.target.checked })}
+            />
             Email the customer about this update
           </label>
           <div className="mt-4 flex flex-wrap gap-2">
-            <button onClick={saveDetails} disabled={busy} className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground disabled:opacity-50">
-              {busy ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />} Save changes
+            <button
+              onClick={saveDetails}
+              disabled={busy}
+              className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground disabled:opacity-50"
+            >
+              {busy ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}{" "}
+              Save changes
             </button>
-            <button onClick={doRefund} disabled={busy} className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-2 text-sm font-semibold hover:border-primary">
+            <button
+              onClick={doRefund}
+              disabled={busy}
+              className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-2 text-sm font-semibold hover:border-primary"
+            >
               <Undo2 className="w-4 h-4" /> Record refund
             </button>
-            <button onClick={doCancel} disabled={busy} className="inline-flex items-center gap-1.5 rounded-md border border-destructive/40 text-destructive px-3 py-2 text-sm font-semibold hover:bg-destructive/10">
+            <button
+              onClick={doCancel}
+              disabled={busy}
+              className="inline-flex items-center gap-1.5 rounded-md border border-destructive/40 text-destructive px-3 py-2 text-sm font-semibold hover:bg-destructive/10"
+            >
               <Ban className="w-4 h-4" /> Cancel booking
             </button>
           </div>
@@ -252,24 +355,95 @@ export function BookingManagePanel({ booking }: { booking: Booking }) {
           <div className="grid sm:grid-cols-2 gap-4">
             <div>
               <label className={lbl}>Email type</label>
-              <select className={field} value={templateKey} onChange={(e) => { setTemplateKey(e.target.value); setPreview(null); }}>
-                {templates.map((t: any) => <option key={t.key} value={t.key}>{t.label}</option>)}
+              <select
+                className={field}
+                value={templateKey}
+                onChange={(e) => {
+                  setTemplateKey(e.target.value);
+                  setPreview(null);
+                }}
+              >
+                {templates.map((t: any) => (
+                  <option key={t.key} value={t.key}>
+                    {t.label}
+                  </option>
+                ))}
               </select>
             </div>
-            <div><label className={lbl}>Subject override</label><input className={field} value={ov.subject} onChange={(e) => setOv({ ...ov, subject: e.target.value })} placeholder="Leave blank to use the template" /></div>
-            <div><label className={lbl}>Heading override</label><input className={field} value={ov.heading} onChange={(e) => setOv({ ...ov, heading: e.target.value })} /></div>
-            <div><label className={lbl}>Button label</label><input className={field} value={ov.ctaLabel} onChange={(e) => setOv({ ...ov, ctaLabel: e.target.value })} /></div>
-            <div className="sm:col-span-2"><label className={lbl}>Button link (e.g. a payment link)</label><input className={field} value={ov.ctaUrl} onChange={(e) => setOv({ ...ov, ctaUrl: e.target.value })} /></div>
-            <div className="sm:col-span-2"><label className={lbl}>Message</label><textarea rows={4} className={field} value={ov.intro} onChange={(e) => setOv({ ...ov, intro: e.target.value })} placeholder="Leave blank to use the saved template text" /></div>
-            <div className="sm:col-span-2"><label className={lbl}>Closing note</label><textarea rows={2} className={field} value={ov.outro} onChange={(e) => setOv({ ...ov, outro: e.target.value })} /></div>
+            <div>
+              <label className={lbl}>Subject override</label>
+              <input
+                className={field}
+                value={ov.subject}
+                onChange={(e) => setOv({ ...ov, subject: e.target.value })}
+                placeholder="Leave blank to use the template"
+              />
+            </div>
+            <div>
+              <label className={lbl}>Heading override</label>
+              <input
+                className={field}
+                value={ov.heading}
+                onChange={(e) => setOv({ ...ov, heading: e.target.value })}
+              />
+            </div>
+            <div>
+              <label className={lbl}>Button label</label>
+              <input
+                className={field}
+                value={ov.ctaLabel}
+                onChange={(e) => setOv({ ...ov, ctaLabel: e.target.value })}
+              />
+            </div>
+            <div className="sm:col-span-2">
+              <label className={lbl}>Button link (e.g. a payment link)</label>
+              <input
+                className={field}
+                value={ov.ctaUrl}
+                onChange={(e) => setOv({ ...ov, ctaUrl: e.target.value })}
+              />
+            </div>
+            <div className="sm:col-span-2">
+              <label className={lbl}>Message</label>
+              <textarea
+                rows={4}
+                className={field}
+                value={ov.intro}
+                onChange={(e) => setOv({ ...ov, intro: e.target.value })}
+                placeholder="Leave blank to use the saved template text"
+              />
+            </div>
+            <div className="sm:col-span-2">
+              <label className={lbl}>Closing note</label>
+              <textarea
+                rows={2}
+                className={field}
+                value={ov.outro}
+                onChange={(e) => setOv({ ...ov, outro: e.target.value })}
+              />
+            </div>
           </div>
           <p className="mt-2 text-xs text-muted-foreground">
-            Placeholders: {"{{customer_name}} {{booking_ref}} {{tour}} {{date}} {{guests}} {{total}} {{refund_amount}}"}
+            Placeholders:{" "}
+            {
+              "{{customer_name}} {{booking_ref}} {{tour}} {{date}} {{guests}} {{total}} {{refund_amount}}"
+            }
           </p>
           <div className="mt-4 flex flex-wrap gap-2">
-            <button onClick={doPreview} disabled={busy} className="rounded-md border border-border px-3 py-2 text-sm font-semibold hover:border-primary">Preview</button>
-            <button onClick={doSend} disabled={busy} className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground disabled:opacity-50">
-              {busy ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />} Send to {booking.email}
+            <button
+              onClick={doPreview}
+              disabled={busy}
+              className="rounded-md border border-border px-3 py-2 text-sm font-semibold hover:border-primary"
+            >
+              Preview
+            </button>
+            <button
+              onClick={doSend}
+              disabled={busy}
+              className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground disabled:opacity-50"
+            >
+              {busy ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}{" "}
+              Send to {booking.email}
             </button>
           </div>
           {preview && (
@@ -282,16 +456,22 @@ export function BookingManagePanel({ booking }: { booking: Booking }) {
                 <div className="mt-3 grid gap-1">
                   {preview.rows.map((r: any) => (
                     <div key={r.label} className="flex justify-between gap-4">
-                      <span className="text-xs uppercase tracking-wider text-muted-foreground">{r.label}</span>
+                      <span className="text-xs uppercase tracking-wider text-muted-foreground">
+                        {r.label}
+                      </span>
                       <span className="font-medium">{r.value}</span>
                     </div>
                   ))}
                 </div>
               )}
               {preview.ctaLabel && preview.ctaUrl && (
-                <p className="mt-3 text-xs text-primary">Button: {preview.ctaLabel} → {preview.ctaUrl}</p>
+                <p className="mt-3 text-xs text-primary">
+                  Button: {preview.ctaLabel} → {preview.ctaUrl}
+                </p>
               )}
-              {preview.outro && <p className="mt-3 whitespace-pre-wrap text-muted-foreground">{preview.outro}</p>}
+              {preview.outro && (
+                <p className="mt-3 whitespace-pre-wrap text-muted-foreground">{preview.outro}</p>
+              )}
             </div>
           )}
         </>

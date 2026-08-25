@@ -27,10 +27,15 @@ export const Route = createFileRoute("/api/public/cron/booking-emails")({
           .eq("id", true)
           .maybeSingle();
 
-        const day = (offset: number) => {
-          const d = new Date();
-          d.setUTCDate(d.getUTCDate() + offset);
-          return d.toISOString().slice(0, 10);
+        const lisbonDay = (offset: number) => {
+          const now = new Date();
+          now.setDate(now.getDate() + offset);
+          return new Intl.DateTimeFormat("en-CA", {
+            timeZone: "Europe/Lisbon",
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+          }).format(now);
         };
 
         let reminders = 0;
@@ -40,13 +45,15 @@ export const Route = createFileRoute("/api/public/cron/booking-emails")({
           const { data: rows } = await supabaseAdmin
             .from("bookings")
             .select(BOOKING_SELECT)
-            .eq("travel_date", day(1))
+            .gte("travel_date", lisbonDay(0))
+            .lte("travel_date", lisbonDay(1))
             .eq("auto_emails_opt_out", false)
             .is("reminder_sent_at", null)
             .in("status", ["new", "quoted", "confirmed"]);
           for (const b of rows ?? []) {
             try {
-              await sendBookingEmail(supabaseAdmin, b as any, "tour_reminder");
+              const result = await sendBookingEmail(supabaseAdmin, b as any, "tour_reminder");
+              if (!result.queued) continue;
               await supabaseAdmin
                 .from("bookings")
                 .update({ reminder_sent_at: new Date().toISOString() })
@@ -62,13 +69,14 @@ export const Route = createFileRoute("/api/public/cron/booking-emails")({
           const { data: rows } = await supabaseAdmin
             .from("bookings")
             .select(BOOKING_SELECT)
-            .eq("travel_date", day(-1))
+            .lte("travel_date", lisbonDay(-1))
             .eq("auto_emails_opt_out", false)
             .is("review_request_sent_at", null)
             .neq("status", "cancelled");
           for (const b of rows ?? []) {
             try {
-              await sendBookingEmail(supabaseAdmin, b as any, "review_request");
+              const result = await sendBookingEmail(supabaseAdmin, b as any, "review_request");
+              if (!result.queued) continue;
               await supabaseAdmin
                 .from("bookings")
                 .update({ review_request_sent_at: new Date().toISOString() })

@@ -2,6 +2,7 @@ import * as React from "react";
 import { render } from "@react-email/render";
 import BookingNotice from "@/lib/email-templates/booking-notice";
 import { fromHeader } from "./mailboxes";
+import { getOrCreateUnsubscribeToken } from "./unsubscribe-token.server";
 
 const SITE_NAME = "Tuk Tuk 24";
 const SENDER_DOMAIN = "notify.tuktuk24lisbon.com";
@@ -53,7 +54,11 @@ export function bookingRows(b: BookingRecord): EmailRow[] {
   }
   rows.push({ label: "Guests", value: String(b.guests) });
   const totalCents =
-    b.amount_total != null ? b.amount_total : b.total_estimate != null ? b.total_estimate * 100 : null;
+    b.amount_total != null
+      ? b.amount_total
+      : b.total_estimate != null
+        ? b.total_estimate * 100
+        : null;
   if (totalCents != null) rows.push({ label: "Total", value: money(totalCents) });
   if (b.refund_cents) rows.push({ label: "Refunded", value: money(b.refund_cents) });
   return rows;
@@ -65,7 +70,11 @@ export function fillPlaceholders(text: string, vars: Record<string, string>) {
 
 export function bookingVars(b: BookingRecord, extra: Record<string, string> = {}) {
   const totalCents =
-    b.amount_total != null ? b.amount_total : b.total_estimate != null ? b.total_estimate * 100 : null;
+    b.amount_total != null
+      ? b.amount_total
+      : b.total_estimate != null
+        ? b.total_estimate * 100
+        : null;
   return {
     customer_name: (b.customer_name || "there").split(" ")[0],
     full_name: b.customer_name || "",
@@ -79,6 +88,7 @@ export function bookingVars(b: BookingRecord, extra: Record<string, string> = {}
         })
       : "",
     guests: String(b.guests),
+    time: b.travel_time || "",
     total: money(totalCents),
     refund_amount: money(b.refund_cents ?? 0),
     site_url: SITE_URL,
@@ -133,6 +143,17 @@ export async function sendBrandedEmail(
     return { sent: false, reason: "email_suppressed" as const };
   }
 
+  const preferences = await getOrCreateUnsubscribeToken(supabase, to);
+  if (preferences.suppressed || !preferences.token) {
+    await supabase.from("email_send_log").insert({
+      message_id: messageId,
+      template_name: input.label || "booking-notice",
+      recipient_email: to,
+      status: "suppressed",
+    });
+    return { sent: false, reason: "email_suppressed" as const };
+  }
+
   const element = React.createElement(BookingNotice, {
     brandName: input.brandName || SITE_NAME,
     heading: input.heading,
@@ -169,6 +190,7 @@ export async function sendBrandedEmail(
       purpose: "transactional",
       label: input.label || "booking-notice",
       idempotency_key: input.idempotencyKey || messageId,
+      unsubscribe_token: preferences.token,
       queued_at: new Date().toISOString(),
     },
   });
@@ -184,5 +206,5 @@ export async function sendBrandedEmail(
     throw new Error("Could not queue the email");
   }
 
-  return { sent: true as const, messageId };
+  return { sent: true as const, queued: true as const, messageId };
 }
