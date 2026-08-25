@@ -65,6 +65,44 @@ export type Database = {
         }
         Relationships: []
       }
+      booking_events: {
+        Row: {
+          actor: string | null
+          booking_id: string
+          created_at: string
+          detail: Json | null
+          id: string
+          kind: string
+          summary: string
+        }
+        Insert: {
+          actor?: string | null
+          booking_id: string
+          created_at?: string
+          detail?: Json | null
+          id?: string
+          kind: string
+          summary: string
+        }
+        Update: {
+          actor?: string | null
+          booking_id?: string
+          created_at?: string
+          detail?: Json | null
+          id?: string
+          kind?: string
+          summary?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "booking_events_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       booking_modifications: {
         Row: {
           booking_id: string
@@ -121,6 +159,8 @@ export type Database = {
       bookings: {
         Row: {
           amount_total: number | null
+          auto_emails_opt_out: boolean
+          cancel_reason: string | null
           created_at: string
           custom_selections: Json | null
           customer_name: string
@@ -129,9 +169,14 @@ export type Database = {
           email: string
           guests: number
           id: string
+          internal_notes: string | null
           notes: string | null
           payment_status: string
           phone: string | null
+          refund_cents: number
+          reminder_sent_at: string | null
+          review_request_sent_at: string | null
+          source: string
           status: string
           total_estimate: number | null
           tour_slug: string | null
@@ -141,6 +186,8 @@ export type Database = {
         }
         Insert: {
           amount_total?: number | null
+          auto_emails_opt_out?: boolean
+          cancel_reason?: string | null
           created_at?: string
           custom_selections?: Json | null
           customer_name: string
@@ -149,9 +196,14 @@ export type Database = {
           email: string
           guests?: number
           id?: string
+          internal_notes?: string | null
           notes?: string | null
           payment_status?: string
           phone?: string | null
+          refund_cents?: number
+          reminder_sent_at?: string | null
+          review_request_sent_at?: string | null
+          source?: string
           status?: string
           total_estimate?: number | null
           tour_slug?: string | null
@@ -161,6 +213,8 @@ export type Database = {
         }
         Update: {
           amount_total?: number | null
+          auto_emails_opt_out?: boolean
+          cancel_reason?: string | null
           created_at?: string
           custom_selections?: Json | null
           customer_name?: string
@@ -169,9 +223,14 @@ export type Database = {
           email?: string
           guests?: number
           id?: string
+          internal_notes?: string | null
           notes?: string | null
           payment_status?: string
           phone?: string | null
+          refund_cents?: number
+          reminder_sent_at?: string | null
+          review_request_sent_at?: string | null
+          source?: string
           status?: string
           total_estimate?: number | null
           tour_slug?: string | null
@@ -402,6 +461,54 @@ export type Database = {
           retry_after_until?: string | null
           send_delay_ms?: number
           transactional_email_ttl_minutes?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      email_templates: {
+        Row: {
+          created_at: string
+          cta_label: string | null
+          cta_url: string | null
+          heading: string
+          id: string
+          intro: string
+          key: string
+          label: string
+          outro: string
+          show_booking_details: boolean
+          sort_order: number
+          subject: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          cta_label?: string | null
+          cta_url?: string | null
+          heading: string
+          id?: string
+          intro: string
+          key: string
+          label: string
+          outro?: string
+          show_booking_details?: boolean
+          sort_order?: number
+          subject: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          cta_label?: string | null
+          cta_url?: string | null
+          heading?: string
+          id?: string
+          intro?: string
+          key?: string
+          label?: string
+          outro?: string
+          show_booking_details?: boolean
+          sort_order?: number
+          subject?: string
           updated_at?: string
         }
         Relationships: []
@@ -1202,6 +1309,8 @@ export type Database = {
           about_image_url: string | null
           address_line1: string | null
           address_line2: string | null
+          auto_reminder_enabled: boolean
+          auto_review_request_enabled: boolean
           brand_name: string
           city: string | null
           contact_email: string | null
@@ -1248,6 +1357,8 @@ export type Database = {
           about_image_url?: string | null
           address_line1?: string | null
           address_line2?: string | null
+          auto_reminder_enabled?: boolean
+          auto_review_request_enabled?: boolean
           brand_name?: string
           city?: string | null
           contact_email?: string | null
@@ -1294,6 +1405,8 @@ export type Database = {
           about_image_url?: string | null
           address_line1?: string | null
           address_line2?: string | null
+          auto_reminder_enabled?: boolean
+          auto_review_request_enabled?: boolean
           brand_name?: string
           city?: string | null
           contact_email?: string | null
