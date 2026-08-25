@@ -20,6 +20,8 @@ import {
   HelpCircle,
   Settings,
   Compass,
+  Gauge,
+
   Tag,
 } from "lucide-react";
 
