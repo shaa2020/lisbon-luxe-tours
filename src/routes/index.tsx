@@ -12,14 +12,18 @@ import caboImg from "@/assets/tour-caboroca.jpg";
 import vanImg from "@/assets/fleet-van.jpg";
 import { Nav } from "@/components/site/Nav";
 import { Footer } from "@/components/site/Footer";
-import { WhatsappFab } from "@/components/site/Whatsapp";
+import { WhatsappFab, WhatsappInline } from "@/components/site/Whatsapp";
 import { BookingModal } from "@/components/site/BookingModal";
 import { TestimonialsSection } from "@/components/site/TestimonialsSection";
+import { TrustStrip } from "@/components/site/TrustStrip";
+import { StickyBookBar } from "@/components/site/StickyBookBar";
 import { useBlogPosts, useTours, tourPricing, type Tour } from "@/lib/cms";
+import { trackBookingCtaClick } from "@/lib/analytics";
 import { subscribeToNewsletter } from "@/lib/subscribers.functions";
 import aboutAsset from "@/assets/about-tuktuk-fleet.jpg.asset.json";
 const aboutImg = aboutAsset.url;
 import { useSiteBrand } from "@/lib/brand";
+
 
 // Hero now uses the tuk-tuk/flowers image (per user request 2026-06-16)
 const lockedHeroImg = `${aboutImg}?v=locked-20260616-hero`;
