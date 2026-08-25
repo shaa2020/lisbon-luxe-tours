@@ -21,5 +21,15 @@ export const subscribeToNewsletter = createServerFn({ method: "POST" })
       throw new Error(error.message);
     }
 
+    const { notifyOwner } = await import("./email/owner-notify.server");
+    await notifyOwner(supabaseAdmin as never, {
+      subject: `New newsletter subscriber — ${email}`,
+      heading: "New subscriber",
+      intro: `${email} joined the mailing list.`,
+      replyTo: email,
+      label: "owner_alert",
+      rows: [{ label: "Email", value: email }],
+    });
+
     return { ok: true, message: "Subscribed. Welcome to the loop." };
   });

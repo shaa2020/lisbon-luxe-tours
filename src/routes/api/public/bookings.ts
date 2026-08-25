@@ -142,6 +142,28 @@ export const Route = createFileRoute("/api/public/bookings")({
             );
           }
 
+          {
+            const { notifyOwner } = await import("@/lib/email/owner-notify.server");
+            await notifyOwner(supabaseAdmin as never, {
+              subject: `New booking — ${data.tour_name}`,
+              heading: "New booking received",
+              intro: `${data.customer.name} booked ${data.tour_name}.`,
+              replyTo: data.customer.email || null,
+              label: "owner_alert",
+              idempotencyKey: `booking-api-${booking.id}`,
+              rows: [
+                { label: "Customer", value: data.customer.name },
+                { label: "Email", value: data.customer.email || "—" },
+                { label: "WhatsApp", value: data.customer.whatsapp || "—" },
+                { label: "Date", value: `${data.tour_date}${data.start_time ? ` · ${data.start_time}` : ""}` },
+                { label: "Guests", value: String(guests) },
+                { label: "Total", value: `€${Number(total).toFixed(2)}` },
+              ],
+              ctaLabel: "Open bookings",
+              ctaUrl: "https://tuktuk24lisbon.com/admin/bookings",
+            });
+          }
+
           const reference = generateReference(data.tour_date);
           await supabaseAdmin
             .from("bookings")
