@@ -58,6 +58,7 @@ export function StickyBookBar() {
 
   return (
     <div
+      ref={barRef}
       className="lg:hidden fixed inset-x-0 z-40 border-t border-ink/10 bg-white/95 backdrop-blur shadow-[0_-8px_24px_rgba(30,58,95,0.12)]"
       style={{ bottom: offset }}
     >
