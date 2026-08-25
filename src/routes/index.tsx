@@ -168,7 +168,7 @@ function Hero() {
             <span
               key={current.label}
               className="block font-sans font-bold uppercase text-white leading-[0.92] tracking-tight animate-[fade-up_0.8s_var(--ease-out-expo)_both]"
-              style={{ fontSize: "clamp(46px, 12vw, 170px)" }}
+              style={{ fontSize: "clamp(40px, 11vw, 170px)" }}
             >
               {current.label}
             </span>
