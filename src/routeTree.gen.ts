@@ -67,6 +67,7 @@ import { Route as LisbonGuideCategorySlugRouteImport } from './routes/lisbon-gui
 import { Route as LovableEmailSuppressionRouteImport } from './routes/lovable/email/suppression'
 import { Route as AdminOpsJobsIndexRouteImport } from './routes/admin.ops.jobs.index'
 import { Route as AdminOpsJobsIdRouteImport } from './routes/admin.ops.jobs.$id'
+import { Route as ApiPublicCronBookingEmailsRouteImport } from './routes/api/public/cron/booking-emails'
 import { Route as ApiPublicPaymentsMollieRouteImport } from './routes/api/public/payments/mollie'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
@@ -363,6 +364,12 @@ const AdminOpsJobsIdRoute = AdminOpsJobsIdRouteImport.update({
   path: '/admin/ops/jobs/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicCronBookingEmailsRoute =
+  ApiPublicCronBookingEmailsRouteImport.update({
+    id: '/api/public/cron/booking-emails',
+    path: '/api/public/cron/booking-emails',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicPaymentsMollieRoute = ApiPublicPaymentsMollieRouteImport.update({
   id: '/api/public/payments/mollie',
   path: '/api/public/payments/mollie',
@@ -451,6 +458,7 @@ export interface FileRoutesByFullPath {
   '/admin/ops/': typeof AdminOpsIndexRoute
   '/admin/tours/': typeof AdminToursIndexRoute
   '/admin/ops/jobs/$id': typeof AdminOpsJobsIdRoute
+  '/api/public/cron/booking-emails': typeof ApiPublicCronBookingEmailsRoute
   '/api/public/payments/mollie': typeof ApiPublicPaymentsMollieRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
@@ -516,6 +524,7 @@ export interface FileRoutesByTo {
   '/admin/ops': typeof AdminOpsIndexRoute
   '/admin/tours': typeof AdminToursIndexRoute
   '/admin/ops/jobs/$id': typeof AdminOpsJobsIdRoute
+  '/api/public/cron/booking-emails': typeof ApiPublicCronBookingEmailsRoute
   '/api/public/payments/mollie': typeof ApiPublicPaymentsMollieRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
@@ -582,6 +591,7 @@ export interface FileRoutesById {
   '/admin/ops/': typeof AdminOpsIndexRoute
   '/admin/tours/': typeof AdminToursIndexRoute
   '/admin/ops/jobs/$id': typeof AdminOpsJobsIdRoute
+  '/api/public/cron/booking-emails': typeof ApiPublicCronBookingEmailsRoute
   '/api/public/payments/mollie': typeof ApiPublicPaymentsMollieRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
@@ -649,6 +659,7 @@ export interface FileRouteTypes {
     | '/admin/ops/'
     | '/admin/tours/'
     | '/admin/ops/jobs/$id'
+    | '/api/public/cron/booking-emails'
     | '/api/public/payments/mollie'
     | '/api/public/payments/webhook'
     | '/lovable/email/queue/process'
@@ -714,6 +725,7 @@ export interface FileRouteTypes {
     | '/admin/ops'
     | '/admin/tours'
     | '/admin/ops/jobs/$id'
+    | '/api/public/cron/booking-emails'
     | '/api/public/payments/mollie'
     | '/api/public/payments/webhook'
     | '/lovable/email/queue/process'
@@ -779,6 +791,7 @@ export interface FileRouteTypes {
     | '/admin/ops/'
     | '/admin/tours/'
     | '/admin/ops/jobs/$id'
+    | '/api/public/cron/booking-emails'
     | '/api/public/payments/mollie'
     | '/api/public/payments/webhook'
     | '/lovable/email/queue/process'
@@ -845,6 +858,7 @@ export interface RootRouteChildren {
   AdminOpsIndexRoute: typeof AdminOpsIndexRoute
   AdminToursIndexRoute: typeof AdminToursIndexRoute
   AdminOpsJobsIdRoute: typeof AdminOpsJobsIdRoute
+  ApiPublicCronBookingEmailsRoute: typeof ApiPublicCronBookingEmailsRoute
   ApiPublicPaymentsMollieRoute: typeof ApiPublicPaymentsMollieRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
   LovableEmailQueueProcessRoute: typeof LovableEmailQueueProcessRoute
@@ -1261,6 +1275,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminOpsJobsIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/cron/booking-emails': {
+      id: '/api/public/cron/booking-emails'
+      path: '/api/public/cron/booking-emails'
+      fullPath: '/api/public/cron/booking-emails'
+      preLoaderRoute: typeof ApiPublicCronBookingEmailsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/payments/mollie': {
       id: '/api/public/payments/mollie'
       path: '/api/public/payments/mollie'
@@ -1357,6 +1378,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminOpsIndexRoute: AdminOpsIndexRoute,
   AdminToursIndexRoute: AdminToursIndexRoute,
   AdminOpsJobsIdRoute: AdminOpsJobsIdRoute,
+  ApiPublicCronBookingEmailsRoute: ApiPublicCronBookingEmailsRoute,
   ApiPublicPaymentsMollieRoute: ApiPublicPaymentsMollieRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
   LovableEmailQueueProcessRoute: LovableEmailQueueProcessRoute,
