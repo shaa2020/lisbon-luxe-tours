@@ -550,20 +550,62 @@ function BookingsInbox() {
                     WhatsApp customer
                   </a>
                 )}
-                <a
-                  href={mailto(b)}
-                  className="inline-flex items-center gap-1.5 rounded-md bg-primary text-primary-foreground px-3 py-2 text-sm font-semibold hover:bg-primary/90"
+                <button
+                  onClick={() => sendDirect(b, "booking_confirmation", "Confirmation")}
+                  disabled={sendingKey === `${b.id}:booking_confirmation`}
+                  className="inline-flex items-center gap-1.5 rounded-md bg-primary text-primary-foreground px-3 py-2 text-sm font-semibold hover:bg-primary/90 disabled:opacity-50"
                 >
-                  <Mail className="w-4 h-4" />
-                  Email customer
-                </a>
-                <a
-                  href={reviewRequestMailto(b)}
+                  {sendingKey === `${b.id}:booking_confirmation` ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Mail className="w-4 h-4" />
+                  )}
+                  Send confirmation
+                </button>
+                <button
+                  onClick={() => sendDirect(b, "tour_reminder", "Reminder")}
+                  disabled={sendingKey === `${b.id}:tour_reminder`}
+                  className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-2 text-sm font-semibold hover:border-primary hover:text-primary disabled:opacity-50"
+                >
+                  {sendingKey === `${b.id}:tour_reminder` ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Clock className="w-4 h-4" />
+                  )}
+                  Send reminder
+                </button>
+                <button
+                  onClick={() => sendDirect(b, "review_request", "Review request")}
+                  disabled={sendingKey === `${b.id}:review_request`}
+                  className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-2 text-sm font-semibold hover:border-primary hover:text-primary disabled:opacity-50"
+                >
+                  {sendingKey === `${b.id}:review_request` ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Star className="w-4 h-4" />
+                  )}
+                  Ask for review
+                </button>
+                <button
+                  onClick={() => {
+                    navigator.clipboard?.writeText(customerMessage(b));
+                    toast.success("Message copied");
+                  }}
                   className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-2 text-sm font-semibold hover:border-primary hover:text-primary"
                 >
-                  <Star className="w-4 h-4" />
-                  Ask for review
-                </a>
+                  <Copy className="w-4 h-4" />
+                  Copy message
+                </button>
+                <button
+                  onClick={() => {
+                    navigator.clipboard?.writeText(`${window.location.origin}/booking/manage`);
+                    toast.success("Booking link copied");
+                  }}
+                  className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-2 text-sm font-semibold hover:border-primary hover:text-primary"
+                >
+                  <Link2 className="w-4 h-4" />
+                  Copy link
+                </button>
                 {reviewRequestWa(b) && (
                   <a
                     href={reviewRequestWa(b)!}
