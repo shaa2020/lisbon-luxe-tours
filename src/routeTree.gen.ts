@@ -48,6 +48,7 @@ import { Route as AdminBlogIdRouteImport } from './routes/admin.blog.$id'
 import { Route as AdminGuideIndexRouteImport } from './routes/admin.guide.index'
 import { Route as AdminGuideIdRouteImport } from './routes/admin.guide.$id'
 import { Route as AdminGuideTaxonomyRouteImport } from './routes/admin.guide.taxonomy'
+import { Route as AdminOpsIndexRouteImport } from './routes/admin.ops.index'
 import { Route as AdminOpsCalendarRouteImport } from './routes/admin.ops.calendar'
 import { Route as AdminOpsCustomersRouteImport } from './routes/admin.ops.customers'
 import { Route as AdminOpsPartnersRouteImport } from './routes/admin.ops.partners'
@@ -263,6 +264,11 @@ const AdminGuideTaxonomyRoute = AdminGuideTaxonomyRouteImport.update({
   path: '/admin/guide/taxonomy',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminOpsIndexRoute = AdminOpsIndexRouteImport.update({
+  id: '/admin/ops/',
+  path: '/admin/ops/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminOpsCalendarRoute = AdminOpsCalendarRouteImport.update({
   id: '/admin/ops/calendar',
   path: '/admin/ops/calendar',
@@ -414,6 +420,7 @@ export interface FileRoutesByFullPath {
   '/lisbon-guide/category/$slug': typeof LisbonGuideCategorySlugRoute
   '/admin/blog/': typeof AdminBlogIndexRoute
   '/admin/guide/': typeof AdminGuideIndexRoute
+  '/admin/ops/': typeof AdminOpsIndexRoute
   '/admin/tours/': typeof AdminToursIndexRoute
   '/admin/ops/jobs/$id': typeof AdminOpsJobsIdRoute
   '/api/public/payments/mollie': typeof ApiPublicPaymentsMollieRoute
@@ -474,6 +481,7 @@ export interface FileRoutesByTo {
   '/lisbon-guide/category/$slug': typeof LisbonGuideCategorySlugRoute
   '/admin/blog': typeof AdminBlogIndexRoute
   '/admin/guide': typeof AdminGuideIndexRoute
+  '/admin/ops': typeof AdminOpsIndexRoute
   '/admin/tours': typeof AdminToursIndexRoute
   '/admin/ops/jobs/$id': typeof AdminOpsJobsIdRoute
   '/api/public/payments/mollie': typeof ApiPublicPaymentsMollieRoute
@@ -535,6 +543,7 @@ export interface FileRoutesById {
   '/lisbon-guide/category/$slug': typeof LisbonGuideCategorySlugRoute
   '/admin/blog/': typeof AdminBlogIndexRoute
   '/admin/guide/': typeof AdminGuideIndexRoute
+  '/admin/ops/': typeof AdminOpsIndexRoute
   '/admin/tours/': typeof AdminToursIndexRoute
   '/admin/ops/jobs/$id': typeof AdminOpsJobsIdRoute
   '/api/public/payments/mollie': typeof ApiPublicPaymentsMollieRoute
@@ -597,6 +606,7 @@ export interface FileRouteTypes {
     | '/lisbon-guide/category/$slug'
     | '/admin/blog/'
     | '/admin/guide/'
+    | '/admin/ops/'
     | '/admin/tours/'
     | '/admin/ops/jobs/$id'
     | '/api/public/payments/mollie'
@@ -657,6 +667,7 @@ export interface FileRouteTypes {
     | '/lisbon-guide/category/$slug'
     | '/admin/blog'
     | '/admin/guide'
+    | '/admin/ops'
     | '/admin/tours'
     | '/admin/ops/jobs/$id'
     | '/api/public/payments/mollie'
@@ -717,6 +728,7 @@ export interface FileRouteTypes {
     | '/lisbon-guide/category/$slug'
     | '/admin/blog/'
     | '/admin/guide/'
+    | '/admin/ops/'
     | '/admin/tours/'
     | '/admin/ops/jobs/$id'
     | '/api/public/payments/mollie'
@@ -778,6 +790,7 @@ export interface RootRouteChildren {
   LisbonGuideCategorySlugRoute: typeof LisbonGuideCategorySlugRoute
   AdminBlogIndexRoute: typeof AdminBlogIndexRoute
   AdminGuideIndexRoute: typeof AdminGuideIndexRoute
+  AdminOpsIndexRoute: typeof AdminOpsIndexRoute
   AdminToursIndexRoute: typeof AdminToursIndexRoute
   AdminOpsJobsIdRoute: typeof AdminOpsJobsIdRoute
   ApiPublicPaymentsMollieRoute: typeof ApiPublicPaymentsMollieRoute
@@ -1061,6 +1074,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminGuideTaxonomyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/ops/': {
+      id: '/admin/ops/'
+      path: '/admin/ops'
+      fullPath: '/admin/ops/'
+      preLoaderRoute: typeof AdminOpsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/ops/calendar': {
       id: '/admin/ops/calendar'
       path: '/admin/ops/calendar'
@@ -1250,6 +1270,7 @@ const rootRouteChildren: RootRouteChildren = {
   LisbonGuideCategorySlugRoute: LisbonGuideCategorySlugRoute,
   AdminBlogIndexRoute: AdminBlogIndexRoute,
   AdminGuideIndexRoute: AdminGuideIndexRoute,
+  AdminOpsIndexRoute: AdminOpsIndexRoute,
   AdminToursIndexRoute: AdminToursIndexRoute,
   AdminOpsJobsIdRoute: AdminOpsJobsIdRoute,
   ApiPublicPaymentsMollieRoute: ApiPublicPaymentsMollieRoute,
