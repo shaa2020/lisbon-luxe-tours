@@ -117,7 +117,7 @@ function Hero() {
 
   return (
     <section className="relative">
-      <div className="relative h-[460px] sm:h-[540px] md:h-[760px] overflow-hidden">
+      <div className="relative min-h-[520px] sm:min-h-[560px] md:h-[760px] overflow-hidden">
         {slides.map((s, i) => (
           <img
             key={`${s.label}-${i}`}
