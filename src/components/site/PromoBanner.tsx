@@ -53,7 +53,7 @@ export function PromoBanner() {
   const dismiss = () => {
     setDismissed(true);
     try {
-      localStorage.setItem(KEY, signature);
+      localStorage.setItem(KEY, `${signature}@@${Date.now()}`);
     } catch {
       /* private mode */
     }
