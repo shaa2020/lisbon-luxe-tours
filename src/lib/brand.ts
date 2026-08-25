@@ -127,6 +127,7 @@ export type SiteBrand = {
   customTour: CustomTourHero;
   hotelPickupFeeCents: number;
   offerBar: OfferBar;
+  promoBanner: PromoBanner;
   groupTiers: GroupTier[];
   groupDiscountEnabled: boolean;
   whatsappReplyLine: string;
@@ -177,6 +178,7 @@ export function useSiteBrand() {
         hotelPickupFeeCents:
           Number((data as any)?.hotel_pickup_fee_cents ?? DEFAULT_HOTEL_PICKUP_FEE_CENTS) || 0,
         offerBar: mapOfferBar(data),
+        promoBanner: mapPromoBanner(data),
         groupTiers: parseGroupTiers((data as any)?.group_discount_tiers),
         groupDiscountEnabled: (data as any)?.group_discount_enabled !== false,
         whatsappReplyLine:
@@ -194,6 +196,7 @@ export function useSiteBrand() {
       customTour: DEFAULT_CUSTOM_TOUR,
       hotelPickupFeeCents: DEFAULT_HOTEL_PICKUP_FEE_CENTS,
       offerBar: DEFAULT_OFFER_BAR,
+      promoBanner: DEFAULT_PROMO_BANNER,
       groupTiers: DEFAULT_GROUP_TIERS,
       groupDiscountEnabled: true,
       whatsappReplyLine: DEFAULT_WHATSAPP_REPLY_LINE,
@@ -212,6 +215,7 @@ export function useSiteBrand() {
     customTour: query.data?.customTour ?? DEFAULT_CUSTOM_TOUR,
     hotelPickupFeeCents: query.data?.hotelPickupFeeCents ?? DEFAULT_HOTEL_PICKUP_FEE_CENTS,
     offerBar: query.data?.offerBar ?? DEFAULT_OFFER_BAR,
+    promoBanner: query.data?.promoBanner ?? DEFAULT_PROMO_BANNER,
     groupTiers: query.data?.groupTiers ?? DEFAULT_GROUP_TIERS,
     groupDiscountEnabled: query.data?.groupDiscountEnabled ?? true,
     whatsappReplyLine: query.data?.whatsappReplyLine ?? DEFAULT_WHATSAPP_REPLY_LINE,
