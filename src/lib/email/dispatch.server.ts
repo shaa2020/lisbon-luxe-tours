@@ -54,7 +54,11 @@ export function bookingRows(b: BookingRecord): EmailRow[] {
   }
   rows.push({ label: "Guests", value: String(b.guests) });
   const totalCents =
-    b.amount_total != null ? b.amount_total : b.total_estimate != null ? b.total_estimate * 100 : null;
+    b.amount_total != null
+      ? b.amount_total
+      : b.total_estimate != null
+        ? b.total_estimate * 100
+        : null;
   if (totalCents != null) rows.push({ label: "Total", value: money(totalCents) });
   if (b.refund_cents) rows.push({ label: "Refunded", value: money(b.refund_cents) });
   return rows;
@@ -66,7 +70,11 @@ export function fillPlaceholders(text: string, vars: Record<string, string>) {
 
 export function bookingVars(b: BookingRecord, extra: Record<string, string> = {}) {
   const totalCents =
-    b.amount_total != null ? b.amount_total : b.total_estimate != null ? b.total_estimate * 100 : null;
+    b.amount_total != null
+      ? b.amount_total
+      : b.total_estimate != null
+        ? b.total_estimate * 100
+        : null;
   return {
     customer_name: (b.customer_name || "there").split(" ")[0],
     full_name: b.customer_name || "",

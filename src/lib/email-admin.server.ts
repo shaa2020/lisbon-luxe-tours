@@ -5,7 +5,10 @@ export type EmailLogFilters = {
   statuses: string[];
 };
 
-export async function fetchEmailDashboard(context: { supabase: any; userId: string }, filters: EmailLogFilters) {
+export async function fetchEmailDashboard(
+  context: { supabase: any; userId: string },
+  filters: EmailLogFilters,
+) {
   const { assertAdmin } = await import("./bookings-admin.server");
   await assertAdmin(context);
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -29,8 +32,10 @@ export async function fetchEmailDashboard(context: { supabase: any; userId: stri
   const templateNames = Array.from(new Set(allRows.map((row) => row.template_name))).sort();
   const normalizeStatus = (status: string) => (status === "dlq" ? "failed" : status);
   const rows = allRows.filter((row) => {
-    const templateMatch = filters.templates.length === 0 || filters.templates.includes(row.template_name);
-    const statusMatch = filters.statuses.length === 0 || filters.statuses.includes(normalizeStatus(row.status));
+    const templateMatch =
+      filters.templates.length === 0 || filters.templates.includes(row.template_name);
+    const statusMatch =
+      filters.statuses.length === 0 || filters.statuses.includes(normalizeStatus(row.status));
     return templateMatch && statusMatch;
   });
 

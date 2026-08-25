@@ -23,7 +23,10 @@ export async function getOrCreateUnsubscribeToken(supabase: SupabaseLike, email:
   const candidate = createToken();
   const { error: insertError } = await supabase
     .from("email_unsubscribe_tokens")
-    .upsert({ token: candidate, email: normalizedEmail }, { onConflict: "email", ignoreDuplicates: true });
+    .upsert(
+      { token: candidate, email: normalizedEmail },
+      { onConflict: "email", ignoreDuplicates: true },
+    );
   if (insertError) throw new Error("Could not prepare the recipient's email preferences");
 
   const { data: stored, error: readError } = await supabase
@@ -31,6 +34,7 @@ export async function getOrCreateUnsubscribeToken(supabase: SupabaseLike, email:
     .select("token,used_at")
     .eq("email", normalizedEmail)
     .maybeSingle();
-  if (readError || !stored?.token) throw new Error("Could not confirm the recipient's email preferences");
+  if (readError || !stored?.token)
+    throw new Error("Could not confirm the recipient's email preferences");
   return { token: stored.token as string, suppressed: Boolean(stored.used_at) };
 }
