@@ -1,10 +1,8 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { X } from "lucide-react";
 import { useSiteBrand, isPromoBannerLive, type PromoBanner as PromoBannerData } from "@/lib/brand";
 import { trackEvent } from "@/lib/analytics";
-
-const KEY = "tt24_promo_banner_dismissed";
 
 const THEME: Record<PromoBannerData["theme"], { wrap: string; pill: string; cta: string }> = {
   gold: {
@@ -27,36 +25,14 @@ const THEME: Record<PromoBannerData["theme"], { wrap: string; pill: string; cta:
 /** Site-wide promotional banner. Managed from Admin → Settings → Marketing. */
 export function PromoBanner() {
   const { promoBanner } = useSiteBrand();
-  const [dismissed, setDismissed] = useState(true);
+  const [dismissed, setDismissed] = useState(false);
   const [copied, setCopied] = useState(false);
-
-  const signature = `${promoBanner.headline}|${promoBanner.code ?? ""}`;
-  // Dismissals only last a day, so returning visitors see the current offer again.
-  const DISMISS_TTL_MS = 24 * 60 * 60 * 1000;
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    try {
-      const raw = localStorage.getItem(KEY);
-      if (!raw) return setDismissed(false);
-      const [sig, ts] = raw.split("@@");
-      const fresh = ts ? Date.now() - Number(ts) < DISMISS_TTL_MS : false;
-      setDismissed(sig === signature && fresh);
-    } catch {
-      setDismissed(false);
-    }
-  }, [signature]);
 
   if (!isPromoBannerLive(promoBanner) || dismissed) return null;
 
   const t = THEME[promoBanner.theme];
   const dismiss = () => {
     setDismissed(true);
-    try {
-      localStorage.setItem(KEY, `${signature}@@${Date.now()}`);
-    } catch {
-      /* private mode */
-    }
   };
 
   const cta =

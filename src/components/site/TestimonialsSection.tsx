@@ -38,9 +38,9 @@ export function TestimonialsSection() {
   if (list.length === 0) return null;
 
   return (
-    <section className="bg-paper py-20 md:py-28">
+    <section id="guest-reviews" className="bg-paper py-14 md:py-20">
       <div className="container-x">
-        <div className="text-center max-w-2xl mx-auto mb-14">
+        <div className="text-center max-w-2xl mx-auto mb-10">
           <p className="eyebrow text-gold mb-3">Guest stories</p>
           <h2 className="font-display text-3xl md:text-5xl font-bold text-ink leading-tight mb-5">
             Loved by travelers from around the world
