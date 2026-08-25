@@ -50,6 +50,7 @@ import { Route as AdminGuideIdRouteImport } from './routes/admin.guide.$id'
 import { Route as AdminGuideTaxonomyRouteImport } from './routes/admin.guide.taxonomy'
 import { Route as AdminOpsCustomersRouteImport } from './routes/admin.ops.customers'
 import { Route as AdminOpsToursRouteImport } from './routes/admin.ops.tours'
+import { Route as AdminOpsVehiclesRouteImport } from './routes/admin.ops.vehicles'
 import { Route as AdminToursIndexRouteImport } from './routes/admin.tours.index'
 import { Route as AdminToursIdRouteImport } from './routes/admin.tours.$id'
 import { Route as ApiPublicBookingsRouteImport } from './routes/api/public/bookings'
@@ -263,6 +264,11 @@ const AdminOpsToursRoute = AdminOpsToursRouteImport.update({
   path: '/admin/ops/tours',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminOpsVehiclesRoute = AdminOpsVehiclesRouteImport.update({
+  id: '/admin/ops/vehicles',
+  path: '/admin/ops/vehicles',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminToursIndexRoute = AdminToursIndexRouteImport.update({
   id: '/admin/tours/',
   path: '/admin/tours/',
@@ -341,6 +347,7 @@ export interface FileRoutesByFullPath {
   '/admin/guide/taxonomy': typeof AdminGuideTaxonomyRoute
   '/admin/ops/customers': typeof AdminOpsCustomersRoute
   '/admin/ops/tours': typeof AdminOpsToursRoute
+  '/admin/ops/vehicles': typeof AdminOpsVehiclesRoute
   '/admin/tours/$id': typeof AdminToursIdRoute
   '/api/public/bookings': typeof ApiPublicBookingsRoute
   '/lisbon-guide/category/$slug': typeof LisbonGuideCategorySlugRoute
@@ -391,6 +398,7 @@ export interface FileRoutesByTo {
   '/admin/guide/taxonomy': typeof AdminGuideTaxonomyRoute
   '/admin/ops/customers': typeof AdminOpsCustomersRoute
   '/admin/ops/tours': typeof AdminOpsToursRoute
+  '/admin/ops/vehicles': typeof AdminOpsVehiclesRoute
   '/admin/tours/$id': typeof AdminToursIdRoute
   '/api/public/bookings': typeof ApiPublicBookingsRoute
   '/lisbon-guide/category/$slug': typeof LisbonGuideCategorySlugRoute
@@ -442,6 +450,7 @@ export interface FileRoutesById {
   '/admin/guide/taxonomy': typeof AdminGuideTaxonomyRoute
   '/admin/ops/customers': typeof AdminOpsCustomersRoute
   '/admin/ops/tours': typeof AdminOpsToursRoute
+  '/admin/ops/vehicles': typeof AdminOpsVehiclesRoute
   '/admin/tours/$id': typeof AdminToursIdRoute
   '/api/public/bookings': typeof ApiPublicBookingsRoute
   '/lisbon-guide/category/$slug': typeof LisbonGuideCategorySlugRoute
@@ -494,6 +503,7 @@ export interface FileRouteTypes {
     | '/admin/guide/taxonomy'
     | '/admin/ops/customers'
     | '/admin/ops/tours'
+    | '/admin/ops/vehicles'
     | '/admin/tours/$id'
     | '/api/public/bookings'
     | '/lisbon-guide/category/$slug'
@@ -544,6 +554,7 @@ export interface FileRouteTypes {
     | '/admin/guide/taxonomy'
     | '/admin/ops/customers'
     | '/admin/ops/tours'
+    | '/admin/ops/vehicles'
     | '/admin/tours/$id'
     | '/api/public/bookings'
     | '/lisbon-guide/category/$slug'
@@ -594,6 +605,7 @@ export interface FileRouteTypes {
     | '/admin/guide/taxonomy'
     | '/admin/ops/customers'
     | '/admin/ops/tours'
+    | '/admin/ops/vehicles'
     | '/admin/tours/$id'
     | '/api/public/bookings'
     | '/lisbon-guide/category/$slug'
@@ -645,6 +657,7 @@ export interface RootRouteChildren {
   AdminGuideTaxonomyRoute: typeof AdminGuideTaxonomyRoute
   AdminOpsCustomersRoute: typeof AdminOpsCustomersRoute
   AdminOpsToursRoute: typeof AdminOpsToursRoute
+  AdminOpsVehiclesRoute: typeof AdminOpsVehiclesRoute
   AdminToursIdRoute: typeof AdminToursIdRoute
   ApiPublicBookingsRoute: typeof ApiPublicBookingsRoute
   LisbonGuideCategorySlugRoute: typeof LisbonGuideCategorySlugRoute
@@ -945,6 +958,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminOpsToursRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/ops/vehicles': {
+      id: '/admin/ops/vehicles'
+      path: '/admin/ops/vehicles'
+      fullPath: '/admin/ops/vehicles'
+      preLoaderRoute: typeof AdminOpsVehiclesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/tours/': {
       id: '/admin/tours/'
       path: '/admin/tours'
@@ -1037,6 +1057,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminGuideTaxonomyRoute: AdminGuideTaxonomyRoute,
   AdminOpsCustomersRoute: AdminOpsCustomersRoute,
   AdminOpsToursRoute: AdminOpsToursRoute,
+  AdminOpsVehiclesRoute: AdminOpsVehiclesRoute,
   AdminToursIdRoute: AdminToursIdRoute,
   ApiPublicBookingsRoute: ApiPublicBookingsRoute,
   LisbonGuideCategorySlugRoute: LisbonGuideCategorySlugRoute,
