@@ -37,7 +37,9 @@ const PRIMARY: NavItem[] = [
 ];
 
 const MORE: NavItem[] = [
+  { to: "/admin/ops", label: "Operations", icon: Gauge },
   { to: "/admin/custom-builder", label: "Custom Builder", icon: Sparkles },
+
   { to: "/admin/faqs", label: "FAQs", icon: HelpCircle },
   { to: "/admin/blog", label: "Journal", icon: BookOpen },
   { to: "/admin/guide", label: "Travel Guide", icon: Compass },
