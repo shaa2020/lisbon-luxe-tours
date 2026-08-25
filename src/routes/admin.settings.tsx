@@ -172,6 +172,9 @@ function AdminSettings() {
     setSavingBiz(true);
     const payload = {
       ...biz,
+      group_discount_tiers: [...biz.group_discount_tiers]
+        .filter((t) => Number.isFinite(t.min_guests) && Number.isFinite(t.percent))
+        .sort((a, b) => a.min_guests - b.min_guests),
       promo_banner_starts_at: fromLocalInput(biz.promo_banner_starts_at),
       promo_banner_ends_at: fromLocalInput(biz.promo_banner_ends_at),
     };
