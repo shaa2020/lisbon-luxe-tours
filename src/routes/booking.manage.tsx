@@ -1,5 +1,4 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { redirectToCheckout } from "@/lib/redirect-to-checkout";
 import { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
@@ -78,15 +77,12 @@ function ManageBookingPage() {
           note: note.trim() || null,
         },
       });
-      if (res.mode === "pay" && "url" in res && res.url) {
-        redirectToCheckout(res.url);
-      } else {
-        toast.success(
-          ("message" in res && res.message) || "Request sent. We'll be in touch within 24h.",
-          { duration: 8000 },
-        );
-        setStep("view");
-      }
+      toast.success(
+        ("message" in res && res.message) || "Request sent. We'll confirm and send you a payment option within 24h.",
+        { duration: 8000 },
+      );
+      setStep("view");
+
     } catch (err) {
       toast.error((err as Error).message || "Could not send request.");
     } finally {
@@ -312,7 +308,7 @@ function ManageBookingPage() {
                   disabled={loading || (changeType === "add_guests" && newGuests <= booking.guests)}
                   className="w-full bg-ink text-paper py-4 rounded-[2px] font-medium tracking-[0.2em] text-xs uppercase hover:bg-gold transition-colors disabled:opacity-40 inline-flex items-center justify-center gap-2"
                 >
-                  {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : changeType === "add_guests" ? "Continue to payment" : "Send request"}
+                  {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Send request"}
                 </button>
               </div>
             )}

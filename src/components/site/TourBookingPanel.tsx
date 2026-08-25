@@ -552,19 +552,16 @@ export function TourBookingPanel({ tour }: { tour: Tour; compact?: boolean }) {
           </div>
         ) : (
           <>
-            <button
-              onClick={() => { trackBookingCtaClick("tour_booking_panel", tour); handleContinue(); }}
-              disabled={paying || requesting || !canContinue}
-              className="w-full bg-ink text-paper py-4 rounded-[2px] font-medium tracking-[0.2em] text-xs uppercase hover:bg-gold transition-colors shadow-[0_8px_20px_rgba(30,58,95,0.18)] disabled:opacity-40 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
-            >
-              {paying ? (
-                <><Loader2 className="w-4 h-4 animate-spin" /> Redirecting…</>
-              ) : showContact ? (
-                <>Pay €{payNow.toFixed(2)}{balanceDue > 0 ? ` now (${depositPct}%)` : ""}</>
-              ) : (
-                <>Continue to Booking</>
-              )}
-            </button>
+            {!showContact && (
+              <button
+                onClick={() => { trackBookingCtaClick("tour_booking_panel", tour); setShowContact(true); }}
+                disabled={paying || requesting || !canContinue}
+                className="w-full bg-ink text-paper py-4 rounded-[2px] font-medium tracking-[0.2em] text-xs uppercase hover:bg-gold transition-colors shadow-[0_8px_20px_rgba(30,58,95,0.18)] disabled:opacity-40 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
+              >
+                Continue to Booking
+              </button>
+            )}
+
 
             {showContact && (
               <PaypalWallet

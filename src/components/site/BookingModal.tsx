@@ -365,22 +365,10 @@ export function BookingModal({
                     <p className="font-display font-bold text-3xl text-gold leading-none">€{total}</p>
                   </div>
                   <p className="text-[10px] text-body text-right max-w-[160px]">
-                    Pay securely with card, or reserve via WhatsApp and pay later.
+                    Reserve via WhatsApp and pay later, or pay instantly with PayPal.
                   </p>
                 </div>
-                <div className="grid sm:grid-cols-2 gap-2">
-                  <button
-                    type="button"
-                    onClick={handlePay}
-                    disabled={paying || !date || !time || !name || !contact || !isPhone(phone)}
-                    className="w-full px-5 py-3.5 rounded-full bg-ink text-white text-[12px] font-semibold uppercase tracking-widest hover:bg-gold transition disabled:opacity-40 disabled:cursor-not-allowed shadow-[0_6px_15px_rgba(30,58,95,0.25)] inline-flex items-center justify-center gap-2"
-                  >
-                    {paying ? (
-                      <><Loader2 className="w-4 h-4 animate-spin" /> Redirecting…</>
-                    ) : (
-                      <><CreditCard className="w-4 h-4" /> Pay with card</>
-                    )}
-                  </button>
+                <div className="grid gap-2">
                   <button
                     type="submit"
                     disabled={paying || !date || !time || !name || !contact || !isPhone(phone)}
@@ -389,6 +377,7 @@ export function BookingModal({
                     Reserve via WhatsApp
                   </button>
                 </div>
+
                 <PaypalWallet
                   amount={total}
                   label={tour.title}
