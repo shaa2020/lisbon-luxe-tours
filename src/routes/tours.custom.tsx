@@ -404,14 +404,8 @@ function CustomBuilderPage() {
                           : "Pick at least one destination"}
                     </p>
                   )}
-                  <button
-                    onClick={() => handleSubmit("pay")}
-                    disabled={!!busy || !requirementsMet || total < 100}
-                    className="w-full py-3 rounded-full bg-gold text-white text-[12px] font-semibold uppercase tracking-widest shadow-[0_8px_20px_rgba(43,182,247,0.35)] hover:bg-ink transition-all disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
-                  >
-                    {busy === "pay" && <Loader2 className="w-4 h-4 animate-spin" />}
-                    Book & Pay €{(total / 100).toFixed(0)}
-                  </button>
+
+
                   <button
                     onClick={() => handleSubmit("request")}
                     disabled={!!busy || !requirementsMet}
