@@ -63,16 +63,18 @@ function Index() {
     <div className="min-h-screen bg-paper text-ink overflow-x-clip">
       <Nav overlay />
       <Hero />
-      <AboutSection />
-      <FlashDeals />
-      <WhyTravel />
       <PopularTours onBook={setBookingTour} />
-      <Destinations />
+      <TrustStrip />
       <TestimonialsSection />
+      <WhyTravel />
+      <Destinations />
+      <AboutSection />
       <Gallery />
       <TravelTipsAndSignup />
       <Footer />
       <WhatsappFab />
+      <StickyBookBar />
+
       <BookingModal
         tour={bookingTour}
         open={!!bookingTour}
