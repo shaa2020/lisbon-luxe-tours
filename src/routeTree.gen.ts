@@ -48,10 +48,23 @@ import { Route as AdminBlogIdRouteImport } from './routes/admin.blog.$id'
 import { Route as AdminGuideIndexRouteImport } from './routes/admin.guide.index'
 import { Route as AdminGuideIdRouteImport } from './routes/admin.guide.$id'
 import { Route as AdminGuideTaxonomyRouteImport } from './routes/admin.guide.taxonomy'
+import { Route as AdminOpsIndexRouteImport } from './routes/admin.ops.index'
+import { Route as AdminOpsCalendarRouteImport } from './routes/admin.ops.calendar'
+import { Route as AdminOpsCustomersRouteImport } from './routes/admin.ops.customers'
+import { Route as AdminOpsPartnersRouteImport } from './routes/admin.ops.partners'
+import { Route as AdminOpsPaymentsRouteImport } from './routes/admin.ops.payments'
+import { Route as AdminOpsRequestsRouteImport } from './routes/admin.ops.requests'
+import { Route as AdminOpsSettingsRouteImport } from './routes/admin.ops.settings'
+import { Route as AdminOpsTeamRouteImport } from './routes/admin.ops.team'
+import { Route as AdminOpsTodayRouteImport } from './routes/admin.ops.today'
+import { Route as AdminOpsToursRouteImport } from './routes/admin.ops.tours'
+import { Route as AdminOpsVehiclesRouteImport } from './routes/admin.ops.vehicles'
 import { Route as AdminToursIndexRouteImport } from './routes/admin.tours.index'
 import { Route as AdminToursIdRouteImport } from './routes/admin.tours.$id'
 import { Route as ApiPublicBookingsRouteImport } from './routes/api/public/bookings'
 import { Route as LisbonGuideCategorySlugRouteImport } from './routes/lisbon-guide.category.$slug'
+import { Route as AdminOpsJobsIndexRouteImport } from './routes/admin.ops.jobs.index'
+import { Route as AdminOpsJobsIdRouteImport } from './routes/admin.ops.jobs.$id'
 import { Route as ApiPublicPaymentsMollieRouteImport } from './routes/api/public/payments/mollie'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
@@ -251,6 +264,61 @@ const AdminGuideTaxonomyRoute = AdminGuideTaxonomyRouteImport.update({
   path: '/admin/guide/taxonomy',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminOpsIndexRoute = AdminOpsIndexRouteImport.update({
+  id: '/admin/ops/',
+  path: '/admin/ops/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminOpsCalendarRoute = AdminOpsCalendarRouteImport.update({
+  id: '/admin/ops/calendar',
+  path: '/admin/ops/calendar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminOpsCustomersRoute = AdminOpsCustomersRouteImport.update({
+  id: '/admin/ops/customers',
+  path: '/admin/ops/customers',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminOpsPartnersRoute = AdminOpsPartnersRouteImport.update({
+  id: '/admin/ops/partners',
+  path: '/admin/ops/partners',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminOpsPaymentsRoute = AdminOpsPaymentsRouteImport.update({
+  id: '/admin/ops/payments',
+  path: '/admin/ops/payments',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminOpsRequestsRoute = AdminOpsRequestsRouteImport.update({
+  id: '/admin/ops/requests',
+  path: '/admin/ops/requests',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminOpsSettingsRoute = AdminOpsSettingsRouteImport.update({
+  id: '/admin/ops/settings',
+  path: '/admin/ops/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminOpsTeamRoute = AdminOpsTeamRouteImport.update({
+  id: '/admin/ops/team',
+  path: '/admin/ops/team',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminOpsTodayRoute = AdminOpsTodayRouteImport.update({
+  id: '/admin/ops/today',
+  path: '/admin/ops/today',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminOpsToursRoute = AdminOpsToursRouteImport.update({
+  id: '/admin/ops/tours',
+  path: '/admin/ops/tours',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminOpsVehiclesRoute = AdminOpsVehiclesRouteImport.update({
+  id: '/admin/ops/vehicles',
+  path: '/admin/ops/vehicles',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminToursIndexRoute = AdminToursIndexRouteImport.update({
   id: '/admin/tours/',
   path: '/admin/tours/',
@@ -269,6 +337,16 @@ const ApiPublicBookingsRoute = ApiPublicBookingsRouteImport.update({
 const LisbonGuideCategorySlugRoute = LisbonGuideCategorySlugRouteImport.update({
   id: '/lisbon-guide/category/$slug',
   path: '/lisbon-guide/category/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminOpsJobsIndexRoute = AdminOpsJobsIndexRouteImport.update({
+  id: '/admin/ops/jobs/',
+  path: '/admin/ops/jobs/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminOpsJobsIdRoute = AdminOpsJobsIdRouteImport.update({
+  id: '/admin/ops/jobs/$id',
+  path: '/admin/ops/jobs/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicPaymentsMollieRoute = ApiPublicPaymentsMollieRouteImport.update({
@@ -327,15 +405,28 @@ export interface FileRoutesByFullPath {
   '/admin/blog/$id': typeof AdminBlogIdRoute
   '/admin/guide/$id': typeof AdminGuideIdRoute
   '/admin/guide/taxonomy': typeof AdminGuideTaxonomyRoute
+  '/admin/ops/calendar': typeof AdminOpsCalendarRoute
+  '/admin/ops/customers': typeof AdminOpsCustomersRoute
+  '/admin/ops/partners': typeof AdminOpsPartnersRoute
+  '/admin/ops/payments': typeof AdminOpsPaymentsRoute
+  '/admin/ops/requests': typeof AdminOpsRequestsRoute
+  '/admin/ops/settings': typeof AdminOpsSettingsRoute
+  '/admin/ops/team': typeof AdminOpsTeamRoute
+  '/admin/ops/today': typeof AdminOpsTodayRoute
+  '/admin/ops/tours': typeof AdminOpsToursRoute
+  '/admin/ops/vehicles': typeof AdminOpsVehiclesRoute
   '/admin/tours/$id': typeof AdminToursIdRoute
   '/api/public/bookings': typeof ApiPublicBookingsRoute
   '/lisbon-guide/category/$slug': typeof LisbonGuideCategorySlugRoute
   '/admin/blog/': typeof AdminBlogIndexRoute
   '/admin/guide/': typeof AdminGuideIndexRoute
+  '/admin/ops/': typeof AdminOpsIndexRoute
   '/admin/tours/': typeof AdminToursIndexRoute
+  '/admin/ops/jobs/$id': typeof AdminOpsJobsIdRoute
   '/api/public/payments/mollie': typeof ApiPublicPaymentsMollieRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
+  '/admin/ops/jobs/': typeof AdminOpsJobsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -375,15 +466,28 @@ export interface FileRoutesByTo {
   '/admin/blog/$id': typeof AdminBlogIdRoute
   '/admin/guide/$id': typeof AdminGuideIdRoute
   '/admin/guide/taxonomy': typeof AdminGuideTaxonomyRoute
+  '/admin/ops/calendar': typeof AdminOpsCalendarRoute
+  '/admin/ops/customers': typeof AdminOpsCustomersRoute
+  '/admin/ops/partners': typeof AdminOpsPartnersRoute
+  '/admin/ops/payments': typeof AdminOpsPaymentsRoute
+  '/admin/ops/requests': typeof AdminOpsRequestsRoute
+  '/admin/ops/settings': typeof AdminOpsSettingsRoute
+  '/admin/ops/team': typeof AdminOpsTeamRoute
+  '/admin/ops/today': typeof AdminOpsTodayRoute
+  '/admin/ops/tours': typeof AdminOpsToursRoute
+  '/admin/ops/vehicles': typeof AdminOpsVehiclesRoute
   '/admin/tours/$id': typeof AdminToursIdRoute
   '/api/public/bookings': typeof ApiPublicBookingsRoute
   '/lisbon-guide/category/$slug': typeof LisbonGuideCategorySlugRoute
   '/admin/blog': typeof AdminBlogIndexRoute
   '/admin/guide': typeof AdminGuideIndexRoute
+  '/admin/ops': typeof AdminOpsIndexRoute
   '/admin/tours': typeof AdminToursIndexRoute
+  '/admin/ops/jobs/$id': typeof AdminOpsJobsIdRoute
   '/api/public/payments/mollie': typeof ApiPublicPaymentsMollieRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
+  '/admin/ops/jobs': typeof AdminOpsJobsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -424,15 +528,28 @@ export interface FileRoutesById {
   '/admin/blog/$id': typeof AdminBlogIdRoute
   '/admin/guide/$id': typeof AdminGuideIdRoute
   '/admin/guide/taxonomy': typeof AdminGuideTaxonomyRoute
+  '/admin/ops/calendar': typeof AdminOpsCalendarRoute
+  '/admin/ops/customers': typeof AdminOpsCustomersRoute
+  '/admin/ops/partners': typeof AdminOpsPartnersRoute
+  '/admin/ops/payments': typeof AdminOpsPaymentsRoute
+  '/admin/ops/requests': typeof AdminOpsRequestsRoute
+  '/admin/ops/settings': typeof AdminOpsSettingsRoute
+  '/admin/ops/team': typeof AdminOpsTeamRoute
+  '/admin/ops/today': typeof AdminOpsTodayRoute
+  '/admin/ops/tours': typeof AdminOpsToursRoute
+  '/admin/ops/vehicles': typeof AdminOpsVehiclesRoute
   '/admin/tours/$id': typeof AdminToursIdRoute
   '/api/public/bookings': typeof ApiPublicBookingsRoute
   '/lisbon-guide/category/$slug': typeof LisbonGuideCategorySlugRoute
   '/admin/blog/': typeof AdminBlogIndexRoute
   '/admin/guide/': typeof AdminGuideIndexRoute
+  '/admin/ops/': typeof AdminOpsIndexRoute
   '/admin/tours/': typeof AdminToursIndexRoute
+  '/admin/ops/jobs/$id': typeof AdminOpsJobsIdRoute
   '/api/public/payments/mollie': typeof ApiPublicPaymentsMollieRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
+  '/admin/ops/jobs/': typeof AdminOpsJobsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -474,15 +591,28 @@ export interface FileRouteTypes {
     | '/admin/blog/$id'
     | '/admin/guide/$id'
     | '/admin/guide/taxonomy'
+    | '/admin/ops/calendar'
+    | '/admin/ops/customers'
+    | '/admin/ops/partners'
+    | '/admin/ops/payments'
+    | '/admin/ops/requests'
+    | '/admin/ops/settings'
+    | '/admin/ops/team'
+    | '/admin/ops/today'
+    | '/admin/ops/tours'
+    | '/admin/ops/vehicles'
     | '/admin/tours/$id'
     | '/api/public/bookings'
     | '/lisbon-guide/category/$slug'
     | '/admin/blog/'
     | '/admin/guide/'
+    | '/admin/ops/'
     | '/admin/tours/'
+    | '/admin/ops/jobs/$id'
     | '/api/public/payments/mollie'
     | '/api/public/payments/webhook'
     | '/lovable/email/queue/process'
+    | '/admin/ops/jobs/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -522,15 +652,28 @@ export interface FileRouteTypes {
     | '/admin/blog/$id'
     | '/admin/guide/$id'
     | '/admin/guide/taxonomy'
+    | '/admin/ops/calendar'
+    | '/admin/ops/customers'
+    | '/admin/ops/partners'
+    | '/admin/ops/payments'
+    | '/admin/ops/requests'
+    | '/admin/ops/settings'
+    | '/admin/ops/team'
+    | '/admin/ops/today'
+    | '/admin/ops/tours'
+    | '/admin/ops/vehicles'
     | '/admin/tours/$id'
     | '/api/public/bookings'
     | '/lisbon-guide/category/$slug'
     | '/admin/blog'
     | '/admin/guide'
+    | '/admin/ops'
     | '/admin/tours'
+    | '/admin/ops/jobs/$id'
     | '/api/public/payments/mollie'
     | '/api/public/payments/webhook'
     | '/lovable/email/queue/process'
+    | '/admin/ops/jobs'
   id:
     | '__root__'
     | '/'
@@ -570,15 +713,28 @@ export interface FileRouteTypes {
     | '/admin/blog/$id'
     | '/admin/guide/$id'
     | '/admin/guide/taxonomy'
+    | '/admin/ops/calendar'
+    | '/admin/ops/customers'
+    | '/admin/ops/partners'
+    | '/admin/ops/payments'
+    | '/admin/ops/requests'
+    | '/admin/ops/settings'
+    | '/admin/ops/team'
+    | '/admin/ops/today'
+    | '/admin/ops/tours'
+    | '/admin/ops/vehicles'
     | '/admin/tours/$id'
     | '/api/public/bookings'
     | '/lisbon-guide/category/$slug'
     | '/admin/blog/'
     | '/admin/guide/'
+    | '/admin/ops/'
     | '/admin/tours/'
+    | '/admin/ops/jobs/$id'
     | '/api/public/payments/mollie'
     | '/api/public/payments/webhook'
     | '/lovable/email/queue/process'
+    | '/admin/ops/jobs/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -619,15 +775,28 @@ export interface RootRouteChildren {
   AdminBlogIdRoute: typeof AdminBlogIdRoute
   AdminGuideIdRoute: typeof AdminGuideIdRoute
   AdminGuideTaxonomyRoute: typeof AdminGuideTaxonomyRoute
+  AdminOpsCalendarRoute: typeof AdminOpsCalendarRoute
+  AdminOpsCustomersRoute: typeof AdminOpsCustomersRoute
+  AdminOpsPartnersRoute: typeof AdminOpsPartnersRoute
+  AdminOpsPaymentsRoute: typeof AdminOpsPaymentsRoute
+  AdminOpsRequestsRoute: typeof AdminOpsRequestsRoute
+  AdminOpsSettingsRoute: typeof AdminOpsSettingsRoute
+  AdminOpsTeamRoute: typeof AdminOpsTeamRoute
+  AdminOpsTodayRoute: typeof AdminOpsTodayRoute
+  AdminOpsToursRoute: typeof AdminOpsToursRoute
+  AdminOpsVehiclesRoute: typeof AdminOpsVehiclesRoute
   AdminToursIdRoute: typeof AdminToursIdRoute
   ApiPublicBookingsRoute: typeof ApiPublicBookingsRoute
   LisbonGuideCategorySlugRoute: typeof LisbonGuideCategorySlugRoute
   AdminBlogIndexRoute: typeof AdminBlogIndexRoute
   AdminGuideIndexRoute: typeof AdminGuideIndexRoute
+  AdminOpsIndexRoute: typeof AdminOpsIndexRoute
   AdminToursIndexRoute: typeof AdminToursIndexRoute
+  AdminOpsJobsIdRoute: typeof AdminOpsJobsIdRoute
   ApiPublicPaymentsMollieRoute: typeof ApiPublicPaymentsMollieRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
   LovableEmailQueueProcessRoute: typeof LovableEmailQueueProcessRoute
+  AdminOpsJobsIndexRoute: typeof AdminOpsJobsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -905,6 +1074,83 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminGuideTaxonomyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/ops/': {
+      id: '/admin/ops/'
+      path: '/admin/ops'
+      fullPath: '/admin/ops/'
+      preLoaderRoute: typeof AdminOpsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/ops/calendar': {
+      id: '/admin/ops/calendar'
+      path: '/admin/ops/calendar'
+      fullPath: '/admin/ops/calendar'
+      preLoaderRoute: typeof AdminOpsCalendarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/ops/customers': {
+      id: '/admin/ops/customers'
+      path: '/admin/ops/customers'
+      fullPath: '/admin/ops/customers'
+      preLoaderRoute: typeof AdminOpsCustomersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/ops/partners': {
+      id: '/admin/ops/partners'
+      path: '/admin/ops/partners'
+      fullPath: '/admin/ops/partners'
+      preLoaderRoute: typeof AdminOpsPartnersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/ops/payments': {
+      id: '/admin/ops/payments'
+      path: '/admin/ops/payments'
+      fullPath: '/admin/ops/payments'
+      preLoaderRoute: typeof AdminOpsPaymentsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/ops/requests': {
+      id: '/admin/ops/requests'
+      path: '/admin/ops/requests'
+      fullPath: '/admin/ops/requests'
+      preLoaderRoute: typeof AdminOpsRequestsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/ops/settings': {
+      id: '/admin/ops/settings'
+      path: '/admin/ops/settings'
+      fullPath: '/admin/ops/settings'
+      preLoaderRoute: typeof AdminOpsSettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/ops/team': {
+      id: '/admin/ops/team'
+      path: '/admin/ops/team'
+      fullPath: '/admin/ops/team'
+      preLoaderRoute: typeof AdminOpsTeamRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/ops/today': {
+      id: '/admin/ops/today'
+      path: '/admin/ops/today'
+      fullPath: '/admin/ops/today'
+      preLoaderRoute: typeof AdminOpsTodayRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/ops/tours': {
+      id: '/admin/ops/tours'
+      path: '/admin/ops/tours'
+      fullPath: '/admin/ops/tours'
+      preLoaderRoute: typeof AdminOpsToursRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/ops/vehicles': {
+      id: '/admin/ops/vehicles'
+      path: '/admin/ops/vehicles'
+      fullPath: '/admin/ops/vehicles'
+      preLoaderRoute: typeof AdminOpsVehiclesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/tours/': {
       id: '/admin/tours/'
       path: '/admin/tours'
@@ -931,6 +1177,20 @@ declare module '@tanstack/react-router' {
       path: '/lisbon-guide/category/$slug'
       fullPath: '/lisbon-guide/category/$slug'
       preLoaderRoute: typeof LisbonGuideCategorySlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/ops/jobs/': {
+      id: '/admin/ops/jobs/'
+      path: '/admin/ops/jobs'
+      fullPath: '/admin/ops/jobs/'
+      preLoaderRoute: typeof AdminOpsJobsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/ops/jobs/$id': {
+      id: '/admin/ops/jobs/$id'
+      path: '/admin/ops/jobs/$id'
+      fullPath: '/admin/ops/jobs/$id'
+      preLoaderRoute: typeof AdminOpsJobsIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/payments/mollie': {
@@ -995,15 +1255,28 @@ const rootRouteChildren: RootRouteChildren = {
   AdminBlogIdRoute: AdminBlogIdRoute,
   AdminGuideIdRoute: AdminGuideIdRoute,
   AdminGuideTaxonomyRoute: AdminGuideTaxonomyRoute,
+  AdminOpsCalendarRoute: AdminOpsCalendarRoute,
+  AdminOpsCustomersRoute: AdminOpsCustomersRoute,
+  AdminOpsPartnersRoute: AdminOpsPartnersRoute,
+  AdminOpsPaymentsRoute: AdminOpsPaymentsRoute,
+  AdminOpsRequestsRoute: AdminOpsRequestsRoute,
+  AdminOpsSettingsRoute: AdminOpsSettingsRoute,
+  AdminOpsTeamRoute: AdminOpsTeamRoute,
+  AdminOpsTodayRoute: AdminOpsTodayRoute,
+  AdminOpsToursRoute: AdminOpsToursRoute,
+  AdminOpsVehiclesRoute: AdminOpsVehiclesRoute,
   AdminToursIdRoute: AdminToursIdRoute,
   ApiPublicBookingsRoute: ApiPublicBookingsRoute,
   LisbonGuideCategorySlugRoute: LisbonGuideCategorySlugRoute,
   AdminBlogIndexRoute: AdminBlogIndexRoute,
   AdminGuideIndexRoute: AdminGuideIndexRoute,
+  AdminOpsIndexRoute: AdminOpsIndexRoute,
   AdminToursIndexRoute: AdminToursIndexRoute,
+  AdminOpsJobsIdRoute: AdminOpsJobsIdRoute,
   ApiPublicPaymentsMollieRoute: ApiPublicPaymentsMollieRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
   LovableEmailQueueProcessRoute: LovableEmailQueueProcessRoute,
+  AdminOpsJobsIndexRoute: AdminOpsJobsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
