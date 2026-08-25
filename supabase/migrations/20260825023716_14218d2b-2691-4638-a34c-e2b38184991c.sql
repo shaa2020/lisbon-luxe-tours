@@ -1,0 +1,2 @@
+ALTER TABLE public.site_settings ADD COLUMN IF NOT EXISTS owner_notification_email text NOT NULL DEFAULT 'tuktuklisbon24@gmail.com';
+UPDATE public.site_settings SET owner_notification_email = 'tuktuklisbon24@gmail.com' WHERE owner_notification_email IS NULL OR owner_notification_email = '';
