@@ -797,7 +797,9 @@ function AdminSettings() {
             {savingBiz ? "Saving…" : "Save marketing settings"}
           </button>
         </section>
+        </div>
       )}
+
 
       {tab === "payments" && (
         <PaymentsSettings
