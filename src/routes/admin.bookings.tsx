@@ -469,13 +469,18 @@ function BookingsInbox() {
               </div>
 
               <div className="grid sm:grid-cols-2 gap-2 text-sm text-foreground mb-4">
-                <a
-                  href={`mailto:${b.email}`}
-                  className="flex items-center gap-2 hover:text-primary"
+                <button
+                  type="button"
+                  title="Click to copy the email address"
+                  onClick={() => {
+                    navigator.clipboard?.writeText(b.email);
+                    toast.success("Email copied");
+                  }}
+                  className="flex items-center gap-2 text-left hover:text-primary"
                 >
                   <Mail className="w-4 h-4 text-muted-foreground" />
                   {b.email}
-                </a>
+                </button>
                 {b.phone && (
                   <a
                     href={`tel:${b.phone}`}
