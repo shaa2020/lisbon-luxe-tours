@@ -3,11 +3,16 @@ import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { AdminShell } from "@/components/admin/AdminShell";
+import { AiTourBuilder } from "@/components/admin/AiTourBuilder";
+import type { AiTourDraft } from "@/lib/ai-tour.functions";
 import { tourCategories } from "@/lib/cms";
 import { slugify, uploadMediaFile } from "@/lib/admin-helpers";
+import { Sparkles } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/admin/tours/$id")({
+  validateSearch: (search: Record<string, unknown>): { ai?: true } =>
+    search['ai'] === true || search['ai'] === "1" || search['ai'] === 1 ? { ai: true } : {},
   component: TourEditPage,
 });
 
@@ -57,15 +62,29 @@ function lines(v: string): string[] {
   return v.split("\n").map((l) => l.trim()).filter(Boolean);
 }
 
+const MANDATORY_TAG = "MANDATORY";
+
 function parseItinerary(v: string) {
   return lines(v).map((line) => {
-    const [time = "", title = "", ...rest] = line.split("|").map((s) => s.trim());
-    return { time, title, detail: rest.join(" | ") };
+    const parts = line.split("|").map((s) => s.trim());
+    const [time = "", title = "", ...rest] = parts;
+    const mandatory = rest.length > 0 && rest[rest.length - 1]?.toUpperCase() === MANDATORY_TAG;
+    const detailParts = mandatory ? rest.slice(0, -1) : rest;
+    return mandatory
+      ? { time, title, detail: detailParts.join(" | "), mandatory: true }
+      : { time, title, detail: detailParts.join(" | ") };
   });
 }
 
-function serializeItinerary(items: { time: string; title: string; detail: string }[]) {
-  return items.map((i) => `${i.time} | ${i.title} | ${i.detail}`).join("\n");
+function serializeItinerary(
+  items: { time: string; title: string; detail: string; mandatory?: boolean }[],
+) {
+  return items
+    .map(
+      (i) =>
+        `${i.time} | ${i.title} | ${i.detail}${i.mandatory ? ` | ${MANDATORY_TAG}` : ""}`,
+    )
+    .join("\n");
 }
 
 function TourEditPage() {
@@ -77,6 +96,29 @@ function TourEditPage() {
   const [loading, setLoading] = useState(!isNew);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const { ai } = Route.useSearch();
+  const [aiOpen, setAiOpen] = useState(!!ai);
+
+  const importDraft = (draft: AiTourDraft) => {
+    const cat = tourCategories.find((c) => c.slug === draft.category_slug);
+    setForm((f) => ({
+      ...f,
+      title: draft.title || f.title,
+      slug: draft.slug ? slugify(draft.slug) : f.slug,
+      category_slug: draft.category_slug || f.category_slug,
+      category: cat?.title ?? f.category,
+      duration: draft.duration || f.duration,
+      tagline: draft.tagline || f.tagline,
+      description: draft.description || f.description,
+      highlights: draft.highlights.filter(Boolean).join("\n"),
+      itinerary: serializeItinerary(draft.itinerary),
+      included: draft.included.filter(Boolean).join("\n"),
+      not_included: draft.not_included.filter(Boolean).join("\n"),
+    }));
+    setAiOpen(false);
+    toast.success("Imported — set the price, then save.");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   useEffect(() => {
     if (isNew) return;
@@ -102,7 +144,12 @@ function TourEditPage() {
         description: data.description ?? "",
         highlights: arr(data.highlights).join("\n"),
         itinerary: serializeItinerary(
-          arr(data.itinerary) as { time: string; title: string; detail: string }[],
+          arr(data.itinerary) as {
+            time: string;
+            title: string;
+            detail: string;
+            mandatory?: boolean;
+          }[],
         ),
         included: arr(data.included).join("\n"),
         not_included: arr(data.not_included).join("\n"),
@@ -181,7 +228,7 @@ function TourEditPage() {
     qc.invalidateQueries({ queryKey: ["admin-tours"] });
     qc.invalidateQueries({ queryKey: ["tours", "public"] });
     qc.invalidateQueries({ queryKey: ["tour", payload.slug] });
-    if (isNew) navigate({ to: "/admin/tours/$id", params: { id: res.data.id } });
+    if (isNew) navigate({ to: "/admin/tours/$id", params: { id: res.data.id }, search: {} });
   };
 
   if (loading) {
@@ -206,7 +253,18 @@ function TourEditPage() {
             {isNew ? "New tour" : form.title || "Edit tour"}
           </h1>
         </div>
+        {!aiOpen && (
+          <button
+            type="button"
+            onClick={() => setAiOpen(true)}
+            className="rounded-md border border-primary/40 bg-primary/10 text-primary px-4 py-2 text-sm font-semibold hover:bg-primary/15 inline-flex items-center gap-2"
+          >
+            <Sparkles className="w-4 h-4" /> Create Tour with AI
+          </button>
+        )}
       </div>
+
+      {aiOpen && <AiTourBuilder onImport={importDraft} onClose={() => setAiOpen(false)} />}
 
       <form onSubmit={save} className="grid lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-5">

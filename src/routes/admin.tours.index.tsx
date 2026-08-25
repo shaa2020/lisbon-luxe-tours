@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { Sparkles } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { AdminShell } from "@/components/admin/AdminShell";
@@ -59,13 +60,24 @@ function AdminToursPage() {
           <h1 className="text-2xl font-display font-bold">Tours</h1>
           <p className="text-sm text-muted-foreground">{data.length} total</p>
         </div>
-        <Link
-          to="/admin/tours/$id"
-          params={{ id: "new" }}
-          className="px-4 py-2 rounded-md bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90"
-        >
-          + New tour
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link
+            to="/admin/tours/$id"
+            params={{ id: "new" }}
+            search={{ ai: true }}
+            className="px-4 py-2 rounded-md border border-primary/40 bg-primary/10 text-primary text-sm font-semibold hover:bg-primary/15 inline-flex items-center gap-2"
+          >
+            <Sparkles className="w-4 h-4" /> Create Tour with AI
+          </Link>
+          <Link
+            to="/admin/tours/$id"
+            params={{ id: "new" }}
+            search={{}}
+            className="px-4 py-2 rounded-md bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90"
+          >
+            + New tour
+          </Link>
+        </div>
       </div>
 
       {isLoading ? (
@@ -130,6 +142,7 @@ function AdminToursPage() {
                       <Link
                         to="/admin/tours/$id"
                         params={{ id: t.id }}
+                        search={{}}
                         className="px-2.5 py-1 text-xs rounded border border-border hover:bg-accent"
                       >
                         Edit
