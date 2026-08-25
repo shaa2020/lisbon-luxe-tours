@@ -434,74 +434,9 @@ function AboutSection() {
 }
 
 
-/* ============================== FLASH DEALS ============================== */
+/* ============================== (flash deals merged into Popular tours) ============================== */
 
-function FlashDeals() {
-  const { data: tours = [] } = useTours();
-  const deals = tours.slice(0, 4);
-  return (
-    <section className="bg-cloud/60 py-20 md:py-24">
-      <div className="container-x">
-        <div className="flex items-end justify-between mb-12">
-          <div>
-            <h2 className="font-display text-3xl md:text-4xl font-bold text-ink mb-2">
-              Last-minute spots
-            </h2>
-            <p className="text-body text-sm">Tours leaving soon with a couple of seats left.</p>
-          </div>
-          <Link to="/tours" className="text-[12px] font-semibold uppercase tracking-widest text-gold hover:text-ink transition">
-            View All ›
-          </Link>
-        </div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {deals.map((t) => (
-            <FlashCard key={t.slug} tour={t} />
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function FlashCard({ tour }: { tour: Tour }) {
-  const pricing = tourPricing(tour);
-  return (
-    <Link
-      to="/tours/$slug"
-      params={{ slug: tour.slug }}
-      className="group bg-white rounded-xl overflow-hidden shadow-[0_4px_20px_rgba(30,58,95,0.06)] hover:shadow-[0_20px_40px_rgba(30,58,95,0.12)] hover:-translate-y-1 transition-all duration-500"
-    >
-      <div className="relative aspect-[4/3] overflow-hidden">
-        <img
-          src={tour.image}
-          alt={tour.title}
-          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-        />
-        <span className="absolute top-3 left-3 bg-gold text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-sm shadow">
-          €{pricing.current} <span className="normal-case tracking-normal font-semibold">pp</span>
-        </span>
-        {pricing.onSale && (
-          <span className="absolute top-3 right-3 bg-red-600 text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-sm shadow">
-            −{pricing.discountPct}%
-          </span>
-        )}
-      </div>
-      <div className="p-5">
-        <h3 className="font-display font-semibold text-ink text-[15px] leading-snug mb-2 group-hover:text-gold transition-colors">
-          {tour.title}
-        </h3>
-        <div className="flex items-center gap-1 text-gold text-[11px] mb-3">
-          <span className="text-[11px] text-body/70">Private group</span>
-        </div>
-        <div className="flex items-center justify-between text-[11px] text-body">
-          <span className="flex items-center gap-1"><PinIco /> Lisboa</span>
-          <span>{tour.duration}</span>
-        </div>
-      </div>
-    </Link>
-  );
-}
 
 /* ============================== WHY TRAVEL ============================== */
 
