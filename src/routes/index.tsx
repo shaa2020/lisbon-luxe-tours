@@ -546,9 +546,10 @@ function PopularCard({ tour, onBook }: { tour: Tour; onBook: () => void }) {
         </h3>
         <p className="text-[11px] text-body/70 mb-4">Private group · English & Portuguese</p>
         <div className="flex items-center gap-4 text-[11px] text-body mb-5 pb-5 border-b border-border">
-          <span className="flex items-center gap-1.5"><PinIco /> Portugal</span>
+          <span className="flex items-center gap-1.5"><PinIco /> {tour.category || "Lisboa"}</span>
           <span className="flex items-center gap-1.5"><ClockIco /> {tour.duration}</span>
-          <span className="flex items-center gap-1.5"><UserIco /> {tour.featured ? "Private" : "2+ pax"}</span>
+          <span className="flex items-center gap-1.5"><UserIco /> Private · max 6</span>
+
         </div>
         <div className="flex items-center justify-between">
           <div>
