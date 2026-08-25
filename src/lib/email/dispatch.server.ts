@@ -183,6 +183,7 @@ export async function sendBrandedEmail(
       message_id: messageId,
       to,
       from: fromHeader(input.brandName || SITE_NAME, input.label || "booking-notice"),
+      reply_to: REPLY_TO,
       sender_domain: SENDER_DOMAIN,
       subject: input.subject,
       html,
