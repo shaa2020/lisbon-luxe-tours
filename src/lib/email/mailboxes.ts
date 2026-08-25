@@ -47,3 +47,9 @@ export function mailboxFor(label?: string | null): string {
 export function fromHeader(brandName: string, label?: string | null) {
   return `${brandName} <${mailboxFor(label)}>`;
 }
+
+/**
+ * Where customer replies actually land until mailboxes exist on the root domain.
+ * Swap this to the branded mailbox once MX records are live.
+ */
+export const REPLY_TO = "tuktuklisbon24@gmail.com";
