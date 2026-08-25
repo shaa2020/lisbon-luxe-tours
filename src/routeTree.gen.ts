@@ -48,6 +48,7 @@ import { Route as AdminBlogIdRouteImport } from './routes/admin.blog.$id'
 import { Route as AdminGuideIndexRouteImport } from './routes/admin.guide.index'
 import { Route as AdminGuideIdRouteImport } from './routes/admin.guide.$id'
 import { Route as AdminGuideTaxonomyRouteImport } from './routes/admin.guide.taxonomy'
+import { Route as AdminOpsCalendarRouteImport } from './routes/admin.ops.calendar'
 import { Route as AdminOpsCustomersRouteImport } from './routes/admin.ops.customers'
 import { Route as AdminOpsPartnersRouteImport } from './routes/admin.ops.partners'
 import { Route as AdminOpsPaymentsRouteImport } from './routes/admin.ops.payments'
@@ -262,6 +263,11 @@ const AdminGuideTaxonomyRoute = AdminGuideTaxonomyRouteImport.update({
   path: '/admin/guide/taxonomy',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminOpsCalendarRoute = AdminOpsCalendarRouteImport.update({
+  id: '/admin/ops/calendar',
+  path: '/admin/ops/calendar',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminOpsCustomersRoute = AdminOpsCustomersRouteImport.update({
   id: '/admin/ops/customers',
   path: '/admin/ops/customers',
@@ -393,6 +399,7 @@ export interface FileRoutesByFullPath {
   '/admin/blog/$id': typeof AdminBlogIdRoute
   '/admin/guide/$id': typeof AdminGuideIdRoute
   '/admin/guide/taxonomy': typeof AdminGuideTaxonomyRoute
+  '/admin/ops/calendar': typeof AdminOpsCalendarRoute
   '/admin/ops/customers': typeof AdminOpsCustomersRoute
   '/admin/ops/partners': typeof AdminOpsPartnersRoute
   '/admin/ops/payments': typeof AdminOpsPaymentsRoute
@@ -452,6 +459,7 @@ export interface FileRoutesByTo {
   '/admin/blog/$id': typeof AdminBlogIdRoute
   '/admin/guide/$id': typeof AdminGuideIdRoute
   '/admin/guide/taxonomy': typeof AdminGuideTaxonomyRoute
+  '/admin/ops/calendar': typeof AdminOpsCalendarRoute
   '/admin/ops/customers': typeof AdminOpsCustomersRoute
   '/admin/ops/partners': typeof AdminOpsPartnersRoute
   '/admin/ops/payments': typeof AdminOpsPaymentsRoute
@@ -512,6 +520,7 @@ export interface FileRoutesById {
   '/admin/blog/$id': typeof AdminBlogIdRoute
   '/admin/guide/$id': typeof AdminGuideIdRoute
   '/admin/guide/taxonomy': typeof AdminGuideTaxonomyRoute
+  '/admin/ops/calendar': typeof AdminOpsCalendarRoute
   '/admin/ops/customers': typeof AdminOpsCustomersRoute
   '/admin/ops/partners': typeof AdminOpsPartnersRoute
   '/admin/ops/payments': typeof AdminOpsPaymentsRoute
@@ -573,6 +582,7 @@ export interface FileRouteTypes {
     | '/admin/blog/$id'
     | '/admin/guide/$id'
     | '/admin/guide/taxonomy'
+    | '/admin/ops/calendar'
     | '/admin/ops/customers'
     | '/admin/ops/partners'
     | '/admin/ops/payments'
@@ -632,6 +642,7 @@ export interface FileRouteTypes {
     | '/admin/blog/$id'
     | '/admin/guide/$id'
     | '/admin/guide/taxonomy'
+    | '/admin/ops/calendar'
     | '/admin/ops/customers'
     | '/admin/ops/partners'
     | '/admin/ops/payments'
@@ -691,6 +702,7 @@ export interface FileRouteTypes {
     | '/admin/blog/$id'
     | '/admin/guide/$id'
     | '/admin/guide/taxonomy'
+    | '/admin/ops/calendar'
     | '/admin/ops/customers'
     | '/admin/ops/partners'
     | '/admin/ops/payments'
@@ -751,6 +763,7 @@ export interface RootRouteChildren {
   AdminBlogIdRoute: typeof AdminBlogIdRoute
   AdminGuideIdRoute: typeof AdminGuideIdRoute
   AdminGuideTaxonomyRoute: typeof AdminGuideTaxonomyRoute
+  AdminOpsCalendarRoute: typeof AdminOpsCalendarRoute
   AdminOpsCustomersRoute: typeof AdminOpsCustomersRoute
   AdminOpsPartnersRoute: typeof AdminOpsPartnersRoute
   AdminOpsPaymentsRoute: typeof AdminOpsPaymentsRoute
@@ -1048,6 +1061,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminGuideTaxonomyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/ops/calendar': {
+      id: '/admin/ops/calendar'
+      path: '/admin/ops/calendar'
+      fullPath: '/admin/ops/calendar'
+      preLoaderRoute: typeof AdminOpsCalendarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/ops/customers': {
       id: '/admin/ops/customers'
       path: '/admin/ops/customers'
@@ -1215,6 +1235,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminBlogIdRoute: AdminBlogIdRoute,
   AdminGuideIdRoute: AdminGuideIdRoute,
   AdminGuideTaxonomyRoute: AdminGuideTaxonomyRoute,
+  AdminOpsCalendarRoute: AdminOpsCalendarRoute,
   AdminOpsCustomersRoute: AdminOpsCustomersRoute,
   AdminOpsPartnersRoute: AdminOpsPartnersRoute,
   AdminOpsPaymentsRoute: AdminOpsPaymentsRoute,
