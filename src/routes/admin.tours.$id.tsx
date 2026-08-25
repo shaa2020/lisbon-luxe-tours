@@ -228,7 +228,7 @@ function TourEditPage() {
     qc.invalidateQueries({ queryKey: ["admin-tours"] });
     qc.invalidateQueries({ queryKey: ["tours", "public"] });
     qc.invalidateQueries({ queryKey: ["tour", payload.slug] });
-    if (isNew) navigate({ to: "/admin/tours/$id", params: { id: res.data.id } });
+    if (isNew) navigate({ to: "/admin/tours/$id", params: { id: res.data.id }, search: {} });
   };
 
   if (loading) {
