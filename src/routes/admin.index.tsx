@@ -1,8 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Map, BookOpen, CalendarCheck, Mail, CreditCard, Star, Euro, Users, TrendingUp } from "lucide-react";
+import { Map, BookOpen, CalendarCheck, Mail, CreditCard, Star, Euro, Users, TrendingUp, Megaphone } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { AdminShell } from "@/components/admin/AdminShell";
+import { AdminShell, AdminPageHeader, AdminCard } from "@/components/admin/AdminShell";
+import { useSiteBrand, isPromoBannerLive } from "@/lib/brand";
 import { useRevenueStats, useUpcomingThisWeek, useAdminBadges } from "@/lib/admin-stats";
 
 export const Route = createFileRoute("/admin/")({
@@ -50,6 +51,8 @@ function AdminDashboard() {
   const revenue = useRevenueStats();
   const upcoming = useUpcomingThisWeek();
   const badges = useAdminBadges();
+  const { promoBanner } = useSiteBrand();
+  const promoLive = isPromoBannerLive(promoBanner);
 
   const fmtEur = (v: number | undefined) =>
     v == null ? "—" : `€${v.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
