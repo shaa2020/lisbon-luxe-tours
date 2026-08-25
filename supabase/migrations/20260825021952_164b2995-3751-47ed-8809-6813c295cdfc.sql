@@ -1,0 +1,1 @@
+CREATE POLICY "Admins read email send log" ON public.email_send_log FOR SELECT TO authenticated USING (private.has_role(auth.uid(), 'admin'::app_role));
