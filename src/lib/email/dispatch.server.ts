@@ -1,7 +1,7 @@
 import * as React from "react";
 import { render } from "@react-email/render";
 import BookingNotice from "@/lib/email-templates/booking-notice";
-import { fromHeader } from "./mailboxes";
+import { fromHeader, REPLY_TO } from "./mailboxes";
 import { getOrCreateUnsubscribeToken } from "./unsubscribe-token.server";
 
 const SITE_NAME = "Tuk Tuk 24";
