@@ -1,7 +1,7 @@
 import * as React from "react";
 import { render } from "@react-email/render";
 import BookingNotice from "@/lib/email-templates/booking-notice";
-import { fromHeader } from "./mailboxes";
+import { fromHeader, REPLY_TO } from "./mailboxes";
 import { getOrCreateUnsubscribeToken } from "./unsubscribe-token.server";
 
 const SITE_NAME = "Tuk Tuk 24";
@@ -183,6 +183,7 @@ export async function sendBrandedEmail(
       message_id: messageId,
       to,
       from: fromHeader(input.brandName || SITE_NAME, input.label || "booking-notice"),
+      reply_to: REPLY_TO,
       sender_domain: SENDER_DOMAIN,
       subject: input.subject,
       html,

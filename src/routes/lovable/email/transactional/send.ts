@@ -3,7 +3,7 @@ import { render } from "@react-email/render";
 import { createClient } from "@supabase/supabase-js";
 import { createFileRoute } from "@tanstack/react-router";
 import { TEMPLATES } from "@/lib/email-templates/registry";
-import { fromHeader } from "@/lib/email/mailboxes";
+import { fromHeader, REPLY_TO } from "@/lib/email/mailboxes";
 import { getOrCreateUnsubscribeToken } from "@/lib/email/unsubscribe-token.server";
 
 // Configuration baked in at scaffold time
@@ -173,6 +173,7 @@ export const Route = createFileRoute("/lovable/email/transactional/send")({
             message_id: messageId,
             to: effectiveRecipient,
             from: fromHeader(SITE_NAME, templateName),
+            reply_to: REPLY_TO,
             sender_domain: SENDER_DOMAIN,
             subject: resolvedSubject,
             html,
