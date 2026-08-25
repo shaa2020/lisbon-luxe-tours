@@ -61,15 +61,20 @@ export function WhatsappFab() {
   useEffect(() => {
     const el = document.getElementById("tt24-bottom-stack");
     if (!el) return;
+    let raf = 0;
     const apply = () =>
       document.documentElement.style.setProperty(
         "--tt24-bottom-stack",
         `${Math.round(el.getBoundingClientRect().height)}px`,
       );
     apply();
-    const ro = new ResizeObserver(apply);
+    const ro = new ResizeObserver(() => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(apply);
+    });
     ro.observe(el);
     return () => {
+      cancelAnimationFrame(raf);
       ro.disconnect();
       document.documentElement.style.setProperty("--tt24-bottom-stack", "0px");
     };
@@ -91,10 +96,16 @@ export function WhatsappFab() {
     }
   };
 
-  const message =
-    typeof window !== "undefined"
-      ? `Hi! I'm looking at ${window.location.pathname === "/" ? "your Lisbon tuk-tuk tours" : `https://tuktuk24lisbon.com${window.location.pathname}`} and have a question.`
-      : "Hi! I have a question about your Lisbon tuk-tuk tours.";
+  const [message, setMessage] = useState(
+    "Hi! I have a question about your Lisbon tuk-tuk tours.",
+  );
+  // Set after mount so server and client markup match.
+  useEffect(() => {
+    const path = window.location.pathname;
+    setMessage(
+      `Hi! I'm looking at ${path === "/" ? "your Lisbon tuk-tuk tours" : `https://tuktuk24lisbon.com${path}`} and have a question.`,
+    );
+  }, []);
 
   return (
     <>
