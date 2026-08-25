@@ -12,14 +12,18 @@ import caboImg from "@/assets/tour-caboroca.jpg";
 import vanImg from "@/assets/fleet-van.jpg";
 import { Nav } from "@/components/site/Nav";
 import { Footer } from "@/components/site/Footer";
-import { WhatsappFab } from "@/components/site/Whatsapp";
+import { WhatsappFab, WhatsappInline } from "@/components/site/Whatsapp";
 import { BookingModal } from "@/components/site/BookingModal";
 import { TestimonialsSection } from "@/components/site/TestimonialsSection";
+import { TrustStrip } from "@/components/site/TrustStrip";
+import { StickyBookBar } from "@/components/site/StickyBookBar";
 import { useBlogPosts, useTours, tourPricing, type Tour } from "@/lib/cms";
+import { trackBookingCtaClick } from "@/lib/analytics";
 import { subscribeToNewsletter } from "@/lib/subscribers.functions";
 import aboutAsset from "@/assets/about-tuktuk-fleet.jpg.asset.json";
 const aboutImg = aboutAsset.url;
 import { useSiteBrand } from "@/lib/brand";
+
 
 // Hero now uses the tuk-tuk/flowers image (per user request 2026-06-16)
 const lockedHeroImg = `${aboutImg}?v=locked-20260616-hero`;
@@ -59,16 +63,18 @@ function Index() {
     <div className="min-h-screen bg-paper text-ink overflow-x-clip">
       <Nav overlay />
       <Hero />
-      <AboutSection />
-      <FlashDeals />
-      <WhyTravel />
       <PopularTours onBook={setBookingTour} />
-      <Destinations />
+      <TrustStrip />
       <TestimonialsSection />
+      <WhyTravel />
+      <Destinations />
+      <AboutSection />
       <Gallery />
       <TravelTipsAndSignup />
       <Footer />
       <WhatsappFab />
+      <StickyBookBar />
+
       <BookingModal
         tour={bookingTour}
         open={!!bookingTour}
@@ -84,7 +90,11 @@ const DEFAULT_HERO_LABELS = ["Alfama", "Belém", "Sintra", "Cascais"];
 
 function Hero() {
   const { heroImageUrl, heroSlides } = useSiteBrand();
+  const { data: allTours = [] } = useTours();
+  const prices = allTours.map((t) => tourPricing(t).current).filter((n) => n > 0);
+  const fromPrice = prices.length ? Math.min(...prices) : null;
   const fallback = heroImageUrl || lockedHeroImg;
+
 
   const slides =
     heroSlides.length > 0
@@ -170,11 +180,43 @@ function Hero() {
           <p className="mt-4 md:mt-5 max-w-xl text-white/85 text-[14px] md:text-[16px] leading-relaxed px-4">
             Private tuk-tuk tours with local drivers. Small groups, flat prices, your pace.
           </p>
+
+          <div className="mt-6 flex flex-col sm:flex-row items-center gap-3">
+            <Link
+              to="/tours"
+              onClick={() => trackBookingCtaClick("home_hero")}
+              className="inline-flex items-center justify-center px-8 py-4 rounded-full bg-gold text-white text-[12px] font-semibold uppercase tracking-widest shadow-[0_10px_26px_rgba(43,182,247,0.4)] hover:bg-white hover:text-ink transition-colors"
+            >
+              Book a tour →
+            </Link>
+            <WhatsappInline
+              location="home_hero"
+              message="Hi Tuk Tuk 24! I'd like to book a private tuk-tuk tour in Lisbon."
+              className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full border border-[#25D366] text-white text-[12px] font-semibold uppercase tracking-widest hover:bg-[#25D366]/20 transition-colors"
+            >
+              WhatsApp us
+            </WhatsappInline>
+          </div>
+
+          <ul className="mt-5 flex flex-wrap justify-center gap-x-5 gap-y-1.5 text-[12px] text-white/80 px-4">
+            {[
+              fromPrice ? `From €${fromPrice} per person` : "Private groups only",
+              "Free cancellation up to 24h",
+              "Instant confirmation",
+              "Licensed local drivers",
+            ].map((b) => (
+              <li key={b} className="flex items-center gap-1.5">
+                <span className="text-gold">✓</span>
+                {b}
+              </li>
+            ))}
+          </ul>
         </div>
+
 
         {/* Slide index */}
         {count > 1 && (
-          <div className="absolute bottom-[100px] md:bottom-[112px] left-1/2 -translate-x-1/2 flex items-center gap-5">
+          <div className="absolute bottom-[100px] md:bottom-[112px] left-1/2 -translate-x-1/2 hidden md:flex items-center gap-5">
             {slides.map((s, i) => (
               <button
                 key={`dot-${s.label}-${i}`}
@@ -306,7 +348,6 @@ function SearchField({
 /* ============================== ABOUT ============================== */
 
 function AboutSection() {
-
   const facts = [
     { k: "Group size", v: "Private only — max 6 per tuk-tuk" },
     { k: "Languages", v: "English · Portuguese · Spanish" },
@@ -321,21 +362,47 @@ function AboutSection() {
   ];
 
   return (
-    <section className="container-x py-16 md:py-28">
-      <div className="grid lg:grid-cols-[minmax(0,1fr)_minmax(0,0.85fr)] gap-12 lg:gap-16 items-start">
-        {/* Left column */}
-        <div className="max-w-2xl">
-          <p className="eyebrow text-gold mb-4">About us</p>
-          <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-ink leading-tight mb-6">
-            A small tuk-tuk crew, born and raised in Lisbon.
-          </h2>
-          <p className="text-body leading-relaxed mb-8">
-            We're a family-run team of Lisboeta drivers and guides. No coach buses, no scripted
-            headsets — just our tuk-tuks, the neighborhoods we grew up in, and the time to show
-            them properly. Tell us what you like and we'll build the route around it.
-          </p>
+    <section className="bg-white border-y border-ink/10">
+      <div className="container-x py-14 md:py-16">
+        <div className="grid lg:grid-cols-3 gap-10 lg:gap-14 items-start">
+          {steps.map((s) => (
+            <div key={s.n}>
+              <span className="font-display text-xl text-gold">{s.n}</span>
+              <h3 className="font-display text-lg font-bold text-ink mt-1 mb-1.5">{s.t}</h3>
+              <p className="text-[14px] text-body leading-relaxed">{s.d}</p>
+            </div>
+          ))}
+        </div>
 
-          <dl className="divide-y divide-ink/10 border-y border-ink/10 mb-8">
+        <div className="mt-12 grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-10 items-start">
+          <div>
+            <p className="eyebrow text-gold mb-3">About us</p>
+            <h2 className="font-display text-2xl md:text-3xl font-bold text-ink leading-tight mb-4">
+              A small tuk-tuk crew, born and raised in Lisbon.
+            </h2>
+            <p className="text-body leading-relaxed text-[15px] mb-6">
+              Family-run drivers and guides from Lisbon. No coach buses, no scripted headsets — just
+              our tuk-tuks and the neighbourhoods we grew up in. Tell us what you like and we build
+              the route around it.
+            </p>
+            <div className="flex flex-wrap items-center gap-3">
+              <Link
+                to="/tours"
+                onClick={() => trackBookingCtaClick("home_about")}
+                className="inline-flex items-center px-7 py-3.5 rounded-full bg-gold text-white text-[12px] font-semibold uppercase tracking-widest hover:bg-ink transition-all"
+              >
+                See our tours
+              </Link>
+              <Link
+                to="/about"
+                className="inline-flex items-center px-7 py-3.5 rounded-full border border-ink/15 text-ink text-[12px] font-semibold uppercase tracking-widest hover:border-ink/40 transition-all"
+              >
+                More about us
+              </Link>
+            </div>
+          </div>
+
+          <dl className="divide-y divide-ink/10 border-y border-ink/10">
             {facts.map((f) => (
               <div key={f.k} className="flex items-baseline justify-between gap-6 py-3">
                 <dt className="text-[11px] uppercase tracking-widest text-body/70 shrink-0">{f.k}</dt>
@@ -343,123 +410,17 @@ function AboutSection() {
               </div>
             ))}
           </dl>
-
-          <div className="flex flex-wrap items-center gap-4">
-            <Link
-              to="/tours"
-              className="inline-flex items-center px-7 py-4 rounded-full bg-gold text-white text-[12px] font-semibold uppercase tracking-widest shadow-[0_8px_20px_rgba(43,182,247,0.35)] hover:bg-ink hover:shadow-[0_8px_20px_rgba(30,58,95,0.35)] transition-all"
-            >
-              See our tours
-            </Link>
-            <Link
-              to="/about"
-              className="inline-flex items-center px-7 py-4 rounded-full border border-ink/15 text-ink text-[12px] font-semibold uppercase tracking-widest hover:border-ink/40 transition-all"
-            >
-              More about us
-            </Link>
-          </div>
-        </div>
-
-        {/* Right column */}
-        <div className="w-full grid gap-6">
-          <div className="rounded-2xl bg-white border border-ink/10 shadow-[0_18px_40px_rgba(30,58,95,0.12)] px-6 py-5 grid grid-cols-3 gap-4 text-center">
-            {[
-              { n: "7", l: "Neighbourhoods" },
-              { n: "100%", l: "Electric fleet" },
-              { n: "24h", l: "Free cancellation" },
-            ].map((s) => (
-              <div key={s.l}>
-                <p className="font-display text-xl sm:text-2xl font-bold text-ink leading-none">{s.n}</p>
-                <p className="text-[10px] uppercase tracking-widest text-body/70 mt-1.5 leading-tight">{s.l}</p>
-              </div>
-            ))}
-          </div>
-
-          <div className="grid sm:grid-cols-3 lg:grid-cols-1 gap-4">
-            {steps.map((s) => (
-              <div key={s.n} className="rounded-2xl border border-ink/10 bg-cloud/40 p-5">
-                <span className="font-display text-2xl text-gold">{s.n}</span>
-                <h3 className="font-display text-lg font-bold text-ink mt-2 mb-1.5">{s.t}</h3>
-                <p className="text-[14px] text-body leading-relaxed">{s.d}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </section>
-
-  );
-}
-
-
-/* ============================== FLASH DEALS ============================== */
-
-function FlashDeals() {
-  const { data: tours = [] } = useTours();
-  const deals = tours.slice(0, 4);
-  return (
-    <section className="bg-cloud/60 py-20 md:py-24">
-      <div className="container-x">
-        <div className="flex items-end justify-between mb-12">
-          <div>
-            <h2 className="font-display text-3xl md:text-4xl font-bold text-ink mb-2">
-              Last-minute spots
-            </h2>
-            <p className="text-body text-sm">Tours leaving soon with a couple of seats left.</p>
-          </div>
-          <Link to="/tours" className="text-[12px] font-semibold uppercase tracking-widest text-gold hover:text-ink transition">
-            View All ›
-          </Link>
-        </div>
-
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {deals.map((t) => (
-            <FlashCard key={t.slug} tour={t} />
-          ))}
         </div>
       </div>
     </section>
   );
 }
 
-function FlashCard({ tour }: { tour: Tour }) {
-  const pricing = tourPricing(tour);
-  return (
-    <Link
-      to="/tours/$slug"
-      params={{ slug: tour.slug }}
-      className="group bg-white rounded-xl overflow-hidden shadow-[0_4px_20px_rgba(30,58,95,0.06)] hover:shadow-[0_20px_40px_rgba(30,58,95,0.12)] hover:-translate-y-1 transition-all duration-500"
-    >
-      <div className="relative aspect-[4/3] overflow-hidden">
-        <img
-          src={tour.image}
-          alt={tour.title}
-          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-        />
-        <span className="absolute top-3 left-3 bg-gold text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-sm shadow">
-          €{pricing.current} <span className="normal-case tracking-normal font-semibold">pp</span>
-        </span>
-        {pricing.onSale && (
-          <span className="absolute top-3 right-3 bg-red-600 text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-sm shadow">
-            −{pricing.discountPct}%
-          </span>
-        )}
-      </div>
-      <div className="p-5">
-        <h3 className="font-display font-semibold text-ink text-[15px] leading-snug mb-2 group-hover:text-gold transition-colors">
-          {tour.title}
-        </h3>
-        <div className="flex items-center gap-1 text-gold text-[11px] mb-3">
-          <span className="text-[11px] text-body/70">Private group</span>
-        </div>
-        <div className="flex items-center justify-between text-[11px] text-body">
-          <span className="flex items-center gap-1"><PinIco /> Lisboa</span>
-          <span>{tour.duration}</span>
-        </div>
-      </div>
-    </Link>
-  );
-}
+
+
+/* ============================== (flash deals merged into Popular tours) ============================== */
+
+
 
 /* ============================== WHY TRAVEL ============================== */
 
@@ -482,37 +443,17 @@ function WhyTravel() {
     },
   ];
   return (
-    <section className="container-x py-20 md:py-28 relative">
-      <svg
-        className="absolute left-0 right-0 top-1/2 -translate-y-1/2 w-full hidden md:block"
-        height="120"
-        viewBox="0 0 1200 120"
-        fill="none"
-      >
-        <path
-          d="M0 80 Q 300 0, 600 80 T 1200 80"
-          stroke="#2bb6f7"
-          strokeWidth="1"
-          strokeDasharray="2 6"
-          opacity="0.4"
-        />
-      </svg>
-
-      <div className="text-center mb-14">
-        <p className="eyebrow text-gold mb-3">Why ride with us</p>
-        <h2 className="font-display text-3xl md:text-4xl font-bold text-ink">
-          Small tuk-tuks, big city, no rush.
-        </h2>
-      </div>
-
-      <div className="relative grid md:grid-cols-3 gap-8">
+    <section className="container-x py-12 md:py-16">
+      <div className="grid md:grid-cols-3 gap-6 md:gap-8">
         {features.map((f) => (
-          <div key={f.title} className="text-center px-4">
-            <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-white border-2 border-gold/20 flex items-center justify-center text-gold shadow-[0_10px_30px_rgba(30,58,95,0.08)]">
+          <div key={f.title} className="flex gap-4 items-start">
+            <div className="w-12 h-12 shrink-0 rounded-full bg-white border border-gold/25 flex items-center justify-center text-gold [&_svg]:w-6 [&_svg]:h-6">
               {f.icon}
             </div>
-            <h3 className="font-display text-xl font-semibold text-ink mb-3">{f.title}</h3>
-            <p className="text-body text-sm leading-relaxed max-w-xs mx-auto">{f.body}</p>
+            <div>
+              <h3 className="font-display text-[17px] font-semibold text-ink mb-1">{f.title}</h3>
+              <p className="text-body text-[13px] leading-relaxed">{f.body}</p>
+            </div>
           </div>
         ))}
       </div>
@@ -520,25 +461,40 @@ function WhyTravel() {
   );
 }
 
+
 /* ============================== POPULAR TOURS ============================== */
 
 function PopularTours({ onBook }: { onBook: (t: Tour) => void }) {
   const { data: tours = [] } = useTours();
+  const { offerBar } = useSiteBrand();
 
   return (
-    <section className="bg-cloud/60 py-20 md:py-28">
+    <section className="bg-cloud/60 py-14 md:py-20">
       <div className="container-x">
-        <div className="flex items-end justify-between mb-12">
+        <div className="flex flex-wrap items-end justify-between gap-4 mb-8">
           <div>
             <h2 className="font-display text-3xl md:text-4xl font-bold text-ink mb-2">
               Our most-booked tours
             </h2>
-            <p className="text-body text-sm">The routes travelers keep asking us to run.</p>
+            <p className="text-body text-sm">
+              Private groups, per-person prices, free cancellation up to 24h before.
+            </p>
           </div>
           <Link to="/tours" className="text-[12px] font-semibold uppercase tracking-widest text-gold hover:text-ink transition">
             View All ›
           </Link>
         </div>
+
+        {offerBar.enabled && offerBar.code && (
+          <div className="mb-8 rounded-xl border border-gold/30 bg-white px-5 py-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-[13px]">
+            <span className="text-ink font-semibold">Book direct and save</span>
+            <span className="text-body">use code</span>
+            <span className="font-mono tracking-widest text-gold border border-gold/40 rounded-[2px] px-2 py-0.5">
+              {offerBar.code}
+            </span>
+            <span className="text-body">at checkout.</span>
+          </div>
+        )}
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {tours.slice(0, 6).map((t) => (
@@ -549,6 +505,7 @@ function PopularTours({ onBook }: { onBook: (t: Tour) => void }) {
     </section>
   );
 }
+
 
 function PopularCard({ tour, onBook }: { tour: Tour; onBook: () => void }) {
   const pricing = tourPricing(tour);
@@ -573,9 +530,10 @@ function PopularCard({ tour, onBook }: { tour: Tour; onBook: () => void }) {
         </h3>
         <p className="text-[11px] text-body/70 mb-4">Private group · English & Portuguese</p>
         <div className="flex items-center gap-4 text-[11px] text-body mb-5 pb-5 border-b border-border">
-          <span className="flex items-center gap-1.5"><PinIco /> Portugal</span>
+          <span className="flex items-center gap-1.5"><PinIco /> {tour.category || "Lisboa"}</span>
           <span className="flex items-center gap-1.5"><ClockIco /> {tour.duration}</span>
-          <span className="flex items-center gap-1.5"><UserIco /> {tour.featured ? "Private" : "2+ pax"}</span>
+          <span className="flex items-center gap-1.5"><UserIco /> Private · max 6</span>
+
         </div>
         <div className="flex items-center justify-between">
           <div>
