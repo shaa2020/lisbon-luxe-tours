@@ -37,6 +37,20 @@ type HeroSlideRow = { label: string; image_url: string | null };
 const input =
   "w-full rounded-md border border-border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary";
 const card = "rounded-xl border border-border bg-card p-5 space-y-4";
+function toLocalInput(v: string | null | undefined) {
+  if (!v) return "";
+  const d = new Date(v);
+  if (Number.isNaN(d.getTime())) return "";
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+function fromLocalInput(v: string) {
+  if (!v) return null;
+  const d = new Date(v);
+  return Number.isNaN(d.getTime()) ? null : d.toISOString();
+}
+
 const btn = "rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground disabled:opacity-50";
 
 function AdminSettings() {
@@ -80,6 +94,15 @@ function AdminSettings() {
     offer_bar_enabled: false,
     offer_bar_text: "Book direct and save",
     offer_bar_code: "",
+    promo_banner_enabled: false,
+    promo_banner_headline: "",
+    promo_banner_subtext: "",
+    promo_banner_code: "",
+    promo_banner_cta_label: "See tours",
+    promo_banner_cta_url: "/tours",
+    promo_banner_theme: "gold",
+    promo_banner_starts_at: "",
+    promo_banner_ends_at: "",
     whatsapp_reply_line: "We usually reply within minutes",
     google_review_url: "",
     group_discount_enabled: true,
@@ -113,6 +136,15 @@ function AdminSettings() {
       offer_bar_enabled: d.offer_bar_enabled === true,
       offer_bar_text: d.offer_bar_text ?? "Book direct and save",
       offer_bar_code: d.offer_bar_code ?? "",
+      promo_banner_enabled: d.promo_banner_enabled === true,
+      promo_banner_headline: d.promo_banner_headline ?? "",
+      promo_banner_subtext: d.promo_banner_subtext ?? "",
+      promo_banner_code: d.promo_banner_code ?? "",
+      promo_banner_cta_label: d.promo_banner_cta_label ?? "See tours",
+      promo_banner_cta_url: d.promo_banner_cta_url ?? "/tours",
+      promo_banner_theme: d.promo_banner_theme ?? "gold",
+      promo_banner_starts_at: toLocalInput(d.promo_banner_starts_at),
+      promo_banner_ends_at: toLocalInput(d.promo_banner_ends_at),
       whatsapp_reply_line: d.whatsapp_reply_line ?? "We usually reply within minutes",
       google_review_url: d.google_review_url ?? "",
       group_discount_enabled: d.group_discount_enabled !== false,
@@ -138,7 +170,12 @@ function AdminSettings() {
 
   const saveBiz = async () => {
     setSavingBiz(true);
-    const { error } = await supabase.from("site_settings").upsert({ id: true, ...biz } as any);
+    const payload = {
+      ...biz,
+      promo_banner_starts_at: fromLocalInput(biz.promo_banner_starts_at),
+      promo_banner_ends_at: fromLocalInput(biz.promo_banner_ends_at),
+    };
+    const { error } = await supabase.from("site_settings").upsert({ id: true, ...payload } as any);
     setSavingBiz(false);
     if (error) return toast.error(error.message);
     toast.success("Settings saved");
