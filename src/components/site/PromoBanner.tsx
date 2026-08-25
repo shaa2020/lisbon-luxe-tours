@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { X, Sparkles } from "lucide-react";
+import { X } from "lucide-react";
 import { useSiteBrand, isPromoBannerLive, type PromoBanner as PromoBannerData } from "@/lib/brand";
 import { trackEvent } from "@/lib/analytics";
 
