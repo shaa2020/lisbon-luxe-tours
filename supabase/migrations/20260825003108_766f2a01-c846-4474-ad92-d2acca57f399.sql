@@ -1,0 +1,2 @@
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.ops_customers, public.ops_tours, public.ops_staff, public.ops_vehicles, public.ops_partners, public.ops_bookings, public.ops_payments, public.ops_booking_activities, public.ops_change_requests, public.ops_settings TO authenticated;
+GRANT ALL ON public.ops_customers, public.ops_tours, public.ops_staff, public.ops_vehicles, public.ops_partners, public.ops_bookings, public.ops_payments, public.ops_booking_activities, public.ops_change_requests, public.ops_settings TO service_role;
