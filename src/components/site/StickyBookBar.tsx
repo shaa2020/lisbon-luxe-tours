@@ -8,14 +8,26 @@ import { WhatsappIcon, whatsappHref } from "@/components/site/Whatsapp";
 /** Mobile-only sticky booking bar; appears once the visitor scrolls past the hero. */
 export function StickyBookBar() {
   const { data: tours = [] } = useTours();
-  const { business, offerBar } = useSiteBrand();
+  const { business } = useSiteBrand();
   const [show, setShow] = useState(false);
+  const [offset, setOffset] = useState(0);
 
   useEffect(() => {
     const onScroll = () => setShow(window.scrollY > 520);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  // Sit exactly above whatever promo strips are currently visible.
+  useEffect(() => {
+    const el = document.getElementById("tt24-bottom-stack");
+    if (!el) return;
+    const measure = () => setOffset(el.getBoundingClientRect().height);
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
   }, []);
 
   const prices = tours.map((t) => tourPricing(t).current).filter((n) => n > 0);
