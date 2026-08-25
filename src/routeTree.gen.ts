@@ -61,6 +61,7 @@ import { Route as AdminToursIdRouteImport } from './routes/admin.tours.$id'
 import { Route as ApiPublicBookingsRouteImport } from './routes/api/public/bookings'
 import { Route as LisbonGuideCategorySlugRouteImport } from './routes/lisbon-guide.category.$slug'
 import { Route as AdminOpsJobsIndexRouteImport } from './routes/admin.ops.jobs.index'
+import { Route as AdminOpsJobsIdRouteImport } from './routes/admin.ops.jobs.$id'
 import { Route as ApiPublicPaymentsMollieRouteImport } from './routes/api/public/payments/mollie'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
@@ -325,6 +326,11 @@ const AdminOpsJobsIndexRoute = AdminOpsJobsIndexRouteImport.update({
   path: '/admin/ops/jobs/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminOpsJobsIdRoute = AdminOpsJobsIdRouteImport.update({
+  id: '/admin/ops/jobs/$id',
+  path: '/admin/ops/jobs/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicPaymentsMollieRoute = ApiPublicPaymentsMollieRouteImport.update({
   id: '/api/public/payments/mollie',
   path: '/api/public/payments/mollie',
@@ -395,6 +401,7 @@ export interface FileRoutesByFullPath {
   '/admin/blog/': typeof AdminBlogIndexRoute
   '/admin/guide/': typeof AdminGuideIndexRoute
   '/admin/tours/': typeof AdminToursIndexRoute
+  '/admin/ops/jobs/$id': typeof AdminOpsJobsIdRoute
   '/api/public/payments/mollie': typeof ApiPublicPaymentsMollieRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
@@ -452,6 +459,7 @@ export interface FileRoutesByTo {
   '/admin/blog': typeof AdminBlogIndexRoute
   '/admin/guide': typeof AdminGuideIndexRoute
   '/admin/tours': typeof AdminToursIndexRoute
+  '/admin/ops/jobs/$id': typeof AdminOpsJobsIdRoute
   '/api/public/payments/mollie': typeof ApiPublicPaymentsMollieRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
@@ -510,6 +518,7 @@ export interface FileRoutesById {
   '/admin/blog/': typeof AdminBlogIndexRoute
   '/admin/guide/': typeof AdminGuideIndexRoute
   '/admin/tours/': typeof AdminToursIndexRoute
+  '/admin/ops/jobs/$id': typeof AdminOpsJobsIdRoute
   '/api/public/payments/mollie': typeof ApiPublicPaymentsMollieRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
@@ -569,6 +578,7 @@ export interface FileRouteTypes {
     | '/admin/blog/'
     | '/admin/guide/'
     | '/admin/tours/'
+    | '/admin/ops/jobs/$id'
     | '/api/public/payments/mollie'
     | '/api/public/payments/webhook'
     | '/lovable/email/queue/process'
@@ -626,6 +636,7 @@ export interface FileRouteTypes {
     | '/admin/blog'
     | '/admin/guide'
     | '/admin/tours'
+    | '/admin/ops/jobs/$id'
     | '/api/public/payments/mollie'
     | '/api/public/payments/webhook'
     | '/lovable/email/queue/process'
@@ -683,6 +694,7 @@ export interface FileRouteTypes {
     | '/admin/blog/'
     | '/admin/guide/'
     | '/admin/tours/'
+    | '/admin/ops/jobs/$id'
     | '/api/public/payments/mollie'
     | '/api/public/payments/webhook'
     | '/lovable/email/queue/process'
@@ -741,6 +753,7 @@ export interface RootRouteChildren {
   AdminBlogIndexRoute: typeof AdminBlogIndexRoute
   AdminGuideIndexRoute: typeof AdminGuideIndexRoute
   AdminToursIndexRoute: typeof AdminToursIndexRoute
+  AdminOpsJobsIdRoute: typeof AdminOpsJobsIdRoute
   ApiPublicPaymentsMollieRoute: typeof ApiPublicPaymentsMollieRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
   LovableEmailQueueProcessRoute: typeof LovableEmailQueueProcessRoute
@@ -1113,6 +1126,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminOpsJobsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/ops/jobs/$id': {
+      id: '/admin/ops/jobs/$id'
+      path: '/admin/ops/jobs/$id'
+      fullPath: '/admin/ops/jobs/$id'
+      preLoaderRoute: typeof AdminOpsJobsIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/payments/mollie': {
       id: '/api/public/payments/mollie'
       path: '/api/public/payments/mollie'
@@ -1189,6 +1209,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminBlogIndexRoute: AdminBlogIndexRoute,
   AdminGuideIndexRoute: AdminGuideIndexRoute,
   AdminToursIndexRoute: AdminToursIndexRoute,
+  AdminOpsJobsIdRoute: AdminOpsJobsIdRoute,
   ApiPublicPaymentsMollieRoute: ApiPublicPaymentsMollieRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
   LovableEmailQueueProcessRoute: LovableEmailQueueProcessRoute,
