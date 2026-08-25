@@ -31,6 +31,26 @@ export function StickyBookBar() {
     return () => ro.disconnect();
   }, []);
 
+  // Publish own height so the page reserves space instead of hiding content behind it.
+  useEffect(() => {
+    const el = barRef.current;
+    const setVar = (v: string) =>
+      document.documentElement.style.setProperty("--tt24-sticky-bar", v);
+    if (!el) {
+      setVar("0px");
+      return;
+    }
+    const apply = () => setVar(`${Math.round(el.getBoundingClientRect().height)}px`);
+    apply();
+    const ro = new ResizeObserver(apply);
+    ro.observe(el);
+    return () => {
+      ro.disconnect();
+      setVar("0px");
+    };
+  }, [show]);
+
+
   const prices = tours.map((t) => tourPricing(t).current).filter((n) => n > 0);
   const from = prices.length ? Math.min(...prices) : null;
 
