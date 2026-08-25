@@ -88,7 +88,11 @@ const DEFAULT_HERO_LABELS = ["Alfama", "Belém", "Sintra", "Cascais"];
 
 function Hero() {
   const { heroImageUrl, heroSlides } = useSiteBrand();
+  const { data: allTours = [] } = useTours();
+  const prices = allTours.map((t) => tourPricing(t).current).filter((n) => n > 0);
+  const fromPrice = prices.length ? Math.min(...prices) : null;
   const fallback = heroImageUrl || lockedHeroImg;
+
 
   const slides =
     heroSlides.length > 0
