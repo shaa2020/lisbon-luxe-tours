@@ -10,11 +10,13 @@ export const Route = createFileRoute("/api/public/cron/booking-emails")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const secret = process.env["CRON_SECRET"];
-        if (!secret) return new Response("Not configured", { status: 503 });
-        if (request.headers.get("x-cron-secret") !== secret) {
-          return new Response("Unauthorized", { status: 401 });
-        }
+        const cronSecret = process.env["CRON_SECRET"];
+        const serviceKey = process.env["SUPABASE_SERVICE_ROLE_KEY"];
+        const header = request.headers.get("x-cron-secret");
+        const bearer = (request.headers.get("Authorization") || "").replace(/^Bearer\s+/i, "");
+        const authorized =
+          (!!cronSecret && header === cronSecret) || (!!serviceKey && bearer === serviceKey);
+        if (!authorized) return new Response("Unauthorized", { status: 401 });
 
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
         const { sendBookingEmail, BOOKING_SELECT } = await import("@/lib/bookings-admin.server");
