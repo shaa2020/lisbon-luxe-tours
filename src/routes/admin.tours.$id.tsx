@@ -253,7 +253,18 @@ function TourEditPage() {
             {isNew ? "New tour" : form.title || "Edit tour"}
           </h1>
         </div>
+        {!aiOpen && (
+          <button
+            type="button"
+            onClick={() => setAiOpen(true)}
+            className="rounded-md border border-primary/40 bg-primary/10 text-primary px-4 py-2 text-sm font-semibold hover:bg-primary/15 inline-flex items-center gap-2"
+          >
+            <Sparkles className="w-4 h-4" /> Create Tour with AI
+          </button>
+        )}
       </div>
+
+      {aiOpen && <AiTourBuilder onImport={importDraft} onClose={() => setAiOpen(false)} />}
 
       <form onSubmit={save} className="grid lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-5">
