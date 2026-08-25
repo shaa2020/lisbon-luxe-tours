@@ -8,14 +8,26 @@ import { WhatsappIcon, whatsappHref } from "@/components/site/Whatsapp";
 /** Mobile-only sticky booking bar; appears once the visitor scrolls past the hero. */
 export function StickyBookBar() {
   const { data: tours = [] } = useTours();
-  const { business, offerBar } = useSiteBrand();
+  const { business } = useSiteBrand();
   const [show, setShow] = useState(false);
+  const [offset, setOffset] = useState(0);
 
   useEffect(() => {
     const onScroll = () => setShow(window.scrollY > 520);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  // Sit exactly above whatever promo strips are currently visible.
+  useEffect(() => {
+    const el = document.getElementById("tt24-bottom-stack");
+    if (!el) return;
+    const measure = () => setOffset(el.getBoundingClientRect().height);
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
   }, []);
 
   const prices = tours.map((t) => tourPricing(t).current).filter((n) => n > 0);
@@ -26,7 +38,7 @@ export function StickyBookBar() {
   return (
     <div
       className="lg:hidden fixed inset-x-0 z-40 border-t border-ink/10 bg-white/95 backdrop-blur shadow-[0_-8px_24px_rgba(30,58,95,0.12)]"
-      style={{ bottom: offerBar.enabled ? 46 : 0 }}
+      style={{ bottom: offset }}
     >
       <div className="flex items-center gap-3 px-4 py-2.5">
         <div className="min-w-0">

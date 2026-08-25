@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import { X, Tag } from "lucide-react";
-import { useSiteBrand } from "@/lib/brand";
+import { useSiteBrand, isPromoBannerLive } from "@/lib/brand";
 import { trackEvent } from "@/lib/analytics";
 
 const KEY = "tt24_offer_bar_dismissed";
 
 /** Slim, dismissible book-direct offer strip. Managed from Admin → Settings → Marketing. */
 export function OfferBar() {
-  const { offerBar } = useSiteBrand();
+  const { offerBar, promoBanner } = useSiteBrand();
   const [visible, setVisible] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -18,7 +18,8 @@ export function OfferBar() {
     return () => clearTimeout(t);
   }, []);
 
-  if (!offerBar.enabled || !visible) return null;
+  // Never stack two promo strips: the richer promo banner wins when it's live.
+  if (!offerBar.enabled || !visible || isPromoBannerLive(promoBanner)) return null;
 
   const dismiss = () => {
     setVisible(false);
@@ -30,7 +31,7 @@ export function OfferBar() {
   };
 
   return (
-    <div className="fixed bottom-0 inset-x-0 z-30 bg-ink text-white shadow-[0_-8px_30px_rgba(30,58,95,0.25)]">
+    <div className="relative w-full bg-ink text-white shadow-[0_-8px_30px_rgba(30,58,95,0.25)]">
       <div className="container-x flex items-center justify-center gap-3 py-2.5 pr-8 text-center">
         <Tag className="w-4 h-4 text-gold shrink-0" />
         <p className="text-[12px] sm:text-[13px] leading-snug">
