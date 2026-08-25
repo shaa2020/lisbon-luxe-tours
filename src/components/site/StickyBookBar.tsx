@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useTours, tourPricing } from "@/lib/cms";
 import { useSiteBrand } from "@/lib/brand";
