@@ -117,7 +117,7 @@ function Hero() {
 
   return (
     <section className="relative">
-      <div className="relative h-[460px] sm:h-[540px] md:h-[760px] overflow-hidden">
+      <div className="relative min-h-[520px] sm:min-h-[560px] md:h-[760px] overflow-hidden">
         {slides.map((s, i) => (
           <img
             key={`${s.label}-${i}`}
@@ -157,7 +157,7 @@ function Hero() {
         )}
 
         {/* Centered headline */}
-        <div className="relative h-full container-x flex flex-col items-center justify-center text-center pt-[68px] md:pt-[110px] pb-28 md:pb-32">
+        <div className="relative md:h-full container-x flex flex-col items-center justify-center text-center pt-[110px] md:pt-[110px] pb-14 md:pb-32">
           <h1 className="flex flex-col items-center">
             <span
               className="text-white text-3xl sm:text-4xl md:text-6xl -mb-3 sm:-mb-5 md:-mb-8 font-normal"
@@ -168,7 +168,7 @@ function Hero() {
             <span
               key={current.label}
               className="block font-sans font-bold uppercase text-white leading-[0.92] tracking-tight animate-[fade-up_0.8s_var(--ease-out-expo)_both]"
-              style={{ fontSize: "clamp(46px, 12vw, 170px)" }}
+              style={{ fontSize: "clamp(40px, 11vw, 170px)" }}
             >
               {current.label}
             </span>
