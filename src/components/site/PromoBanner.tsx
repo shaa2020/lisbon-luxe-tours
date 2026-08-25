@@ -79,7 +79,6 @@ export function PromoBanner() {
   return (
     <div className={`w-full shadow-[0_-10px_34px_rgba(30,58,95,0.28)] ${t.wrap}`}>
       <div className="container-x relative flex flex-wrap items-center justify-center gap-x-4 gap-y-2 py-3 pr-9 text-center">
-        <Sparkles className="hidden sm:block w-4 h-4 shrink-0 opacity-90" />
         <div className="min-w-0">
           <p className="text-[13px] sm:text-[14px] font-semibold leading-snug">{promoBanner.headline}</p>
           {promoBanner.subtext && (
