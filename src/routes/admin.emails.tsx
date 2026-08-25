@@ -69,7 +69,11 @@ function EmailsAdmin() {
   });
 
   const toggleAuto = async (key: "auto_reminder_enabled" | "auto_review_request_enabled", value: boolean) => {
-    const { error } = await supabase.from("site_settings").update({ [key]: value }).eq("id", true);
+    const patch =
+      key === "auto_reminder_enabled"
+        ? { auto_reminder_enabled: value }
+        : { auto_review_request_enabled: value };
+    const { error } = await supabase.from("site_settings").update(patch).eq("id", true);
     if (error) return toast.error(error.message);
     toast.success("Saved");
     qc.invalidateQueries({ queryKey: ["admin-email-settings"] });
