@@ -1,0 +1,1 @@
+UPDATE public.site_settings SET contact_email = 'hello@tuktuk24lisbon.com' WHERE id = true;

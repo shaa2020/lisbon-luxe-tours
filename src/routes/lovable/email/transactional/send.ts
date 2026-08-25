@@ -3,15 +3,13 @@ import { render } from '@react-email/render'
 import { createClient } from '@supabase/supabase-js'
 import { createFileRoute } from '@tanstack/react-router'
 import { TEMPLATES } from '@/lib/email-templates/registry'
+import { fromHeader } from '@/lib/email/mailboxes'
 
 // Configuration baked in at scaffold time
-const SITE_NAME = "Lisbon Luxe Tours"
+const SITE_NAME = "Tuk Tuk 24"
 // SENDER_DOMAIN is the verified sender subdomain FQDN (e.g., "notify.example.com").
 // It MUST match the subdomain delegated to Lovable's nameservers. NEVER use the root domain.
 const SENDER_DOMAIN = "notify.tuktuk24lisbon.com"
-// FROM_DOMAIN is the domain shown in the From: header (e.g., "example.com").
-// Can be the root domain when display_from_root is enabled — this is cosmetic only.
-const FROM_DOMAIN = "tuktuk24lisbon.com"
 
 function redactEmail(email: string | null | undefined): string {
   if (!email) return '***'
@@ -282,7 +280,7 @@ export const Route = createFileRoute("/lovable/email/transactional/send")({
           payload: {
             message_id: messageId,
             to: effectiveRecipient,
-            from: `${SITE_NAME} <noreply@${FROM_DOMAIN}>`,
+            from: fromHeader(SITE_NAME, templateName),
             sender_domain: SENDER_DOMAIN,
             subject: resolvedSubject,
             html,

@@ -1,10 +1,10 @@
 import * as React from "react";
 import { render } from "@react-email/render";
 import BookingNotice from "@/lib/email-templates/booking-notice";
+import { fromHeader } from "./mailboxes";
 
 const SITE_NAME = "Tuk Tuk 24";
 const SENDER_DOMAIN = "notify.tuktuk24lisbon.com";
-const FROM_DOMAIN = "tuktuk24lisbon.com";
 const SITE_URL = "https://tuktuk24lisbon.com";
 
 export type EmailRow = { label: string; value: string };
@@ -161,7 +161,7 @@ export async function sendBrandedEmail(
     payload: {
       message_id: messageId,
       to,
-      from: `${input.brandName || SITE_NAME} <noreply@${FROM_DOMAIN}>`,
+      from: fromHeader(input.brandName || SITE_NAME, input.label || "booking-notice"),
       sender_domain: SENDER_DOMAIN,
       subject: input.subject,
       html,
