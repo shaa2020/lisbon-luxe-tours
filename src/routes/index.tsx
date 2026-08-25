@@ -482,21 +482,35 @@ function WhyTravel() {
 
 function PopularTours({ onBook }: { onBook: (t: Tour) => void }) {
   const { data: tours = [] } = useTours();
+  const { offerBar } = useSiteBrand();
 
   return (
-    <section className="bg-cloud/60 py-20 md:py-28">
+    <section className="bg-cloud/60 py-14 md:py-20">
       <div className="container-x">
-        <div className="flex items-end justify-between mb-12">
+        <div className="flex flex-wrap items-end justify-between gap-4 mb-8">
           <div>
             <h2 className="font-display text-3xl md:text-4xl font-bold text-ink mb-2">
               Our most-booked tours
             </h2>
-            <p className="text-body text-sm">The routes travelers keep asking us to run.</p>
+            <p className="text-body text-sm">
+              Private groups, per-person prices, free cancellation up to 24h before.
+            </p>
           </div>
           <Link to="/tours" className="text-[12px] font-semibold uppercase tracking-widest text-gold hover:text-ink transition">
             View All ›
           </Link>
         </div>
+
+        {offerBar.enabled && offerBar.code && (
+          <div className="mb-8 rounded-xl border border-gold/30 bg-white px-5 py-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-[13px]">
+            <span className="text-ink font-semibold">Book direct and save</span>
+            <span className="text-body">use code</span>
+            <span className="font-mono tracking-widest text-gold border border-gold/40 rounded-[2px] px-2 py-0.5">
+              {offerBar.code}
+            </span>
+            <span className="text-body">at checkout.</span>
+          </div>
+        )}
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {tours.slice(0, 6).map((t) => (
@@ -507,6 +521,7 @@ function PopularTours({ onBook }: { onBook: (t: Tour) => void }) {
     </section>
   );
 }
+
 
 function PopularCard({ tour, onBook }: { tour: Tour; onBook: () => void }) {
   const pricing = tourPricing(tour);
