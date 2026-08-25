@@ -216,7 +216,7 @@ function Hero() {
 
         {/* Slide index */}
         {count > 1 && (
-          <div className="absolute bottom-[100px] md:bottom-[112px] left-1/2 -translate-x-1/2 flex items-center gap-5">
+          <div className="absolute bottom-[100px] md:bottom-[112px] left-1/2 -translate-x-1/2 hidden md:flex items-center gap-5">
             {slides.map((s, i) => (
               <button
                 key={`dot-${s.label}-${i}`}
