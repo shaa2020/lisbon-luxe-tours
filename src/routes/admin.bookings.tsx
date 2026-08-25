@@ -79,12 +79,14 @@ function BookingsInbox() {
   const [editAmount, setEditAmount] = useState<number | "">("");
   const [editNote, setEditNote] = useState("");
   const [generating, setGenerating] = useState(false);
+  const [sendingKey, setSendingKey] = useState<string | null>(null);
 
   const createCheckout = useServerFn(adminCreateModificationCheckout);
   const listMods = useServerFn(adminListModifications);
   const applyMod = useServerFn(adminApplyModification);
   const waiveMod = useServerFn(adminWaiveModification);
   const getPaymentUrl = useServerFn(getMolliePaymentUrl);
+  const sendBookingEmail = useServerFn(adminSendBookingEmail);
 
   const { data: bookings = [], isLoading } = useQuery({
     queryKey: ["admin-bookings"],
