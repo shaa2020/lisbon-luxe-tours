@@ -14,6 +14,8 @@ import {
   adminWaiveModification,
   getMolliePaymentUrl,
 } from "@/lib/booking-changes.functions";
+import { BookingCreateDialog } from "@/components/admin/BookingCreateDialog";
+import { BookingManagePanel } from "@/components/admin/BookingManagePanel";
 
 export const Route = createFileRoute("/admin/bookings")({
   component: BookingsInbox,
@@ -309,12 +311,15 @@ function BookingsInbox() {
 
   return (
     <AdminShell>
-      <div className="mb-8">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary mb-2">Inbox</p>
-        <h1 className="text-3xl font-display font-bold">Bookings</h1>
-        <p className="text-sm text-muted-foreground mt-1">
-          Reply on WhatsApp, confirm, and keep your pipeline tidy.
-        </p>
+      <div className="mb-8 flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary mb-2">Inbox</p>
+          <h1 className="text-3xl font-display font-bold">Bookings</h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            Add bookings from any source, edit them, and email your guests.
+          </p>
+        </div>
+        <BookingCreateDialog />
       </div>
 
       <BookingsCalendar bookings={bookings} />
@@ -589,6 +594,8 @@ function BookingsInbox() {
                   Delete
                 </button>
               </div>
+
+              {expandedId === b.id && <BookingManagePanel booking={b} />}
 
               {expandedId === b.id && (
                 <div className="mt-5 pt-5 border-t border-border">

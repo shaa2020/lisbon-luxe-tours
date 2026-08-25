@@ -23,6 +23,7 @@ import {
   Gauge,
   Megaphone,
   Tag,
+  Mail,
 } from "lucide-react";
 
 type NavItem = {
@@ -54,6 +55,7 @@ const GROUPS: NavGroup[] = [
       { to: "/admin/orders", label: "Orders", icon: CreditCard, desc: "Payments and refunds" },
       { to: "/admin/ops", label: "Operations", icon: Gauge, desc: "Jobs, drivers, vehicles" },
       { to: "/admin/messages", label: "Messages", icon: MessageSquare, desc: "Contact inbox" },
+      { to: "/admin/emails", label: "Emails", icon: Mail, desc: "Templates and send log" },
     ],
   },
   {

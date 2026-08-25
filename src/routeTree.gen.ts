@@ -22,6 +22,7 @@ import { Route as ReviewsRouteImport } from './routes/reviews'
 import { Route as SintraPrivateToursRouteImport } from './routes/sintra-private-tours'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as TermsRouteImport } from './routes/terms'
+import { Route as UnsubscribeRouteImport } from './routes/unsubscribe'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminBookingsRouteImport } from './routes/admin.bookings'
 import { Route as AdminCustomBuilderRouteImport } from './routes/admin.custom-builder'
@@ -138,6 +139,11 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
   path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UnsubscribeRoute = UnsubscribeRouteImport.update({
+  id: '/unsubscribe',
+  path: '/unsubscribe',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
@@ -420,6 +426,7 @@ export interface FileRoutesByFullPath {
   '/sintra-private-tours': typeof SintraPrivateToursRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
+  '/unsubscribe': typeof UnsubscribeRoute
   '/admin/bookings': typeof AdminBookingsRoute
   '/admin/custom-builder': typeof AdminCustomBuilderRoute
   '/admin/discounts': typeof AdminDiscountsRoute
@@ -487,6 +494,7 @@ export interface FileRoutesByTo {
   '/sintra-private-tours': typeof SintraPrivateToursRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
+  '/unsubscribe': typeof UnsubscribeRoute
   '/admin/bookings': typeof AdminBookingsRoute
   '/admin/custom-builder': typeof AdminCustomBuilderRoute
   '/admin/discounts': typeof AdminDiscountsRoute
@@ -555,6 +563,7 @@ export interface FileRoutesById {
   '/sintra-private-tours': typeof SintraPrivateToursRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
+  '/unsubscribe': typeof UnsubscribeRoute
   '/admin/bookings': typeof AdminBookingsRoute
   '/admin/custom-builder': typeof AdminCustomBuilderRoute
   '/admin/discounts': typeof AdminDiscountsRoute
@@ -624,6 +633,7 @@ export interface FileRouteTypes {
     | '/sintra-private-tours'
     | '/sitemap.xml'
     | '/terms'
+    | '/unsubscribe'
     | '/admin/bookings'
     | '/admin/custom-builder'
     | '/admin/discounts'
@@ -691,6 +701,7 @@ export interface FileRouteTypes {
     | '/sintra-private-tours'
     | '/sitemap.xml'
     | '/terms'
+    | '/unsubscribe'
     | '/admin/bookings'
     | '/admin/custom-builder'
     | '/admin/discounts'
@@ -758,6 +769,7 @@ export interface FileRouteTypes {
     | '/sintra-private-tours'
     | '/sitemap.xml'
     | '/terms'
+    | '/unsubscribe'
     | '/admin/bookings'
     | '/admin/custom-builder'
     | '/admin/discounts'
@@ -826,6 +838,7 @@ export interface RootRouteChildren {
   SintraPrivateToursRoute: typeof SintraPrivateToursRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
+  UnsubscribeRoute: typeof UnsubscribeRoute
   AdminBookingsRoute: typeof AdminBookingsRoute
   AdminCustomBuilderRoute: typeof AdminCustomBuilderRoute
   AdminDiscountsRoute: typeof AdminDiscountsRoute
@@ -971,6 +984,13 @@ declare module '@tanstack/react-router' {
       path: '/terms'
       fullPath: '/terms'
       preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/unsubscribe': {
+      id: '/unsubscribe'
+      path: '/unsubscribe'
+      fullPath: '/unsubscribe'
+      preLoaderRoute: typeof UnsubscribeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/': {
@@ -1354,6 +1374,7 @@ const rootRouteChildren: RootRouteChildren = {
   SintraPrivateToursRoute: SintraPrivateToursRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
+  UnsubscribeRoute: UnsubscribeRoute,
   AdminBookingsRoute: AdminBookingsRoute,
   AdminCustomBuilderRoute: AdminCustomBuilderRoute,
   AdminDiscountsRoute: AdminDiscountsRoute,
