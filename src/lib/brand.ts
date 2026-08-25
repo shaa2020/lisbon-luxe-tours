@@ -42,6 +42,56 @@ export const DEFAULT_WHATSAPP_REPLY_LINE = "We usually reply within minutes";
 
 export type OfferBar = typeof DEFAULT_OFFER_BAR;
 
+export type PromoBannerTheme = "gold" | "ink" | "sunset";
+
+export type PromoBanner = {
+  enabled: boolean;
+  headline: string;
+  subtext: string | null;
+  code: string | null;
+  ctaLabel: string | null;
+  ctaUrl: string | null;
+  theme: PromoBannerTheme;
+  startsAt: string | null;
+  endsAt: string | null;
+};
+
+export const DEFAULT_PROMO_BANNER: PromoBanner = {
+  enabled: false,
+  headline: "Summer in Lisbon — 10% off private tuk tuk tours",
+  subtext: null,
+  code: null,
+  ctaLabel: "See tours",
+  ctaUrl: "/tours",
+  theme: "gold",
+  startsAt: null,
+  endsAt: null,
+};
+
+function mapPromoBanner(d: any): PromoBanner {
+  const theme = String(d?.promo_banner_theme || "gold");
+  return {
+    enabled: d?.promo_banner_enabled === true,
+    headline: (d?.promo_banner_headline || "").trim() || DEFAULT_PROMO_BANNER.headline,
+    subtext: (d?.promo_banner_subtext || "").trim() || null,
+    code: (d?.promo_banner_code || "").trim() || null,
+    ctaLabel: (d?.promo_banner_cta_label || "").trim() || null,
+    ctaUrl: (d?.promo_banner_cta_url || "").trim() || null,
+    theme: (["gold", "ink", "sunset"].includes(theme) ? theme : "gold") as PromoBannerTheme,
+    startsAt: d?.promo_banner_starts_at ?? null,
+    endsAt: d?.promo_banner_ends_at ?? null,
+  };
+}
+
+/** True when the banner is on and inside its scheduled window. */
+export function isPromoBannerLive(p: PromoBanner, now: Date = new Date()): boolean {
+  if (!p.enabled) return false;
+  if (p.startsAt && now < new Date(p.startsAt)) return false;
+  if (p.endsAt && now > new Date(p.endsAt)) return false;
+  return true;
+}
+
+
 function mapOfferBar(d: any): OfferBar {
   return {
     enabled: d?.offer_bar_enabled === true,
