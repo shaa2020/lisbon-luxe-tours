@@ -84,7 +84,7 @@ export function WhatsappFab() {
       <OfferBar />
 
       {showPrompt && (
-        <div className="fixed bottom-40 lg:bottom-24 left-4 lg:left-auto lg:right-6 z-40 max-w-[240px] rounded-xl bg-white border border-border shadow-[0_12px_40px_rgba(30,58,95,0.18)] p-3 animate-fade-in">
+        <div className="hidden lg:block fixed bottom-24 right-6 z-40 max-w-[240px] rounded-xl bg-white border border-border shadow-[0_12px_40px_rgba(30,58,95,0.18)] p-3 animate-fade-in">
           <button
             onClick={dismiss}
             aria-label="Dismiss WhatsApp message"
@@ -110,16 +110,18 @@ export function WhatsappFab() {
         </div>
       )}
 
+      {/* Desktop only — on mobile the sticky booking bar already carries a WhatsApp button. */}
       <a
         href={whatsappHref(business.whatsappPhone, message)}
         target="_blank"
         rel="noreferrer"
         aria-label="Chat on WhatsApp"
         onClick={() => trackWhatsappClick("floating_button")}
-        className="fixed bottom-24 lg:bottom-6 left-4 lg:left-auto lg:right-6 z-40 size-12 lg:size-14 rounded-full bg-[#25D366] text-white flex items-center justify-center shadow-[0_10px_30px_rgba(37,211,102,0.4)] hover:scale-110 transition-transform"
+        className="hidden lg:flex fixed bottom-6 right-6 z-40 size-14 rounded-full bg-[#25D366] text-white items-center justify-center shadow-[0_10px_30px_rgba(37,211,102,0.4)] hover:scale-110 transition-transform"
       >
-        <WhatsappIcon className="w-6 h-6 lg:w-7 lg:h-7" />
+        <WhatsappIcon className="w-7 h-7" />
       </a>
+
     </>
   );
 }
