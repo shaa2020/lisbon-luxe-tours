@@ -1230,6 +1230,15 @@ export type Database = {
           payment_provider: string
           payments_enabled: boolean
           payments_maintenance_message: string
+          promo_banner_code: string | null
+          promo_banner_cta_label: string | null
+          promo_banner_cta_url: string | null
+          promo_banner_enabled: boolean
+          promo_banner_ends_at: string | null
+          promo_banner_headline: string | null
+          promo_banner_starts_at: string | null
+          promo_banner_subtext: string | null
+          promo_banner_theme: string
           twitter_url: string | null
           updated_at: string
           whatsapp_phone: string | null
@@ -1267,6 +1276,15 @@ export type Database = {
           payment_provider?: string
           payments_enabled?: boolean
           payments_maintenance_message?: string
+          promo_banner_code?: string | null
+          promo_banner_cta_label?: string | null
+          promo_banner_cta_url?: string | null
+          promo_banner_enabled?: boolean
+          promo_banner_ends_at?: string | null
+          promo_banner_headline?: string | null
+          promo_banner_starts_at?: string | null
+          promo_banner_subtext?: string | null
+          promo_banner_theme?: string
           twitter_url?: string | null
           updated_at?: string
           whatsapp_phone?: string | null
@@ -1304,6 +1322,15 @@ export type Database = {
           payment_provider?: string
           payments_enabled?: boolean
           payments_maintenance_message?: string
+          promo_banner_code?: string | null
+          promo_banner_cta_label?: string | null
+          promo_banner_cta_url?: string | null
+          promo_banner_enabled?: boolean
+          promo_banner_ends_at?: string | null
+          promo_banner_headline?: string | null
+          promo_banner_starts_at?: string | null
+          promo_banner_subtext?: string | null
+          promo_banner_theme?: string
           twitter_url?: string | null
           updated_at?: string
           whatsapp_phone?: string | null

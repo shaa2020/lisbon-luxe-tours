@@ -37,6 +37,20 @@ type HeroSlideRow = { label: string; image_url: string | null };
 const input =
   "w-full rounded-md border border-border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary";
 const card = "rounded-xl border border-border bg-card p-5 space-y-4";
+function toLocalInput(v: string | null | undefined) {
+  if (!v) return "";
+  const d = new Date(v);
+  if (Number.isNaN(d.getTime())) return "";
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+function fromLocalInput(v: string) {
+  if (!v) return null;
+  const d = new Date(v);
+  return Number.isNaN(d.getTime()) ? null : d.toISOString();
+}
+
 const btn = "rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground disabled:opacity-50";
 
 function AdminSettings() {
@@ -80,6 +94,15 @@ function AdminSettings() {
     offer_bar_enabled: false,
     offer_bar_text: "Book direct and save",
     offer_bar_code: "",
+    promo_banner_enabled: false,
+    promo_banner_headline: "",
+    promo_banner_subtext: "",
+    promo_banner_code: "",
+    promo_banner_cta_label: "See tours",
+    promo_banner_cta_url: "/tours",
+    promo_banner_theme: "gold",
+    promo_banner_starts_at: "",
+    promo_banner_ends_at: "",
     whatsapp_reply_line: "We usually reply within minutes",
     google_review_url: "",
     group_discount_enabled: true,
@@ -113,6 +136,15 @@ function AdminSettings() {
       offer_bar_enabled: d.offer_bar_enabled === true,
       offer_bar_text: d.offer_bar_text ?? "Book direct and save",
       offer_bar_code: d.offer_bar_code ?? "",
+      promo_banner_enabled: d.promo_banner_enabled === true,
+      promo_banner_headline: d.promo_banner_headline ?? "",
+      promo_banner_subtext: d.promo_banner_subtext ?? "",
+      promo_banner_code: d.promo_banner_code ?? "",
+      promo_banner_cta_label: d.promo_banner_cta_label ?? "See tours",
+      promo_banner_cta_url: d.promo_banner_cta_url ?? "/tours",
+      promo_banner_theme: d.promo_banner_theme ?? "gold",
+      promo_banner_starts_at: toLocalInput(d.promo_banner_starts_at),
+      promo_banner_ends_at: toLocalInput(d.promo_banner_ends_at),
       whatsapp_reply_line: d.whatsapp_reply_line ?? "We usually reply within minutes",
       google_review_url: d.google_review_url ?? "",
       group_discount_enabled: d.group_discount_enabled !== false,
@@ -138,7 +170,12 @@ function AdminSettings() {
 
   const saveBiz = async () => {
     setSavingBiz(true);
-    const { error } = await supabase.from("site_settings").upsert({ id: true, ...biz } as any);
+    const payload = {
+      ...biz,
+      promo_banner_starts_at: fromLocalInput(biz.promo_banner_starts_at),
+      promo_banner_ends_at: fromLocalInput(biz.promo_banner_ends_at),
+    };
+    const { error } = await supabase.from("site_settings").upsert({ id: true, ...payload } as any);
     setSavingBiz(false);
     if (error) return toast.error(error.message);
     toast.success("Settings saved");
@@ -560,7 +597,150 @@ function AdminSettings() {
       )}
 
       {tab === "marketing" && (
-        <section className={`${card} max-w-xl`}>
+        <div className="space-y-6 max-w-xl">
+        <section className={card}>
+          <div>
+            <p className="text-sm font-semibold text-foreground">Promotional banner</p>
+            <p className="text-xs text-muted-foreground">
+              A campaign banner shown across the whole website. Guests can dismiss it; it reappears whenever you
+              change the headline or code.
+            </p>
+          </div>
+
+          <label className="flex items-center gap-2 text-sm">
+            <input
+              type="checkbox"
+              checked={biz.promo_banner_enabled}
+              onChange={(e) => setBiz((b) => ({ ...b, promo_banner_enabled: e.target.checked }))}
+            />
+            Show the promotional banner
+          </label>
+
+          <label className="block space-y-1">
+            <span className="text-xs font-medium text-foreground">Headline</span>
+            <input
+              value={biz.promo_banner_headline}
+              onChange={(e) => setBiz((b) => ({ ...b, promo_banner_headline: e.target.value }))}
+              className={input}
+              placeholder="Summer in Lisbon — 10% off private tuk tuk tours"
+            />
+          </label>
+
+          <label className="block space-y-1">
+            <span className="text-xs font-medium text-foreground">Sub-line (optional)</span>
+            <input
+              value={biz.promo_banner_subtext}
+              onChange={(e) => setBiz((b) => ({ ...b, promo_banner_subtext: e.target.value }))}
+              className={input}
+              placeholder="Free cancellation up to 24h before your tour"
+            />
+          </label>
+
+          <div className="grid grid-cols-2 gap-3">
+            <label className="block space-y-1">
+              <span className="text-xs font-medium text-foreground">Promo code (optional)</span>
+              <input
+                value={biz.promo_banner_code}
+                onChange={(e) => setBiz((b) => ({ ...b, promo_banner_code: e.target.value.toUpperCase() }))}
+                className={input}
+                placeholder="SUMMER10"
+              />
+            </label>
+            <label className="block space-y-1">
+              <span className="text-xs font-medium text-foreground">Colour theme</span>
+              <select
+                value={biz.promo_banner_theme}
+                onChange={(e) => setBiz((b) => ({ ...b, promo_banner_theme: e.target.value }))}
+                className={input}
+              >
+                <option value="gold">Gold</option>
+                <option value="ink">Deep blue</option>
+                <option value="sunset">Sunset gradient</option>
+              </select>
+            </label>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <label className="block space-y-1">
+              <span className="text-xs font-medium text-foreground">Button label</span>
+              <input
+                value={biz.promo_banner_cta_label}
+                onChange={(e) => setBiz((b) => ({ ...b, promo_banner_cta_label: e.target.value }))}
+                className={input}
+                placeholder="See tours"
+              />
+            </label>
+            <label className="block space-y-1">
+              <span className="text-xs font-medium text-foreground">Button link</span>
+              <input
+                value={biz.promo_banner_cta_url}
+                onChange={(e) => setBiz((b) => ({ ...b, promo_banner_cta_url: e.target.value }))}
+                className={input}
+                placeholder="/tours"
+              />
+            </label>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <label className="block space-y-1">
+              <span className="text-xs font-medium text-foreground">Starts (optional)</span>
+              <input
+                type="datetime-local"
+                value={biz.promo_banner_starts_at}
+                onChange={(e) => setBiz((b) => ({ ...b, promo_banner_starts_at: e.target.value }))}
+                className={input}
+              />
+            </label>
+            <label className="block space-y-1">
+              <span className="text-xs font-medium text-foreground">Ends (optional)</span>
+              <input
+                type="datetime-local"
+                value={biz.promo_banner_ends_at}
+                onChange={(e) => setBiz((b) => ({ ...b, promo_banner_ends_at: e.target.value }))}
+                className={input}
+              />
+            </label>
+          </div>
+
+          <div className="rounded-lg border border-border bg-background p-3">
+            <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground mb-2">Live preview</p>
+            <div
+              className={`rounded-md px-4 py-3 text-center text-white ${
+                biz.promo_banner_theme === "ink"
+                  ? "bg-[#1E3A5F]"
+                  : biz.promo_banner_theme === "sunset"
+                    ? "bg-[linear-gradient(100deg,#1E3A5F_0%,#2BB6F7_55%,#F5A623_100%)]"
+                    : "bg-[#F5A623]"
+              }`}
+            >
+              <p className="text-sm font-semibold">
+                {biz.promo_banner_headline || "Your headline goes here"}
+              </p>
+              {biz.promo_banner_subtext && (
+                <p className="text-[11px] opacity-90">{biz.promo_banner_subtext}</p>
+              )}
+              <div className="mt-2 flex items-center justify-center gap-2">
+                {biz.promo_banner_code && (
+                  <span className="rounded-full border border-white/50 bg-white/15 px-3 py-1 font-mono text-[11px] tracking-[0.2em]">
+                    {biz.promo_banner_code}
+                  </span>
+                )}
+                {biz.promo_banner_cta_label && (
+                  <span className="rounded-full bg-white px-3 py-1 text-[11px] font-semibold uppercase tracking-widest text-[#1E3A5F]">
+                    {biz.promo_banner_cta_label}
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <button type="button" onClick={saveBiz} disabled={savingBiz} className={btn}>
+            {savingBiz ? "Saving…" : "Save promotional banner"}
+          </button>
+        </section>
+
+        <section className={card}>
+
           <div>
             <p className="text-sm font-semibold text-foreground">Conversion tools</p>
             <p className="text-xs text-muted-foreground">
@@ -617,7 +797,9 @@ function AdminSettings() {
             {savingBiz ? "Saving…" : "Save marketing settings"}
           </button>
         </section>
+        </div>
       )}
+
 
       {tab === "payments" && (
         <PaymentsSettings
