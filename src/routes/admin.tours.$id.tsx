@@ -96,6 +96,29 @@ function TourEditPage() {
   const [loading, setLoading] = useState(!isNew);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const { ai } = Route.useSearch();
+  const [aiOpen, setAiOpen] = useState(!!ai);
+
+  const importDraft = (draft: AiTourDraft) => {
+    const cat = tourCategories.find((c) => c.slug === draft.category_slug);
+    setForm((f) => ({
+      ...f,
+      title: draft.title || f.title,
+      slug: draft.slug ? slugify(draft.slug) : f.slug,
+      category_slug: draft.category_slug || f.category_slug,
+      category: cat?.title ?? f.category,
+      duration: draft.duration || f.duration,
+      tagline: draft.tagline || f.tagline,
+      description: draft.description || f.description,
+      highlights: draft.highlights.filter(Boolean).join("\n"),
+      itinerary: serializeItinerary(draft.itinerary),
+      included: draft.included.filter(Boolean).join("\n"),
+      not_included: draft.not_included.filter(Boolean).join("\n"),
+    }));
+    setAiOpen(false);
+    toast.success("Imported — set the price, then save.");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   useEffect(() => {
     if (isNew) return;
