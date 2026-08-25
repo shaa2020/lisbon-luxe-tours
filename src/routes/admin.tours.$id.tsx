@@ -3,11 +3,17 @@ import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { AdminShell } from "@/components/admin/AdminShell";
+import { AiTourBuilder } from "@/components/admin/AiTourBuilder";
+import type { AiTourDraft } from "@/lib/ai-tour.functions";
 import { tourCategories } from "@/lib/cms";
 import { slugify, uploadMediaFile } from "@/lib/admin-helpers";
+import { Sparkles } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/admin/tours/$id")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    ai: search['ai'] === true || search['ai'] === "1" || search['ai'] === 1 ? true : undefined,
+  }),
   component: TourEditPage,
 });
 
