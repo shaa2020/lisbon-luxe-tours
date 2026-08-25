@@ -11,11 +11,9 @@ async function ownerInbox(supabase: SupabaseLike): Promise<string[]> {
   try {
     const { data } = await supabase
       .from("site_settings")
-      .select("value")
-      .eq("key", "owner_notification_email")
+      .select("owner_notification_email")
       .maybeSingle();
-    const raw = (data as { value?: unknown } | null)?.value;
-    const str = typeof raw === "string" ? raw : typeof raw === "object" && raw ? String((raw as any).email ?? "") : "";
+    const str = String((data as { owner_notification_email?: string } | null)?.owner_notification_email ?? "");
     const list = str
       .split(/[,;\s]+/)
       .map((e) => e.trim().toLowerCase())
