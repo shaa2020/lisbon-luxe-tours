@@ -3,6 +3,7 @@ import { X } from "lucide-react";
 import { useSiteBrand } from "@/lib/brand";
 import { trackWhatsappClick } from "@/lib/analytics";
 import { OfferBar } from "@/components/site/OfferBar";
+import { PromoBanner } from "@/components/site/PromoBanner";
 
 /** Builds a wa.me link with a context-aware pre-filled message. */
 export function whatsappHref(phone: string, message?: string) {
@@ -79,6 +80,7 @@ export function WhatsappFab() {
 
   return (
     <>
+      <PromoBanner />
       <OfferBar />
 
       {showPrompt && (
