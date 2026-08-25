@@ -62,15 +62,29 @@ function lines(v: string): string[] {
   return v.split("\n").map((l) => l.trim()).filter(Boolean);
 }
 
+const MANDATORY_TAG = "MANDATORY";
+
 function parseItinerary(v: string) {
   return lines(v).map((line) => {
-    const [time = "", title = "", ...rest] = line.split("|").map((s) => s.trim());
-    return { time, title, detail: rest.join(" | ") };
+    const parts = line.split("|").map((s) => s.trim());
+    const [time = "", title = "", ...rest] = parts;
+    const mandatory = rest.length > 0 && rest[rest.length - 1]?.toUpperCase() === MANDATORY_TAG;
+    const detailParts = mandatory ? rest.slice(0, -1) : rest;
+    return mandatory
+      ? { time, title, detail: detailParts.join(" | "), mandatory: true }
+      : { time, title, detail: detailParts.join(" | ") };
   });
 }
 
-function serializeItinerary(items: { time: string; title: string; detail: string }[]) {
-  return items.map((i) => `${i.time} | ${i.title} | ${i.detail}`).join("\n");
+function serializeItinerary(
+  items: { time: string; title: string; detail: string; mandatory?: boolean }[],
+) {
+  return items
+    .map(
+      (i) =>
+        `${i.time} | ${i.title} | ${i.detail}${i.mandatory ? ` | ${MANDATORY_TAG}` : ""}`,
+    )
+    .join("\n");
 }
 
 function TourEditPage() {
