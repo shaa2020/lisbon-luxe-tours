@@ -86,7 +86,10 @@ function EmailsAdmin() {
   const stats = dashboard.data?.stats ?? { total: 0, sent: 0, failed: 0, suppressed: 0 };
 
   const toggleAuto = async (key: "auto_reminder_enabled" | "auto_review_request_enabled", value: boolean) => {
-    const { error } = await supabase.from("site_settings").update({ [key]: value }).eq("id", true);
+    const update = key === "auto_reminder_enabled"
+      ? { auto_reminder_enabled: value }
+      : { auto_review_request_enabled: value };
+    const { error } = await supabase.from("site_settings").update(update).eq("id", true);
     if (error) return toast.error(error.message);
     toast.success("Automation saved");
     qc.invalidateQueries({ queryKey: ["admin-email-settings"] });
