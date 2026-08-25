@@ -21,7 +21,7 @@ import {
   Settings,
   Compass,
   Gauge,
-
+  Megaphone,
   Tag,
 } from "lucide-react";
 
@@ -29,29 +29,59 @@ type NavItem = {
   to: string;
   label: string;
   icon: React.ComponentType<{ className?: string }>;
+  desc?: string;
 };
 
+type NavGroup = { title: string; items: NavItem[] };
+
+const GROUPS: NavGroup[] = [
+  {
+    title: "Overview",
+    items: [{ to: "/admin", label: "Dashboard", icon: LayoutDashboard, desc: "Revenue and activity" }],
+  },
+  {
+    title: "Sell",
+    items: [
+      { to: "/admin/tours", label: "Tours", icon: Map, desc: "Catalogue and pricing" },
+      { to: "/admin/custom-builder", label: "Custom builder", icon: Sparkles, desc: "Build-your-own options" },
+      { to: "/admin/discounts", label: "Discounts", icon: Tag, desc: "Promo codes" },
+    ],
+  },
+  {
+    title: "Operate",
+    items: [
+      { to: "/admin/bookings", label: "Bookings", icon: CalendarCheck, desc: "Requests and schedule" },
+      { to: "/admin/orders", label: "Orders", icon: CreditCard, desc: "Payments and refunds" },
+      { to: "/admin/ops", label: "Operations", icon: Gauge, desc: "Jobs, drivers, vehicles" },
+      { to: "/admin/messages", label: "Messages", icon: MessageSquare, desc: "Contact inbox" },
+    ],
+  },
+  {
+    title: "Content",
+    items: [
+      { to: "/admin/blog", label: "Journal", icon: BookOpen, desc: "Stories and news" },
+      { to: "/admin/guide", label: "Travel guide", icon: Compass, desc: "SEO guide hub" },
+      { to: "/admin/reviews", label: "Reviews", icon: Star, desc: "Approve guest reviews" },
+      { to: "/admin/faqs", label: "FAQs", icon: HelpCircle, desc: "Questions and answers" },
+    ],
+  },
+  {
+    title: "Configure",
+    items: [
+      { to: "/admin/settings", label: "Settings", icon: Settings, desc: "Brand, booking, payments" },
+    ],
+  },
+];
+
+const ALL: NavItem[] = GROUPS.flatMap((g) => g.items);
+
+/** Bottom tab bar targets on mobile. */
 const PRIMARY: NavItem[] = [
   { to: "/admin", label: "Home", icon: LayoutDashboard },
-  { to: "/admin/tours", label: "Tours", icon: Map },
   { to: "/admin/bookings", label: "Bookings", icon: CalendarCheck },
+  { to: "/admin/tours", label: "Tours", icon: Map },
   { to: "/admin/orders", label: "Orders", icon: CreditCard },
 ];
-
-const MORE: NavItem[] = [
-  { to: "/admin/ops", label: "Operations", icon: Gauge },
-  { to: "/admin/custom-builder", label: "Custom Builder", icon: Sparkles },
-
-  { to: "/admin/faqs", label: "FAQs", icon: HelpCircle },
-  { to: "/admin/blog", label: "Journal", icon: BookOpen },
-  { to: "/admin/guide", label: "Travel Guide", icon: Compass },
-  { to: "/admin/reviews", label: "Reviews", icon: Star },
-  { to: "/admin/discounts", label: "Discounts", icon: Tag },
-  { to: "/admin/messages", label: "Messages", icon: MessageSquare },
-  { to: "/admin/settings", label: "Settings", icon: Settings },
-];
-
-const ALL = [...PRIMARY, ...MORE];
 
 function isActiveRoute(to: string, pathname: string) {
   if (to === "/admin") return pathname === "/admin";
@@ -60,17 +90,18 @@ function isActiveRoute(to: string, pathname: string) {
 
 export function AdminShell({ children }: { children: ReactNode }) {
   const { user, isAdmin, loading, signOut } = useAuth();
-  const { brandName } = useSiteBrand();
+  const { brandName, promoBanner } = useSiteBrand();
   const navigate = useNavigate();
   const { location } = useRouterState();
   const { data: badges } = useAdminBadges();
+  const [moreOpen, setMoreOpen] = useState(false);
+
   const badgeFor = (to: string): number => {
     if (to === "/admin/bookings") return badges?.bookings ?? 0;
     if (to === "/admin/messages") return badges?.messages ?? 0;
     if (to === "/admin/reviews") return badges?.reviews ?? 0;
     return 0;
   };
-  const [moreOpen, setMoreOpen] = useState(false);
 
   useEffect(() => {
     if (!loading && (!user || !isAdmin)) {
@@ -78,14 +109,13 @@ export function AdminShell({ children }: { children: ReactNode }) {
     }
   }, [loading, user, isAdmin, navigate, location.pathname]);
 
-  // close sheet on route change
   useEffect(() => {
     setMoreOpen(false);
   }, [location.pathname]);
 
   if (loading || !user || !isAdmin) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background text-foreground">
+      <div className="min-h-screen flex items-center justify-center bg-muted/40 text-foreground">
         <p className="text-sm text-muted-foreground">Checking access…</p>
       </div>
     );
@@ -94,106 +124,156 @@ export function AdminShell({ children }: { children: ReactNode }) {
   const current = ALL.find((n) => isActiveRoute(n.to, location.pathname));
   const currentLabel = current?.label ?? "Admin";
   const onHome = location.pathname === "/admin";
-  const moreActive = MORE.some((n) => isActiveRoute(n.to, location.pathname));
+  const moreItems = ALL.filter((n) => !PRIMARY.some((p) => p.to === n.to));
+  const moreActive = moreItems.some((n) => isActiveRoute(n.to, location.pathname));
+  const moreBadge = (badges?.messages ?? 0) + (badges?.reviews ?? 0);
+
+  const Badge = ({ n, small = false }: { n: number; small?: boolean }) =>
+    n > 0 ? (
+      <span
+        className={`inline-flex items-center justify-center rounded-full font-bold bg-destructive text-destructive-foreground ${
+          small ? "min-w-[16px] h-[16px] px-1 text-[9px]" : "min-w-[20px] h-5 px-1.5 text-[10px]"
+        }`}
+      >
+        {n > 99 ? "99+" : n}
+      </span>
+    ) : null;
 
   return (
-    <div className="min-h-[100dvh] bg-background text-foreground flex flex-col">
-      {/* ============= Desktop header ============= */}
-      <header className="hidden md:block border-b border-border bg-card sticky top-0 z-30">
-        <div className="max-w-6xl mx-auto px-6 py-3 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-6 min-w-0">
-            <Link to="/admin" className="font-display font-bold text-lg truncate">
-              {brandName} Admin
-            </Link>
-            <nav className="flex items-center gap-1 text-sm">
-              {ALL.map((n) => {
-                const active = isActiveRoute(n.to, location.pathname);
-                const Icon = n.icon;
-                const b = badgeFor(n.to);
-                return (
-                  <Link
-                    key={n.to}
-                    to={n.to}
-                    className={`px-3 py-1.5 rounded-md transition flex items-center gap-1.5 ${
-                      active
-                        ? "bg-primary text-primary-foreground"
-                        : "text-muted-foreground hover:text-foreground hover:bg-accent"
-                    }`}
-                  >
-                    <Icon className="w-4 h-4" />
-                    {n.label}
-                    {b > 0 && (
-                      <span className="ml-0.5 inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-bold bg-destructive text-destructive-foreground">
-                        {b > 99 ? "99+" : b}
+    <div className="min-h-[100dvh] bg-muted/40 text-foreground md:flex">
+      {/* ============= Desktop sidebar ============= */}
+      <aside className="hidden md:flex w-[248px] shrink-0 flex-col border-r border-border bg-card sticky top-0 h-[100dvh]">
+        <div className="px-5 py-5 border-b border-border">
+          <Link to="/admin" className="block">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+              Control panel
+            </p>
+            <p className="font-display text-lg font-bold leading-tight truncate">{brandName}</p>
+          </Link>
+        </div>
+
+        <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-5">
+          {GROUPS.map((group) => (
+            <div key={group.title}>
+              <p className="px-2 mb-1.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground/70">
+                {group.title}
+              </p>
+              <div className="space-y-0.5">
+                {group.items.map((n) => {
+                  const active = isActiveRoute(n.to, location.pathname);
+                  const Icon = n.icon;
+                  return (
+                    <Link
+                      key={n.to}
+                      to={n.to}
+                      className={`group relative flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm transition-colors ${
+                        active
+                          ? "bg-primary/10 text-primary font-semibold"
+                          : "text-muted-foreground hover:bg-accent hover:text-foreground"
+                      }`}
+                    >
+                      {active && (
+                        <span className="absolute left-0 top-1.5 bottom-1.5 w-1 rounded-r-full bg-primary" />
+                      )}
+                      <Icon className="w-4 h-4 shrink-0" />
+                      <span className="truncate">{n.label}</span>
+                      <span className="ml-auto">
+                        <Badge n={badgeFor(n.to)} small />
                       </span>
-                    )}
-                  </Link>
-                );
-              })}
-            </nav>
-          </div>
-          <div className="flex items-center gap-3 text-xs">
-            <span className="text-muted-foreground truncate max-w-[180px]">{user.email}</span>
-            <Link to="/" className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1">
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+        </nav>
+
+        <div className="border-t border-border p-3 space-y-2">
+          {promoBanner.enabled && (
+            <div className="rounded-lg border border-primary/30 bg-primary/5 px-3 py-2">
+              <p className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-primary">
+                <Megaphone className="w-3 h-3" /> Promo live
+              </p>
+              <p className="mt-0.5 text-[11px] text-muted-foreground line-clamp-2">{promoBanner.headline}</p>
+            </div>
+          )}
+          <p className="px-1 text-[11px] text-muted-foreground truncate">{user.email}</p>
+          <div className="flex items-center gap-2">
+            <Link
+              to="/"
+              className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-md border border-border px-2 py-1.5 text-[11px] font-medium hover:bg-accent"
+            >
               <ExternalLink className="w-3.5 h-3.5" /> Site
             </Link>
             <button
               onClick={() => signOut()}
-              className="px-3 py-1.5 rounded-md border border-border hover:bg-accent text-foreground inline-flex items-center gap-1"
+              className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-md border border-border px-2 py-1.5 text-[11px] font-medium hover:bg-accent"
             >
               <LogOut className="w-3.5 h-3.5" /> Sign out
             </button>
           </div>
         </div>
-      </header>
+      </aside>
 
-      {/* ============= Mobile app bar ============= */}
-      <header
-        className="md:hidden sticky top-0 z-30 bg-card/95 backdrop-blur border-b border-border"
-        style={{ paddingTop: "env(safe-area-inset-top)" }}
-      >
-        <div className="h-14 px-3 flex items-center gap-2">
-          {!onHome ? (
-            <button
-              onClick={() => navigate({ to: "/admin" })}
-              className="w-10 h-10 -ml-1 grid place-items-center rounded-full hover:bg-accent active:scale-95 transition"
-              aria-label="Back to dashboard"
-            >
-              <ChevronLeft className="w-5 h-5" />
-            </button>
-          ) : (
+      <div className="flex-1 min-w-0 flex flex-col">
+        {/* ============= Desktop top bar ============= */}
+        <header className="hidden md:flex sticky top-0 z-30 h-14 items-center gap-3 border-b border-border bg-card/85 backdrop-blur px-6">
+          <h1 className="font-display text-base font-bold truncate">{currentLabel}</h1>
+          <span className="text-muted-foreground/40">/</span>
+          <p className="text-xs text-muted-foreground truncate">{brandName} admin</p>
+          <div className="ml-auto flex items-center gap-2">
             <Link
-              to="/admin"
-              className="w-10 h-10 -ml-1 grid place-items-center rounded-full"
-              aria-label="Home"
+              to="/admin/messages"
+              className="relative inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs text-muted-foreground hover:bg-accent hover:text-foreground"
             >
-              <span className="font-display font-bold text-base">
-                {brandName.charAt(0)}
-              </span>
+              <MessageSquare className="w-4 h-4" />
+              <Badge n={badges?.messages ?? 0} small />
             </Link>
-          )}
-          <div className="flex-1 min-w-0">
-            <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground leading-none">
-              {brandName} Admin
-            </p>
-            <h1 className="font-display font-bold text-lg leading-tight truncate">
-              {currentLabel}
-            </h1>
+            <Link
+              to="/admin/settings"
+              className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs text-muted-foreground hover:bg-accent hover:text-foreground"
+            >
+              <Settings className="w-4 h-4" />
+            </Link>
           </div>
-          <Link
-            to="/"
-            className="w-10 h-10 grid place-items-center rounded-full hover:bg-accent"
-            aria-label="View site"
-          >
-            <ExternalLink className="w-4 h-4 text-muted-foreground" />
-          </Link>
-        </div>
-      </header>
+        </header>
 
-      {/* ============= Main ============= */}
-      <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-6 md:py-8 pb-[calc(env(safe-area-inset-bottom)+88px)] md:pb-12">
-        {children}
-      </main>
+        {/* ============= Mobile app bar ============= */}
+        <header
+          className="md:hidden sticky top-0 z-30 bg-card/95 backdrop-blur border-b border-border"
+          style={{ paddingTop: "env(safe-area-inset-top)" }}
+        >
+          <div className="h-14 px-3 flex items-center gap-2">
+            {!onHome ? (
+              <button
+                onClick={() => navigate({ to: "/admin" })}
+                className="w-10 h-10 -ml-1 grid place-items-center rounded-full hover:bg-accent active:scale-95 transition"
+                aria-label="Back to dashboard"
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+            ) : (
+              <Link to="/admin" className="w-10 h-10 -ml-1 grid place-items-center rounded-full" aria-label="Home">
+                <span className="font-display font-bold text-base">{brandName.charAt(0)}</span>
+              </Link>
+            )}
+            <div className="flex-1 min-w-0">
+              <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground leading-none">
+                {brandName} Admin
+              </p>
+              <h1 className="font-display font-bold text-lg leading-tight truncate">{currentLabel}</h1>
+            </div>
+            <Link to="/" className="w-10 h-10 grid place-items-center rounded-full hover:bg-accent" aria-label="View site">
+              <ExternalLink className="w-4 h-4 text-muted-foreground" />
+            </Link>
+          </div>
+        </header>
+
+        {/* ============= Main ============= */}
+        <main className="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 py-6 md:py-8 pb-[calc(env(safe-area-inset-bottom)+88px)] md:pb-14">
+          {children}
+        </main>
+      </div>
 
       {/* ============= Mobile bottom tab bar ============= */}
       <nav
@@ -234,10 +314,9 @@ export function AdminShell({ children }: { children: ReactNode }) {
           >
             <div className="relative">
               <MoreHorizontal className="w-5 h-5" />
-              {((badges?.messages ?? 0) + (badges?.reviews ?? 0)) > 0 && (
+              {moreBadge > 0 && (
                 <span className="absolute -top-1.5 -right-2 inline-flex items-center justify-center min-w-[16px] h-[16px] px-1 rounded-full text-[9px] font-bold bg-destructive text-destructive-foreground">
-                  {Math.min(9, (badges?.messages ?? 0) + (badges?.reviews ?? 0))}
-                  {((badges?.messages ?? 0) + (badges?.reviews ?? 0)) > 9 ? "+" : ""}
+                  {moreBadge > 9 ? "9+" : moreBadge}
                 </span>
               )}
             </div>
@@ -250,17 +329,16 @@ export function AdminShell({ children }: { children: ReactNode }) {
       {moreOpen && (
         <div className="md:hidden fixed inset-0 z-40">
           <button
+            className="absolute inset-0 bg-foreground/40 backdrop-blur-[2px]"
             aria-label="Close menu"
             onClick={() => setMoreOpen(false)}
-            className="absolute inset-0 bg-black/40 backdrop-blur-sm animate-in fade-in"
           />
           <div
-            className="absolute bottom-0 inset-x-0 bg-card rounded-t-3xl border-t border-border shadow-2xl animate-in slide-in-from-bottom duration-200"
+            className="absolute bottom-0 inset-x-0 rounded-t-2xl bg-card border-t border-border max-h-[80vh] overflow-y-auto"
             style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 16px)" }}
           >
-            <div className="flex items-center justify-between px-5 pt-4 pb-2">
-              <div className="w-10 h-1 bg-border rounded-full mx-auto absolute left-1/2 -translate-x-1/2 top-2" />
-              <h2 className="font-display font-bold text-lg mt-2">More</h2>
+            <div className="sticky top-0 bg-card px-4 pt-3 pb-2 flex items-center justify-between border-b border-border">
+              <p className="font-display font-bold text-base">All sections</p>
               <button
                 onClick={() => setMoreOpen(false)}
                 className="w-9 h-9 grid place-items-center rounded-full hover:bg-accent"
@@ -269,58 +347,82 @@ export function AdminShell({ children }: { children: ReactNode }) {
                 <X className="w-4 h-4" />
               </button>
             </div>
-            <div className="px-3 pt-2 pb-3 grid gap-1">
-              {MORE.map((n) => {
-                const active = isActiveRoute(n.to, location.pathname);
-                const Icon = n.icon;
-                const b = badgeFor(n.to);
-                return (
-                  <Link
-                    key={n.to}
-                    to={n.to}
-                    className={`flex items-center gap-3 px-3 py-3 rounded-xl transition ${
-                      active
-                        ? "bg-primary/10 text-primary"
-                        : "hover:bg-accent text-foreground"
-                    }`}
-                  >
-                    <span className={`w-10 h-10 grid place-items-center rounded-xl ${
-                      active ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
-                    }`}>
-                      <Icon className="w-5 h-5" />
-                    </span>
-                    <span className="font-medium flex-1">{n.label}</span>
-                    {b > 0 && (
-                      <span className="inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full text-[10px] font-bold bg-destructive text-destructive-foreground">
-                        {b > 99 ? "99+" : b}
-                      </span>
-                    )}
-                  </Link>
-                );
-              })}
-            </div>
-            <div className="border-t border-border mt-1 px-5 py-4">
-              <p className="text-xs text-muted-foreground truncate mb-3">{user.email}</p>
-              <div className="grid grid-cols-2 gap-2">
-                <Link
-                  to="/"
-                  className="flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl border border-border text-sm font-medium"
-                >
-                  <ExternalLink className="w-4 h-4" />
-                  View site
-                </Link>
-                <button
-                  onClick={() => signOut()}
-                  className="flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-semibold"
-                >
-                  <LogOut className="w-4 h-4" />
-                  Sign out
-                </button>
-              </div>
+            <div className="p-4 space-y-5">
+              {GROUPS.map((group) => (
+                <div key={group.title}>
+                  <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                    {group.title}
+                  </p>
+                  <div className="grid grid-cols-2 gap-2">
+                    {group.items.map((n) => {
+                      const Icon = n.icon;
+                      const active = isActiveRoute(n.to, location.pathname);
+                      const b = badgeFor(n.to);
+                      return (
+                        <Link
+                          key={n.to}
+                          to={n.to}
+                          className={`rounded-xl border p-3 active:scale-[0.98] transition ${
+                            active ? "border-primary bg-primary/5" : "border-border bg-background"
+                          }`}
+                        >
+                          <div className="flex items-center justify-between mb-1.5">
+                            <Icon className={`w-5 h-5 ${active ? "text-primary" : "text-muted-foreground"}`} />
+                            <Badge n={b} small />
+                          </div>
+                          <p className="text-sm font-semibold leading-tight">{n.label}</p>
+                          {n.desc && <p className="text-[11px] text-muted-foreground leading-snug">{n.desc}</p>}
+                        </Link>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+              <button
+                onClick={() => signOut()}
+                className="w-full rounded-xl border border-border py-3 text-sm font-semibold inline-flex items-center justify-center gap-2"
+              >
+                <LogOut className="w-4 h-4" /> Sign out
+              </button>
             </div>
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+/* ============================ Shared page primitives ============================ */
+
+export function AdminPageHeader({
+  eyebrow,
+  title,
+  description,
+  actions,
+}: {
+  eyebrow?: string;
+  title: string;
+  description?: string;
+  actions?: ReactNode;
+}) {
+  return (
+    <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
+      <div>
+        {eyebrow && (
+          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-primary mb-1.5">{eyebrow}</p>
+        )}
+        <h2 className="font-display text-2xl md:text-3xl font-bold leading-tight">{title}</h2>
+        {description && <p className="text-sm text-muted-foreground mt-1">{description}</p>}
+      </div>
+      {actions && <div className="flex items-center gap-2">{actions}</div>}
+    </div>
+  );
+}
+
+export function AdminCard({ className = "", children }: { className?: string; children: ReactNode }) {
+  return (
+    <div className={`rounded-xl border border-border bg-card shadow-[0_1px_2px_rgba(30,58,95,0.04)] ${className}`}>
+      {children}
     </div>
   );
 }
