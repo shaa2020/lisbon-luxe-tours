@@ -5,7 +5,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { useSiteBrand } from "@/lib/brand";
 import { toast } from "sonner";
-import { MessageCircle, Mail, Phone, Calendar, Users, Trash2, Edit3, Copy, Check, Loader2, Clock, Star } from "lucide-react";
+import { MessageCircle, Mail, Phone, Calendar, Users, Trash2, Edit3, Copy, Check, Loader2, Clock, Star, Link2 } from "lucide-react";
+import { adminSendBookingEmail } from "@/lib/bookings-admin.functions";
 import { useServerFn } from "@tanstack/react-start";
 import {
   adminCreateModificationCheckout,
