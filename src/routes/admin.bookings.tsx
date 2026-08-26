@@ -95,6 +95,19 @@ function BookingsInbox() {
   const [editNote, setEditNote] = useState("");
   const [generating, setGenerating] = useState(false);
   const [sendingKey, setSendingKey] = useState<string | null>(null);
+  const [pickedTemplate, setPickedTemplate] = useState<Record<string, string>>({});
+
+  const { data: emailTemplates = [] } = useQuery({
+    queryKey: ["admin-email-templates-list"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("email_templates")
+        .select("key,label")
+        .order("sort_order", { ascending: true });
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
 
   const createCheckout = useServerFn(adminCreateModificationCheckout);
   const listMods = useServerFn(adminListModifications);
