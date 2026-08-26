@@ -38,6 +38,7 @@ import { Route as BookingCancelledRouteImport } from './routes/booking.cancelled
 import { Route as BookingManageRouteImport } from './routes/booking.manage'
 import { Route as BookingSuccessRouteImport } from './routes/booking.success'
 import { Route as EmailUnsubscribeRouteImport } from './routes/email/unsubscribe'
+import { Route as InvoiceIdRouteImport } from './routes/invoice.$id'
 import { Route as JournalIndexRouteImport } from './routes/journal.index'
 import { Route as JournalSlugRouteImport } from './routes/journal.$slug'
 import { Route as LisbonGuideIndexRouteImport } from './routes/lisbon-guide.index'
@@ -219,6 +220,11 @@ const BookingSuccessRoute = BookingSuccessRouteImport.update({
 const EmailUnsubscribeRoute = EmailUnsubscribeRouteImport.update({
   id: '/email/unsubscribe',
   path: '/email/unsubscribe',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InvoiceIdRoute = InvoiceIdRouteImport.update({
+  id: '/invoice/$id',
+  path: '/invoice/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
 const JournalIndexRoute = JournalIndexRouteImport.update({
@@ -441,6 +447,7 @@ export interface FileRoutesByFullPath {
   '/booking/manage': typeof BookingManageRoute
   '/booking/success': typeof BookingSuccessRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
+  '/invoice/$id': typeof InvoiceIdRoute
   '/journal/$slug': typeof JournalSlugRoute
   '/lisbon-guide/$slug': typeof LisbonGuideSlugRoute
   '/tours/$slug': typeof ToursSlugRoute
@@ -509,6 +516,7 @@ export interface FileRoutesByTo {
   '/booking/manage': typeof BookingManageRoute
   '/booking/success': typeof BookingSuccessRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
+  '/invoice/$id': typeof InvoiceIdRoute
   '/journal/$slug': typeof JournalSlugRoute
   '/lisbon-guide/$slug': typeof LisbonGuideSlugRoute
   '/tours/$slug': typeof ToursSlugRoute
@@ -578,6 +586,7 @@ export interface FileRoutesById {
   '/booking/manage': typeof BookingManageRoute
   '/booking/success': typeof BookingSuccessRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
+  '/invoice/$id': typeof InvoiceIdRoute
   '/journal/$slug': typeof JournalSlugRoute
   '/lisbon-guide/$slug': typeof LisbonGuideSlugRoute
   '/tours/$slug': typeof ToursSlugRoute
@@ -648,6 +657,7 @@ export interface FileRouteTypes {
     | '/booking/manage'
     | '/booking/success'
     | '/email/unsubscribe'
+    | '/invoice/$id'
     | '/journal/$slug'
     | '/lisbon-guide/$slug'
     | '/tours/$slug'
@@ -716,6 +726,7 @@ export interface FileRouteTypes {
     | '/booking/manage'
     | '/booking/success'
     | '/email/unsubscribe'
+    | '/invoice/$id'
     | '/journal/$slug'
     | '/lisbon-guide/$slug'
     | '/tours/$slug'
@@ -784,6 +795,7 @@ export interface FileRouteTypes {
     | '/booking/manage'
     | '/booking/success'
     | '/email/unsubscribe'
+    | '/invoice/$id'
     | '/journal/$slug'
     | '/lisbon-guide/$slug'
     | '/tours/$slug'
@@ -853,6 +865,7 @@ export interface RootRouteChildren {
   BookingManageRoute: typeof BookingManageRoute
   BookingSuccessRoute: typeof BookingSuccessRoute
   EmailUnsubscribeRoute: typeof EmailUnsubscribeRoute
+  InvoiceIdRoute: typeof InvoiceIdRoute
   JournalSlugRoute: typeof JournalSlugRoute
   LisbonGuideSlugRoute: typeof LisbonGuideSlugRoute
   ToursSlugRoute: typeof ToursSlugRoute
@@ -1096,6 +1109,13 @@ declare module '@tanstack/react-router' {
       path: '/email/unsubscribe'
       fullPath: '/email/unsubscribe'
       preLoaderRoute: typeof EmailUnsubscribeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/invoice/$id': {
+      id: '/invoice/$id'
+      path: '/invoice/$id'
+      fullPath: '/invoice/$id'
+      preLoaderRoute: typeof InvoiceIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/journal/': {
@@ -1389,6 +1409,7 @@ const rootRouteChildren: RootRouteChildren = {
   BookingManageRoute: BookingManageRoute,
   BookingSuccessRoute: BookingSuccessRoute,
   EmailUnsubscribeRoute: EmailUnsubscribeRoute,
+  InvoiceIdRoute: InvoiceIdRoute,
   JournalSlugRoute: JournalSlugRoute,
   LisbonGuideSlugRoute: LisbonGuideSlugRoute,
   ToursSlugRoute: ToursSlugRoute,
