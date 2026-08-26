@@ -629,6 +629,42 @@ function BookingsInbox() {
                   )}
                   Ask for review
                 </button>
+                {emailTemplates.length > 0 && (
+                  <div className="inline-flex items-center gap-1.5 rounded-md border border-border bg-background pl-2">
+                    <Mail className="w-4 h-4 text-muted-foreground" />
+                    <select
+                      value={pickedTemplate[b.id] ?? ""}
+                      onChange={(e) =>
+                        setPickedTemplate((prev) => ({ ...prev, [b.id]: e.target.value }))
+                      }
+                      className="bg-transparent py-2 text-sm outline-none"
+                    >
+                      <option value="">Other email…</option>
+                      {emailTemplates.map((t: any) => (
+                        <option key={t.key} value={t.key}>
+                          {t.label}
+                        </option>
+                      ))}
+                    </select>
+                    <button
+                      onClick={() => {
+                        const key = pickedTemplate[b.id];
+                        if (!key) return toast.error("Pick an email first");
+                        const label =
+                          emailTemplates.find((t: any) => t.key === key)?.label || "Email";
+                        sendDirect(b, key, label);
+                      }}
+                      disabled={sendingKey === `${b.id}:${pickedTemplate[b.id]}`}
+                      className="rounded-r-md border-l border-border px-3 py-2 text-sm font-semibold hover:text-primary disabled:opacity-50"
+                    >
+                      {sendingKey === `${b.id}:${pickedTemplate[b.id]}` ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        "Send"
+                      )}
+                    </button>
+                  </div>
+                )}
                 <button
                   onClick={() => {
                     navigator.clipboard?.writeText(customerMessage(b));
