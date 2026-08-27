@@ -47,6 +47,7 @@ export const createBalanceCheckout = createServerFn({ method: "POST" })
       .select("customer_name,email,tour_title,tour_slug,guests,travel_date")
       .eq("id", data.id)
       .single();
+    if (!booking) throw new Error("Booking not found");
 
     const host = getRequestHost();
     const proto = host.includes("localhost") ? "http" : "https";
