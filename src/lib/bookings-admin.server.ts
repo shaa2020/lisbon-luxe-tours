@@ -76,6 +76,12 @@ export async function resolveBookingEmail(
   let ctaUrl = overrides.ctaUrl != null ? overrides.ctaUrl : tpl.cta_url;
   let ctaLabel = overrides.ctaLabel != null ? overrides.ctaLabel : tpl.cta_label;
   if (templateKey === "review_request" && !ctaUrl) ctaUrl = brand.reviewUrl;
+  if (templateKey === "invoice") {
+    // Emails can't carry attachments, so the invoice CTA points at a private
+    // page where the customer downloads the branded PDF.
+    if (!ctaUrl) ctaUrl = `https://tuktuk24lisbon.com/invoice/${booking.id}`;
+    if (!ctaLabel) ctaLabel = "Download PDF invoice";
+  }
 
   return {
     templateKey,
