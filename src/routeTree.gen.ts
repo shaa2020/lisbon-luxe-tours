@@ -66,6 +66,7 @@ import { Route as AdminOpsVehiclesRouteImport } from './routes/admin.ops.vehicle
 import { Route as AdminToursIndexRouteImport } from './routes/admin.tours.index'
 import { Route as AdminToursIdRouteImport } from './routes/admin.tours.$id'
 import { Route as ApiPublicBookingsRouteImport } from './routes/api/public/bookings'
+import { Route as BookingPayIdRouteImport } from './routes/booking.pay.$id'
 import { Route as LisbonGuideCategorySlugRouteImport } from './routes/lisbon-guide.category.$slug'
 import { Route as LovableEmailSuppressionRouteImport } from './routes/lovable/email/suppression'
 import { Route as AdminOpsJobsIndexRouteImport } from './routes/admin.ops.jobs.index'
@@ -362,6 +363,11 @@ const ApiPublicBookingsRoute = ApiPublicBookingsRouteImport.update({
   path: '/api/public/bookings',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BookingPayIdRoute = BookingPayIdRouteImport.update({
+  id: '/booking/pay/$id',
+  path: '/booking/pay/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LisbonGuideCategorySlugRoute = LisbonGuideCategorySlugRouteImport.update({
   id: '/lisbon-guide/category/$slug',
   path: '/lisbon-guide/category/$slug',
@@ -472,6 +478,7 @@ export interface FileRoutesByFullPath {
   '/admin/ops/vehicles': typeof AdminOpsVehiclesRoute
   '/admin/tours/$id': typeof AdminToursIdRoute
   '/api/public/bookings': typeof ApiPublicBookingsRoute
+  '/booking/pay/$id': typeof BookingPayIdRoute
   '/lisbon-guide/category/$slug': typeof LisbonGuideCategorySlugRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/admin/blog/': typeof AdminBlogIndexRoute
@@ -541,6 +548,7 @@ export interface FileRoutesByTo {
   '/admin/ops/vehicles': typeof AdminOpsVehiclesRoute
   '/admin/tours/$id': typeof AdminToursIdRoute
   '/api/public/bookings': typeof ApiPublicBookingsRoute
+  '/booking/pay/$id': typeof BookingPayIdRoute
   '/lisbon-guide/category/$slug': typeof LisbonGuideCategorySlugRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/admin/blog': typeof AdminBlogIndexRoute
@@ -611,6 +619,7 @@ export interface FileRoutesById {
   '/admin/ops/vehicles': typeof AdminOpsVehiclesRoute
   '/admin/tours/$id': typeof AdminToursIdRoute
   '/api/public/bookings': typeof ApiPublicBookingsRoute
+  '/booking/pay/$id': typeof BookingPayIdRoute
   '/lisbon-guide/category/$slug': typeof LisbonGuideCategorySlugRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/admin/blog/': typeof AdminBlogIndexRoute
@@ -682,6 +691,7 @@ export interface FileRouteTypes {
     | '/admin/ops/vehicles'
     | '/admin/tours/$id'
     | '/api/public/bookings'
+    | '/booking/pay/$id'
     | '/lisbon-guide/category/$slug'
     | '/lovable/email/suppression'
     | '/admin/blog/'
@@ -751,6 +761,7 @@ export interface FileRouteTypes {
     | '/admin/ops/vehicles'
     | '/admin/tours/$id'
     | '/api/public/bookings'
+    | '/booking/pay/$id'
     | '/lisbon-guide/category/$slug'
     | '/lovable/email/suppression'
     | '/admin/blog'
@@ -820,6 +831,7 @@ export interface FileRouteTypes {
     | '/admin/ops/vehicles'
     | '/admin/tours/$id'
     | '/api/public/bookings'
+    | '/booking/pay/$id'
     | '/lisbon-guide/category/$slug'
     | '/lovable/email/suppression'
     | '/admin/blog/'
@@ -890,6 +902,7 @@ export interface RootRouteChildren {
   AdminOpsVehiclesRoute: typeof AdminOpsVehiclesRoute
   AdminToursIdRoute: typeof AdminToursIdRoute
   ApiPublicBookingsRoute: typeof ApiPublicBookingsRoute
+  BookingPayIdRoute: typeof BookingPayIdRoute
   LisbonGuideCategorySlugRoute: typeof LisbonGuideCategorySlugRoute
   LovableEmailSuppressionRoute: typeof LovableEmailSuppressionRoute
   AdminBlogIndexRoute: typeof AdminBlogIndexRoute
@@ -1307,6 +1320,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicBookingsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/booking/pay/$id': {
+      id: '/booking/pay/$id'
+      path: '/booking/pay/$id'
+      fullPath: '/booking/pay/$id'
+      preLoaderRoute: typeof BookingPayIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/lisbon-guide/category/$slug': {
       id: '/lisbon-guide/category/$slug'
       path: '/lisbon-guide/category/$slug'
@@ -1434,6 +1454,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminOpsVehiclesRoute: AdminOpsVehiclesRoute,
   AdminToursIdRoute: AdminToursIdRoute,
   ApiPublicBookingsRoute: ApiPublicBookingsRoute,
+  BookingPayIdRoute: BookingPayIdRoute,
   LisbonGuideCategorySlugRoute: LisbonGuideCategorySlugRoute,
   LovableEmailSuppressionRoute: LovableEmailSuppressionRoute,
   AdminBlogIndexRoute: AdminBlogIndexRoute,
