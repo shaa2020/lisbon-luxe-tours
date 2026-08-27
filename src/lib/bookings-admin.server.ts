@@ -73,6 +73,7 @@ export async function resolveBookingEmail(
   const showDetails =
     overrides.includeDetails != null ? overrides.includeDetails : tpl.show_booking_details;
 
+  let rows = showDetails ? bookingRows(booking) : [];
   let ctaUrl = overrides.ctaUrl != null ? overrides.ctaUrl : tpl.cta_url;
   let ctaLabel = overrides.ctaLabel != null ? overrides.ctaLabel : tpl.cta_label;
   if (templateKey === "review_request" && !ctaUrl) ctaUrl = brand.reviewUrl;
@@ -81,6 +82,24 @@ export async function resolveBookingEmail(
     // page where the customer downloads the branded PDF.
     if (!ctaUrl) ctaUrl = `https://tuktuk24lisbon.com/invoice/${booking.id}`;
     if (!ctaLabel) ctaLabel = "Download PDF invoice";
+  }
+  if (templateKey === "payment_request") {
+    // Point the button at the secure pay-balance page and spell out the money.
+    const { computeBookingBalance } = await import("./balance-pay.server");
+    const balance = await computeBookingBalance(admin, booking.id);
+    if (balance) {
+      const eur = (c: number) => `€${(c / 100).toFixed(2)}`;
+      if (!ctaUrl) ctaUrl = `https://tuktuk24lisbon.com/booking/pay/${booking.id}`;
+      if (!ctaLabel)
+        ctaLabel = balance.dueCents > 0 ? `Pay ${eur(balance.dueCents)} securely now` : "View booking";
+      if (showDetails) {
+        rows = rows.filter((r) => r.label !== "Total");
+        rows.push({ label: "Booking total", value: eur(balance.totalCents) });
+        if (balance.paidCents > 0)
+          rows.push({ label: "Already paid", value: eur(balance.paidCents) });
+        rows.push({ label: "Balance due", value: eur(balance.dueCents) });
+      }
+    }
   }
 
   return {
@@ -92,7 +111,7 @@ export async function resolveBookingEmail(
     outro: pick(overrides.outro, tpl.outro || ""),
     ctaLabel: ctaLabel ? fillPlaceholders(ctaLabel, vars) : null,
     ctaUrl: ctaUrl ? fillPlaceholders(ctaUrl, vars) : null,
-    rows: showDetails ? bookingRows(booking) : [],
+    rows,
     brand,
   };
 }
