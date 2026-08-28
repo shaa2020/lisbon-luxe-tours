@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import heroAsset from "@/assets/hero-lisbon-tuktuk.jpg.asset.json";
@@ -20,13 +20,7 @@ import { StickyBookBar } from "@/components/site/StickyBookBar";
 import { useBlogPosts, useTours, tourPricing, type Tour } from "@/lib/cms";
 import { trackBookingCtaClick } from "@/lib/analytics";
 import { subscribeToNewsletter } from "@/lib/subscribers.functions";
-import aboutAsset from "@/assets/about-tuktuk-fleet.jpg.asset.json";
-const aboutImg = aboutAsset.url;
 import { useSiteBrand } from "@/lib/brand";
-
-
-// Hero now uses the tuk-tuk/flowers image (per user request 2026-06-16)
-const lockedHeroImg = `${aboutImg}?v=locked-20260616-hero`;
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -86,79 +80,27 @@ function Index() {
 
 /* ============================== HERO ============================== */
 
-const DEFAULT_HERO_LABELS = ["Alfama", "Belém", "Sintra", "Cascais"];
-
 function Hero() {
-  const { heroImageUrl, heroSlides, isPlaceholderData, isPending } = useSiteBrand();
+  const { heroImageUrl, isPlaceholderData, isPending } = useSiteBrand();
   const settingsReady = !isPending && !isPlaceholderData;
   const { data: allTours = [] } = useTours();
   const prices = allTours.map((t) => tourPricing(t).current).filter((n) => n > 0);
   const fromPrice = prices.length ? Math.min(...prices) : null;
-  const fallback = heroImageUrl || lockedHeroImg;
-
-
-  const slides =
-    heroSlides.length > 0
-      ? heroSlides.map((s) => ({ label: s.label || "Lisboa", image: s.image_url || fallback }))
-      : DEFAULT_HERO_LABELS.map((label) => ({ label, image: fallback }));
-
-  const [slide, setSlide] = useState(0);
-  const count = slides.length;
-
-  useEffect(() => {
-    if (count < 2) return;
-    const t = setInterval(() => setSlide((s) => (s + 1) % count), 5500);
-    return () => clearInterval(t);
-  }, [count]);
-
-  const idx = slide % count;
-  const current = slides[idx];
-  const prev = slides[(idx + count - 1) % count];
-  const next = slides[(idx + 1) % count];
 
   return (
     <section className="relative">
       <div className="relative min-h-[520px] sm:min-h-[560px] md:h-[760px] overflow-hidden bg-ink">
-        {settingsReady &&
-          slides.map((s, i) => (
-            <img
-              key={s.image}
-              src={s.image}
-              alt={i === idx ? `Private tuk-tuk tour in ${s.label}, Lisbon` : ""}
-              aria-hidden={i !== idx}
-              loading={i === 0 ? "eager" : "lazy"}
-              className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-[1200ms] ${
-                i === idx ? "opacity-100 scale-105" : "opacity-0"
-              }`}
-              style={{ transitionProperty: "opacity, transform", transform: i === idx ? "scale(1.04)" : "scale(1)" }}
-            />
-          ))}
+        {settingsReady && heroImageUrl && (
+          <img
+            src={heroImageUrl}
+            alt="Private tuk-tuk tour in Lisbon"
+            loading="eager"
+            fetchPriority="high"
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+        )}
 
         <div className="absolute inset-0 bg-gradient-to-b from-ink/55 via-ink/30 to-ink/70" />
-
-        {/* Side slide labels */}
-        {count > 1 && (
-          <>
-            <button
-              type="button"
-              aria-label={`Previous: ${prev.label}`}
-              onClick={() => setSlide((s) => (s + count - 1) % count)}
-              className="absolute left-6 top-1/2 -translate-y-1/2 hidden md:flex items-center gap-3 text-white/70 hover:text-white transition"
-            >
-              <span className="w-9 h-9 rounded-full border border-white/50 grid place-items-center text-[11px]">◀</span>
-              <span className="text-2xl font-display">{prev.label}</span>
-            </button>
-            <button
-              type="button"
-              aria-label={`Next: ${next.label}`}
-              onClick={() => setSlide((s) => (s + 1) % count)}
-              className="absolute right-6 top-1/2 -translate-y-1/2 hidden md:flex items-center gap-3 text-white/70 hover:text-white transition"
-            >
-              <span className="text-2xl font-display">{next.label}</span>
-              <span className="w-9 h-9 rounded-full border border-white/50 grid place-items-center text-[11px]">▶</span>
-            </button>
-          </>
-        )}
 
         {/* Centered headline */}
         <div className="relative md:h-full container-x flex flex-col items-center justify-center text-center pt-[110px] md:pt-[110px] pb-14 md:pb-32">
@@ -170,11 +112,10 @@ function Hero() {
               Explore Beautiful
             </span>
             <span
-              key={current.label}
               className="block font-sans font-bold uppercase text-white leading-[0.92] tracking-tight animate-[fade-up_0.8s_var(--ease-out-expo)_both]"
               style={{ fontSize: "clamp(40px, 11vw, 170px)" }}
             >
-              {current.label}
+              Lisbon
             </span>
             <span className="mt-2 text-white/90 text-[13px] md:text-[15px] uppercase tracking-[0.28em]">
               Private Tuk-Tuk Tours in Lisbon
@@ -216,27 +157,6 @@ function Hero() {
             ))}
           </ul>
         </div>
-
-
-        {/* Slide index */}
-        {count > 1 && (
-          <div className="absolute bottom-[100px] md:bottom-[112px] left-1/2 -translate-x-1/2 hidden md:flex items-center gap-5">
-            {slides.map((s, i) => (
-              <button
-                key={`dot-${s.label}-${i}`}
-                type="button"
-                onClick={() => setSlide(i)}
-                aria-label={`Show ${s.label}`}
-                className={`text-[12px] tracking-widest transition ${
-                  i === idx ? "text-white font-semibold" : "text-white/50 hover:text-white/80"
-                }`}
-              >
-                {String(i + 1).padStart(2, "0")}
-              </button>
-            ))}
-          </div>
-        )}
-
         {/* Search bar — inside hero on desktop, hidden on mobile (shown below hero) */}
         <div className="hidden md:block absolute inset-x-0 bottom-8">
           <div className="container-x">
