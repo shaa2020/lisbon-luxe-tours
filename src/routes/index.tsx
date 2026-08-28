@@ -89,7 +89,8 @@ function Index() {
 const DEFAULT_HERO_LABELS = ["Alfama", "Belém", "Sintra", "Cascais"];
 
 function Hero() {
-  const { heroImageUrl, heroSlides } = useSiteBrand();
+  const { heroImageUrl, heroSlides, isPlaceholderData, isPending } = useSiteBrand();
+  const settingsReady = !isPending && !isPlaceholderData;
   const { data: allTours = [] } = useTours();
   const prices = allTours.map((t) => tourPricing(t).current).filter((n) => n > 0);
   const fromPrice = prices.length ? Math.min(...prices) : null;
@@ -117,19 +118,22 @@ function Hero() {
 
   return (
     <section className="relative">
-      <div className="relative min-h-[520px] sm:min-h-[560px] md:h-[760px] overflow-hidden">
-        {slides.map((s, i) => (
-          <img
-            key={`${s.label}-${i}`}
-            src={s.image}
-            alt={i === idx ? `Private tuk-tuk tour in ${s.label}, Lisbon` : ""}
-            aria-hidden={i !== idx}
-            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-[1200ms] ${
-              i === idx ? "opacity-100 scale-105" : "opacity-0"
-            }`}
-            style={{ transitionProperty: "opacity, transform", transform: i === idx ? "scale(1.04)" : "scale(1)" }}
-          />
-        ))}
+      <div className="relative min-h-[520px] sm:min-h-[560px] md:h-[760px] overflow-hidden bg-ink">
+        {settingsReady &&
+          slides.map((s, i) => (
+            <img
+              key={s.image}
+              src={s.image}
+              alt={i === idx ? `Private tuk-tuk tour in ${s.label}, Lisbon` : ""}
+              aria-hidden={i !== idx}
+              loading={i === 0 ? "eager" : "lazy"}
+              className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-[1200ms] ${
+                i === idx ? "opacity-100 scale-105" : "opacity-0"
+              }`}
+              style={{ transitionProperty: "opacity, transform", transform: i === idx ? "scale(1.04)" : "scale(1)" }}
+            />
+          ))}
+
         <div className="absolute inset-0 bg-gradient-to-b from-ink/55 via-ink/30 to-ink/70" />
 
         {/* Side slide labels */}
