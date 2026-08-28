@@ -252,7 +252,17 @@ export const confirmCheckout = createServerFn({ method: "POST" })
         .select("amount_total")
         .eq("id", order.booking_id)
         .maybeSingle();
-      const isDeposit = !!bk?.amount_total && (order.amount_total ?? 0) < bk.amount_total;
+      // Fully paid when every paid order together covers the booking total —
+      // a balance payment after a deposit must flip the booking to "paid".
+      const { data: paidOrders } = await supabaseAdmin
+        .from("orders")
+        .select("amount_total")
+        .eq("booking_id", order.booking_id)
+        .eq("payment_status", "paid");
+      const cumulativePaid =
+        (paidOrders ?? []).reduce((s: number, o: any) => s + Number(o.amount_total || 0), 0) +
+        (order.amount_total ?? 0);
+      const isDeposit = !!bk?.amount_total && cumulativePaid < bk.amount_total;
       await supabaseAdmin
         .from("bookings")
         .update({ payment_status: isDeposit ? "deposit_paid" : "paid", status: "confirmed" })
