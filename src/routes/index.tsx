@@ -112,11 +112,10 @@ function Hero() {
               Explore Beautiful
             </span>
             <span
-              key={current.label}
               className="block font-sans font-bold uppercase text-white leading-[0.92] tracking-tight animate-[fade-up_0.8s_var(--ease-out-expo)_both]"
               style={{ fontSize: "clamp(40px, 11vw, 170px)" }}
             >
-              {current.label}
+              Lisbon
             </span>
             <span className="mt-2 text-white/90 text-[13px] md:text-[15px] uppercase tracking-[0.28em]">
               Private Tuk-Tuk Tours in Lisbon
@@ -158,27 +157,6 @@ function Hero() {
             ))}
           </ul>
         </div>
-
-
-        {/* Slide index */}
-        {count > 1 && (
-          <div className="absolute bottom-[100px] md:bottom-[112px] left-1/2 -translate-x-1/2 hidden md:flex items-center gap-5">
-            {slides.map((s, i) => (
-              <button
-                key={`dot-${s.label}-${i}`}
-                type="button"
-                onClick={() => setSlide(i)}
-                aria-label={`Show ${s.label}`}
-                className={`text-[12px] tracking-widest transition ${
-                  i === idx ? "text-white font-semibold" : "text-white/50 hover:text-white/80"
-                }`}
-              >
-                {String(i + 1).padStart(2, "0")}
-              </button>
-            ))}
-          </div>
-        )}
-
         {/* Search bar — inside hero on desktop, hidden on mobile (shown below hero) */}
         <div className="hidden md:block absolute inset-x-0 bottom-8">
           <div className="container-x">
