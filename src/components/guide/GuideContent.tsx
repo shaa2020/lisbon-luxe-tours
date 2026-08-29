@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import { headingId, type GuideBlock } from "@/lib/travel-guide";
 import { useTours, tourPricing } from "@/lib/cms";
+import { MediaImage } from "@/components/site/MediaImage";
 
 /** Minimal, safe inline formatting: **bold**, *italic*, [text](href). No raw HTML. */
 function inline(text: string): ReactNode[] {
@@ -68,10 +69,10 @@ function InlineTourCard({ slug }: { slug: string }) {
   return (
     <div className="my-8 overflow-hidden rounded-xl border border-border bg-white shadow-[0_10px_30px_rgba(30,58,95,0.07)] sm:flex">
       <div className="sm:w-56 shrink-0">
-        <img
+        <MediaImage
           src={tour.image}
           alt={tour.title}
-          loading="lazy"
+          wrapperClassName="h-44 w-full sm:h-full"
           className="h-44 w-full object-cover sm:h-full"
         />
       </div>

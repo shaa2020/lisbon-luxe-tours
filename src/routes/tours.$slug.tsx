@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { TourCard } from "@/components/site/TourCard";
 import { Nav } from "@/components/site/Nav";
+import { MediaImage } from "@/components/site/MediaImage";
 import { Footer } from "@/components/site/Footer";
 import { WhatsappFab } from "@/components/site/Whatsapp";
 import { TourBookingPanel } from "@/components/site/TourBookingPanel";
@@ -140,9 +141,12 @@ function TourPage() {
 
       {/* Hero */}
       <section className="relative h-[70vh] min-h-[480px] overflow-hidden bg-ink">
-        <img
+        <MediaImage
           src={tour.image}
           alt={tour.title}
+          loading="eager"
+          fetchPriority="high"
+          wrapperClassName="absolute inset-0"
           className="absolute inset-0 w-full h-full object-cover animate-[scale-in_1.4s_var(--ease-out-expo)]"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/30 to-ink/40" />

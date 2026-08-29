@@ -3,6 +3,7 @@ import { Nav } from "@/components/site/Nav";
 import { Footer } from "@/components/site/Footer";
 import { WhatsappFab, WhatsappInline } from "@/components/site/Whatsapp";
 import { TourCard } from "@/components/site/TourCard";
+import { MediaImage } from "@/components/site/MediaImage";
 import { useTours, type Tour } from "@/lib/cms";
 import { useSiteBrand } from "@/lib/brand";
 import { CANCELLATION_POLICY_BULLETS } from "@/lib/cancellation";
@@ -41,11 +42,12 @@ export function LandingPage(props: LandingPageProps) {
       {/* Hero */}
       <header className="relative pt-[120px] pb-14 md:pb-20 bg-ink text-white overflow-hidden">
         {bg && (
-          <img
+          <MediaImage
             src={bg}
             alt=""
-            aria-hidden="true"
-            className="absolute inset-0 w-full h-full object-cover opacity-30"
+            loading="eager"
+            wrapperClassName="absolute inset-0 opacity-30"
+            className="absolute inset-0 w-full h-full object-cover"
           />
         )}
         <div className="absolute inset-0 bg-gradient-to-b from-ink/80 via-ink/70 to-ink" />

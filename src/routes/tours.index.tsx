@@ -2,6 +2,7 @@ import { trackWhatsappClick } from "@/lib/analytics";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { Nav } from "@/components/site/Nav";
+import { MediaImage } from "@/components/site/MediaImage";
 import { Footer } from "@/components/site/Footer";
 import { WhatsappFab } from "@/components/site/Whatsapp";
 import { BookingModal } from "@/components/site/BookingModal";
@@ -12,7 +13,6 @@ import { useSiteBrand } from "@/lib/brand";
 import { CANCELLATION_POLICY_BULLETS } from "@/lib/cancellation";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import heroImg from "@/assets/hero-lisbon.jpg";
 
 export const Route = createFileRoute("/tours/")({
   head: () => ({
@@ -72,7 +72,7 @@ function ToursPage() {
   const { data: statsBySlug = {} } = useReviewStatsBySlug();
   const { data: guestReviews = [] } = useFeaturedReviews(3);
   const { data: faqs = [] } = useFaqs(6);
-  const { business, hotelPickupFeeCents } = useSiteBrand();
+  const { business, hotelPickupFeeCents, heroImageUrl } = useSiteBrand();
   const [cat, setCat] = useState<string>("all");
   const [q, setQ] = useState(sp.q ?? "");
   const [sort, setSort] = useState<SortKey>("featured");
@@ -155,9 +155,12 @@ function ToursPage() {
       {/* PAGE HEADER */}
       <header className="relative pt-[78px]">
         <div className="relative h-[300px] md:h-[360px] overflow-hidden">
-          <img
-            src={heroImg}
+          <MediaImage
+            src={heroImageUrl}
             alt="A Tuk Tuk 24 electric tuk-tuk on a cobbled Lisbon street"
+            loading="eager"
+            fetchPriority="high"
+            wrapperClassName="absolute inset-0"
             className="absolute inset-0 w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-ink/60" />
@@ -548,10 +551,10 @@ function TourGridCard({
   return (
     <article className="group bg-white rounded-xl overflow-hidden shadow-[0_4px_20px_rgba(30,58,95,0.06)] hover:shadow-[0_20px_40px_rgba(30,58,95,0.12)] hover:-translate-y-1 transition-all duration-500 flex flex-col">
       <Link to="/tours/$slug" params={{ slug: tour.slug }} className="relative block aspect-[16/10] overflow-hidden">
-        <img
+        <MediaImage
           src={tour.image}
           alt={`${tour.title} — private tour in ${tour.category}`}
-          loading="lazy"
+          wrapperClassName="w-full h-full"
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
         />
         {tour.featured && (

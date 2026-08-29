@@ -19,7 +19,8 @@ const TOUR_SELECT = `
   featured,
   published,
   sort_order,
-  per_person_pricing
+  per_person_pricing,
+  updated_at
 `;
 
 const BLOG_SELECT = `
@@ -34,7 +35,8 @@ const BLOG_SELECT = `
   comments,
   shares,
   published_at,
-  published
+  published,
+  updated_at
 `;
 
 export async function fetchPublishedTours() {

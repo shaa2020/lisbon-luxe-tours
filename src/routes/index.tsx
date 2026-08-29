@@ -2,14 +2,6 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import heroAsset from "@/assets/hero-lisbon-tuktuk.jpg.asset.json";
-const heroImg = heroAsset.url;
-import alfamaImg from "@/assets/tour-alfama.jpg";
-import sintraImg from "@/assets/tour-sintra.jpg";
-import belemImg from "@/assets/dest-belem.jpg";
-import cascaisImg from "@/assets/dest-cascais.jpg";
-import caboImg from "@/assets/tour-caboroca.jpg";
-import vanImg from "@/assets/fleet-van.jpg";
 import { Nav } from "@/components/site/Nav";
 import { Footer } from "@/components/site/Footer";
 import { WhatsappFab, WhatsappInline } from "@/components/site/Whatsapp";
@@ -18,6 +10,7 @@ import { TestimonialsSection } from "@/components/site/TestimonialsSection";
 import { TrustStrip } from "@/components/site/TrustStrip";
 import { StickyBookBar } from "@/components/site/StickyBookBar";
 import { useBlogPosts, useTours, tourPricing, type Tour } from "@/lib/cms";
+import { MediaImage } from "@/components/site/MediaImage";
 import { trackBookingCtaClick } from "@/lib/analytics";
 import { subscribeToNewsletter } from "@/lib/subscribers.functions";
 import { useSiteBrand } from "@/lib/brand";
@@ -436,7 +429,7 @@ function PopularCard({ tour, onBook }: { tour: Tour; onBook: () => void }) {
   return (
     <article className="bg-white rounded-xl overflow-hidden shadow-[0_4px_20px_rgba(30,58,95,0.06)] hover:shadow-[0_20px_40px_rgba(30,58,95,0.12)] transition-all duration-500 group">
       <Link to="/tours/$slug" params={{ slug: tour.slug }} className="relative block aspect-[16/10] overflow-hidden">
-        <img src={tour.image} alt={tour.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+        <MediaImage src={tour.image} alt={tour.title} wrapperClassName="w-full h-full" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
         {tour.featured && (
           <span className="absolute top-3 left-3 bg-gold text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-sm">
             Top Rated
@@ -484,13 +477,24 @@ function PopularCard({ tour, onBook }: { tour: Tour; onBook: () => void }) {
 /* ============================== DESTINATIONS ============================== */
 
 function Destinations() {
+  const { data: tours = [] } = useTours();
+  // Destination imagery is taken from the live tour catalogue so it always
+  // reflects what admins uploaded — never a bundled/stale photo.
+  const byCategory = (needle: string) =>
+    tours.find(
+      (t) =>
+        t.categorySlug?.toLowerCase().includes(needle) ||
+        t.category?.toLowerCase().includes(needle) ||
+        t.slug?.toLowerCase().includes(needle),
+    )?.image || null;
+  const anyImg = (i: number) => tours[i % (tours.length || 1)]?.image || null;
   const dests = [
-    { name: "Lisboa", count: 12, img: heroImg },
-    { name: "Sintra", count: 6, img: sintraImg },
-    { name: "Belém", count: 4, img: belemImg },
-    { name: "Cascais", count: 5, img: cascaisImg },
-    { name: "Cabo da Roca", count: 3, img: caboImg },
-    { name: "Alfama", count: 8, img: alfamaImg },
+    { name: "Lisboa", count: 12, img: byCategory("lisbo") ?? anyImg(0) },
+    { name: "Sintra", count: 6, img: byCategory("sintra") ?? anyImg(1) },
+    { name: "Belém", count: 4, img: byCategory("belem") ?? anyImg(2) },
+    { name: "Cascais", count: 5, img: byCategory("cascais") ?? anyImg(3) },
+    { name: "Cabo da Roca", count: 3, img: byCategory("roca") ?? anyImg(4) },
+    { name: "Alfama", count: 8, img: byCategory("alfama") ?? anyImg(5) },
   ];
   const [active, setActive] = useState(2);
 
@@ -515,7 +519,7 @@ function Destinations() {
                   : "w-[200px] h-[320px] mt-8 opacity-90 hover:opacity-100"
               }`}
             >
-              <img src={d.img} alt={d.name} className="w-full h-full object-cover" />
+              <MediaImage src={d.img} alt={d.name} wrapperClassName="w-full h-full" className="w-full h-full object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/20 to-transparent" />
               <div className="absolute bottom-0 left-0 right-0 p-5 text-left text-white">
                 <div className="flex items-center gap-2 mb-1">
@@ -545,11 +549,9 @@ function Destinations() {
 /* ============================== GALLERY ============================== */
 
 function Gallery() {
-  const imgs = [
-    alfamaImg, sintraImg, belemImg, cascaisImg,
-    caboImg, heroImg, vanImg, alfamaImg,
-    sintraImg, belemImg, cascaisImg, caboImg,
-  ];
+  const { data: tours = [] } = useTours();
+  const pool = tours.map((t) => t.image).filter(Boolean);
+  const imgs = Array.from({ length: 12 }, (_, i) => (pool.length ? pool[i % pool.length] : null));
   return (
     <section className="bg-cloud/40 py-20 md:py-24">
       <div className="container-x">
@@ -568,9 +570,10 @@ function Gallery() {
                 i === 2 || i === 7 ? "md:row-span-2 md:col-span-2 aspect-square md:aspect-auto" : "aspect-square"
               }`}
             >
-              <img
+              <MediaImage
                 src={src}
                 alt=""
+                wrapperClassName="w-full h-full"
                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
               />
               <div className="absolute inset-0 bg-gold/0 group-hover:bg-gold/20 transition-colors flex items-center justify-center">
@@ -613,7 +616,7 @@ function TravelTipsAndSignup() {
         {tips.map((t) => (
           <article key={t.slug} className="bg-white rounded-xl overflow-hidden shadow-[0_4px_20px_rgba(30,58,95,0.06)] hover:shadow-[0_20px_40px_rgba(30,58,95,0.12)] transition-shadow group">
             <Link to="/journal/$slug" params={{ slug: t.slug }} className="block aspect-[16/10] overflow-hidden">
-              <img src={t.image} alt={t.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+              <MediaImage src={t.image} alt={t.title} wrapperClassName="w-full h-full" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
             </Link>
             <div className="p-6">
               <div className="flex gap-4 text-[11px] text-body mb-3">

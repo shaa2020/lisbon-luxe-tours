@@ -1,11 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import vanImg from "@/assets/fleet-van.jpg";
-import aboutHeroAsset from "@/assets/about-tuktuk-fleet.jpg.asset.json";
-const aboutHeroImg = aboutHeroAsset.url;
-import alfamaImg from "@/assets/tour-alfama.jpg";
-import sintraImg from "@/assets/tour-sintra.jpg";
-import caboImg from "@/assets/tour-caboroca.jpg";
 import { useSiteBrand } from "@/lib/brand";
+import { MediaImage } from "@/components/site/MediaImage";
+import { useTours } from "@/lib/cms";
 import { Nav } from "@/components/site/Nav";
 import { Footer } from "@/components/site/Footer";
 import { WhatsappFab } from "@/components/site/Whatsapp";
@@ -33,6 +29,10 @@ export const Route = createFileRoute("/about")({
 
 function AboutPage() {
   const { aboutImageUrl } = useSiteBrand();
+  const { data: tours = [] } = useTours();
+  // Gallery imagery comes from the live tour catalogue, never from bundled files.
+  const gallery = tours.map((t) => t.image).filter(Boolean);
+  const pick = (i: number) => gallery[i % (gallery.length || 1)] ?? null;
   return (
     <div className="min-h-screen bg-paper text-ink overflow-x-clip">
       <Nav overlay />
@@ -40,7 +40,7 @@ function AboutPage() {
       {/* Page header */}
       <header className="relative pt-[120px] pb-12">
         <div className="relative h-[320px] md:h-[380px] overflow-hidden">
-          <img src={aboutImageUrl || aboutHeroImg} alt="Tuk Tuk 24 white electric tuk-tuks parked on Lisbon cobblestones" className="absolute inset-0 w-full h-full object-cover" />
+          <MediaImage src={aboutImageUrl} alt="Tuk Tuk 24 white electric tuk-tuks parked on Lisbon cobblestones" loading="eager" fetchPriority="high" wrapperClassName="absolute inset-0" className="absolute inset-0 w-full h-full object-cover" />
           <div className="absolute inset-0 bg-ink/55" />
           <div className="container-x relative h-full flex flex-col justify-center text-white">
             <p className="eyebrow text-white/80 mb-3">◆  Who we are</p>
@@ -59,10 +59,11 @@ function AboutPage() {
       <section className="container-x py-20 grid md:grid-cols-2 gap-16 items-center">
         <div className="relative">
           <div className="absolute -top-6 -left-6 w-32 h-32 rounded-full bg-gold/10" />
-          <img
-            src={alfamaImg}
+          <MediaImage
+            src={pick(0)}
             alt="A quiet morning in Alfama"
-            className="relative rounded-2xl shadow-[0_20px_50px_rgba(30,58,95,0.15)] w-full h-[460px] object-cover"
+            wrapperClassName="relative rounded-2xl shadow-[0_20px_50px_rgba(30,58,95,0.15)] w-full h-[460px]"
+            className="w-full h-[460px] object-cover"
           />
         </div>
         <div>
@@ -164,10 +165,10 @@ function AboutPage() {
             </ul>
           </div>
           <div className="grid grid-cols-2 gap-4">
-            <img src={sintraImg} alt="Sintra romantic palace surrounded by pine forests" className="rounded-2xl object-cover h-64 w-full" />
-            <img src={caboImg} alt="Cabo da Roca sunset over the Atlantic Ocean" className="rounded-2xl object-cover h-64 w-full mt-10" />
-            <img src={alfamaImg} alt="Alfama neighborhood with terracotta rooftops" className="rounded-2xl object-cover h-64 w-full -mt-6" />
-            <img src={vanImg} alt="Tuk Tuk 24 luxury van ready for a private Portugal tour" className="rounded-2xl object-cover h-64 w-full" />
+            <MediaImage src={pick(1)} alt="Sintra romantic palace surrounded by pine forests" wrapperClassName="rounded-2xl h-64 w-full rounded-2xl" className="h-64 w-full object-cover" />
+            <MediaImage src={pick(2)} alt="Cabo da Roca sunset over the Atlantic Ocean" wrapperClassName="rounded-2xl h-64 w-full mt-10 rounded-2xl" className="h-64 w-full object-cover" />
+            <MediaImage src={pick(3)} alt="Alfama neighborhood with terracotta rooftops" wrapperClassName="rounded-2xl h-64 w-full -mt-6 rounded-2xl" className="h-64 w-full object-cover" />
+            <MediaImage src={pick(4)} alt="Tuk Tuk 24 luxury van ready for a private Portugal tour" wrapperClassName="rounded-2xl h-64 w-full rounded-2xl" className="h-64 w-full object-cover" />
           </div>
         </div>
       </section>

@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Nav } from "@/components/site/Nav";
+import { MediaImage } from "@/components/site/MediaImage";
 import { Footer } from "@/components/site/Footer";
 import { WhatsappFab } from "@/components/site/Whatsapp";
 import { useBlogPosts } from "@/lib/cms";
@@ -71,7 +72,7 @@ function JournalPage() {
               className="grid lg:grid-cols-[1.2fr_0.8fr] overflow-hidden rounded-xl bg-white border border-border shadow-[0_10px_30px_rgba(30,58,95,0.08)]"
             >
               <div className="aspect-[16/11] lg:aspect-auto min-h-[280px]">
-                <img src={featured.image} alt={featured.title} className="w-full h-full object-cover" />
+                <MediaImage src={featured.image} alt={featured.title} wrapperClassName="w-full h-full" className="w-full h-full object-cover" />
               </div>
               <div className="p-6 sm:p-8 md:p-10 flex flex-col justify-center">
                 <p className="eyebrow text-gold mb-3">Featured story</p>
@@ -96,7 +97,7 @@ function JournalPage() {
                   className="bg-white rounded-xl overflow-hidden border border-border shadow-[0_4px_20px_rgba(30,58,95,0.06)]"
                 >
                   <Link to="/journal/$slug" params={{ slug: post.slug }} className="block aspect-[16/10] overflow-hidden">
-                    <img src={post.image} alt={post.title} className="w-full h-full object-cover transition-transform duration-700 hover:scale-105" />
+                    <MediaImage src={post.image} alt={post.title} wrapperClassName="w-full h-full" className="w-full h-full object-cover transition-transform duration-700 hover:scale-105" />
                   </Link>
                   <div className="p-6">
                     <div className="flex flex-wrap gap-3 text-[11px] text-body uppercase tracking-widest mb-3">

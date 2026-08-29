@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Nav } from "@/components/site/Nav";
+import { MediaImage } from "@/components/site/MediaImage";
 import { Footer } from "@/components/site/Footer";
 import { WhatsappFab } from "@/components/site/Whatsapp";
 import { useBlogPost, useBlogPosts, mapPost } from "@/lib/cms";
@@ -130,7 +131,7 @@ function JournalPostPage() {
 
           <div className="container-x">
             <div className="overflow-hidden rounded-xl border border-border shadow-[0_10px_30px_rgba(30,58,95,0.08)]">
-              <img src={post.image} alt={post.title} className="w-full h-[260px] sm:h-[340px] md:h-[480px] object-cover" />
+              <MediaImage src={post.image} alt={post.title} loading="eager" wrapperClassName="w-full" className="w-full h-[260px] sm:h-[340px] md:h-[480px] object-cover" />
             </div>
           </div>
         </section>
@@ -166,7 +167,7 @@ function JournalPostPage() {
                     className="bg-white rounded-xl overflow-hidden border border-border shadow-[0_4px_20px_rgba(30,58,95,0.06)]"
                   >
                     <Link to="/journal/$slug" params={{ slug: entry.slug }} className="block aspect-[16/10] overflow-hidden">
-                      <img src={entry.image} alt={entry.title} className="w-full h-full object-cover" />
+                      <MediaImage src={entry.image} alt={entry.title} wrapperClassName="w-full h-full" className="w-full h-full object-cover" />
                     </Link>
                     <div className="p-6">
                       <p className="text-[11px] uppercase tracking-widest text-gold mb-2">{entry.category}</p>
