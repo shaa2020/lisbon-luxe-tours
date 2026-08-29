@@ -1,6 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import type { Tour } from "@/lib/cms";
 import { tourPricing } from "@/lib/cms";
+import { MediaImage } from "@/components/site/MediaImage";
+
 
 export function TourCard({ tour }: { tour: Tour; offset?: boolean }) {
   const pricing = tourPricing(tour);
