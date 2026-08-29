@@ -2,6 +2,7 @@ import { trackWhatsappClick } from "@/lib/analytics";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { Nav } from "@/components/site/Nav";
+import { MediaImage } from "@/components/site/MediaImage";
 import { Footer } from "@/components/site/Footer";
 import { WhatsappFab } from "@/components/site/Whatsapp";
 import { BookingModal } from "@/components/site/BookingModal";
@@ -548,10 +549,10 @@ function TourGridCard({
   return (
     <article className="group bg-white rounded-xl overflow-hidden shadow-[0_4px_20px_rgba(30,58,95,0.06)] hover:shadow-[0_20px_40px_rgba(30,58,95,0.12)] hover:-translate-y-1 transition-all duration-500 flex flex-col">
       <Link to="/tours/$slug" params={{ slug: tour.slug }} className="relative block aspect-[16/10] overflow-hidden">
-        <img
+        <MediaImage
           src={tour.image}
           alt={`${tour.title} — private tour in ${tour.category}`}
-          loading="lazy"
+          wrapperClassName="w-full h-full"
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
         />
         {tour.featured && (
