@@ -3,6 +3,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { getPublicSiteSettings } from "./cms.functions";
 import defaultLogoAsset from "@/assets/tuktuk24-logo-new.png.asset.json";
 import { DEFAULT_GROUP_TIERS, parseGroupTiers, type GroupTier } from "./pricing";
+import { versionedUrl } from "./media";
 
 export const DEFAULT_BRAND_NAME = "Tuk Tuk 24";
 export const DEFAULT_BRAND_TAGLINE = "Lisbon Tours";
@@ -167,11 +168,13 @@ export function useSiteBrand() {
     staleTime: 60_000,
     queryFn: async (): Promise<SiteBrand> => {
       const data = await fetchBrand();
+      // Cache-bust admin-replaced images without disabling caching entirely.
+      const stamp = (data as any)?.updated_at ?? null;
       return {
         brandName: (data as any)?.brand_name || DEFAULT_BRAND_NAME,
-        logoUrl: (data as any)?.logo_url ?? DEFAULT_BRAND_LOGO,
-        heroImageUrl: (data as any)?.hero_image_url ?? null,
-        aboutImageUrl: (data as any)?.about_image_url ?? null,
+        logoUrl: versionedUrl((data as any)?.logo_url, stamp) ?? DEFAULT_BRAND_LOGO,
+        heroImageUrl: versionedUrl((data as any)?.hero_image_url, stamp),
+        aboutImageUrl: versionedUrl((data as any)?.about_image_url, stamp),
         heroSlides: mapHeroSlides(data),
         business: mapBusiness(data),
         customTour: mapCustomTour(data),
