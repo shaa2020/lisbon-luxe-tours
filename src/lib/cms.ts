@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { tourImage, blogImage } from "./fallback-images";
+import { versionedUrl } from "./media";
 import {
   getPublishedBlogPostBySlug,
   getPublishedBlogPosts,
@@ -80,6 +81,7 @@ type TourRow = {
   published: boolean;
   sort_order: number;
   per_person_pricing?: boolean | null;
+  updated_at?: string | null;
 };
 
 type BlogRow = {
@@ -95,6 +97,7 @@ type BlogRow = {
   shares: number;
   published_at: string;
   published: boolean;
+  updated_at?: string | null;
 };
 
 export function mapTour(row: TourRow): Tour {
@@ -109,7 +112,7 @@ export function mapTour(row: TourRow): Tour {
     salePrice: row.sale_price,
     perPersonPricing: row.per_person_pricing !== false,
     image_url: row.image_url,
-    image: tourImage(row.slug, row.image_url),
+    image: versionedUrl(tourImage(row.slug, row.image_url), row.updated_at) ?? "",
     tagline: row.tagline ?? "",
     description: row.description,
     highlights: arr(row.highlights),
@@ -130,7 +133,7 @@ export function mapPost(row: BlogRow): BlogPost {
     title: row.title,
     excerpt: row.excerpt,
     image_url: row.image_url,
-    image: blogImage(row.slug, row.image_url),
+    image: versionedUrl(blogImage(row.slug, row.image_url), row.updated_at) ?? "",
     category: row.category,
     readTime: row.read_time,
     content: arr(row.content),
