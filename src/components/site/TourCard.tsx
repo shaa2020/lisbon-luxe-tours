@@ -11,12 +11,13 @@ export function TourCard({ tour }: { tour: Tour; offset?: boolean }) {
       className="group block bg-white rounded-xl overflow-hidden shadow-[0_4px_20px_rgba(30,58,95,0.06)] hover:shadow-[0_20px_40px_rgba(30,58,95,0.12)] hover:-translate-y-1 transition-all duration-500"
     >
       <div className="relative aspect-[16/10] overflow-hidden">
-        <img
+        <MediaImage
           src={tour.image}
           alt={tour.title}
-          loading="lazy"
+          wrapperClassName="w-full h-full"
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
         />
+
         {tour.featured && (
           <span className="absolute top-3 left-3 bg-gold text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-sm">
             Signature
