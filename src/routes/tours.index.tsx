@@ -72,7 +72,7 @@ function ToursPage() {
   const { data: statsBySlug = {} } = useReviewStatsBySlug();
   const { data: guestReviews = [] } = useFeaturedReviews(3);
   const { data: faqs = [] } = useFaqs(6);
-  const { business, hotelPickupFeeCents } = useSiteBrand();
+  const { business, hotelPickupFeeCents, heroImageUrl } = useSiteBrand();
   const [cat, setCat] = useState<string>("all");
   const [q, setQ] = useState(sp.q ?? "");
   const [sort, setSort] = useState<SortKey>("featured");
