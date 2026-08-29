@@ -13,7 +13,6 @@ import { useSiteBrand } from "@/lib/brand";
 import { CANCELLATION_POLICY_BULLETS } from "@/lib/cancellation";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import heroImg from "@/assets/hero-lisbon.jpg";
 
 export const Route = createFileRoute("/tours/")({
   head: () => ({
@@ -156,9 +155,12 @@ function ToursPage() {
       {/* PAGE HEADER */}
       <header className="relative pt-[78px]">
         <div className="relative h-[300px] md:h-[360px] overflow-hidden">
-          <img
-            src={heroImg}
+          <MediaImage
+            src={heroImageUrl}
             alt="A Tuk Tuk 24 electric tuk-tuk on a cobbled Lisbon street"
+            loading="eager"
+            fetchPriority="high"
+            wrapperClassName="absolute inset-0"
             className="absolute inset-0 w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-ink/60" />
