@@ -4,6 +4,7 @@ import { Map, BookOpen, CalendarCheck, Mail, CreditCard, Star, Euro, Users, Tren
 import { supabase } from "@/integrations/supabase/client";
 import { AdminShell, AdminCard } from "@/components/admin/AdminShell";
 import { useSiteBrand, isPromoBannerLive } from "@/lib/brand";
+import { useAuth } from "@/lib/auth";
 import { useRevenueStats, useUpcomingThisWeek, useAdminBadges } from "@/lib/admin-stats";
 
 export const Route = createFileRoute("/admin/")({
@@ -52,15 +53,17 @@ function AdminDashboard() {
   const upcoming = useUpcomingThisWeek();
   const badges = useAdminBadges();
   const { promoBanner } = useSiteBrand();
+  const { can } = useAuth();
   const promoLive = isPromoBannerLive(promoBanner);
 
   const fmtEur = (v: number | undefined) =>
     v == null ? "—" : `€${v.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
 
-  const cards = [
-    { to: "/admin/tours", label: "Tours", count: tours.data, desc: "Create, edit and publish tour pages.", Icon: Map, badge: null },
-    { to: "/admin/blog", label: "Journal", count: posts.data, desc: "Write and publish stories.", Icon: BookOpen, badge: null },
+  const allCards = [
+    { perm: "tours.manage" as const, to: "/admin/tours", label: "Tours", count: tours.data, desc: "Create, edit and publish tour pages.", Icon: Map, badge: null },
+    { perm: "content.manage" as const, to: "/admin/blog", label: "Journal", count: posts.data, desc: "Write and publish stories.", Icon: BookOpen, badge: null },
     {
+      perm: "reviews.manage" as const,
       to: "/admin/reviews",
       label: "Reviews",
       count: reviews.data,
@@ -69,6 +72,7 @@ function AdminDashboard() {
       badge: pendingReviews.data ? `${pendingReviews.data} pending` : null,
     },
     {
+      perm: "bookings.view" as const,
       to: "/admin/bookings",
       label: "Bookings",
       count: bookings.data,
@@ -76,8 +80,9 @@ function AdminDashboard() {
       Icon: CalendarCheck,
       badge: badges.data?.bookings ? `${badges.data.bookings} new` : null,
     },
-    { to: "/admin/orders", label: "Orders", count: orders.data, desc: "Card payments and revenue.", Icon: CreditCard, badge: null },
+    { perm: "orders.view" as const, to: "/admin/orders", label: "Orders", count: orders.data, desc: "Card payments and revenue.", Icon: CreditCard, badge: null },
     {
+      perm: "messages.view" as const,
       to: "/admin/messages",
       label: "Messages",
       count: messages.data,
@@ -85,7 +90,7 @@ function AdminDashboard() {
       Icon: Mail,
       badge: badges.data?.messages ? `${badges.data.messages} new` : null,
     },
-  ] as const;
+  ].filter((c) => can(c.perm));
 
   const hour = new Date().getHours();
   const greeting = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
@@ -109,6 +114,7 @@ function AdminDashboard() {
       </div>
 
       {/* ===== Revenue KPI strip ===== */}
+      {can("revenue.view") && (
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
         {[
           { label: "Today", value: revenue.data?.today, Icon: Euro, tint: "bg-emerald-500/10 text-emerald-600" },
@@ -129,7 +135,7 @@ function AdminDashboard() {
           </AdminCard>
         ))}
       </div>
-
+      )}
 
       <div className="grid lg:grid-cols-[1.35fr_0.65fr] gap-6 items-start">
         <div className="space-y-6">
@@ -181,7 +187,7 @@ function AdminDashboard() {
 
           {/* ===== Section cards ===== */}
           <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-4">
-            {cards.map((c) => (
+            {allCards.map((c) => (
               <Link
                 key={c.label}
                 to={c.to}
