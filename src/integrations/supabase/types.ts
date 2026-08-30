@@ -1239,6 +1239,30 @@ export type Database = {
         }
         Relationships: []
       }
+      profiles: {
+        Row: {
+          created_at: string
+          email: string | null
+          full_name: string | null
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       reviews: {
         Row: {
           author_email: string | null
@@ -1989,6 +2013,13 @@ export type Database = {
         Args: { payload: Json; queue_name: string }
         Returns: number
       }
+      has_min_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
       move_to_dlq: {
         Args: {
           dlq_name: string
@@ -2005,6 +2036,10 @@ export type Database = {
           msg_id: number
           read_ct: number
         }[]
+      }
+      role_rank: {
+        Args: { _role: Database["public"]["Enums"]["app_role"] }
+        Returns: number
       }
     }
     Enums: {
