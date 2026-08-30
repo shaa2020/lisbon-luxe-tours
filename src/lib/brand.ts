@@ -160,35 +160,38 @@ function mapCustomTour(d: any): CustomTourHero {
   };
 }
 
+export const SITE_BRAND_KEY = ["site-brand"] as const;
+
+/** Shapes the raw settings row into the brand object used across the site. */
+export function mapSiteBrand(data: any): SiteBrand {
+  const stamp = (data as any)?.updated_at ?? null;
+  return {
+    brandName: (data as any)?.brand_name || DEFAULT_BRAND_NAME,
+    logoUrl: versionedUrl((data as any)?.logo_url, stamp) ?? DEFAULT_BRAND_LOGO,
+    heroImageUrl: versionedUrl((data as any)?.hero_image_url, stamp),
+    aboutImageUrl: versionedUrl((data as any)?.about_image_url, stamp),
+    heroSlides: mapHeroSlides(data, stamp),
+    business: mapBusiness(data),
+    customTour: mapCustomTour(data),
+    hotelPickupFeeCents:
+      Number((data as any)?.hotel_pickup_fee_cents ?? DEFAULT_HOTEL_PICKUP_FEE_CENTS) || 0,
+    offerBar: mapOfferBar(data),
+    promoBanner: mapPromoBanner(data),
+    groupTiers: parseGroupTiers((data as any)?.group_discount_tiers),
+    groupDiscountEnabled: (data as any)?.group_discount_enabled !== false,
+    whatsappReplyLine: (data as any)?.whatsapp_reply_line || DEFAULT_WHATSAPP_REPLY_LINE,
+    googleReviewUrl: (data as any)?.google_review_url || null,
+  };
+}
+
 export function useSiteBrand() {
   const fetchBrand = useServerFn(getPublicSiteSettings);
 
   const query = useQuery({
-    queryKey: ["site-brand"],
-    staleTime: 60_000,
-    queryFn: async (): Promise<SiteBrand> => {
-      const data = await fetchBrand();
-      // Cache-bust admin-replaced images without disabling caching entirely.
-      const stamp = (data as any)?.updated_at ?? null;
-      return {
-        brandName: (data as any)?.brand_name || DEFAULT_BRAND_NAME,
-        logoUrl: versionedUrl((data as any)?.logo_url, stamp) ?? DEFAULT_BRAND_LOGO,
-        heroImageUrl: versionedUrl((data as any)?.hero_image_url, stamp),
-        aboutImageUrl: versionedUrl((data as any)?.about_image_url, stamp),
-        heroSlides: mapHeroSlides(data, stamp),
-        business: mapBusiness(data),
-        customTour: mapCustomTour(data),
-        hotelPickupFeeCents:
-          Number((data as any)?.hotel_pickup_fee_cents ?? DEFAULT_HOTEL_PICKUP_FEE_CENTS) || 0,
-        offerBar: mapOfferBar(data),
-        promoBanner: mapPromoBanner(data),
-        groupTiers: parseGroupTiers((data as any)?.group_discount_tiers),
-        groupDiscountEnabled: (data as any)?.group_discount_enabled !== false,
-        whatsappReplyLine:
-          (data as any)?.whatsapp_reply_line || DEFAULT_WHATSAPP_REPLY_LINE,
-        googleReviewUrl: (data as any)?.google_review_url || null,
-      };
-    },
+    queryKey: SITE_BRAND_KEY,
+    staleTime: 5 * 60_000,
+    queryFn: async (): Promise<SiteBrand> => mapSiteBrand(await fetchBrand()),
+
     placeholderData: {
       brandName: DEFAULT_BRAND_NAME,
       logoUrl: DEFAULT_BRAND_LOGO,
