@@ -11,6 +11,8 @@ import { TrustStrip } from "@/components/site/TrustStrip";
 import { StickyBookBar } from "@/components/site/StickyBookBar";
 import { useBlogPosts, useTours, tourPricing, type Tour } from "@/lib/cms";
 import { MediaImage } from "@/components/site/MediaImage";
+import { HeroSlideshow, useSlideRotation } from "@/components/site/HeroSlideshow";
+
 import { trackBookingCtaClick } from "@/lib/analytics";
 import { subscribeToNewsletter } from "@/lib/subscribers.functions";
 import { useSiteBrand } from "@/lib/brand";
