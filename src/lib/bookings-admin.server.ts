@@ -1,3 +1,4 @@
+import { assertRole } from "./roles";
 import {
   bookingRows,
   bookingVars,
@@ -10,14 +11,7 @@ export const BOOKING_SELECT =
   "id,tour_slug,tour_title,customer_name,email,phone,travel_date,travel_time,guests,notes,internal_notes,total_estimate,amount_total,refund_cents,cancel_reason,status,payment_status,source,custom_selections,auto_emails_opt_out,reminder_sent_at,review_request_sent_at,created_at";
 
 export async function assertAdmin(context: { supabase: any; userId: string }) {
-  const { data, error } = await context.supabase
-    .from("user_roles")
-    .select("role")
-    .eq("user_id", context.userId)
-    .eq("role", "admin")
-    .maybeSingle();
-  if (error) throw new Error(error.message);
-  if (!data) throw new Error("Forbidden");
+  await assertRole(context, "staff");
 }
 
 export async function loadBrand(admin: any) {

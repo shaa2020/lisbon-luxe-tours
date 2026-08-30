@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import { assertPermission } from "./roles";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 export const syncWebsiteBookings = createServerFn({ method: "POST" })
@@ -7,14 +8,7 @@ export const syncWebsiteBookings = createServerFn({ method: "POST" })
   .handler(async ({ context }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-    const { data: roleRow, error: roleErr } = await supabaseAdmin
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", context.userId)
-      .eq("role", "admin")
-      .maybeSingle();
-    if (roleErr) throw new Error(roleErr.message);
-    if (!roleRow) throw new Error("Forbidden");
+    await assertPermission(context, "ops.manage");
 
     const { data: siteBookings, error: bErr } = await supabaseAdmin
       .from("bookings")
