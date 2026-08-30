@@ -6,6 +6,22 @@ import { normalizeRole, type StaffRole } from "./permissions";
 
 const roleSchema = z.enum(["owner", "manager", "staff"]);
 
+const DEFAULT_SITE_URL = "https://tuktuk24lisbon.com";
+
+/** Only allow redirect origins we own, falling back to the live site. */
+function safeOrigin(origin?: string | null): string {
+  if (!origin) return DEFAULT_SITE_URL;
+  try {
+    const u = new URL(origin);
+    const ok =
+      u.protocol === "https:" &&
+      (u.hostname.endsWith("tuktuk24lisbon.com") || u.hostname.endsWith("lovable.app"));
+    return ok ? u.origin : DEFAULT_SITE_URL;
+  } catch {
+    return DEFAULT_SITE_URL;
+  }
+}
+
 export type TeamMember = {
   userId: string;
   email: string;
