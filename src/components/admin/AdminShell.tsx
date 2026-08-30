@@ -31,6 +31,7 @@ import {
   ShieldAlert,
 } from "lucide-react";
 import { ROLE_LABELS, type Permission } from "@/lib/permissions";
+import { InstallAppButton } from "@/components/admin/InstallAppButton";
 
 
 type NavItem = {
@@ -334,6 +335,7 @@ export function AdminShell({ children, requires }: { children: ReactNode; requir
             </div>
 
             <div className="ml-auto flex items-center gap-1 sm:gap-2 shrink-0">
+              <InstallAppButton />
               {waHref && (
                 <a
                   href={waHref}
@@ -375,6 +377,9 @@ export function AdminShell({ children, requires }: { children: ReactNode; requir
                 {userMenu && (
                   <div className="absolute right-0 top-12 w-56 rounded-xl border border-border bg-card shadow-lg p-1.5 z-40">
                     <p className="px-2.5 py-2 text-[11px] text-muted-foreground truncate">{user.email}</p>
+                    <div className="px-1 pb-1.5">
+                      <InstallAppButton variant="full" />
+                    </div>
                     <Link
                       to="/admin/settings"
                       className="flex items-center gap-2 rounded-lg px-2.5 py-2 text-sm hover:bg-accent"
