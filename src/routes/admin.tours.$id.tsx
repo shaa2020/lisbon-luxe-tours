@@ -233,14 +233,14 @@ function TourEditPage() {
 
   if (loading) {
     return (
-      <AdminShell>
+      <AdminShell requires="tours.manage">
         <p className="text-sm text-muted-foreground">Loading…</p>
       </AdminShell>
     );
   }
 
   return (
-    <AdminShell>
+    <AdminShell requires="tours.manage">
       <div className="flex items-center justify-between mb-6 gap-3 flex-wrap">
         <div>
           <Link

@@ -45,7 +45,7 @@ function Page() {
   );
 
   return (
-    <AdminShell>
+    <AdminShell requires="ops.view">
       <OpsPage title="Calendar" description="Month view of everything booked.">
         <div className="flex items-center justify-between mb-3">
           <button

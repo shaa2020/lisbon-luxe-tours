@@ -77,7 +77,7 @@ function MessagesInbox() {
   };
 
   return (
-    <AdminShell>
+    <AdminShell requires="messages.view">
       <div className="mb-8">
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary mb-2">Inbox</p>
         <h1 className="text-3xl font-display font-bold">Messages</h1>

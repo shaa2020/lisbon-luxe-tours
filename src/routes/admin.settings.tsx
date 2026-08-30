@@ -246,7 +246,7 @@ function AdminSettings() {
   };
 
   return (
-    <AdminShell>
+    <AdminShell requires="settings.manage">
       <div className="mb-6">
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary mb-2">Configuration</p>
         <h1 className="text-3xl font-display font-bold">Settings</h1>

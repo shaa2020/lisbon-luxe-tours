@@ -32,7 +32,7 @@ function Page() {
   const revenue = jobs.reduce((s, j) => s + Number(j.total), 0);
 
   return (
-    <AdminShell>
+    <AdminShell requires="ops.view">
       <OpsPage
         title="Day sheet"
         description="Run the day: every job in order, with driver, vehicle and pickup."

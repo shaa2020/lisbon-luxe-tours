@@ -256,7 +256,7 @@ function Page() {
   };
 
   return (
-    <AdminShell>
+    <AdminShell requires="ops.view">
       <OpsPage
         title={isNew ? "New job" : form.reference}
         description={isNew ? "Create an operational job." : form.tour_name}

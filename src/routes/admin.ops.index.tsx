@@ -59,7 +59,7 @@ function Page() {
   };
 
   return (
-    <AdminShell>
+    <AdminShell requires="ops.view">
       <OpsPage
         title="Dispatch"
         description="Live overview of today's operation."

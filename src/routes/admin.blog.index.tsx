@@ -50,7 +50,7 @@ function AdminBlogPage() {
   };
 
   return (
-    <AdminShell>
+    <AdminShell requires="content.manage">
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-display font-bold">Journal</h1>

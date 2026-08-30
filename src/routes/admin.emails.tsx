@@ -186,7 +186,7 @@ function EmailsAdmin() {
   };
 
   return (
-    <AdminShell>
+    <AdminShell requires="emails.manage">
       <div className="mb-7">
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary mb-2">
           Customer communications

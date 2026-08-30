@@ -92,7 +92,7 @@ function AdminDashboard() {
   const today = new Date().toLocaleDateString(undefined, { day: "numeric", month: "long", year: "numeric" });
 
   return (
-    <AdminShell>
+    <AdminShell requires="dashboard.view">
       <div className="mb-6 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 sm:flex sm:flex-wrap sm:justify-between">
         <div className="min-w-0">
           <h2 className="font-display text-2xl md:text-3xl font-bold leading-tight truncate">

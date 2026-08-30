@@ -17,7 +17,7 @@ function Page() {
   const outstanding = Math.max(0, billed - collected);
 
   return (
-    <AdminShell>
+    <AdminShell requires="orders.view">
       <OpsPage title="Payments" description="Every payment recorded against an operations job.">
         <div className="grid grid-cols-3 gap-3 mb-5">
           <Stat label="Collected" value={money(collected)} />

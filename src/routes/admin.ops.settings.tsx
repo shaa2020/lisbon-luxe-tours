@@ -44,7 +44,7 @@ function Page() {
   const set = (p: Partial<OpsSettings>) => setForm((f) => ({ ...f, ...p }));
 
   return (
-    <AdminShell>
+    <AdminShell requires="settings.manage">
       <OpsPage title="Ops settings" description="Defaults used when creating operations jobs.">
         <div className="rounded-xl border border-border bg-card p-4 grid sm:grid-cols-2 gap-3 max-w-3xl">
           <L label="Business name">

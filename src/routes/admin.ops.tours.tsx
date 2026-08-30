@@ -8,7 +8,7 @@ export const Route = createFileRoute("/admin/ops/tours")({ component: Page });
 
 function Page() {
   return (
-    <AdminShell>
+    <AdminShell requires="ops.manage">
       <OpsPage
         title="Tour catalogue"
         description="Operational tour products used when dispatching jobs. Separate from the public website tours."

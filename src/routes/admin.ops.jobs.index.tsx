@@ -26,7 +26,7 @@ function Page() {
   );
 
   return (
-    <AdminShell>
+    <AdminShell requires="ops.view">
       <OpsPage
         title="Jobs"
         description="Every operational job — from first enquiry to completed tour."

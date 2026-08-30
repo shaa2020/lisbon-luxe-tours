@@ -197,7 +197,7 @@ function AdminReviewsPage() {
   };
 
   return (
-    <AdminShell>
+    <AdminShell requires="reviews.manage">
       <div className="mb-8">
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary mb-2">
           Moderation

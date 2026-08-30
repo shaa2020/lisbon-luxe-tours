@@ -120,7 +120,7 @@ function FaqsAdmin() {
   };
 
   return (
-    <AdminShell>
+    <AdminShell requires="faqs.manage">
       <div className="mb-8 flex items-end justify-between flex-wrap gap-3">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary mb-2">
