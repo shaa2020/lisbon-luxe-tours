@@ -6,6 +6,22 @@ import { normalizeRole, type StaffRole } from "./permissions";
 
 const roleSchema = z.enum(["owner", "manager", "staff"]);
 
+const DEFAULT_SITE_URL = "https://tuktuk24lisbon.com";
+
+/** Only allow redirect origins we own, falling back to the live site. */
+function safeOrigin(origin?: string | null): string {
+  if (!origin) return DEFAULT_SITE_URL;
+  try {
+    const u = new URL(origin);
+    const ok =
+      u.protocol === "https:" &&
+      (u.hostname.endsWith("tuktuk24lisbon.com") || u.hostname.endsWith("lovable.app"));
+    return ok ? u.origin : DEFAULT_SITE_URL;
+  } catch {
+    return DEFAULT_SITE_URL;
+  }
+}
+
 export type TeamMember = {
   userId: string;
   email: string;
@@ -64,12 +80,14 @@ export const inviteTeamMember = createServerFn({ method: "POST" })
         email: z.string().trim().email().max(200),
         fullName: z.string().trim().max(200).optional(),
         role: roleSchema,
+        origin: z.string().max(300).optional(),
       })
       .parse(d),
   )
   .handler(async ({ data, context }) => {
     await assertPermission(context, "team.manage");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const redirectTo = `${safeOrigin(data.origin)}/admin/set-password`;
 
     const { data: existing } = await supabaseAdmin.auth.admin.listUsers({ page: 1, perPage: 200 });
     let userId = existing?.users.find((u) => u.email?.toLowerCase() === data.email.toLowerCase())?.id;
@@ -77,9 +95,13 @@ export const inviteTeamMember = createServerFn({ method: "POST" })
     if (!userId) {
       const { data: invited, error } = await supabaseAdmin.auth.admin.inviteUserByEmail(data.email, {
         data: { full_name: data.fullName ?? null },
+        redirectTo,
       });
       if (error) throw new Error(error.message);
       userId = invited.user?.id;
+    } else {
+      // Existing account: send a password link instead of a duplicate invite.
+      await supabaseAdmin.auth.resetPasswordForEmail(data.email, { redirectTo });
     }
     if (!userId) throw new Error("Could not create the team member.");
 
@@ -136,6 +158,23 @@ export const removeTeamMember = createServerFn({ method: "POST" })
     if (victimIsOwner && (count ?? 0) <= 1) throw new Error("There must be at least one owner.");
 
     const { error } = await supabaseAdmin.from("user_roles").delete().eq("user_id", data.userId);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+/** Owner/manager action: email a password set/reset link to a team member. */
+export const sendTeamPasswordReset = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z.object({ email: z.string().trim().email().max(200), origin: z.string().max(300).optional() }).parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    await assertPermission(context, "team.manage");
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    const { error } = await supabaseAdmin.auth.resetPasswordForEmail(data.email, {
+      redirectTo: `${safeOrigin(data.origin)}/admin/set-password`,
+    });
     if (error) throw new Error(error.message);
     return { ok: true };
   });

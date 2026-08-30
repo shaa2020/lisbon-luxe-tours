@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/auth";
 import { useSiteBrand } from "@/lib/brand";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/admin/login")({
@@ -17,6 +18,26 @@ function AdminLoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
+  const [resetting, setResetting] = useState(false);
+  const [resetSent, setResetSent] = useState(false);
+
+  const sendReset = async () => {
+    if (!email.trim()) {
+      toast.error("Enter your email address first.");
+      return;
+    }
+    setResetting(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+      redirectTo: `${window.location.origin}/admin/set-password`,
+    });
+    setResetting(false);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    setResetSent(true);
+    toast.success("Reset link sent — check your inbox.");
+  };
 
   useEffect(() => {
     if (!loading && user && isAdmin) {
@@ -83,6 +104,22 @@ function AdminLoginPage() {
             {busy ? "Please wait…" : "Sign in"}
           </button>
         </form>
+
+        <div className="mt-4 text-center">
+          <button
+            type="button"
+            onClick={sendReset}
+            disabled={resetting}
+            className="text-xs text-muted-foreground underline underline-offset-4 hover:text-foreground disabled:opacity-50"
+          >
+            {resetting ? "Sending…" : "Forgot your password?"}
+          </button>
+          {resetSent && (
+            <p className="mt-2 text-xs text-muted-foreground">
+              We emailed a reset link to {email}. It expires shortly — check spam too.
+            </p>
+          )}
+        </div>
       </div>
     </div>
   );

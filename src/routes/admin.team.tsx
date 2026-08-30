@@ -3,11 +3,17 @@ import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { Trash2, UserPlus, ShieldCheck } from "lucide-react";
+import { Trash2, UserPlus, ShieldCheck, KeyRound } from "lucide-react";
 import { AdminShell, AdminPageHeader, AdminCard } from "@/components/admin/AdminShell";
 import { ROLE_DESCRIPTIONS, ROLE_LABELS, type StaffRole } from "@/lib/permissions";
 import { useAuth } from "@/lib/auth";
-import { listTeam, inviteTeamMember, setTeamRole, removeTeamMember } from "@/lib/team.functions";
+import {
+  listTeam,
+  inviteTeamMember,
+  setTeamRole,
+  removeTeamMember,
+  sendTeamPasswordReset,
+} from "@/lib/team.functions";
 
 export const Route = createFileRoute("/admin/team")({
   head: () => ({ meta: [{ title: "Team & roles — Admin" }] }),
@@ -31,6 +37,7 @@ function TeamBody() {
   const invite = useServerFn(inviteTeamMember);
   const setRole = useServerFn(setTeamRole);
   const remove = useServerFn(removeTeamMember);
+  const resetPw = useServerFn(sendTeamPasswordReset);
 
   const [email, setEmail] = useState("");
   const [fullName, setFullName] = useState("");
@@ -39,8 +46,16 @@ function TeamBody() {
   const team = useQuery({ queryKey: ["admin-team"], queryFn: () => fetchTeam({}) });
   const refresh = () => qc.invalidateQueries({ queryKey: ["admin-team"] });
 
+  const origin = typeof window === "undefined" ? undefined : window.location.origin;
+
+  const resetM = useMutation({
+    mutationFn: (memberEmail: string) => resetPw({ data: { email: memberEmail, origin } }),
+    onSuccess: () => toast.success("Password link sent"),
+    onError: (e: Error) => toast.error(e.message),
+  });
+
   const inviteM = useMutation({
-    mutationFn: () => invite({ data: { email, fullName: fullName || undefined, role } }),
+    mutationFn: () => invite({ data: { email, fullName: fullName || undefined, role, origin } }),
     onSuccess: () => {
       toast.success("Invitation sent");
       setEmail("");
@@ -96,6 +111,15 @@ function TeamBody() {
                       {m.email}
                       {m.userId === user?.id ? " · you" : ""}
                     </p>
+                    <span
+                      className={`mt-1 inline-block rounded-full px-2 py-0.5 text-[10px] font-semibold ${
+                        m.lastSignInAt
+                          ? "bg-emerald-100 text-emerald-700"
+                          : "bg-amber-100 text-amber-700"
+                      }`}
+                    >
+                      {m.lastSignInAt ? "Active" : "Invited — not signed in yet"}
+                    </span>
                   </div>
                   <select
                     value={m.role ?? "staff"}
@@ -109,6 +133,15 @@ function TeamBody() {
                       </option>
                     ))}
                   </select>
+                  <button
+                    onClick={() => resetM.mutate(m.email)}
+                    disabled={resetM.isPending || !m.email}
+                    className="grid h-9 w-9 place-items-center rounded-lg border border-border text-foreground disabled:opacity-40"
+                    aria-label="Send password link"
+                    title={m.lastSignInAt ? "Send password reset link" : "Resend set-password link"}
+                  >
+                    <KeyRound className="h-4 w-4" />
+                  </button>
                   <button
                     onClick={() => {
                       if (confirm(`Remove ${m.email} from the team?`)) removeM.mutate(m.userId);
