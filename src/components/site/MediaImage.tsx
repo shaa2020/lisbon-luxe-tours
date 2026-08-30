@@ -39,7 +39,9 @@ export function MediaImage({
   const showSkeleton = !src || failed || !loaded;
 
   return (
-    <span className={`relative block overflow-hidden ${wrapperClassName}`}>
+    <span
+      className={`block overflow-hidden ${/\b(absolute|fixed|sticky)\b/.test(wrapperClassName) ? "" : "relative"} ${wrapperClassName}`}
+    >
       {showSkeleton && (
         <span
           aria-hidden="true"

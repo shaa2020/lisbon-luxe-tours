@@ -83,12 +83,13 @@ function Hero() {
   return (
     <section className="relative">
       <div className="relative min-h-[520px] sm:min-h-[560px] md:h-[760px] overflow-hidden bg-ink">
-        {settingsReady && heroImageUrl && (
-          <img
+        {settingsReady && (
+          <MediaImage
             src={heroImageUrl}
             alt="Private tuk-tuk tour in Lisbon"
             loading="eager"
             fetchPriority="high"
+            wrapperClassName="absolute inset-0"
             className="absolute inset-0 h-full w-full object-cover"
           />
         )}
