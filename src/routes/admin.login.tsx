@@ -104,6 +104,22 @@ function AdminLoginPage() {
             {busy ? "Please wait…" : "Sign in"}
           </button>
         </form>
+
+        <div className="mt-4 text-center">
+          <button
+            type="button"
+            onClick={sendReset}
+            disabled={resetting}
+            className="text-xs text-muted-foreground underline underline-offset-4 hover:text-foreground disabled:opacity-50"
+          >
+            {resetting ? "Sending…" : "Forgot your password?"}
+          </button>
+          {resetSent && (
+            <p className="mt-2 text-xs text-muted-foreground">
+              We emailed a reset link to {email}. It expires shortly — check spam too.
+            </p>
+          )}
+        </div>
       </div>
     </div>
   );
