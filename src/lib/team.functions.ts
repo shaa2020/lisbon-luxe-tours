@@ -161,3 +161,20 @@ export const removeTeamMember = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true };
   });
+
+/** Owner/manager action: email a password set/reset link to a team member. */
+export const sendTeamPasswordReset = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z.object({ email: z.string().trim().email().max(200), origin: z.string().max(300).optional() }).parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    await assertPermission(context, "team.manage");
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    const { error } = await supabaseAdmin.auth.resetPasswordForEmail(data.email, {
+      redirectTo: `${safeOrigin(data.origin)}/admin/set-password`,
+    });
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
