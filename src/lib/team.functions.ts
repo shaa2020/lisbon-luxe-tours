@@ -80,12 +80,14 @@ export const inviteTeamMember = createServerFn({ method: "POST" })
         email: z.string().trim().email().max(200),
         fullName: z.string().trim().max(200).optional(),
         role: roleSchema,
+        origin: z.string().max(300).optional(),
       })
       .parse(d),
   )
   .handler(async ({ data, context }) => {
     await assertPermission(context, "team.manage");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const redirectTo = `${safeOrigin(data.origin)}/admin/set-password`;
 
     const { data: existing } = await supabaseAdmin.auth.admin.listUsers({ page: 1, perPage: 200 });
     let userId = existing?.users.find((u) => u.email?.toLowerCase() === data.email.toLowerCase())?.id;
@@ -93,9 +95,13 @@ export const inviteTeamMember = createServerFn({ method: "POST" })
     if (!userId) {
       const { data: invited, error } = await supabaseAdmin.auth.admin.inviteUserByEmail(data.email, {
         data: { full_name: data.fullName ?? null },
+        redirectTo,
       });
       if (error) throw new Error(error.message);
       userId = invited.user?.id;
+    } else {
+      // Existing account: send a password link instead of a duplicate invite.
+      await supabaseAdmin.auth.resetPasswordForEmail(data.email, { redirectTo });
     }
     if (!userId) throw new Error("Could not create the team member.");
 
