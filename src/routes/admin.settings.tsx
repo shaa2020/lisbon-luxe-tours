@@ -392,7 +392,13 @@ function AdminSettings() {
             </div>
           </section>
 
+          <HomepagePreview
+            slides={heroSlides}
+            heroImageUrl={heroImage}
+          />
+
           <section className={card}>
+
             <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
               <div className="min-w-0">
                 <p className="text-sm font-semibold text-foreground">Homepage slideshow</p>
