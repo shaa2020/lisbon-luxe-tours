@@ -134,6 +134,15 @@ function TeamBody() {
                     ))}
                   </select>
                   <button
+                    onClick={() => resetM.mutate(m.email)}
+                    disabled={resetM.isPending || !m.email}
+                    className="grid h-9 w-9 place-items-center rounded-lg border border-border text-foreground disabled:opacity-40"
+                    aria-label="Send password link"
+                    title={m.lastSignInAt ? "Send password reset link" : "Resend set-password link"}
+                  >
+                    <KeyRound className="h-4 w-4" />
+                  </button>
+                  <button
                     onClick={() => {
                       if (confirm(`Remove ${m.email} from the team?`)) removeM.mutate(m.userId);
                     }}
