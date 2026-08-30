@@ -46,8 +46,16 @@ function TeamBody() {
   const team = useQuery({ queryKey: ["admin-team"], queryFn: () => fetchTeam({}) });
   const refresh = () => qc.invalidateQueries({ queryKey: ["admin-team"] });
 
+  const origin = typeof window === "undefined" ? undefined : window.location.origin;
+
+  const resetM = useMutation({
+    mutationFn: (memberEmail: string) => resetPw({ data: { email: memberEmail, origin } }),
+    onSuccess: () => toast.success("Password link sent"),
+    onError: (e: Error) => toast.error(e.message),
+  });
+
   const inviteM = useMutation({
-    mutationFn: () => invite({ data: { email, fullName: fullName || undefined, role } }),
+    mutationFn: () => invite({ data: { email, fullName: fullName || undefined, role, origin } }),
     onSuccess: () => {
       toast.success("Invitation sent");
       setEmail("");
