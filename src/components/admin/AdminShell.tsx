@@ -34,6 +34,7 @@ type NavItem = {
   label: string;
   icon: React.ComponentType<{ className?: string }>;
   desc?: string;
+  perm: Permission;
 };
 
 type NavGroup = { title: string; items: NavItem[] };
@@ -41,55 +42,57 @@ type NavGroup = { title: string; items: NavItem[] };
 const GROUPS: NavGroup[] = [
   {
     title: "Overview",
-    items: [{ to: "/admin", label: "Dashboard", icon: LayoutDashboard, desc: "Revenue and activity" }],
+    items: [{ to: "/admin", label: "Dashboard", icon: LayoutDashboard, desc: "Revenue and activity", perm: "dashboard.view" }],
   },
   {
     title: "Sell",
     items: [
-      { to: "/admin/tours", label: "Tours", icon: Map, desc: "Catalogue and pricing" },
-      { to: "/admin/custom-builder", label: "Custom builder", icon: Sparkles, desc: "Build-your-own options" },
-      { to: "/admin/discounts", label: "Discounts", icon: Tag, desc: "Promo codes" },
+      { to: "/admin/tours", label: "Tours", icon: Map, desc: "Catalogue and pricing", perm: "tours.manage" },
+      { to: "/admin/custom-builder", label: "Custom builder", icon: Sparkles, desc: "Build-your-own options", perm: "tours.manage" },
+      { to: "/admin/discounts", label: "Discounts", icon: Tag, desc: "Promo codes", perm: "discounts.manage" },
     ],
   },
   {
     title: "Operate",
     items: [
-      { to: "/admin/bookings", label: "Bookings", icon: CalendarCheck, desc: "Requests and schedule" },
-      { to: "/admin/orders", label: "Orders", icon: CreditCard, desc: "Payments and refunds" },
-      { to: "/admin/ops", label: "Operations", icon: Gauge, desc: "Jobs, drivers, vehicles" },
-      { to: "/admin/messages", label: "Messages", icon: MessageSquare, desc: "Contact inbox" },
-      { to: "/admin/emails", label: "Emails", icon: Mail, desc: "Templates and send log" },
+      { to: "/admin/bookings", label: "Bookings", icon: CalendarCheck, desc: "Requests and schedule", perm: "bookings.view" },
+      { to: "/admin/orders", label: "Orders", icon: CreditCard, desc: "Payments and refunds", perm: "orders.view" },
+      { to: "/admin/ops", label: "Operations", icon: Gauge, desc: "Jobs, drivers, vehicles", perm: "ops.view" },
+      { to: "/admin/messages", label: "Messages", icon: MessageSquare, desc: "Contact inbox", perm: "messages.view" },
+      { to: "/admin/emails", label: "Emails", icon: Mail, desc: "Templates and send log", perm: "emails.manage" },
     ],
   },
   {
     title: "Content",
     items: [
-      { to: "/admin/blog", label: "Journal", icon: BookOpen, desc: "Stories and news" },
-      { to: "/admin/guide", label: "Travel guide", icon: Compass, desc: "SEO guide hub" },
-      { to: "/admin/reviews", label: "Reviews", icon: Star, desc: "Approve guest reviews" },
-      { to: "/admin/faqs", label: "FAQs", icon: HelpCircle, desc: "Questions and answers" },
+      { to: "/admin/blog", label: "Journal", icon: BookOpen, desc: "Stories and news", perm: "content.manage" },
+      { to: "/admin/guide", label: "Travel guide", icon: Compass, desc: "SEO guide hub", perm: "content.manage" },
+      { to: "/admin/reviews", label: "Reviews", icon: Star, desc: "Approve guest reviews", perm: "reviews.manage" },
+      { to: "/admin/faqs", label: "FAQs", icon: HelpCircle, desc: "Questions and answers", perm: "faqs.manage" },
     ],
   },
   {
     title: "Configure",
-    items: [{ to: "/admin/settings", label: "Settings", icon: Settings, desc: "Brand, booking, payments" }],
+    items: [
+      { to: "/admin/settings", label: "Settings", icon: Settings, desc: "Brand, booking, payments", perm: "settings.manage" },
+      { to: "/admin/team", label: "Team", icon: Users, desc: "Members and roles", perm: "team.manage" },
+    ],
   },
 ];
 
-const ALL: NavItem[] = GROUPS.flatMap((g) => g.items);
-
 /** Bottom tab bar targets on mobile. */
 const PRIMARY: NavItem[] = [
-  { to: "/admin", label: "Home", icon: LayoutDashboard },
-  { to: "/admin/bookings", label: "Bookings", icon: CalendarCheck },
-  { to: "/admin/tours", label: "Tours", icon: Map },
-  { to: "/admin/orders", label: "Orders", icon: CreditCard },
+  { to: "/admin", label: "Home", icon: LayoutDashboard, perm: "dashboard.view" },
+  { to: "/admin/bookings", label: "Bookings", icon: CalendarCheck, perm: "bookings.view" },
+  { to: "/admin/tours", label: "Tours", icon: Map, perm: "tours.manage" },
+  { to: "/admin/orders", label: "Orders", icon: CreditCard, perm: "orders.view" },
 ];
 
 function isActiveRoute(to: string, pathname: string) {
   if (to === "/admin") return pathname === "/admin";
   return pathname === to || pathname.startsWith(to + "/");
 }
+
 
 function Badge({ n, small = false }: { n: number; small?: boolean }) {
   if (!n) return null;
