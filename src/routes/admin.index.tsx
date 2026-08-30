@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Map, BookOpen, CalendarCheck, Mail, CreditCard, Star, Euro, Users, TrendingUp, Megaphone } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { AdminShell, AdminPageHeader, AdminCard } from "@/components/admin/AdminShell";
+import { AdminShell, AdminCard } from "@/components/admin/AdminShell";
 import { useSiteBrand, isPromoBannerLive } from "@/lib/brand";
 import { useRevenueStats, useUpcomingThisWeek, useAdminBadges } from "@/lib/admin-stats";
 
@@ -87,46 +87,49 @@ function AdminDashboard() {
     },
   ] as const;
 
+  const hour = new Date().getHours();
+  const greeting = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
+  const today = new Date().toLocaleDateString(undefined, { day: "numeric", month: "long", year: "numeric" });
+
   return (
     <AdminShell>
-      <AdminPageHeader
-        eyebrow="Overview"
-        title="Dashboard"
-        description="Revenue, upcoming rides and everything that needs your attention."
-        actions={
-          <Link
-            to="/admin/settings"
-            className="rounded-full border border-border bg-card px-4 py-2 text-xs font-semibold hover:bg-accent"
-          >
-            Settings
-          </Link>
-        }
-      />
+      <div className="mb-6 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 sm:flex sm:flex-wrap sm:justify-between">
+        <div className="min-w-0">
+          <h2 className="font-display text-2xl md:text-3xl font-bold leading-tight truncate">
+            {greeting}! 👋
+          </h2>
+          <p className="text-sm text-muted-foreground mt-1">
+            Here&apos;s what&apos;s happening with your tours today.
+          </p>
+        </div>
+        <div className="shrink-0 inline-flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-2 text-xs font-semibold">
+          <CalendarCheck className="w-4 h-4 text-muted-foreground" />
+          <span className="hidden sm:inline">{today}</span>
+        </div>
+      </div>
 
       {/* ===== Revenue KPI strip ===== */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
         {[
-          { label: "Today", value: revenue.data?.today, Icon: Euro },
-          { label: "This week", value: revenue.data?.week, Icon: TrendingUp },
-          { label: "This month", value: revenue.data?.month, Icon: TrendingUp },
-          { label: "All time", value: revenue.data?.all, Icon: Euro },
+          { label: "Today", value: revenue.data?.today, Icon: Euro, tint: "bg-emerald-500/10 text-emerald-600" },
+          { label: "This week", value: revenue.data?.week, Icon: TrendingUp, tint: "bg-sky-500/10 text-sky-600" },
+          { label: "This month", value: revenue.data?.month, Icon: TrendingUp, tint: "bg-violet-500/10 text-violet-600" },
+          { label: "All time", value: revenue.data?.all, Icon: Euro, tint: "bg-amber-500/10 text-amber-600" },
         ].map((k) => (
-          <AdminCard key={k.label} className="p-4 overflow-hidden relative">
-            <div className="flex items-center justify-between mb-1">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                {k.label}
+          <AdminCard key={k.label} className="p-4 flex items-center gap-3 min-w-0">
+            <span className={`w-11 h-11 shrink-0 rounded-xl grid place-items-center ${k.tint}`}>
+              <k.Icon className="w-5 h-5" />
+            </span>
+            <div className="min-w-0">
+              <p className="text-[11px] font-medium text-muted-foreground truncate">{k.label}</p>
+              <p className="font-display text-xl sm:text-2xl font-bold tabular-nums truncate">
+                {revenue.isLoading ? "…" : fmtEur(k.value)}
               </p>
-              <span className="w-7 h-7 rounded-lg bg-primary/10 text-primary grid place-items-center">
-                <k.Icon className="w-3.5 h-3.5" />
-              </span>
             </div>
-            <p className="font-display text-2xl font-bold tabular-nums">
-              {revenue.isLoading ? "…" : fmtEur(k.value)}
-            </p>
-            <p className="text-[10px] text-muted-foreground mt-0.5">Paid revenue</p>
           </AdminCard>
         ))}
       </div>
+
 
       <div className="grid lg:grid-cols-[1.35fr_0.65fr] gap-6 items-start">
         <div className="space-y-6">
