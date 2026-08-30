@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Map, BookOpen, CalendarCheck, Mail, CreditCard, Star, Euro, Users, TrendingUp, Megaphone } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { AdminShell, AdminPageHeader, AdminCard } from "@/components/admin/AdminShell";
+import { AdminShell, AdminCard } from "@/components/admin/AdminShell";
 import { useSiteBrand, isPromoBannerLive } from "@/lib/brand";
 import { useRevenueStats, useUpcomingThisWeek, useAdminBadges } from "@/lib/admin-stats";
 
