@@ -37,6 +37,7 @@ function TeamBody() {
   const invite = useServerFn(inviteTeamMember);
   const setRole = useServerFn(setTeamRole);
   const remove = useServerFn(removeTeamMember);
+  const resetPw = useServerFn(sendTeamPasswordReset);
 
   const [email, setEmail] = useState("");
   const [fullName, setFullName] = useState("");
