@@ -98,21 +98,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       options: { emailRedirectTo: redirectUrl },
     });
     if (error) return { error: error.message };
-    // If first user, try to claim admin (RLS allows insert only if no admin exists yet via fallback below)
+    // If this is the very first account, claim owner.
     if (data.user) {
-      // Check if any admin exists
       const { count } = await supabase
         .from("user_roles")
-        .select("*", { count: "exact", head: true })
-        .eq("role", "admin");
+        .select("*", { count: "exact", head: true });
       if ((count ?? 0) === 0) {
         await supabase.from("user_roles").insert({
           user_id: data.user.id,
-          role: "admin",
+          role: "owner",
         });
         await refreshRole(data.user.id);
       }
     }
+
     return {};
   };
 
