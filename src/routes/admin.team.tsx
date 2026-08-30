@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { Trash2, UserPlus, ShieldCheck } from "lucide-react";
+import { Trash2, UserPlus, ShieldCheck, KeyRound } from "lucide-react";
 import { AdminShell, AdminPageHeader, AdminCard } from "@/components/admin/AdminShell";
 import { ROLE_DESCRIPTIONS, ROLE_LABELS, type StaffRole } from "@/lib/permissions";
 import { useAuth } from "@/lib/auth";
