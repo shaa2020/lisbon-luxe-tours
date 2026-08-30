@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Button, Text } from '@react-email/components'
+import { Button, Link, Text } from '@react-email/components'
 import { AuthLayout, authStyles } from './auth-shell'
 
 interface RecoveryEmailProps {
@@ -7,29 +7,31 @@ interface RecoveryEmailProps {
   confirmationUrl: string
 }
 
-export const RecoveryEmail = ({ siteName, confirmationUrl }: RecoveryEmailProps) => (
+export const RecoveryEmail = ({
+  siteName,
+  confirmationUrl,
+}: RecoveryEmailProps) => (
   <AuthLayout
     siteName={siteName}
-    preview={`Reset your ${siteName || 'Tuk Tuk 24'} password`}
+    preview={`Reset your ${siteName} password`}
     heading="Reset your password"
   >
     <Text style={authStyles.text}>
-      We received a request to reset the password for your {siteName || 'Tuk Tuk 24'}{' '}
-      account. Click below to choose a new one. This link expires shortly.
+      We received a request to reset the password for your {siteName} account.
+      Click the button below to choose a new password.
     </Text>
-    <Button style={authStyles.button} href={confirmationUrl}>
+    <Button href={confirmationUrl} style={authStyles.button}>
       Set a new password
     </Button>
-    <Text style={{ ...authStyles.text, margin: '22px 0 0', fontSize: '13px' }}>
+    <Text style={{ ...authStyles.text, marginTop: '24px' }}>
       If the button doesn't work, copy and paste this link into your browser:
-      <br />
-      <span style={authStyles.link}>{confirmationUrl}</span>
     </Text>
+    <Link href={confirmationUrl} style={authStyles.link}>
+      {confirmationUrl}
+    </Link>
     <Text style={authStyles.footer}>
-      If you didn't request a reset, you can ignore this email — your password stays
-      unchanged.
+      If you didn't request a password reset, you can safely ignore this email
+      — your password will stay the same.
     </Text>
   </AuthLayout>
 )
-
-export default RecoveryEmail

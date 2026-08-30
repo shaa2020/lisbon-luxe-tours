@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Button, Text } from '@react-email/components'
+import { Button, Link, Text } from '@react-email/components'
 import { AuthLayout, authStyles } from './auth-shell'
 
 interface InviteEmailProps {
@@ -8,29 +8,36 @@ interface InviteEmailProps {
   confirmationUrl: string
 }
 
-export const InviteEmail = ({ siteName, confirmationUrl }: InviteEmailProps) => (
+export const InviteEmail = ({
+  siteName,
+  siteUrl,
+  confirmationUrl,
+}: InviteEmailProps) => (
   <AuthLayout
     siteName={siteName}
-    preview={`You've been invited to the ${siteName || 'Tuk Tuk 24'} team`}
+    preview={`You've been invited to join ${siteName}`}
     heading="You've been invited"
   >
     <Text style={authStyles.text}>
-      You've been added to the {siteName || 'Tuk Tuk 24'} admin team. Use the button
-      below to accept your invitation and choose your password — it only takes a
-      moment.
+      You've been invited to join the{' '}
+      <Link href={siteUrl} style={authStyles.link}>
+        <strong>{siteName}</strong>
+      </Link>{' '}
+      team. Click the button below to accept the invitation and set up your
+      account.
     </Text>
-    <Button style={authStyles.button} href={confirmationUrl}>
+    <Button href={confirmationUrl} style={authStyles.button}>
       Accept invitation
     </Button>
-    <Text style={{ ...authStyles.text, margin: '22px 0 0', fontSize: '13px' }}>
+    <Text style={{ ...authStyles.text, marginTop: '24px' }}>
       If the button doesn't work, copy and paste this link into your browser:
-      <br />
-      <span style={authStyles.link}>{confirmationUrl}</span>
     </Text>
+    <Link href={confirmationUrl} style={authStyles.link}>
+      {confirmationUrl}
+    </Link>
     <Text style={authStyles.footer}>
-      If you weren't expecting this invitation, you can safely ignore this email.
+      This invitation link expires soon. If you weren't expecting it, you can
+      ignore this email.
     </Text>
   </AuthLayout>
 )
-
-export default InviteEmail
