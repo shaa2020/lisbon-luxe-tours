@@ -7,7 +7,13 @@ import { Trash2, UserPlus, ShieldCheck, KeyRound } from "lucide-react";
 import { AdminShell, AdminPageHeader, AdminCard } from "@/components/admin/AdminShell";
 import { ROLE_DESCRIPTIONS, ROLE_LABELS, type StaffRole } from "@/lib/permissions";
 import { useAuth } from "@/lib/auth";
-import { listTeam, inviteTeamMember, setTeamRole, removeTeamMember } from "@/lib/team.functions";
+import {
+  listTeam,
+  inviteTeamMember,
+  setTeamRole,
+  removeTeamMember,
+  sendTeamPasswordReset,
+} from "@/lib/team.functions";
 
 export const Route = createFileRoute("/admin/team")({
   head: () => ({ meta: [{ title: "Team & roles — Admin" }] }),
