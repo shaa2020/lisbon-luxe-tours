@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 type MediaImageProps = {
   /** Current image URL from the database. Empty/null renders a skeleton. */
@@ -28,13 +28,10 @@ export function MediaImage({
   fetchPriority,
   sizes,
 }: MediaImageProps) {
-  const [loaded, setLoaded] = useState(false);
-  const [failed, setFailed] = useState(false);
-
-  useEffect(() => {
-    setLoaded(false);
-    setFailed(false);
-  }, [src]);
+  const [loadedSrc, setLoadedSrc] = useState<string | null>(null);
+  const [failedSrc, setFailedSrc] = useState<string | null>(null);
+  const loaded = Boolean(src && loadedSrc === src);
+  const failed = Boolean(src && failedSrc === src);
 
   const showSkeleton = !src || failed || !loaded;
 
@@ -56,8 +53,8 @@ export function MediaImage({
           loading={loading}
           fetchPriority={fetchPriority}
           sizes={sizes}
-          onLoad={() => setLoaded(true)}
-          onError={() => setFailed(true)}
+          onLoad={() => setLoadedSrc(src)}
+          onError={() => setFailedSrc(src)}
           className={`${className} transition-opacity duration-300 ${loaded ? "opacity-100" : "opacity-0"}`}
         />
       )}

@@ -106,14 +106,14 @@ export type CustomTourHero = typeof DEFAULT_CUSTOM_TOUR;
 
 export type HeroSlide = { label: string; image_url: string | null };
 
-function mapHeroSlides(d: any): HeroSlide[] {
+function mapHeroSlides(d: any, stamp?: string | number | null): HeroSlide[] {
   const raw = (d as any)?.hero_slides;
   if (!Array.isArray(raw)) return [];
   return raw
     .filter((s: any) => s && typeof s === "object")
     .map((s: any) => ({
       label: String(s.label ?? "").trim(),
-      image_url: s.image_url ? String(s.image_url) : null,
+      image_url: versionedUrl(s.image_url ? String(s.image_url) : null, stamp),
     }))
     .filter((s: HeroSlide) => s.label || s.image_url);
 }
@@ -175,7 +175,7 @@ export function useSiteBrand() {
         logoUrl: versionedUrl((data as any)?.logo_url, stamp) ?? DEFAULT_BRAND_LOGO,
         heroImageUrl: versionedUrl((data as any)?.hero_image_url, stamp),
         aboutImageUrl: versionedUrl((data as any)?.about_image_url, stamp),
-        heroSlides: mapHeroSlides(data),
+        heroSlides: mapHeroSlides(data, stamp),
         business: mapBusiness(data),
         customTour: mapCustomTour(data),
         hotelPickupFeeCents:
