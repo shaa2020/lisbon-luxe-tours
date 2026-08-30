@@ -11,6 +11,8 @@ import { TrustStrip } from "@/components/site/TrustStrip";
 import { StickyBookBar } from "@/components/site/StickyBookBar";
 import { useBlogPosts, useTours, tourPricing, type Tour } from "@/lib/cms";
 import { MediaImage } from "@/components/site/MediaImage";
+import { HeroSlideshow, useSlideRotation } from "@/components/site/HeroSlideshow";
+
 import { trackBookingCtaClick } from "@/lib/analytics";
 import { subscribeToNewsletter } from "@/lib/subscribers.functions";
 import { useSiteBrand } from "@/lib/brand";
@@ -79,37 +81,17 @@ function Hero() {
   const slides = heroSlides.length
     ? heroSlides.map((slide) => ({ ...slide, image_url: slide.image_url ?? heroImageUrl }))
     : [{ label: "Lisbon", image_url: heroImageUrl }];
-  const [activeSlide, setActiveSlide] = useState(0);
-  const currentSlide = slides[activeSlide] ?? slides[0];
+  const usableSlides = slides.filter((s) => !!s.image_url);
+  const [activeSlide] = useSlideRotation(usableSlides.length);
+  const currentSlide = usableSlides[activeSlide] ?? slides[0];
   const { data: allTours = [] } = useTours();
   const prices = allTours.map((t) => tourPricing(t).current).filter((n) => n > 0);
   const fromPrice = prices.length ? Math.min(...prices) : null;
 
-  useEffect(() => {
-    if (activeSlide >= slides.length) setActiveSlide(0);
-  }, [activeSlide, slides.length]);
-
-  useEffect(() => {
-    if (slides.length < 2) return;
-    const interval = window.setInterval(() => {
-      setActiveSlide((current) => (current + 1) % slides.length);
-    }, 5500);
-    return () => window.clearInterval(interval);
-  }, [slides.length]);
-
   return (
     <section className="relative">
       <div className="relative min-h-[520px] sm:min-h-[560px] md:h-[760px] overflow-hidden bg-ink">
-        {settingsReady && (
-          <MediaImage
-            src={currentSlide?.image_url}
-            alt={currentSlide?.label ? `${currentSlide.label} tuk-tuk tour` : "Private tuk-tuk tour in Lisbon"}
-            loading="eager"
-            fetchPriority="high"
-            wrapperClassName="absolute inset-0"
-            className="absolute inset-0 h-full w-full object-cover"
-          />
-        )}
+        {settingsReady && <HeroSlideshow slides={usableSlides} activeIndex={activeSlide} />}
 
         <div className="absolute inset-0 bg-gradient-to-b from-ink/55 via-ink/30 to-ink/70" />
 
@@ -123,11 +105,13 @@ function Hero() {
               Explore Beautiful
             </span>
             <span
+              key={currentSlide?.label || "Lisbon"}
               className="block font-sans font-bold uppercase text-white leading-[0.92] tracking-tight animate-[fade-up_0.8s_var(--ease-out-expo)_both]"
               style={{ fontSize: "clamp(40px, 11vw, 170px)" }}
             >
               {currentSlide?.label || "Lisbon"}
             </span>
+
             <span className="mt-2 text-white/90 text-[13px] md:text-[15px] uppercase tracking-[0.28em]">
               Private Tuk-Tuk Tours in Lisbon
             </span>

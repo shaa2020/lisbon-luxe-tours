@@ -6,6 +6,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { BrandLogo } from "@/components/site/BrandLogo";
 import { uploadMediaFile } from "@/lib/admin-helpers";
+import { versionedUrl } from "@/lib/media";
+import { HeroSlideshow, useSlideRotation } from "@/components/site/HeroSlideshow";
 import {
   gatewayCredentialStatus,
   testGatewayConnection,
@@ -392,7 +394,13 @@ function AdminSettings() {
             </div>
           </section>
 
+          <HomepagePreview
+            slides={heroSlides}
+            heroImageUrl={heroImage}
+          />
+
           <section className={card}>
+
             <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
               <div className="min-w-0">
                 <p className="text-sm font-semibold text-foreground">Homepage slideshow</p>
@@ -1245,5 +1253,133 @@ function PaymentsSettings({
         </button>
       </section>
     </div>
+  );
+}
+
+/* ===================== Homepage preview mode ===================== */
+
+function HomepagePreview({
+  slides,
+  heroImageUrl,
+}: {
+  slides: HeroSlideRow[];
+  heroImageUrl: string | null;
+}) {
+  const [open, setOpen] = useState(false);
+  const [device, setDevice] = useState<"desktop" | "mobile">("desktop");
+  const [stamp, setStamp] = useState(() => Date.now());
+
+  const resolved = (slides.length ? slides : [{ label: "Lisbon", image_url: heroImageUrl }])
+    .map((s) => ({
+      label: s.label,
+      image_url: versionedUrl(s.image_url ?? heroImageUrl, stamp),
+    }))
+    .filter((s) => !!s.image_url);
+
+  const [active, setActive] = useSlideRotation(open ? resolved.length : 0);
+  const current = resolved[active] ?? resolved[0];
+
+  return (
+    <section className={card}>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="text-sm font-semibold text-foreground">Preview mode</p>
+          <p className="text-xs text-muted-foreground">
+            See the live homepage hero — slides, order and freshly cache-busted images — before visitors do.
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={() => {
+              setStamp(Date.now());
+              setOpen((v) => !v);
+            }}
+            className="rounded-md bg-primary px-3 py-2 text-xs font-semibold text-primary-foreground"
+          >
+            {open ? "Hide preview" : "Show preview"}
+          </button>
+          {open && (
+            <button
+              type="button"
+              onClick={() => setStamp(Date.now())}
+              className="rounded-md border border-border px-3 py-2 text-xs font-medium text-foreground"
+            >
+              Refresh images
+            </button>
+          )}
+        </div>
+      </div>
+
+      {open && (
+        <div className="space-y-3">
+          <div className="flex flex-wrap items-center gap-2">
+            {(["desktop", "mobile"] as const).map((d) => (
+              <button
+                key={d}
+                type="button"
+                onClick={() => setDevice(d)}
+                className={`rounded-md border px-3 py-1.5 text-xs font-medium capitalize ${
+                  device === d
+                    ? "border-primary bg-primary/10 text-foreground"
+                    : "border-border text-muted-foreground"
+                }`}
+              >
+                {d}
+              </button>
+            ))}
+            <span className="text-xs text-muted-foreground">
+              {resolved.length} slide{resolved.length === 1 ? "" : "s"} · cache version {stamp}
+            </span>
+          </div>
+
+          <div className="flex justify-center rounded-lg border border-border bg-background p-3">
+            <div
+              className={`relative overflow-hidden rounded-lg bg-black ${
+                device === "mobile" ? "w-[320px] h-[440px]" : "w-full h-[360px]"
+              }`}
+            >
+              {resolved.length === 0 ? (
+                <div className="flex h-full items-center justify-center text-xs text-muted-foreground">
+                  No images set yet.
+                </div>
+              ) : (
+                <>
+                  <HeroSlideshow slides={resolved} activeIndex={active} />
+                  <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/25 to-black/70" />
+                  <div className="relative flex h-full flex-col items-center justify-center px-4 text-center">
+                    <span className="text-white/90 text-sm" style={{ fontFamily: '"Yellowtail", cursive' }}>
+                      Explore Beautiful
+                    </span>
+                    <span
+                      key={current?.label}
+                      className="font-sans font-bold uppercase leading-[0.92] tracking-tight text-white animate-[fade-up_0.8s_ease-out_both]"
+                      style={{ fontSize: device === "mobile" ? "42px" : "72px" }}
+                    >
+                      {current?.label || "Lisbon"}
+                    </span>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+
+          <div className="flex flex-wrap gap-2">
+            {resolved.map((s, i) => (
+              <button
+                key={`${s.image_url}-${i}`}
+                type="button"
+                onClick={() => setActive(i)}
+                className={`rounded-md border px-2 py-1 text-xs ${
+                  i === active ? "border-primary bg-primary/10 text-foreground" : "border-border text-muted-foreground"
+                }`}
+              >
+                {i + 1}. {s.label || "Untitled"}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+    </section>
   );
 }
