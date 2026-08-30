@@ -28,7 +28,7 @@ export const Route = createFileRoute("/")({
       }),
       context.queryClient.ensureQueryData(toursQueryOptions),
     ]);
-    return { heroImage: brand.heroSlides?.[0]?.url ?? brand.heroImageUrl ?? null };
+    return { heroImage: brand.heroSlides?.[0]?.image_url ?? brand.heroImageUrl ?? null };
   },
   head: ({ loaderData }) => ({
     meta: [
