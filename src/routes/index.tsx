@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { Nav } from "@/components/site/Nav";
@@ -74,19 +74,36 @@ function Index() {
 /* ============================== HERO ============================== */
 
 function Hero() {
-  const { heroImageUrl, isPlaceholderData, isPending } = useSiteBrand();
+  const { heroImageUrl, heroSlides, isPlaceholderData, isPending } = useSiteBrand();
   const settingsReady = !isPending && !isPlaceholderData;
+  const slides = heroSlides.length
+    ? heroSlides.map((slide) => ({ ...slide, image_url: slide.image_url ?? heroImageUrl }))
+    : [{ label: "Lisbon", image_url: heroImageUrl }];
+  const [activeSlide, setActiveSlide] = useState(0);
+  const currentSlide = slides[activeSlide] ?? slides[0];
   const { data: allTours = [] } = useTours();
   const prices = allTours.map((t) => tourPricing(t).current).filter((n) => n > 0);
   const fromPrice = prices.length ? Math.min(...prices) : null;
+
+  useEffect(() => {
+    if (activeSlide >= slides.length) setActiveSlide(0);
+  }, [activeSlide, slides.length]);
+
+  useEffect(() => {
+    if (slides.length < 2) return;
+    const interval = window.setInterval(() => {
+      setActiveSlide((current) => (current + 1) % slides.length);
+    }, 5500);
+    return () => window.clearInterval(interval);
+  }, [slides.length]);
 
   return (
     <section className="relative">
       <div className="relative min-h-[520px] sm:min-h-[560px] md:h-[760px] overflow-hidden bg-ink">
         {settingsReady && (
           <MediaImage
-            src={heroImageUrl}
-            alt="Private tuk-tuk tour in Lisbon"
+            src={currentSlide?.image_url}
+            alt={currentSlide?.label ? `${currentSlide.label} tuk-tuk tour` : "Private tuk-tuk tour in Lisbon"}
             loading="eager"
             fetchPriority="high"
             wrapperClassName="absolute inset-0"
@@ -109,7 +126,7 @@ function Hero() {
               className="block font-sans font-bold uppercase text-white leading-[0.92] tracking-tight animate-[fade-up_0.8s_var(--ease-out-expo)_both]"
               style={{ fontSize: "clamp(40px, 11vw, 170px)" }}
             >
-              Lisbon
+              {currentSlide?.label || "Lisbon"}
             </span>
             <span className="mt-2 text-white/90 text-[13px] md:text-[15px] uppercase tracking-[0.28em]">
               Private Tuk-Tuk Tours in Lisbon
