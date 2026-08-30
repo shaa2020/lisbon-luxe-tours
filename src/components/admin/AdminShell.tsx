@@ -27,7 +27,11 @@ import {
   Search,
   Bell,
   ChevronDown,
+  Users,
+  ShieldAlert,
 } from "lucide-react";
+import { ROLE_LABELS, type Permission } from "@/lib/permissions";
+
 
 type NavItem = {
   to: string;
