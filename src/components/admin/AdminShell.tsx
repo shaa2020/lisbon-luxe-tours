@@ -107,8 +107,8 @@ function Badge({ n, small = false }: { n: number; small?: boolean }) {
   );
 }
 
-export function AdminShell({ children }: { children: ReactNode }) {
-  const { user, isAdmin, loading, signOut } = useAuth();
+export function AdminShell({ children, requires }: { children: ReactNode; requires?: Permission }) {
+  const { user, isAdmin, role, can, loading, signOut } = useAuth();
   const { brandName, logoUrl, business, promoBanner } = useSiteBrand();
   const navigate = useNavigate();
   const { location } = useRouterState();
@@ -117,6 +117,16 @@ export function AdminShell({ children }: { children: ReactNode }) {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [userMenu, setUserMenu] = useState(false);
   const [query, setQuery] = useState("");
+
+  const groups = useMemo(
+    () =>
+      GROUPS.map((g) => ({ ...g, items: g.items.filter((n) => can(n.perm)) })).filter(
+        (g) => g.items.length > 0,
+      ),
+    [can],
+  );
+  const all = useMemo(() => groups.flatMap((g) => g.items), [groups]);
+  const primary = useMemo(() => PRIMARY.filter((n) => can(n.perm)), [can]);
 
   const badgeFor = (to: string): number => {
     if (to === "/admin/bookings") return badges?.bookings ?? 0;
@@ -141,8 +151,8 @@ export function AdminShell({ children }: { children: ReactNode }) {
   const results = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return [];
-    return ALL.filter((n) => n.label.toLowerCase().includes(q) || n.desc?.toLowerCase().includes(q)).slice(0, 6);
-  }, [query]);
+    return all.filter((n) => n.label.toLowerCase().includes(q) || n.desc?.toLowerCase().includes(q)).slice(0, 6);
+  }, [query, all]);
 
   if (loading || !user || !isAdmin) {
     return (
@@ -152,16 +162,19 @@ export function AdminShell({ children }: { children: ReactNode }) {
     );
   }
 
-  const current = ALL.find((n) => isActiveRoute(n.to, location.pathname));
+  const current = all.find((n) => isActiveRoute(n.to, location.pathname));
   const currentLabel = current?.label ?? "Admin";
-  const moreItems = ALL.filter((n) => !PRIMARY.some((p) => p.to === n.to));
+  const moreItems = all.filter((n) => !primary.some((p) => p.to === n.to));
   const moreActive = moreItems.some((n) => isActiveRoute(n.to, location.pathname));
   const moreBadge = (badges?.messages ?? 0) + (badges?.reviews ?? 0);
   const totalAlerts = (badges?.bookings ?? 0) + (badges?.messages ?? 0) + (badges?.reviews ?? 0);
   const initials = (user.email ?? "A").slice(0, 2).toUpperCase();
+  const roleLabel = role ? ROLE_LABELS[role] : "Admin";
+  const allowed = !requires || can(requires);
   const waHref = business?.whatsappPhone
     ? `https://wa.me/${business.whatsappPhone.replace(/[^0-9]/g, "")}`
     : null;
+
 
   const SidebarBody = (
     <>
