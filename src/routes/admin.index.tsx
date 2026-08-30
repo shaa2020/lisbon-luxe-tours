@@ -215,6 +215,7 @@ function AdminDashboard() {
 
         {/* ===== Right rail ===== */}
         <div className="space-y-6">
+          {can("marketing.manage") && (
           <AdminCard className="p-5 space-y-3">
             <div className="flex items-center gap-2">
               <Megaphone className="w-4 h-4 text-primary" />
@@ -242,6 +243,7 @@ function AdminDashboard() {
               {promoLive ? "Edit banner" : "Create banner"}
             </Link>
           </AdminCard>
+          )}
 
           <AdminCard className="p-5 space-y-3">
             <div>
@@ -249,11 +251,11 @@ function AdminDashboard() {
               <p className="text-xs text-muted-foreground">Jump straight to setup areas.</p>
             </div>
             {[
-              { to: "/admin/settings", label: "Settings", desc: "Brand, contact, booking rules, payments." },
-              { to: "/admin/custom-builder", label: "Custom builder", desc: "Prices for build-your-own tours." },
-              { to: "/admin/discounts", label: "Discounts", desc: "Promo codes and campaigns." },
-              { to: "/admin/faqs", label: "FAQs", desc: "Questions shown on the FAQ page." },
-            ].map((s) => (
+              { perm: "settings.manage" as const, to: "/admin/settings", label: "Settings", desc: "Brand, contact, booking rules, payments." },
+              { perm: "tours.manage" as const, to: "/admin/custom-builder", label: "Custom builder", desc: "Prices for build-your-own tours." },
+              { perm: "discounts.manage" as const, to: "/admin/discounts", label: "Discounts", desc: "Promo codes and campaigns." },
+              { perm: "faqs.manage" as const, to: "/admin/faqs", label: "FAQs", desc: "Questions shown on the FAQ page." },
+            ].filter((x) => can(x.perm)).map((s) => (
               <Link
                 key={s.to}
                 to={s.to}
