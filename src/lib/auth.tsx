@@ -120,7 +120,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setLoading(true);
     await supabase.auth.signOut();
     setSession(null);
-    setIsAdmin(false);
+    setRole(null);
     setLoading(false);
   };
 
@@ -129,7 +129,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       value={{
         user: session?.user ?? null,
         session,
-        isAdmin,
+        isAdmin: role != null,
+        role,
+        can: (permission) => roleCan(role, permission),
+        hasRole: (min) => roleAtLeast(role, min),
         loading,
         signIn,
         signUp,
@@ -139,6 +142,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       {children}
     </Ctx.Provider>
   );
+
 }
 
 export function useAuth() {
