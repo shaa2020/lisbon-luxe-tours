@@ -195,7 +195,7 @@ export function AdminShell({ children, requires }: { children: ReactNode; requir
       </div>
 
       <nav className="flex-1 overflow-y-auto px-3 pb-4 space-y-5">
-        {GROUPS.map((group) => (
+        {groups.map((group) => (
           <div key={group.title}>
             <p className="px-3 mb-1.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground/70">
               {group.title}
@@ -368,7 +368,7 @@ export function AdminShell({ children, requires }: { children: ReactNode; requir
                   </span>
                   <span className="hidden lg:block text-left leading-tight max-w-[140px]">
                     <span className="block text-sm font-semibold truncate">{user.email?.split("@")[0]}</span>
-                    <span className="block text-[11px] text-muted-foreground">Admin</span>
+                    <span className="block text-[11px] text-muted-foreground">{roleLabel}</span>
                   </span>
                   <ChevronDown className="hidden lg:block w-4 h-4 text-muted-foreground" />
                 </button>
@@ -402,7 +402,25 @@ export function AdminShell({ children, requires }: { children: ReactNode; requir
 
         {/* ============= Main ============= */}
         <main className="flex-1 w-full max-w-[1400px] mx-auto px-3 sm:px-6 py-5 md:py-7 pb-[calc(env(safe-area-inset-bottom)+88px)] md:pb-14">
-          {children}
+          {allowed ? (
+            children
+          ) : (
+            <div className="mx-auto max-w-md rounded-2xl border border-border bg-card p-8 text-center">
+              <span className="mx-auto mb-3 grid h-12 w-12 place-items-center rounded-2xl bg-destructive/10 text-destructive">
+                <ShieldAlert className="h-6 w-6" />
+              </span>
+              <h2 className="font-display text-xl font-bold">No access</h2>
+              <p className="mt-1.5 text-sm text-muted-foreground">
+                Your role ({roleLabel}) doesn&apos;t include this section. Ask an owner if you need it.
+              </p>
+              <Link
+                to="/admin"
+                className="mt-4 inline-flex rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground"
+              >
+                Back to dashboard
+              </Link>
+            </div>
+          )}
         </main>
       </div>
 
@@ -411,8 +429,8 @@ export function AdminShell({ children, requires }: { children: ReactNode; requir
         className="md:hidden fixed bottom-0 inset-x-0 z-30 bg-card/95 backdrop-blur border-t border-border"
         style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
       >
-        <div className="grid grid-cols-5 h-16">
-          {PRIMARY.map((n) => {
+        <div className="grid h-16" style={{ gridTemplateColumns: `repeat(${primary.length + 1}, minmax(0, 1fr))` }}>
+          {primary.map((n) => {
             const active = isActiveRoute(n.to, location.pathname);
             const Icon = n.icon;
             const b = badgeFor(n.to);
@@ -479,7 +497,7 @@ export function AdminShell({ children, requires }: { children: ReactNode; requir
               </button>
             </div>
             <div className="p-4 space-y-5">
-              {GROUPS.map((group) => (
+              {groups.map((group) => (
                 <div key={group.title}>
                   <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
                     {group.title}
