@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { assertPermission } from "./roles";
 
 const overridesSchema = z
   .object({
@@ -143,8 +144,8 @@ export const adminCancelBooking = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => cancelSchema.parse(d))
   .handler(async ({ data, context }) => {
-    const { assertAdmin, logEvent, sendBookingEmail, BOOKING_SELECT } = await import("./bookings-admin.server");
-    await assertAdmin(context);
+    const { logEvent, sendBookingEmail, BOOKING_SELECT } = await import("./bookings-admin.server");
+    await assertPermission(context, "bookings.delete");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
     const { data: booking, error } = await supabaseAdmin
@@ -194,8 +195,8 @@ export const adminRecordRefund = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => refundSchema.parse(d))
   .handler(async ({ data, context }) => {
-    const { assertAdmin, logEvent, sendBookingEmail, BOOKING_SELECT } = await import("./bookings-admin.server");
-    await assertAdmin(context);
+    const { logEvent, sendBookingEmail, BOOKING_SELECT } = await import("./bookings-admin.server");
+    await assertPermission(context, "orders.refund");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
     const { data: booking, error } = await supabaseAdmin

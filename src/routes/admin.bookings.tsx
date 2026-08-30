@@ -351,7 +351,7 @@ function BookingsInbox() {
   };
 
   return (
-    <AdminShell>
+    <AdminShell requires="bookings.view">
       <div className="mb-8 flex flex-wrap items-start justify-between gap-3">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary mb-2">

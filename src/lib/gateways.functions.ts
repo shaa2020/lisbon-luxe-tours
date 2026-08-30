@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import { assertPermission } from "./roles";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import {
@@ -13,13 +14,7 @@ const providerSchema = z.enum(["stripe", "mollie", "paypal", "manual"]);
 const modeSchema = z.enum(["test", "live"]);
 
 async function assertAdmin(context: { supabase: any; userId: string }) {
-  const { data, error } = await context.supabase
-    .from("user_roles")
-    .select("role")
-    .eq("user_id", context.userId)
-    .eq("role", "admin")
-    .maybeSingle();
-  if (error || !data) throw new Error("Forbidden");
+  await assertPermission(context, "payments.manage");
 }
 
 /** Which providers have credentials configured, per mode, plus which fields are filled. */

@@ -1,11 +1,21 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import type { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
+import {
+  normalizeRole,
+  roleAtLeast,
+  roleCan,
+  type Permission,
+  type StaffRole,
+} from "@/lib/permissions";
 
 type AuthState = {
   user: User | null;
   session: Session | null;
   isAdmin: boolean;
+  role: StaffRole | null;
+  can: (permission: Permission) => boolean;
+  hasRole: (min: StaffRole) => boolean;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{ error?: string }>;
   signUp: (email: string, password: string) => Promise<{ error?: string }>;
@@ -16,34 +26,39 @@ const Ctx = createContext<AuthState | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [role, setRole] = useState<StaffRole | null>(null);
   const [loading, setLoading] = useState(true);
 
   const refreshRole = async (uid: string | undefined) => {
     try {
       if (!uid) {
-        setIsAdmin(false);
+        setRole(null);
         return;
       }
 
       const { data, error } = await supabase
         .from("user_roles")
         .select("role")
-        .eq("user_id", uid)
-        .eq("role", "admin")
-        .maybeSingle();
+        .eq("user_id", uid);
 
       if (error) {
-        console.error("Failed to fetch admin role", error);
-        setIsAdmin(false);
+        console.error("Failed to fetch staff role", error);
+        setRole(null);
         return;
       }
 
-      setIsAdmin(!!data);
+      // Highest role wins.
+      let best: StaffRole | null = null;
+      for (const row of data ?? []) {
+        const r = normalizeRole((row as { role: string }).role);
+        if (r && (!best || roleAtLeast(r, best))) best = r;
+      }
+      setRole(best);
     } finally {
       setLoading(false);
     }
   };
+
 
   useEffect(() => {
     const syncSession = (nextSession: Session | null) => {
@@ -83,21 +98,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       options: { emailRedirectTo: redirectUrl },
     });
     if (error) return { error: error.message };
-    // If first user, try to claim admin (RLS allows insert only if no admin exists yet via fallback below)
+    // If this is the very first account, claim owner.
     if (data.user) {
-      // Check if any admin exists
       const { count } = await supabase
         .from("user_roles")
-        .select("*", { count: "exact", head: true })
-        .eq("role", "admin");
+        .select("*", { count: "exact", head: true });
       if ((count ?? 0) === 0) {
         await supabase.from("user_roles").insert({
           user_id: data.user.id,
-          role: "admin",
+          role: "owner",
         });
         await refreshRole(data.user.id);
       }
     }
+
     return {};
   };
 
@@ -105,7 +119,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setLoading(true);
     await supabase.auth.signOut();
     setSession(null);
-    setIsAdmin(false);
+    setRole(null);
     setLoading(false);
   };
 
@@ -114,7 +128,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       value={{
         user: session?.user ?? null,
         session,
-        isAdmin,
+        isAdmin: role != null,
+        role,
+        can: (permission) => roleCan(role, permission),
+        hasRole: (min) => roleAtLeast(role, min),
         loading,
         signIn,
         signUp,
@@ -124,6 +141,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       {children}
     </Ctx.Provider>
   );
+
 }
 
 export function useAuth() {

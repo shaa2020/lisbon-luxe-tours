@@ -21,7 +21,7 @@ function Page() {
   };
 
   return (
-    <AdminShell>
+    <AdminShell requires="ops.view">
       <OpsPage
         title="Guest requests"
         description="Change, cancellation and question requests raised against jobs."

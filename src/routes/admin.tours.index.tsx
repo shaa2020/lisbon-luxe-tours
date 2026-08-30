@@ -54,7 +54,7 @@ function AdminToursPage() {
   };
 
   return (
-    <AdminShell>
+    <AdminShell requires="tours.manage">
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-display font-bold">Tours</h1>

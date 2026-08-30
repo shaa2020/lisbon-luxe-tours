@@ -8,7 +8,7 @@ export const Route = createFileRoute("/admin/ops/partners")({ component: Page })
 
 function Page() {
   return (
-    <AdminShell>
+    <AdminShell requires="ops.manage">
       <OpsPage
         title="Partners"
         description="Hotels, agencies and creators who send you bookings, with their commission."

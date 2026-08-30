@@ -8,7 +8,7 @@ export const Route = createFileRoute("/admin/ops/vehicles")({ component: Page })
 
 function Page() {
   return (
-    <AdminShell>
+    <AdminShell requires="ops.manage">
       <OpsPage title="Vehicles" description="Your fleet and its availability.">
         <ResourceManager
           table="ops_vehicles"

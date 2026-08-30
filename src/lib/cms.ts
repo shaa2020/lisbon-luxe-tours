@@ -146,11 +146,24 @@ export function mapPost(row: BlogRow): BlogPost {
   };
 }
 
+export const TOURS_KEY = ["tours", "public"] as const;
+
+/** SSR-friendly options so route loaders can warm the same cache entry. */
+export const toursQueryOptions = {
+  queryKey: TOURS_KEY,
+  staleTime: 5 * 60_000,
+  queryFn: async (): Promise<Tour[]> => {
+    const data = await getPublishedTours();
+    return (data ?? []).map((r) => mapTour(r as TourRow));
+  },
+};
+
 export function useTours() {
   const fetchTours = useServerFn(getPublishedTours);
 
   return useQuery({
-    queryKey: ["tours", "public"],
+    queryKey: TOURS_KEY,
+    staleTime: 5 * 60_000,
     queryFn: async (): Promise<Tour[]> => {
       const data = await fetchTours();
       return (data ?? []).map((r) => mapTour(r as TourRow));

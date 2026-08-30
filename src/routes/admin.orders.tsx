@@ -141,7 +141,7 @@ function OrdersPage() {
   };
 
   return (
-    <AdminShell>
+    <AdminShell requires="orders.view">
       <div className="mb-8">
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary mb-2">
           Revenue

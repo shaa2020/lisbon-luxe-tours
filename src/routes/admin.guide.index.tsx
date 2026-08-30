@@ -139,7 +139,7 @@ function AdminGuideListPage() {
   };
 
   return (
-    <AdminShell>
+    <AdminShell requires="content.manage">
       <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
         <div>
           <h1 className="text-2xl font-display font-bold">Travel Guide</h1>

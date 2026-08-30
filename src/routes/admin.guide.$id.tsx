@@ -346,14 +346,14 @@ function GuideEditorPage() {
 
   if (loading) {
     return (
-      <AdminShell>
+      <AdminShell requires="content.manage">
         <p className="text-sm text-muted-foreground">Loading…</p>
       </AdminShell>
     );
   }
 
   return (
-    <AdminShell>
+    <AdminShell requires="content.manage">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <Link to="/admin/guide" className="text-xs text-muted-foreground hover:text-foreground">
           ← All articles

@@ -92,7 +92,7 @@ function AdminCustomBuilder() {
   });
 
   return (
-    <AdminShell>
+    <AdminShell requires="tours.manage">
       <HeroEditor />
 
       <div className="flex items-center justify-between gap-3 mb-6 flex-wrap">

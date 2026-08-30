@@ -9,16 +9,28 @@ import { BookingModal } from "@/components/site/BookingModal";
 import { TestimonialsSection } from "@/components/site/TestimonialsSection";
 import { TrustStrip } from "@/components/site/TrustStrip";
 import { StickyBookBar } from "@/components/site/StickyBookBar";
-import { useBlogPosts, useTours, tourPricing, type Tour } from "@/lib/cms";
+import { useBlogPosts, useTours, tourPricing, toursQueryOptions, type Tour } from "@/lib/cms";
 import { MediaImage } from "@/components/site/MediaImage";
 import { HeroSlideshow, useSlideRotation } from "@/components/site/HeroSlideshow";
 
 import { trackBookingCtaClick } from "@/lib/analytics";
 import { subscribeToNewsletter } from "@/lib/subscribers.functions";
-import { useSiteBrand } from "@/lib/brand";
+import { useSiteBrand, mapSiteBrand, SITE_BRAND_KEY } from "@/lib/brand";
+import { getPublicSiteSettings } from "@/lib/cms.functions";
 
 export const Route = createFileRoute("/")({
-  head: () => ({
+  loader: async ({ context }) => {
+    const [brand] = await Promise.all([
+      context.queryClient.ensureQueryData({
+        queryKey: SITE_BRAND_KEY,
+        staleTime: 5 * 60_000,
+        queryFn: async () => mapSiteBrand(await getPublicSiteSettings()),
+      }),
+      context.queryClient.ensureQueryData(toursQueryOptions),
+    ]);
+    return { heroImage: brand.heroSlides?.[0]?.image_url ?? brand.heroImageUrl ?? null };
+  },
+  head: ({ loaderData }) => ({
     meta: [
       { title: "Private Tuk-Tuk Tours in Lisbon — Tuk Tuk 24" },
       {
@@ -40,7 +52,12 @@ export const Route = createFileRoute("/")({
       },
       { property: "og:url", content: "https://tuktuk24lisbon.com/" },
     ],
-    links: [{ rel: "canonical", href: "https://tuktuk24lisbon.com/" }],
+    links: [
+      { rel: "canonical", href: "https://tuktuk24lisbon.com/" },
+      ...(loaderData?.heroImage
+        ? [{ rel: "preload", as: "image", href: loaderData.heroImage, fetchpriority: "high" }]
+        : []),
+    ],
 
   }),
   component: Index,

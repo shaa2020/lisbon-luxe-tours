@@ -143,7 +143,7 @@ function GuideTaxonomyPage() {
   };
 
   return (
-    <AdminShell>
+    <AdminShell requires="content.manage">
       <div className="mb-6">
         <Link to="/admin/guide" className="text-xs text-muted-foreground hover:text-foreground">
           ← All articles

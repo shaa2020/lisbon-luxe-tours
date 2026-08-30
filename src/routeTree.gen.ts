@@ -34,6 +34,7 @@ import { Route as AdminMessagesRouteImport } from './routes/admin.messages'
 import { Route as AdminOrdersRouteImport } from './routes/admin.orders'
 import { Route as AdminReviewsRouteImport } from './routes/admin.reviews'
 import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
+import { Route as AdminTeamRouteImport } from './routes/admin.team'
 import { Route as BookingCancelledRouteImport } from './routes/booking.cancelled'
 import { Route as BookingManageRouteImport } from './routes/booking.manage'
 import { Route as BookingSuccessRouteImport } from './routes/booking.success'
@@ -201,6 +202,11 @@ const AdminReviewsRoute = AdminReviewsRouteImport.update({
 const AdminSettingsRoute = AdminSettingsRouteImport.update({
   id: '/admin/settings',
   path: '/admin/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminTeamRoute = AdminTeamRouteImport.update({
+  id: '/admin/team',
+  path: '/admin/team',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BookingCancelledRoute = BookingCancelledRouteImport.update({
@@ -449,6 +455,7 @@ export interface FileRoutesByFullPath {
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/reviews': typeof AdminReviewsRoute
   '/admin/settings': typeof AdminSettingsRoute
+  '/admin/team': typeof AdminTeamRoute
   '/booking/cancelled': typeof BookingCancelledRoute
   '/booking/manage': typeof BookingManageRoute
   '/booking/success': typeof BookingSuccessRoute
@@ -519,6 +526,7 @@ export interface FileRoutesByTo {
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/reviews': typeof AdminReviewsRoute
   '/admin/settings': typeof AdminSettingsRoute
+  '/admin/team': typeof AdminTeamRoute
   '/booking/cancelled': typeof BookingCancelledRoute
   '/booking/manage': typeof BookingManageRoute
   '/booking/success': typeof BookingSuccessRoute
@@ -590,6 +598,7 @@ export interface FileRoutesById {
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/reviews': typeof AdminReviewsRoute
   '/admin/settings': typeof AdminSettingsRoute
+  '/admin/team': typeof AdminTeamRoute
   '/booking/cancelled': typeof BookingCancelledRoute
   '/booking/manage': typeof BookingManageRoute
   '/booking/success': typeof BookingSuccessRoute
@@ -662,6 +671,7 @@ export interface FileRouteTypes {
     | '/admin/orders'
     | '/admin/reviews'
     | '/admin/settings'
+    | '/admin/team'
     | '/booking/cancelled'
     | '/booking/manage'
     | '/booking/success'
@@ -732,6 +742,7 @@ export interface FileRouteTypes {
     | '/admin/orders'
     | '/admin/reviews'
     | '/admin/settings'
+    | '/admin/team'
     | '/booking/cancelled'
     | '/booking/manage'
     | '/booking/success'
@@ -802,6 +813,7 @@ export interface FileRouteTypes {
     | '/admin/orders'
     | '/admin/reviews'
     | '/admin/settings'
+    | '/admin/team'
     | '/booking/cancelled'
     | '/booking/manage'
     | '/booking/success'
@@ -873,6 +885,7 @@ export interface RootRouteChildren {
   AdminOrdersRoute: typeof AdminOrdersRoute
   AdminReviewsRoute: typeof AdminReviewsRoute
   AdminSettingsRoute: typeof AdminSettingsRoute
+  AdminTeamRoute: typeof AdminTeamRoute
   BookingCancelledRoute: typeof BookingCancelledRoute
   BookingManageRoute: typeof BookingManageRoute
   BookingSuccessRoute: typeof BookingSuccessRoute
@@ -1094,6 +1107,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/settings'
       fullPath: '/admin/settings'
       preLoaderRoute: typeof AdminSettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/team': {
+      id: '/admin/team'
+      path: '/admin/team'
+      fullPath: '/admin/team'
+      preLoaderRoute: typeof AdminTeamRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/booking/cancelled': {
@@ -1425,6 +1445,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminOrdersRoute: AdminOrdersRoute,
   AdminReviewsRoute: AdminReviewsRoute,
   AdminSettingsRoute: AdminSettingsRoute,
+  AdminTeamRoute: AdminTeamRoute,
   BookingCancelledRoute: BookingCancelledRoute,
   BookingManageRoute: BookingManageRoute,
   BookingSuccessRoute: BookingSuccessRoute,

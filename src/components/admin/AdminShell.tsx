@@ -27,13 +27,18 @@ import {
   Search,
   Bell,
   ChevronDown,
+  Users,
+  ShieldAlert,
 } from "lucide-react";
+import { ROLE_LABELS, type Permission } from "@/lib/permissions";
+
 
 type NavItem = {
   to: string;
   label: string;
   icon: React.ComponentType<{ className?: string }>;
   desc?: string;
+  perm: Permission;
 };
 
 type NavGroup = { title: string; items: NavItem[] };
@@ -41,55 +46,57 @@ type NavGroup = { title: string; items: NavItem[] };
 const GROUPS: NavGroup[] = [
   {
     title: "Overview",
-    items: [{ to: "/admin", label: "Dashboard", icon: LayoutDashboard, desc: "Revenue and activity" }],
+    items: [{ to: "/admin", label: "Dashboard", icon: LayoutDashboard, desc: "Revenue and activity", perm: "dashboard.view" }],
   },
   {
     title: "Sell",
     items: [
-      { to: "/admin/tours", label: "Tours", icon: Map, desc: "Catalogue and pricing" },
-      { to: "/admin/custom-builder", label: "Custom builder", icon: Sparkles, desc: "Build-your-own options" },
-      { to: "/admin/discounts", label: "Discounts", icon: Tag, desc: "Promo codes" },
+      { to: "/admin/tours", label: "Tours", icon: Map, desc: "Catalogue and pricing", perm: "tours.manage" },
+      { to: "/admin/custom-builder", label: "Custom builder", icon: Sparkles, desc: "Build-your-own options", perm: "tours.manage" },
+      { to: "/admin/discounts", label: "Discounts", icon: Tag, desc: "Promo codes", perm: "discounts.manage" },
     ],
   },
   {
     title: "Operate",
     items: [
-      { to: "/admin/bookings", label: "Bookings", icon: CalendarCheck, desc: "Requests and schedule" },
-      { to: "/admin/orders", label: "Orders", icon: CreditCard, desc: "Payments and refunds" },
-      { to: "/admin/ops", label: "Operations", icon: Gauge, desc: "Jobs, drivers, vehicles" },
-      { to: "/admin/messages", label: "Messages", icon: MessageSquare, desc: "Contact inbox" },
-      { to: "/admin/emails", label: "Emails", icon: Mail, desc: "Templates and send log" },
+      { to: "/admin/bookings", label: "Bookings", icon: CalendarCheck, desc: "Requests and schedule", perm: "bookings.view" },
+      { to: "/admin/orders", label: "Orders", icon: CreditCard, desc: "Payments and refunds", perm: "orders.view" },
+      { to: "/admin/ops", label: "Operations", icon: Gauge, desc: "Jobs, drivers, vehicles", perm: "ops.view" },
+      { to: "/admin/messages", label: "Messages", icon: MessageSquare, desc: "Contact inbox", perm: "messages.view" },
+      { to: "/admin/emails", label: "Emails", icon: Mail, desc: "Templates and send log", perm: "emails.manage" },
     ],
   },
   {
     title: "Content",
     items: [
-      { to: "/admin/blog", label: "Journal", icon: BookOpen, desc: "Stories and news" },
-      { to: "/admin/guide", label: "Travel guide", icon: Compass, desc: "SEO guide hub" },
-      { to: "/admin/reviews", label: "Reviews", icon: Star, desc: "Approve guest reviews" },
-      { to: "/admin/faqs", label: "FAQs", icon: HelpCircle, desc: "Questions and answers" },
+      { to: "/admin/blog", label: "Journal", icon: BookOpen, desc: "Stories and news", perm: "content.manage" },
+      { to: "/admin/guide", label: "Travel guide", icon: Compass, desc: "SEO guide hub", perm: "content.manage" },
+      { to: "/admin/reviews", label: "Reviews", icon: Star, desc: "Approve guest reviews", perm: "reviews.manage" },
+      { to: "/admin/faqs", label: "FAQs", icon: HelpCircle, desc: "Questions and answers", perm: "faqs.manage" },
     ],
   },
   {
     title: "Configure",
-    items: [{ to: "/admin/settings", label: "Settings", icon: Settings, desc: "Brand, booking, payments" }],
+    items: [
+      { to: "/admin/settings", label: "Settings", icon: Settings, desc: "Brand, booking, payments", perm: "settings.manage" },
+      { to: "/admin/team", label: "Team", icon: Users, desc: "Members and roles", perm: "team.manage" },
+    ],
   },
 ];
 
-const ALL: NavItem[] = GROUPS.flatMap((g) => g.items);
-
 /** Bottom tab bar targets on mobile. */
 const PRIMARY: NavItem[] = [
-  { to: "/admin", label: "Home", icon: LayoutDashboard },
-  { to: "/admin/bookings", label: "Bookings", icon: CalendarCheck },
-  { to: "/admin/tours", label: "Tours", icon: Map },
-  { to: "/admin/orders", label: "Orders", icon: CreditCard },
+  { to: "/admin", label: "Home", icon: LayoutDashboard, perm: "dashboard.view" },
+  { to: "/admin/bookings", label: "Bookings", icon: CalendarCheck, perm: "bookings.view" },
+  { to: "/admin/tours", label: "Tours", icon: Map, perm: "tours.manage" },
+  { to: "/admin/orders", label: "Orders", icon: CreditCard, perm: "orders.view" },
 ];
 
 function isActiveRoute(to: string, pathname: string) {
   if (to === "/admin") return pathname === "/admin";
   return pathname === to || pathname.startsWith(to + "/");
 }
+
 
 function Badge({ n, small = false }: { n: number; small?: boolean }) {
   if (!n) return null;
@@ -104,8 +111,8 @@ function Badge({ n, small = false }: { n: number; small?: boolean }) {
   );
 }
 
-export function AdminShell({ children }: { children: ReactNode }) {
-  const { user, isAdmin, loading, signOut } = useAuth();
+export function AdminShell({ children, requires }: { children: ReactNode; requires?: Permission }) {
+  const { user, isAdmin, role, can, loading, signOut } = useAuth();
   const { brandName, logoUrl, business, promoBanner } = useSiteBrand();
   const navigate = useNavigate();
   const { location } = useRouterState();
@@ -114,6 +121,16 @@ export function AdminShell({ children }: { children: ReactNode }) {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [userMenu, setUserMenu] = useState(false);
   const [query, setQuery] = useState("");
+
+  const groups = useMemo(
+    () =>
+      GROUPS.map((g) => ({ ...g, items: g.items.filter((n) => can(n.perm)) })).filter(
+        (g) => g.items.length > 0,
+      ),
+    [can],
+  );
+  const all = useMemo(() => groups.flatMap((g) => g.items), [groups]);
+  const primary = useMemo(() => PRIMARY.filter((n) => can(n.perm)), [can]);
 
   const badgeFor = (to: string): number => {
     if (to === "/admin/bookings") return badges?.bookings ?? 0;
@@ -138,8 +155,8 @@ export function AdminShell({ children }: { children: ReactNode }) {
   const results = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return [];
-    return ALL.filter((n) => n.label.toLowerCase().includes(q) || n.desc?.toLowerCase().includes(q)).slice(0, 6);
-  }, [query]);
+    return all.filter((n) => n.label.toLowerCase().includes(q) || n.desc?.toLowerCase().includes(q)).slice(0, 6);
+  }, [query, all]);
 
   if (loading || !user || !isAdmin) {
     return (
@@ -149,16 +166,19 @@ export function AdminShell({ children }: { children: ReactNode }) {
     );
   }
 
-  const current = ALL.find((n) => isActiveRoute(n.to, location.pathname));
+  const current = all.find((n) => isActiveRoute(n.to, location.pathname));
   const currentLabel = current?.label ?? "Admin";
-  const moreItems = ALL.filter((n) => !PRIMARY.some((p) => p.to === n.to));
+  const moreItems = all.filter((n) => !primary.some((p) => p.to === n.to));
   const moreActive = moreItems.some((n) => isActiveRoute(n.to, location.pathname));
   const moreBadge = (badges?.messages ?? 0) + (badges?.reviews ?? 0);
   const totalAlerts = (badges?.bookings ?? 0) + (badges?.messages ?? 0) + (badges?.reviews ?? 0);
   const initials = (user.email ?? "A").slice(0, 2).toUpperCase();
+  const roleLabel = role ? ROLE_LABELS[role] : "Admin";
+  const allowed = !requires || can(requires);
   const waHref = business?.whatsappPhone
     ? `https://wa.me/${business.whatsappPhone.replace(/[^0-9]/g, "")}`
     : null;
+
 
   const SidebarBody = (
     <>
@@ -175,7 +195,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
       </div>
 
       <nav className="flex-1 overflow-y-auto px-3 pb-4 space-y-5">
-        {GROUPS.map((group) => (
+        {groups.map((group) => (
           <div key={group.title}>
             <p className="px-3 mb-1.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground/70">
               {group.title}
@@ -348,7 +368,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
                   </span>
                   <span className="hidden lg:block text-left leading-tight max-w-[140px]">
                     <span className="block text-sm font-semibold truncate">{user.email?.split("@")[0]}</span>
-                    <span className="block text-[11px] text-muted-foreground">Admin</span>
+                    <span className="block text-[11px] text-muted-foreground">{roleLabel}</span>
                   </span>
                   <ChevronDown className="hidden lg:block w-4 h-4 text-muted-foreground" />
                 </button>
@@ -382,7 +402,25 @@ export function AdminShell({ children }: { children: ReactNode }) {
 
         {/* ============= Main ============= */}
         <main className="flex-1 w-full max-w-[1400px] mx-auto px-3 sm:px-6 py-5 md:py-7 pb-[calc(env(safe-area-inset-bottom)+88px)] md:pb-14">
-          {children}
+          {allowed ? (
+            children
+          ) : (
+            <div className="mx-auto max-w-md rounded-2xl border border-border bg-card p-8 text-center">
+              <span className="mx-auto mb-3 grid h-12 w-12 place-items-center rounded-2xl bg-destructive/10 text-destructive">
+                <ShieldAlert className="h-6 w-6" />
+              </span>
+              <h2 className="font-display text-xl font-bold">No access</h2>
+              <p className="mt-1.5 text-sm text-muted-foreground">
+                Your role ({roleLabel}) doesn&apos;t include this section. Ask an owner if you need it.
+              </p>
+              <Link
+                to="/admin"
+                className="mt-4 inline-flex rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground"
+              >
+                Back to dashboard
+              </Link>
+            </div>
+          )}
         </main>
       </div>
 
@@ -391,8 +429,8 @@ export function AdminShell({ children }: { children: ReactNode }) {
         className="md:hidden fixed bottom-0 inset-x-0 z-30 bg-card/95 backdrop-blur border-t border-border"
         style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
       >
-        <div className="grid grid-cols-5 h-16">
-          {PRIMARY.map((n) => {
+        <div className="grid h-16" style={{ gridTemplateColumns: `repeat(${primary.length + 1}, minmax(0, 1fr))` }}>
+          {primary.map((n) => {
             const active = isActiveRoute(n.to, location.pathname);
             const Icon = n.icon;
             const b = badgeFor(n.to);
@@ -459,7 +497,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
               </button>
             </div>
             <div className="p-4 space-y-5">
-              {GROUPS.map((group) => (
+              {groups.map((group) => (
                 <div key={group.title}>
                   <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
                     {group.title}

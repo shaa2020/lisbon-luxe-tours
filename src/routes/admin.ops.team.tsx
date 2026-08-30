@@ -8,7 +8,7 @@ export const Route = createFileRoute("/admin/ops/team")({ component: Page });
 
 function Page() {
   return (
-    <AdminShell>
+    <AdminShell requires="ops.manage">
       <OpsPage title="Guides & drivers" description="Your team and who can be assigned to jobs.">
         <ResourceManager
           table="ops_staff"

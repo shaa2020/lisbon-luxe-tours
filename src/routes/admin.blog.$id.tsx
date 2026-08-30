@@ -131,14 +131,14 @@ function BlogEditPage() {
 
   if (loading) {
     return (
-      <AdminShell>
+      <AdminShell requires="content.manage">
         <p className="text-sm text-muted-foreground">Loading…</p>
       </AdminShell>
     );
   }
 
   return (
-    <AdminShell>
+    <AdminShell requires="content.manage">
       <div className="mb-6">
         <Link to="/admin/blog" className="text-xs text-muted-foreground hover:text-foreground">
           ← All posts

@@ -7,7 +7,7 @@ export const Route = createFileRoute("/admin/ops/customers")({ component: Page }
 
 function Page() {
   return (
-    <AdminShell>
+    <AdminShell requires="ops.manage">
       <OpsPage title="Customers" description="Everyone who has ever booked or enquired.">
         <ResourceManager
           table="ops_customers"
