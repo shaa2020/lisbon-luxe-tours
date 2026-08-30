@@ -103,6 +103,7 @@ function SetPasswordPage() {
             </div>
             <Link
               to="/admin/login"
+              search={{ redirect: "/admin" }}
               className="block w-full text-center rounded-md bg-primary text-primary-foreground px-4 py-2.5 text-sm font-semibold hover:bg-primary/90"
             >
               Request a new link
