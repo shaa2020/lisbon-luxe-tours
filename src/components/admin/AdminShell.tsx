@@ -335,6 +335,7 @@ export function AdminShell({ children, requires }: { children: ReactNode; requir
             </div>
 
             <div className="ml-auto flex items-center gap-1 sm:gap-2 shrink-0">
+              <InstallAppButton />
               {waHref && (
                 <a
                   href={waHref}
