@@ -111,6 +111,15 @@ function TeamBody() {
                       {m.email}
                       {m.userId === user?.id ? " · you" : ""}
                     </p>
+                    <span
+                      className={`mt-1 inline-block rounded-full px-2 py-0.5 text-[10px] font-semibold ${
+                        m.lastSignInAt
+                          ? "bg-emerald-100 text-emerald-700"
+                          : "bg-amber-100 text-amber-700"
+                      }`}
+                    >
+                      {m.lastSignInAt ? "Active" : "Invited — not signed in yet"}
+                    </span>
                   </div>
                   <select
                     value={m.role ?? "staff"}
