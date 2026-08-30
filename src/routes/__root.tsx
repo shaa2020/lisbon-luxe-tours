@@ -90,7 +90,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "theme-color", content: "#1e3a5f" },
       { name: "apple-mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
-      { name: "apple-mobile-web-app-title", content: "TT24 Admin" },
+      { name: "apple-mobile-web-app-title", content: "Tuk Tuk 24" },
       { name: "google-site-verification", content: "4JQk2KhK0pEZsoCDlJR4Edx0b9W5O2eLIh6Eq4Qvzzk" },
     ],
     links: [
