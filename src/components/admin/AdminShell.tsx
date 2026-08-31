@@ -64,6 +64,7 @@ const GROUPS: NavGroup[] = [
       { to: "/admin/orders", label: "Orders", icon: CreditCard, desc: "Payments and refunds", perm: "orders.view" },
       { to: "/admin/ops", label: "Operations", icon: Gauge, desc: "Jobs, drivers, vehicles", perm: "ops.view" },
       { to: "/admin/messages", label: "Messages", icon: MessageSquare, desc: "Contact inbox", perm: "messages.view" },
+      { to: "/admin/leads", label: "Leads & chats", icon: MessageSquare, desc: "WhatsApp and AI enquiries", perm: "bookings.view" },
       { to: "/admin/emails", label: "Emails", icon: Mail, desc: "Templates and send log", perm: "emails.manage" },
     ],
   },
