@@ -30,6 +30,7 @@ import { Route as AdminCustomBuilderRouteImport } from './routes/admin.custom-bu
 import { Route as AdminDiscountsRouteImport } from './routes/admin.discounts'
 import { Route as AdminEmailsRouteImport } from './routes/admin.emails'
 import { Route as AdminFaqsRouteImport } from './routes/admin.faqs'
+import { Route as AdminLeadsRouteImport } from './routes/admin.leads'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AdminMessagesRouteImport } from './routes/admin.messages'
 import { Route as AdminOrdersRouteImport } from './routes/admin.orders'
@@ -200,6 +201,11 @@ const AdminEmailsRoute = AdminEmailsRouteImport.update({
 const AdminFaqsRoute = AdminFaqsRouteImport.update({
   id: '/admin/faqs',
   path: '/admin/faqs',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminLeadsRoute = AdminLeadsRouteImport.update({
+  id: '/admin/leads',
+  path: '/admin/leads',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminLoginRoute = AdminLoginRouteImport.update({
@@ -560,6 +566,7 @@ export interface FileRoutesByFullPath {
   '/admin/discounts': typeof AdminDiscountsRoute
   '/admin/emails': typeof AdminEmailsRoute
   '/admin/faqs': typeof AdminFaqsRoute
+  '/admin/leads': typeof AdminLeadsRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/messages': typeof AdminMessagesRoute
   '/admin/orders': typeof AdminOrdersRoute
@@ -649,6 +656,7 @@ export interface FileRoutesByTo {
   '/admin/discounts': typeof AdminDiscountsRoute
   '/admin/emails': typeof AdminEmailsRoute
   '/admin/faqs': typeof AdminFaqsRoute
+  '/admin/leads': typeof AdminLeadsRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/messages': typeof AdminMessagesRoute
   '/admin/orders': typeof AdminOrdersRoute
@@ -739,6 +747,7 @@ export interface FileRoutesById {
   '/admin/discounts': typeof AdminDiscountsRoute
   '/admin/emails': typeof AdminEmailsRoute
   '/admin/faqs': typeof AdminFaqsRoute
+  '/admin/leads': typeof AdminLeadsRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/messages': typeof AdminMessagesRoute
   '/admin/orders': typeof AdminOrdersRoute
@@ -830,6 +839,7 @@ export interface FileRouteTypes {
     | '/admin/discounts'
     | '/admin/emails'
     | '/admin/faqs'
+    | '/admin/leads'
     | '/admin/login'
     | '/admin/messages'
     | '/admin/orders'
@@ -919,6 +929,7 @@ export interface FileRouteTypes {
     | '/admin/discounts'
     | '/admin/emails'
     | '/admin/faqs'
+    | '/admin/leads'
     | '/admin/login'
     | '/admin/messages'
     | '/admin/orders'
@@ -1008,6 +1019,7 @@ export interface FileRouteTypes {
     | '/admin/discounts'
     | '/admin/emails'
     | '/admin/faqs'
+    | '/admin/leads'
     | '/admin/login'
     | '/admin/messages'
     | '/admin/orders'
@@ -1098,6 +1110,7 @@ export interface RootRouteChildren {
   AdminDiscountsRoute: typeof AdminDiscountsRoute
   AdminEmailsRoute: typeof AdminEmailsRoute
   AdminFaqsRoute: typeof AdminFaqsRoute
+  AdminLeadsRoute: typeof AdminLeadsRoute
   AdminLoginRoute: typeof AdminLoginRoute
   AdminMessagesRoute: typeof AdminMessagesRoute
   AdminOrdersRoute: typeof AdminOrdersRoute
@@ -1313,6 +1326,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/faqs'
       fullPath: '/admin/faqs'
       preLoaderRoute: typeof AdminFaqsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/leads': {
+      id: '/admin/leads'
+      path: '/admin/leads'
+      fullPath: '/admin/leads'
+      preLoaderRoute: typeof AdminLeadsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/login': {
@@ -1812,6 +1832,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminDiscountsRoute: AdminDiscountsRoute,
   AdminEmailsRoute: AdminEmailsRoute,
   AdminFaqsRoute: AdminFaqsRoute,
+  AdminLeadsRoute: AdminLeadsRoute,
   AdminLoginRoute: AdminLoginRoute,
   AdminMessagesRoute: AdminMessagesRoute,
   AdminOrdersRoute: AdminOrdersRoute,
