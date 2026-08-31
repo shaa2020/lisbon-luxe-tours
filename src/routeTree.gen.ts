@@ -79,6 +79,7 @@ import { Route as AdminOpsJobsIdRouteImport } from './routes/admin.ops.jobs.$id'
 import { Route as ApiPublicCronBookingEmailsRouteImport } from './routes/api/public/cron/booking-emails'
 import { Route as ApiPublicPaymentsMollieRouteImport } from './routes/api/public/payments/mollie'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
+import { Route as ApiV1AiToursRouteImport } from './routes/api/v1/ai.tours'
 import { Route as ApiV1ConversationsIndexRouteImport } from './routes/api/v1/conversations.index'
 import { Route as ApiV1ConversationsIdRouteImport } from './routes/api/v1/conversations.$id'
 import { Route as ApiV1CustomersIndexRouteImport } from './routes/api/v1/customers.index'
@@ -445,6 +446,11 @@ const ApiPublicPaymentsWebhookRoute =
     path: '/api/public/payments/webhook',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiV1AiToursRoute = ApiV1AiToursRouteImport.update({
+  id: '/api/v1/ai/tours',
+  path: '/api/v1/ai/tours',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiV1ConversationsIndexRoute = ApiV1ConversationsIndexRouteImport.update({
   id: '/api/v1/conversations/',
   path: '/api/v1/conversations/',
@@ -585,6 +591,7 @@ export interface FileRoutesByFullPath {
   '/api/public/cron/booking-emails': typeof ApiPublicCronBookingEmailsRoute
   '/api/public/payments/mollie': typeof ApiPublicPaymentsMollieRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
+  '/api/v1/ai/tours': typeof ApiV1AiToursRoute
   '/api/v1/conversations/$id': typeof ApiV1ConversationsIdRouteWithChildren
   '/api/v1/customers/$id': typeof ApiV1CustomersIdRoute
   '/api/v1/tours/$id': typeof ApiV1ToursIdRoute
@@ -670,6 +677,7 @@ export interface FileRoutesByTo {
   '/api/public/cron/booking-emails': typeof ApiPublicCronBookingEmailsRoute
   '/api/public/payments/mollie': typeof ApiPublicPaymentsMollieRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
+  '/api/v1/ai/tours': typeof ApiV1AiToursRoute
   '/api/v1/conversations/$id': typeof ApiV1ConversationsIdRouteWithChildren
   '/api/v1/customers/$id': typeof ApiV1CustomersIdRoute
   '/api/v1/tours/$id': typeof ApiV1ToursIdRoute
@@ -756,6 +764,7 @@ export interface FileRoutesById {
   '/api/public/cron/booking-emails': typeof ApiPublicCronBookingEmailsRoute
   '/api/public/payments/mollie': typeof ApiPublicPaymentsMollieRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
+  '/api/v1/ai/tours': typeof ApiV1AiToursRoute
   '/api/v1/conversations/$id': typeof ApiV1ConversationsIdRouteWithChildren
   '/api/v1/customers/$id': typeof ApiV1CustomersIdRoute
   '/api/v1/tours/$id': typeof ApiV1ToursIdRoute
@@ -843,6 +852,7 @@ export interface FileRouteTypes {
     | '/api/public/cron/booking-emails'
     | '/api/public/payments/mollie'
     | '/api/public/payments/webhook'
+    | '/api/v1/ai/tours'
     | '/api/v1/conversations/$id'
     | '/api/v1/customers/$id'
     | '/api/v1/tours/$id'
@@ -928,6 +938,7 @@ export interface FileRouteTypes {
     | '/api/public/cron/booking-emails'
     | '/api/public/payments/mollie'
     | '/api/public/payments/webhook'
+    | '/api/v1/ai/tours'
     | '/api/v1/conversations/$id'
     | '/api/v1/customers/$id'
     | '/api/v1/tours/$id'
@@ -1013,6 +1024,7 @@ export interface FileRouteTypes {
     | '/api/public/cron/booking-emails'
     | '/api/public/payments/mollie'
     | '/api/public/payments/webhook'
+    | '/api/v1/ai/tours'
     | '/api/v1/conversations/$id'
     | '/api/v1/customers/$id'
     | '/api/v1/tours/$id'
@@ -1099,6 +1111,7 @@ export interface RootRouteChildren {
   ApiPublicCronBookingEmailsRoute: typeof ApiPublicCronBookingEmailsRoute
   ApiPublicPaymentsMollieRoute: typeof ApiPublicPaymentsMollieRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
+  ApiV1AiToursRoute: typeof ApiV1AiToursRoute
   ApiV1ConversationsIdRoute: typeof ApiV1ConversationsIdRouteWithChildren
   ApiV1CustomersIdRoute: typeof ApiV1CustomersIdRoute
   ApiV1ToursIdRoute: typeof ApiV1ToursIdRoute
@@ -1606,6 +1619,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicPaymentsWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/v1/ai/tours': {
+      id: '/api/v1/ai/tours'
+      path: '/api/v1/ai/tours'
+      fullPath: '/api/v1/ai/tours'
+      preLoaderRoute: typeof ApiV1AiToursRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/v1/conversations/': {
       id: '/api/v1/conversations/'
       path: '/api/v1/conversations'
@@ -1781,6 +1801,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicCronBookingEmailsRoute: ApiPublicCronBookingEmailsRoute,
   ApiPublicPaymentsMollieRoute: ApiPublicPaymentsMollieRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
+  ApiV1AiToursRoute: ApiV1AiToursRoute,
   ApiV1ConversationsIdRoute: ApiV1ConversationsIdRouteWithChildren,
   ApiV1CustomersIdRoute: ApiV1CustomersIdRoute,
   ApiV1ToursIdRoute: ApiV1ToursIdRoute,
