@@ -87,6 +87,7 @@ import { Route as ApiV1CustomersIndexRouteImport } from './routes/api/v1/custome
 import { Route as ApiV1CustomersIdRouteImport } from './routes/api/v1/customers.$id'
 import { Route as ApiV1ToursIndexRouteImport } from './routes/api/v1/tours.index'
 import { Route as ApiV1ToursIdRouteImport } from './routes/api/v1/tours.$id'
+import { Route as ApiV1WebhooksWhatsappRouteImport } from './routes/api/v1/webhooks.whatsapp'
 import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
 import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
@@ -487,6 +488,11 @@ const ApiV1ToursIdRoute = ApiV1ToursIdRouteImport.update({
   path: '/api/v1/tours/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiV1WebhooksWhatsappRoute = ApiV1WebhooksWhatsappRouteImport.update({
+  id: '/api/v1/webhooks/whatsapp',
+  path: '/api/v1/webhooks/whatsapp',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LovableEmailAuthPreviewRoute = LovableEmailAuthPreviewRouteImport.update({
   id: '/lovable/email/auth/preview',
   path: '/lovable/email/auth/preview',
@@ -602,6 +608,7 @@ export interface FileRoutesByFullPath {
   '/api/v1/conversations/$id': typeof ApiV1ConversationsIdRouteWithChildren
   '/api/v1/customers/$id': typeof ApiV1CustomersIdRoute
   '/api/v1/tours/$id': typeof ApiV1ToursIdRoute
+  '/api/v1/webhooks/whatsapp': typeof ApiV1WebhooksWhatsappRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
@@ -689,6 +696,7 @@ export interface FileRoutesByTo {
   '/api/v1/conversations/$id': typeof ApiV1ConversationsIdRouteWithChildren
   '/api/v1/customers/$id': typeof ApiV1CustomersIdRoute
   '/api/v1/tours/$id': typeof ApiV1ToursIdRoute
+  '/api/v1/webhooks/whatsapp': typeof ApiV1WebhooksWhatsappRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
@@ -777,6 +785,7 @@ export interface FileRoutesById {
   '/api/v1/conversations/$id': typeof ApiV1ConversationsIdRouteWithChildren
   '/api/v1/customers/$id': typeof ApiV1CustomersIdRoute
   '/api/v1/tours/$id': typeof ApiV1ToursIdRoute
+  '/api/v1/webhooks/whatsapp': typeof ApiV1WebhooksWhatsappRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
@@ -866,6 +875,7 @@ export interface FileRouteTypes {
     | '/api/v1/conversations/$id'
     | '/api/v1/customers/$id'
     | '/api/v1/tours/$id'
+    | '/api/v1/webhooks/whatsapp'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
     | '/lovable/email/queue/process'
@@ -953,6 +963,7 @@ export interface FileRouteTypes {
     | '/api/v1/conversations/$id'
     | '/api/v1/customers/$id'
     | '/api/v1/tours/$id'
+    | '/api/v1/webhooks/whatsapp'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
     | '/lovable/email/queue/process'
@@ -1040,6 +1051,7 @@ export interface FileRouteTypes {
     | '/api/v1/conversations/$id'
     | '/api/v1/customers/$id'
     | '/api/v1/tours/$id'
+    | '/api/v1/webhooks/whatsapp'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
     | '/lovable/email/queue/process'
@@ -1128,6 +1140,7 @@ export interface RootRouteChildren {
   ApiV1ConversationsIdRoute: typeof ApiV1ConversationsIdRouteWithChildren
   ApiV1CustomersIdRoute: typeof ApiV1CustomersIdRoute
   ApiV1ToursIdRoute: typeof ApiV1ToursIdRoute
+  ApiV1WebhooksWhatsappRoute: typeof ApiV1WebhooksWhatsappRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
   LovableEmailAuthWebhookRoute: typeof LovableEmailAuthWebhookRoute
   LovableEmailQueueProcessRoute: typeof LovableEmailQueueProcessRoute
@@ -1688,6 +1701,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiV1ToursIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/v1/webhooks/whatsapp': {
+      id: '/api/v1/webhooks/whatsapp'
+      path: '/api/v1/webhooks/whatsapp'
+      fullPath: '/api/v1/webhooks/whatsapp'
+      preLoaderRoute: typeof ApiV1WebhooksWhatsappRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/lovable/email/auth/preview': {
       id: '/lovable/email/auth/preview'
       path: '/lovable/email/auth/preview'
@@ -1826,6 +1846,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiV1ConversationsIdRoute: ApiV1ConversationsIdRouteWithChildren,
   ApiV1CustomersIdRoute: ApiV1CustomersIdRoute,
   ApiV1ToursIdRoute: ApiV1ToursIdRoute,
+  ApiV1WebhooksWhatsappRoute: ApiV1WebhooksWhatsappRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
   LovableEmailAuthWebhookRoute: LovableEmailAuthWebhookRoute,
   LovableEmailQueueProcessRoute: LovableEmailQueueProcessRoute,
