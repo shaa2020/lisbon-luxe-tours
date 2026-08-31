@@ -172,11 +172,16 @@ export async function upsertCustomer(input: {
   }
 
   if (existing) {
-    const patch: Record<string, unknown> = {};
-    if (input.name) patch["name"] = input.name;
-    if (phone) patch["whatsapp"] = phone;
-    if (email) patch["email"] = email;
-    if (input.country) patch["country"] = input.country;
+    const patch: {
+      name?: string;
+      whatsapp?: string;
+      email?: string;
+      country?: string;
+    } = {};
+    if (input.name) patch.name = input.name;
+    if (phone) patch.whatsapp = phone;
+    if (email) patch.email = email;
+    if (input.country) patch.country = input.country;
     if (Object.keys(patch).length) {
       await db.from("ops_customers").update(patch).eq("id", existing.id);
     }
