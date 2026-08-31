@@ -24,6 +24,7 @@ import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as UnsubscribeRouteImport } from './routes/unsubscribe'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as AdminApiRouteImport } from './routes/admin.api'
 import { Route as AdminBookingsRouteImport } from './routes/admin.bookings'
 import { Route as AdminCustomBuilderRouteImport } from './routes/admin.custom-builder'
 import { Route as AdminDiscountsRouteImport } from './routes/admin.discounts'
@@ -169,6 +170,11 @@ const UnsubscribeRoute = UnsubscribeRouteImport.update({
 const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/admin/',
   path: '/admin/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminApiRoute = AdminApiRouteImport.update({
+  id: '/admin/api',
+  path: '/admin/api',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminBookingsRoute = AdminBookingsRouteImport.update({
@@ -548,6 +554,7 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/unsubscribe': typeof UnsubscribeRoute
+  '/admin/api': typeof AdminApiRoute
   '/admin/bookings': typeof AdminBookingsRoute
   '/admin/custom-builder': typeof AdminCustomBuilderRoute
   '/admin/discounts': typeof AdminDiscountsRoute
@@ -636,6 +643,7 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/unsubscribe': typeof UnsubscribeRoute
+  '/admin/api': typeof AdminApiRoute
   '/admin/bookings': typeof AdminBookingsRoute
   '/admin/custom-builder': typeof AdminCustomBuilderRoute
   '/admin/discounts': typeof AdminDiscountsRoute
@@ -725,6 +733,7 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/unsubscribe': typeof UnsubscribeRoute
+  '/admin/api': typeof AdminApiRoute
   '/admin/bookings': typeof AdminBookingsRoute
   '/admin/custom-builder': typeof AdminCustomBuilderRoute
   '/admin/discounts': typeof AdminDiscountsRoute
@@ -815,6 +824,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/terms'
     | '/unsubscribe'
+    | '/admin/api'
     | '/admin/bookings'
     | '/admin/custom-builder'
     | '/admin/discounts'
@@ -903,6 +913,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/terms'
     | '/unsubscribe'
+    | '/admin/api'
     | '/admin/bookings'
     | '/admin/custom-builder'
     | '/admin/discounts'
@@ -991,6 +1002,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/terms'
     | '/unsubscribe'
+    | '/admin/api'
     | '/admin/bookings'
     | '/admin/custom-builder'
     | '/admin/discounts'
@@ -1080,6 +1092,7 @@ export interface RootRouteChildren {
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
   UnsubscribeRoute: typeof UnsubscribeRoute
+  AdminApiRoute: typeof AdminApiRoute
   AdminBookingsRoute: typeof AdminBookingsRoute
   AdminCustomBuilderRoute: typeof AdminCustomBuilderRoute
   AdminDiscountsRoute: typeof AdminDiscountsRoute
@@ -1258,6 +1271,13 @@ declare module '@tanstack/react-router' {
       path: '/admin'
       fullPath: '/admin/'
       preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/api': {
+      id: '/admin/api'
+      path: '/admin/api'
+      fullPath: '/admin/api'
+      preLoaderRoute: typeof AdminApiRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/bookings': {
@@ -1786,6 +1806,7 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
   UnsubscribeRoute: UnsubscribeRoute,
+  AdminApiRoute: AdminApiRoute,
   AdminBookingsRoute: AdminBookingsRoute,
   AdminCustomBuilderRoute: AdminCustomBuilderRoute,
   AdminDiscountsRoute: AdminDiscountsRoute,
