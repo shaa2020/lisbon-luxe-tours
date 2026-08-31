@@ -14,6 +14,101 @@ export type Database = {
   }
   public: {
     Tables: {
+      api_keys: {
+        Row: {
+          active: boolean
+          created_at: string
+          created_by: string | null
+          expires_at: string | null
+          id: string
+          key_hash: string
+          key_prefix: string
+          last_used_at: string | null
+          name: string
+          revoked_at: string | null
+          scopes: string[]
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          created_by?: string | null
+          expires_at?: string | null
+          id?: string
+          key_hash: string
+          key_prefix: string
+          last_used_at?: string | null
+          name: string
+          revoked_at?: string | null
+          scopes?: string[]
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          created_by?: string | null
+          expires_at?: string | null
+          id?: string
+          key_hash?: string
+          key_prefix?: string
+          last_used_at?: string | null
+          name?: string
+          revoked_at?: string | null
+          scopes?: string[]
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      api_request_logs: {
+        Row: {
+          api_key_id: string | null
+          created_at: string
+          duration_ms: number | null
+          error: string | null
+          id: string
+          ip: string | null
+          key_prefix: string | null
+          method: string
+          path: string
+          status: number
+          user_agent: string | null
+        }
+        Insert: {
+          api_key_id?: string | null
+          created_at?: string
+          duration_ms?: number | null
+          error?: string | null
+          id?: string
+          ip?: string | null
+          key_prefix?: string | null
+          method: string
+          path: string
+          status: number
+          user_agent?: string | null
+        }
+        Update: {
+          api_key_id?: string | null
+          created_at?: string
+          duration_ms?: number | null
+          error?: string | null
+          id?: string
+          ip?: string | null
+          key_prefix?: string | null
+          method?: string
+          path?: string
+          status?: number
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "api_request_logs_api_key_id_fkey"
+            columns: ["api_key_id"]
+            isOneToOne: false
+            referencedRelation: "api_keys"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       blog_posts: {
         Row: {
           category: string
@@ -269,6 +364,109 @@ export type Database = {
           subject?: string | null
         }
         Relationships: []
+      }
+      conversation_messages: {
+        Row: {
+          body: string | null
+          conversation_id: string
+          created_at: string
+          external_id: string | null
+          id: string
+          language: string | null
+          message_type: string
+          metadata: Json | null
+          sender: string
+          sent_at: string
+        }
+        Insert: {
+          body?: string | null
+          conversation_id: string
+          created_at?: string
+          external_id?: string | null
+          id?: string
+          language?: string | null
+          message_type?: string
+          metadata?: Json | null
+          sender?: string
+          sent_at?: string
+        }
+        Update: {
+          body?: string | null
+          conversation_id?: string
+          created_at?: string
+          external_id?: string | null
+          id?: string
+          language?: string | null
+          message_type?: string
+          metadata?: Json | null
+          sender?: string
+          sent_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversation_messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      conversations: {
+        Row: {
+          channel: string
+          created_at: string
+          customer_id: string | null
+          display_name: string | null
+          external_id: string | null
+          handled_by: string
+          id: string
+          language: string
+          last_message_at: string | null
+          phone: string
+          source: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          channel?: string
+          created_at?: string
+          customer_id?: string | null
+          display_name?: string | null
+          external_id?: string | null
+          handled_by?: string
+          id?: string
+          language?: string
+          last_message_at?: string | null
+          phone: string
+          source?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          channel?: string
+          created_at?: string
+          customer_id?: string | null
+          display_name?: string | null
+          external_id?: string | null
+          handled_by?: string
+          id?: string
+          language?: string
+          last_message_at?: string | null
+          phone?: string
+          source?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversations_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "ops_customers"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       custom_tour_components: {
         Row: {
@@ -566,6 +764,81 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      leads: {
+        Row: {
+          created_at: string
+          customer_id: string | null
+          email: string | null
+          id: string
+          language: string
+          message: string | null
+          name: string | null
+          notes: string | null
+          number_of_people: number | null
+          phone: string | null
+          preferred_date: string | null
+          preferred_time: string | null
+          source: string
+          status: string
+          tour_id: string | null
+          tour_slug: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          customer_id?: string | null
+          email?: string | null
+          id?: string
+          language?: string
+          message?: string | null
+          name?: string | null
+          notes?: string | null
+          number_of_people?: number | null
+          phone?: string | null
+          preferred_date?: string | null
+          preferred_time?: string | null
+          source?: string
+          status?: string
+          tour_id?: string | null
+          tour_slug?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          customer_id?: string | null
+          email?: string | null
+          id?: string
+          language?: string
+          message?: string | null
+          name?: string | null
+          notes?: string | null
+          number_of_people?: number | null
+          phone?: string | null
+          preferred_date?: string | null
+          preferred_time?: string | null
+          source?: string
+          status?: string
+          tour_id?: string | null
+          tour_slug?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "leads_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "ops_customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "leads_tour_id_fkey"
+            columns: ["tour_id"]
+            isOneToOne: false
+            referencedRelation: "tours"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       ops_booking_activities: {
         Row: {
