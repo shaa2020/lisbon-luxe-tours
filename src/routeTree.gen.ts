@@ -79,6 +79,7 @@ import { Route as AdminOpsJobsIdRouteImport } from './routes/admin.ops.jobs.$id'
 import { Route as ApiPublicCronBookingEmailsRouteImport } from './routes/api/public/cron/booking-emails'
 import { Route as ApiPublicPaymentsMollieRouteImport } from './routes/api/public/payments/mollie'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
+import { Route as ApiV1ConversationsIndexRouteImport } from './routes/api/v1/conversations.index'
 import { Route as ApiV1CustomersIndexRouteImport } from './routes/api/v1/customers.index'
 import { Route as ApiV1CustomersIdRouteImport } from './routes/api/v1/customers.$id'
 import { Route as ApiV1ToursIndexRouteImport } from './routes/api/v1/tours.index'
@@ -442,6 +443,11 @@ const ApiPublicPaymentsWebhookRoute =
     path: '/api/public/payments/webhook',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiV1ConversationsIndexRoute = ApiV1ConversationsIndexRouteImport.update({
+  id: '/api/v1/conversations/',
+  path: '/api/v1/conversations/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiV1CustomersIndexRoute = ApiV1CustomersIndexRouteImport.update({
   id: '/api/v1/customers/',
   path: '/api/v1/customers/',
@@ -574,6 +580,7 @@ export interface FileRoutesByFullPath {
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
   '/lovable/email/transactional/send': typeof LovableEmailTransactionalSendRoute
   '/admin/ops/jobs/': typeof AdminOpsJobsIndexRoute
+  '/api/v1/conversations/': typeof ApiV1ConversationsIndexRoute
   '/api/v1/customers/': typeof ApiV1CustomersIndexRoute
   '/api/v1/tours/': typeof ApiV1ToursIndexRoute
   '/api/v1/tours/slug/$slug': typeof ApiV1ToursSlugSlugRoute
@@ -656,6 +663,7 @@ export interface FileRoutesByTo {
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
   '/lovable/email/transactional/send': typeof LovableEmailTransactionalSendRoute
   '/admin/ops/jobs': typeof AdminOpsJobsIndexRoute
+  '/api/v1/conversations': typeof ApiV1ConversationsIndexRoute
   '/api/v1/customers': typeof ApiV1CustomersIndexRoute
   '/api/v1/tours': typeof ApiV1ToursIndexRoute
   '/api/v1/tours/slug/$slug': typeof ApiV1ToursSlugSlugRoute
@@ -739,6 +747,7 @@ export interface FileRoutesById {
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
   '/lovable/email/transactional/send': typeof LovableEmailTransactionalSendRoute
   '/admin/ops/jobs/': typeof AdminOpsJobsIndexRoute
+  '/api/v1/conversations/': typeof ApiV1ConversationsIndexRoute
   '/api/v1/customers/': typeof ApiV1CustomersIndexRoute
   '/api/v1/tours/': typeof ApiV1ToursIndexRoute
   '/api/v1/tours/slug/$slug': typeof ApiV1ToursSlugSlugRoute
@@ -823,6 +832,7 @@ export interface FileRouteTypes {
     | '/lovable/email/transactional/preview'
     | '/lovable/email/transactional/send'
     | '/admin/ops/jobs/'
+    | '/api/v1/conversations/'
     | '/api/v1/customers/'
     | '/api/v1/tours/'
     | '/api/v1/tours/slug/$slug'
@@ -905,6 +915,7 @@ export interface FileRouteTypes {
     | '/lovable/email/transactional/preview'
     | '/lovable/email/transactional/send'
     | '/admin/ops/jobs'
+    | '/api/v1/conversations'
     | '/api/v1/customers'
     | '/api/v1/tours'
     | '/api/v1/tours/slug/$slug'
@@ -987,6 +998,7 @@ export interface FileRouteTypes {
     | '/lovable/email/transactional/preview'
     | '/lovable/email/transactional/send'
     | '/admin/ops/jobs/'
+    | '/api/v1/conversations/'
     | '/api/v1/customers/'
     | '/api/v1/tours/'
     | '/api/v1/tours/slug/$slug'
@@ -1070,6 +1082,7 @@ export interface RootRouteChildren {
   LovableEmailTransactionalPreviewRoute: typeof LovableEmailTransactionalPreviewRoute
   LovableEmailTransactionalSendRoute: typeof LovableEmailTransactionalSendRoute
   AdminOpsJobsIndexRoute: typeof AdminOpsJobsIndexRoute
+  ApiV1ConversationsIndexRoute: typeof ApiV1ConversationsIndexRoute
   ApiV1CustomersIndexRoute: typeof ApiV1CustomersIndexRoute
   ApiV1ToursIndexRoute: typeof ApiV1ToursIndexRoute
   ApiV1ToursSlugSlugRoute: typeof ApiV1ToursSlugSlugRoute
@@ -1567,6 +1580,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicPaymentsWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/v1/conversations/': {
+      id: '/api/v1/conversations/'
+      path: '/api/v1/conversations'
+      fullPath: '/api/v1/conversations/'
+      preLoaderRoute: typeof ApiV1ConversationsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/v1/customers/': {
       id: '/api/v1/customers/'
       path: '/api/v1/customers'
@@ -1718,6 +1738,7 @@ const rootRouteChildren: RootRouteChildren = {
   LovableEmailTransactionalPreviewRoute: LovableEmailTransactionalPreviewRoute,
   LovableEmailTransactionalSendRoute: LovableEmailTransactionalSendRoute,
   AdminOpsJobsIndexRoute: AdminOpsJobsIndexRoute,
+  ApiV1ConversationsIndexRoute: ApiV1ConversationsIndexRoute,
   ApiV1CustomersIndexRoute: ApiV1CustomersIndexRoute,
   ApiV1ToursIndexRoute: ApiV1ToursIndexRoute,
   ApiV1ToursSlugSlugRoute: ApiV1ToursSlugSlugRoute,
