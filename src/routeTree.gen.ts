@@ -76,6 +76,7 @@ import { Route as AdminOpsJobsIdRouteImport } from './routes/admin.ops.jobs.$id'
 import { Route as ApiPublicCronBookingEmailsRouteImport } from './routes/api/public/cron/booking-emails'
 import { Route as ApiPublicPaymentsMollieRouteImport } from './routes/api/public/payments/mollie'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
+import { Route as ApiV1ToursIndexRouteImport } from './routes/api/v1/tours.index'
 import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
 import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
@@ -419,6 +420,11 @@ const ApiPublicPaymentsWebhookRoute =
     path: '/api/public/payments/webhook',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiV1ToursIndexRoute = ApiV1ToursIndexRouteImport.update({
+  id: '/api/v1/tours/',
+  path: '/api/v1/tours/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LovableEmailAuthPreviewRoute = LovableEmailAuthPreviewRouteImport.update({
   id: '/lovable/email/auth/preview',
   path: '/lovable/email/auth/preview',
@@ -521,6 +527,7 @@ export interface FileRoutesByFullPath {
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
   '/lovable/email/transactional/send': typeof LovableEmailTransactionalSendRoute
   '/admin/ops/jobs/': typeof AdminOpsJobsIndexRoute
+  '/api/v1/tours/': typeof ApiV1ToursIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -595,6 +602,7 @@ export interface FileRoutesByTo {
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
   '/lovable/email/transactional/send': typeof LovableEmailTransactionalSendRoute
   '/admin/ops/jobs': typeof AdminOpsJobsIndexRoute
+  '/api/v1/tours': typeof ApiV1ToursIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -670,6 +678,7 @@ export interface FileRoutesById {
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
   '/lovable/email/transactional/send': typeof LovableEmailTransactionalSendRoute
   '/admin/ops/jobs/': typeof AdminOpsJobsIndexRoute
+  '/api/v1/tours/': typeof ApiV1ToursIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -746,6 +755,7 @@ export interface FileRouteTypes {
     | '/lovable/email/transactional/preview'
     | '/lovable/email/transactional/send'
     | '/admin/ops/jobs/'
+    | '/api/v1/tours/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -820,6 +830,7 @@ export interface FileRouteTypes {
     | '/lovable/email/transactional/preview'
     | '/lovable/email/transactional/send'
     | '/admin/ops/jobs'
+    | '/api/v1/tours'
   id:
     | '__root__'
     | '/'
@@ -894,6 +905,7 @@ export interface FileRouteTypes {
     | '/lovable/email/transactional/preview'
     | '/lovable/email/transactional/send'
     | '/admin/ops/jobs/'
+    | '/api/v1/tours/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -969,6 +981,7 @@ export interface RootRouteChildren {
   LovableEmailTransactionalPreviewRoute: typeof LovableEmailTransactionalPreviewRoute
   LovableEmailTransactionalSendRoute: typeof LovableEmailTransactionalSendRoute
   AdminOpsJobsIndexRoute: typeof AdminOpsJobsIndexRoute
+  ApiV1ToursIndexRoute: typeof ApiV1ToursIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -1442,6 +1455,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicPaymentsWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/v1/tours/': {
+      id: '/api/v1/tours/'
+      path: '/api/v1/tours'
+      fullPath: '/api/v1/tours/'
+      preLoaderRoute: typeof ApiV1ToursIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/lovable/email/auth/preview': {
       id: '/lovable/email/auth/preview'
       path: '/lovable/email/auth/preview'
@@ -1553,6 +1573,7 @@ const rootRouteChildren: RootRouteChildren = {
   LovableEmailTransactionalPreviewRoute: LovableEmailTransactionalPreviewRoute,
   LovableEmailTransactionalSendRoute: LovableEmailTransactionalSendRoute,
   AdminOpsJobsIndexRoute: AdminOpsJobsIndexRoute,
+  ApiV1ToursIndexRoute: ApiV1ToursIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
