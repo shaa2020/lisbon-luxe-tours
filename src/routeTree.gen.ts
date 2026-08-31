@@ -90,6 +90,7 @@ import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/em
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
 import { Route as LovableEmailTransactionalSendRouteImport } from './routes/lovable/email/transactional/send'
+import { Route as ApiV1ConversationsIdMessagesRouteImport } from './routes/api/v1/conversations.$id.messages'
 import { Route as ApiV1ToursSlugSlugRouteImport } from './routes/api/v1/tours.slug.$slug'
 
 const IndexRoute = IndexRouteImport.update({
@@ -502,6 +503,12 @@ const LovableEmailTransactionalSendRoute =
     path: '/lovable/email/transactional/send',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiV1ConversationsIdMessagesRoute =
+  ApiV1ConversationsIdMessagesRouteImport.update({
+    id: '/messages',
+    path: '/messages',
+    getParentRoute: () => ApiV1ConversationsIdRoute,
+  } as any)
 const ApiV1ToursSlugSlugRoute = ApiV1ToursSlugSlugRouteImport.update({
   id: '/api/v1/tours/slug/$slug',
   path: '/api/v1/tours/slug/$slug',
@@ -578,7 +585,7 @@ export interface FileRoutesByFullPath {
   '/api/public/cron/booking-emails': typeof ApiPublicCronBookingEmailsRoute
   '/api/public/payments/mollie': typeof ApiPublicPaymentsMollieRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
-  '/api/v1/conversations/$id': typeof ApiV1ConversationsIdRoute
+  '/api/v1/conversations/$id': typeof ApiV1ConversationsIdRouteWithChildren
   '/api/v1/customers/$id': typeof ApiV1CustomersIdRoute
   '/api/v1/tours/$id': typeof ApiV1ToursIdRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -590,6 +597,7 @@ export interface FileRoutesByFullPath {
   '/api/v1/conversations/': typeof ApiV1ConversationsIndexRoute
   '/api/v1/customers/': typeof ApiV1CustomersIndexRoute
   '/api/v1/tours/': typeof ApiV1ToursIndexRoute
+  '/api/v1/conversations/$id/messages': typeof ApiV1ConversationsIdMessagesRoute
   '/api/v1/tours/slug/$slug': typeof ApiV1ToursSlugSlugRoute
 }
 export interface FileRoutesByTo {
@@ -662,7 +670,7 @@ export interface FileRoutesByTo {
   '/api/public/cron/booking-emails': typeof ApiPublicCronBookingEmailsRoute
   '/api/public/payments/mollie': typeof ApiPublicPaymentsMollieRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
-  '/api/v1/conversations/$id': typeof ApiV1ConversationsIdRoute
+  '/api/v1/conversations/$id': typeof ApiV1ConversationsIdRouteWithChildren
   '/api/v1/customers/$id': typeof ApiV1CustomersIdRoute
   '/api/v1/tours/$id': typeof ApiV1ToursIdRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -674,6 +682,7 @@ export interface FileRoutesByTo {
   '/api/v1/conversations': typeof ApiV1ConversationsIndexRoute
   '/api/v1/customers': typeof ApiV1CustomersIndexRoute
   '/api/v1/tours': typeof ApiV1ToursIndexRoute
+  '/api/v1/conversations/$id/messages': typeof ApiV1ConversationsIdMessagesRoute
   '/api/v1/tours/slug/$slug': typeof ApiV1ToursSlugSlugRoute
 }
 export interface FileRoutesById {
@@ -747,7 +756,7 @@ export interface FileRoutesById {
   '/api/public/cron/booking-emails': typeof ApiPublicCronBookingEmailsRoute
   '/api/public/payments/mollie': typeof ApiPublicPaymentsMollieRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
-  '/api/v1/conversations/$id': typeof ApiV1ConversationsIdRoute
+  '/api/v1/conversations/$id': typeof ApiV1ConversationsIdRouteWithChildren
   '/api/v1/customers/$id': typeof ApiV1CustomersIdRoute
   '/api/v1/tours/$id': typeof ApiV1ToursIdRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -759,6 +768,7 @@ export interface FileRoutesById {
   '/api/v1/conversations/': typeof ApiV1ConversationsIndexRoute
   '/api/v1/customers/': typeof ApiV1CustomersIndexRoute
   '/api/v1/tours/': typeof ApiV1ToursIndexRoute
+  '/api/v1/conversations/$id/messages': typeof ApiV1ConversationsIdMessagesRoute
   '/api/v1/tours/slug/$slug': typeof ApiV1ToursSlugSlugRoute
 }
 export interface FileRouteTypes {
@@ -845,6 +855,7 @@ export interface FileRouteTypes {
     | '/api/v1/conversations/'
     | '/api/v1/customers/'
     | '/api/v1/tours/'
+    | '/api/v1/conversations/$id/messages'
     | '/api/v1/tours/slug/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -929,6 +940,7 @@ export interface FileRouteTypes {
     | '/api/v1/conversations'
     | '/api/v1/customers'
     | '/api/v1/tours'
+    | '/api/v1/conversations/$id/messages'
     | '/api/v1/tours/slug/$slug'
   id:
     | '__root__'
@@ -1013,6 +1025,7 @@ export interface FileRouteTypes {
     | '/api/v1/conversations/'
     | '/api/v1/customers/'
     | '/api/v1/tours/'
+    | '/api/v1/conversations/$id/messages'
     | '/api/v1/tours/slug/$slug'
   fileRoutesById: FileRoutesById
 }
@@ -1086,7 +1099,7 @@ export interface RootRouteChildren {
   ApiPublicCronBookingEmailsRoute: typeof ApiPublicCronBookingEmailsRoute
   ApiPublicPaymentsMollieRoute: typeof ApiPublicPaymentsMollieRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
-  ApiV1ConversationsIdRoute: typeof ApiV1ConversationsIdRoute
+  ApiV1ConversationsIdRoute: typeof ApiV1ConversationsIdRouteWithChildren
   ApiV1CustomersIdRoute: typeof ApiV1CustomersIdRoute
   ApiV1ToursIdRoute: typeof ApiV1ToursIdRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
@@ -1670,6 +1683,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LovableEmailTransactionalSendRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/v1/conversations/$id/messages': {
+      id: '/api/v1/conversations/$id/messages'
+      path: '/messages'
+      fullPath: '/api/v1/conversations/$id/messages'
+      preLoaderRoute: typeof ApiV1ConversationsIdMessagesRouteImport
+      parentRoute: typeof ApiV1ConversationsIdRoute
+    }
     '/api/v1/tours/slug/$slug': {
       id: '/api/v1/tours/slug/$slug'
       path: '/api/v1/tours/slug/$slug'
@@ -1679,6 +1699,17 @@ declare module '@tanstack/react-router' {
     }
   }
 }
+
+interface ApiV1ConversationsIdRouteChildren {
+  ApiV1ConversationsIdMessagesRoute: typeof ApiV1ConversationsIdMessagesRoute
+}
+
+const ApiV1ConversationsIdRouteChildren: ApiV1ConversationsIdRouteChildren = {
+  ApiV1ConversationsIdMessagesRoute: ApiV1ConversationsIdMessagesRoute,
+}
+
+const ApiV1ConversationsIdRouteWithChildren =
+  ApiV1ConversationsIdRoute._addFileChildren(ApiV1ConversationsIdRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -1750,7 +1781,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicCronBookingEmailsRoute: ApiPublicCronBookingEmailsRoute,
   ApiPublicPaymentsMollieRoute: ApiPublicPaymentsMollieRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
-  ApiV1ConversationsIdRoute: ApiV1ConversationsIdRoute,
+  ApiV1ConversationsIdRoute: ApiV1ConversationsIdRouteWithChildren,
   ApiV1CustomersIdRoute: ApiV1CustomersIdRoute,
   ApiV1ToursIdRoute: ApiV1ToursIdRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
