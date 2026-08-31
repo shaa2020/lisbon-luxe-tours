@@ -83,6 +83,7 @@ import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/em
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
 import { Route as LovableEmailTransactionalSendRouteImport } from './routes/lovable/email/transactional/send'
+import { Route as ApiV1ToursSlugSlugRouteImport } from './routes/api/v1/tours.slug.$slug'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -459,6 +460,11 @@ const LovableEmailTransactionalSendRoute =
     path: '/lovable/email/transactional/send',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiV1ToursSlugSlugRoute = ApiV1ToursSlugSlugRouteImport.update({
+  id: '/api/v1/tours/slug/$slug',
+  path: '/api/v1/tours/slug/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -535,6 +541,7 @@ export interface FileRoutesByFullPath {
   '/lovable/email/transactional/send': typeof LovableEmailTransactionalSendRoute
   '/admin/ops/jobs/': typeof AdminOpsJobsIndexRoute
   '/api/v1/tours/': typeof ApiV1ToursIndexRoute
+  '/api/v1/tours/slug/$slug': typeof ApiV1ToursSlugSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -611,6 +618,7 @@ export interface FileRoutesByTo {
   '/lovable/email/transactional/send': typeof LovableEmailTransactionalSendRoute
   '/admin/ops/jobs': typeof AdminOpsJobsIndexRoute
   '/api/v1/tours': typeof ApiV1ToursIndexRoute
+  '/api/v1/tours/slug/$slug': typeof ApiV1ToursSlugSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -688,6 +696,7 @@ export interface FileRoutesById {
   '/lovable/email/transactional/send': typeof LovableEmailTransactionalSendRoute
   '/admin/ops/jobs/': typeof AdminOpsJobsIndexRoute
   '/api/v1/tours/': typeof ApiV1ToursIndexRoute
+  '/api/v1/tours/slug/$slug': typeof ApiV1ToursSlugSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -766,6 +775,7 @@ export interface FileRouteTypes {
     | '/lovable/email/transactional/send'
     | '/admin/ops/jobs/'
     | '/api/v1/tours/'
+    | '/api/v1/tours/slug/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -842,6 +852,7 @@ export interface FileRouteTypes {
     | '/lovable/email/transactional/send'
     | '/admin/ops/jobs'
     | '/api/v1/tours'
+    | '/api/v1/tours/slug/$slug'
   id:
     | '__root__'
     | '/'
@@ -918,6 +929,7 @@ export interface FileRouteTypes {
     | '/lovable/email/transactional/send'
     | '/admin/ops/jobs/'
     | '/api/v1/tours/'
+    | '/api/v1/tours/slug/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -995,6 +1007,7 @@ export interface RootRouteChildren {
   LovableEmailTransactionalSendRoute: typeof LovableEmailTransactionalSendRoute
   AdminOpsJobsIndexRoute: typeof AdminOpsJobsIndexRoute
   ApiV1ToursIndexRoute: typeof ApiV1ToursIndexRoute
+  ApiV1ToursSlugSlugRoute: typeof ApiV1ToursSlugSlugRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -1517,6 +1530,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LovableEmailTransactionalSendRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/v1/tours/slug/$slug': {
+      id: '/api/v1/tours/slug/$slug'
+      path: '/api/v1/tours/slug/$slug'
+      fullPath: '/api/v1/tours/slug/$slug'
+      preLoaderRoute: typeof ApiV1ToursSlugSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -1595,6 +1615,7 @@ const rootRouteChildren: RootRouteChildren = {
   LovableEmailTransactionalSendRoute: LovableEmailTransactionalSendRoute,
   AdminOpsJobsIndexRoute: AdminOpsJobsIndexRoute,
   ApiV1ToursIndexRoute: ApiV1ToursIndexRoute,
+  ApiV1ToursSlugSlugRoute: ApiV1ToursSlugSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
