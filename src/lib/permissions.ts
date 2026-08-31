@@ -39,6 +39,7 @@ export type Permission =
   | "discounts.manage"
   | "settings.manage"
   | "payments.manage"
+  | "api.manage"
   | "team.manage";
 
 const STAFF: Permission[] = [
