@@ -24,11 +24,13 @@ import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as UnsubscribeRouteImport } from './routes/unsubscribe'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as AdminApiRouteImport } from './routes/admin.api'
 import { Route as AdminBookingsRouteImport } from './routes/admin.bookings'
 import { Route as AdminCustomBuilderRouteImport } from './routes/admin.custom-builder'
 import { Route as AdminDiscountsRouteImport } from './routes/admin.discounts'
 import { Route as AdminEmailsRouteImport } from './routes/admin.emails'
 import { Route as AdminFaqsRouteImport } from './routes/admin.faqs'
+import { Route as AdminLeadsRouteImport } from './routes/admin.leads'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AdminMessagesRouteImport } from './routes/admin.messages'
 import { Route as AdminOrdersRouteImport } from './routes/admin.orders'
@@ -68,6 +70,9 @@ import { Route as AdminOpsVehiclesRouteImport } from './routes/admin.ops.vehicle
 import { Route as AdminToursIndexRouteImport } from './routes/admin.tours.index'
 import { Route as AdminToursIdRouteImport } from './routes/admin.tours.$id'
 import { Route as ApiPublicBookingsRouteImport } from './routes/api/public/bookings'
+import { Route as ApiV1AvailabilityRouteImport } from './routes/api/v1/availability'
+import { Route as ApiV1BookingRequestsRouteImport } from './routes/api/v1/booking-requests'
+import { Route as ApiV1LeadsRouteImport } from './routes/api/v1/leads'
 import { Route as BookingPayIdRouteImport } from './routes/booking.pay.$id'
 import { Route as LisbonGuideCategorySlugRouteImport } from './routes/lisbon-guide.category.$slug'
 import { Route as LovableEmailSuppressionRouteImport } from './routes/lovable/email/suppression'
@@ -76,11 +81,22 @@ import { Route as AdminOpsJobsIdRouteImport } from './routes/admin.ops.jobs.$id'
 import { Route as ApiPublicCronBookingEmailsRouteImport } from './routes/api/public/cron/booking-emails'
 import { Route as ApiPublicPaymentsMollieRouteImport } from './routes/api/public/payments/mollie'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
+import { Route as ApiV1AiBusinessRouteImport } from './routes/api/v1/ai.business'
+import { Route as ApiV1AiToursRouteImport } from './routes/api/v1/ai.tours'
+import { Route as ApiV1ConversationsIndexRouteImport } from './routes/api/v1/conversations.index'
+import { Route as ApiV1ConversationsIdRouteImport } from './routes/api/v1/conversations.$id'
+import { Route as ApiV1CustomersIndexRouteImport } from './routes/api/v1/customers.index'
+import { Route as ApiV1CustomersIdRouteImport } from './routes/api/v1/customers.$id'
+import { Route as ApiV1ToursIndexRouteImport } from './routes/api/v1/tours.index'
+import { Route as ApiV1ToursIdRouteImport } from './routes/api/v1/tours.$id'
+import { Route as ApiV1WebhooksWhatsappRouteImport } from './routes/api/v1/webhooks.whatsapp'
 import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
 import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
 import { Route as LovableEmailTransactionalSendRouteImport } from './routes/lovable/email/transactional/send'
+import { Route as ApiV1ConversationsIdMessagesRouteImport } from './routes/api/v1/conversations.$id.messages'
+import { Route as ApiV1ToursSlugSlugRouteImport } from './routes/api/v1/tours.slug.$slug'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -157,6 +173,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   path: '/admin/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminApiRoute = AdminApiRouteImport.update({
+  id: '/admin/api',
+  path: '/admin/api',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminBookingsRoute = AdminBookingsRouteImport.update({
   id: '/admin/bookings',
   path: '/admin/bookings',
@@ -180,6 +201,11 @@ const AdminEmailsRoute = AdminEmailsRouteImport.update({
 const AdminFaqsRoute = AdminFaqsRouteImport.update({
   id: '/admin/faqs',
   path: '/admin/faqs',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminLeadsRoute = AdminLeadsRouteImport.update({
+  id: '/admin/leads',
+  path: '/admin/leads',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminLoginRoute = AdminLoginRouteImport.update({
@@ -377,6 +403,21 @@ const ApiPublicBookingsRoute = ApiPublicBookingsRouteImport.update({
   path: '/api/public/bookings',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiV1AvailabilityRoute = ApiV1AvailabilityRouteImport.update({
+  id: '/api/v1/availability',
+  path: '/api/v1/availability',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiV1BookingRequestsRoute = ApiV1BookingRequestsRouteImport.update({
+  id: '/api/v1/booking-requests',
+  path: '/api/v1/booking-requests',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiV1LeadsRoute = ApiV1LeadsRouteImport.update({
+  id: '/api/v1/leads',
+  path: '/api/v1/leads',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BookingPayIdRoute = BookingPayIdRouteImport.update({
   id: '/booking/pay/$id',
   path: '/booking/pay/$id',
@@ -419,6 +460,51 @@ const ApiPublicPaymentsWebhookRoute =
     path: '/api/public/payments/webhook',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiV1AiBusinessRoute = ApiV1AiBusinessRouteImport.update({
+  id: '/api/v1/ai/business',
+  path: '/api/v1/ai/business',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiV1AiToursRoute = ApiV1AiToursRouteImport.update({
+  id: '/api/v1/ai/tours',
+  path: '/api/v1/ai/tours',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiV1ConversationsIndexRoute = ApiV1ConversationsIndexRouteImport.update({
+  id: '/api/v1/conversations/',
+  path: '/api/v1/conversations/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiV1ConversationsIdRoute = ApiV1ConversationsIdRouteImport.update({
+  id: '/api/v1/conversations/$id',
+  path: '/api/v1/conversations/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiV1CustomersIndexRoute = ApiV1CustomersIndexRouteImport.update({
+  id: '/api/v1/customers/',
+  path: '/api/v1/customers/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiV1CustomersIdRoute = ApiV1CustomersIdRouteImport.update({
+  id: '/api/v1/customers/$id',
+  path: '/api/v1/customers/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiV1ToursIndexRoute = ApiV1ToursIndexRouteImport.update({
+  id: '/api/v1/tours/',
+  path: '/api/v1/tours/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiV1ToursIdRoute = ApiV1ToursIdRouteImport.update({
+  id: '/api/v1/tours/$id',
+  path: '/api/v1/tours/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiV1WebhooksWhatsappRoute = ApiV1WebhooksWhatsappRouteImport.update({
+  id: '/api/v1/webhooks/whatsapp',
+  path: '/api/v1/webhooks/whatsapp',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LovableEmailAuthPreviewRoute = LovableEmailAuthPreviewRouteImport.update({
   id: '/lovable/email/auth/preview',
   path: '/lovable/email/auth/preview',
@@ -447,6 +533,17 @@ const LovableEmailTransactionalSendRoute =
     path: '/lovable/email/transactional/send',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiV1ConversationsIdMessagesRoute =
+  ApiV1ConversationsIdMessagesRouteImport.update({
+    id: '/messages',
+    path: '/messages',
+    getParentRoute: () => ApiV1ConversationsIdRoute,
+  } as any)
+const ApiV1ToursSlugSlugRoute = ApiV1ToursSlugSlugRouteImport.update({
+  id: '/api/v1/tours/slug/$slug',
+  path: '/api/v1/tours/slug/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -463,11 +560,13 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/unsubscribe': typeof UnsubscribeRoute
+  '/admin/api': typeof AdminApiRoute
   '/admin/bookings': typeof AdminBookingsRoute
   '/admin/custom-builder': typeof AdminCustomBuilderRoute
   '/admin/discounts': typeof AdminDiscountsRoute
   '/admin/emails': typeof AdminEmailsRoute
   '/admin/faqs': typeof AdminFaqsRoute
+  '/admin/leads': typeof AdminLeadsRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/messages': typeof AdminMessagesRoute
   '/admin/orders': typeof AdminOrdersRoute
@@ -504,6 +603,9 @@ export interface FileRoutesByFullPath {
   '/admin/ops/vehicles': typeof AdminOpsVehiclesRoute
   '/admin/tours/$id': typeof AdminToursIdRoute
   '/api/public/bookings': typeof ApiPublicBookingsRoute
+  '/api/v1/availability': typeof ApiV1AvailabilityRoute
+  '/api/v1/booking-requests': typeof ApiV1BookingRequestsRoute
+  '/api/v1/leads': typeof ApiV1LeadsRoute
   '/booking/pay/$id': typeof BookingPayIdRoute
   '/lisbon-guide/category/$slug': typeof LisbonGuideCategorySlugRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
@@ -515,12 +617,23 @@ export interface FileRoutesByFullPath {
   '/api/public/cron/booking-emails': typeof ApiPublicCronBookingEmailsRoute
   '/api/public/payments/mollie': typeof ApiPublicPaymentsMollieRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
+  '/api/v1/ai/business': typeof ApiV1AiBusinessRoute
+  '/api/v1/ai/tours': typeof ApiV1AiToursRoute
+  '/api/v1/conversations/$id': typeof ApiV1ConversationsIdRouteWithChildren
+  '/api/v1/customers/$id': typeof ApiV1CustomersIdRoute
+  '/api/v1/tours/$id': typeof ApiV1ToursIdRoute
+  '/api/v1/webhooks/whatsapp': typeof ApiV1WebhooksWhatsappRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
   '/lovable/email/transactional/send': typeof LovableEmailTransactionalSendRoute
   '/admin/ops/jobs/': typeof AdminOpsJobsIndexRoute
+  '/api/v1/conversations/': typeof ApiV1ConversationsIndexRoute
+  '/api/v1/customers/': typeof ApiV1CustomersIndexRoute
+  '/api/v1/tours/': typeof ApiV1ToursIndexRoute
+  '/api/v1/conversations/$id/messages': typeof ApiV1ConversationsIdMessagesRoute
+  '/api/v1/tours/slug/$slug': typeof ApiV1ToursSlugSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -537,11 +650,13 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/unsubscribe': typeof UnsubscribeRoute
+  '/admin/api': typeof AdminApiRoute
   '/admin/bookings': typeof AdminBookingsRoute
   '/admin/custom-builder': typeof AdminCustomBuilderRoute
   '/admin/discounts': typeof AdminDiscountsRoute
   '/admin/emails': typeof AdminEmailsRoute
   '/admin/faqs': typeof AdminFaqsRoute
+  '/admin/leads': typeof AdminLeadsRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/messages': typeof AdminMessagesRoute
   '/admin/orders': typeof AdminOrdersRoute
@@ -578,6 +693,9 @@ export interface FileRoutesByTo {
   '/admin/ops/vehicles': typeof AdminOpsVehiclesRoute
   '/admin/tours/$id': typeof AdminToursIdRoute
   '/api/public/bookings': typeof ApiPublicBookingsRoute
+  '/api/v1/availability': typeof ApiV1AvailabilityRoute
+  '/api/v1/booking-requests': typeof ApiV1BookingRequestsRoute
+  '/api/v1/leads': typeof ApiV1LeadsRoute
   '/booking/pay/$id': typeof BookingPayIdRoute
   '/lisbon-guide/category/$slug': typeof LisbonGuideCategorySlugRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
@@ -589,12 +707,23 @@ export interface FileRoutesByTo {
   '/api/public/cron/booking-emails': typeof ApiPublicCronBookingEmailsRoute
   '/api/public/payments/mollie': typeof ApiPublicPaymentsMollieRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
+  '/api/v1/ai/business': typeof ApiV1AiBusinessRoute
+  '/api/v1/ai/tours': typeof ApiV1AiToursRoute
+  '/api/v1/conversations/$id': typeof ApiV1ConversationsIdRouteWithChildren
+  '/api/v1/customers/$id': typeof ApiV1CustomersIdRoute
+  '/api/v1/tours/$id': typeof ApiV1ToursIdRoute
+  '/api/v1/webhooks/whatsapp': typeof ApiV1WebhooksWhatsappRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
   '/lovable/email/transactional/send': typeof LovableEmailTransactionalSendRoute
   '/admin/ops/jobs': typeof AdminOpsJobsIndexRoute
+  '/api/v1/conversations': typeof ApiV1ConversationsIndexRoute
+  '/api/v1/customers': typeof ApiV1CustomersIndexRoute
+  '/api/v1/tours': typeof ApiV1ToursIndexRoute
+  '/api/v1/conversations/$id/messages': typeof ApiV1ConversationsIdMessagesRoute
+  '/api/v1/tours/slug/$slug': typeof ApiV1ToursSlugSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -612,11 +741,13 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/unsubscribe': typeof UnsubscribeRoute
+  '/admin/api': typeof AdminApiRoute
   '/admin/bookings': typeof AdminBookingsRoute
   '/admin/custom-builder': typeof AdminCustomBuilderRoute
   '/admin/discounts': typeof AdminDiscountsRoute
   '/admin/emails': typeof AdminEmailsRoute
   '/admin/faqs': typeof AdminFaqsRoute
+  '/admin/leads': typeof AdminLeadsRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/messages': typeof AdminMessagesRoute
   '/admin/orders': typeof AdminOrdersRoute
@@ -653,6 +784,9 @@ export interface FileRoutesById {
   '/admin/ops/vehicles': typeof AdminOpsVehiclesRoute
   '/admin/tours/$id': typeof AdminToursIdRoute
   '/api/public/bookings': typeof ApiPublicBookingsRoute
+  '/api/v1/availability': typeof ApiV1AvailabilityRoute
+  '/api/v1/booking-requests': typeof ApiV1BookingRequestsRoute
+  '/api/v1/leads': typeof ApiV1LeadsRoute
   '/booking/pay/$id': typeof BookingPayIdRoute
   '/lisbon-guide/category/$slug': typeof LisbonGuideCategorySlugRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
@@ -664,12 +798,23 @@ export interface FileRoutesById {
   '/api/public/cron/booking-emails': typeof ApiPublicCronBookingEmailsRoute
   '/api/public/payments/mollie': typeof ApiPublicPaymentsMollieRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
+  '/api/v1/ai/business': typeof ApiV1AiBusinessRoute
+  '/api/v1/ai/tours': typeof ApiV1AiToursRoute
+  '/api/v1/conversations/$id': typeof ApiV1ConversationsIdRouteWithChildren
+  '/api/v1/customers/$id': typeof ApiV1CustomersIdRoute
+  '/api/v1/tours/$id': typeof ApiV1ToursIdRoute
+  '/api/v1/webhooks/whatsapp': typeof ApiV1WebhooksWhatsappRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
   '/lovable/email/transactional/send': typeof LovableEmailTransactionalSendRoute
   '/admin/ops/jobs/': typeof AdminOpsJobsIndexRoute
+  '/api/v1/conversations/': typeof ApiV1ConversationsIndexRoute
+  '/api/v1/customers/': typeof ApiV1CustomersIndexRoute
+  '/api/v1/tours/': typeof ApiV1ToursIndexRoute
+  '/api/v1/conversations/$id/messages': typeof ApiV1ConversationsIdMessagesRoute
+  '/api/v1/tours/slug/$slug': typeof ApiV1ToursSlugSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -688,11 +833,13 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/terms'
     | '/unsubscribe'
+    | '/admin/api'
     | '/admin/bookings'
     | '/admin/custom-builder'
     | '/admin/discounts'
     | '/admin/emails'
     | '/admin/faqs'
+    | '/admin/leads'
     | '/admin/login'
     | '/admin/messages'
     | '/admin/orders'
@@ -729,6 +876,9 @@ export interface FileRouteTypes {
     | '/admin/ops/vehicles'
     | '/admin/tours/$id'
     | '/api/public/bookings'
+    | '/api/v1/availability'
+    | '/api/v1/booking-requests'
+    | '/api/v1/leads'
     | '/booking/pay/$id'
     | '/lisbon-guide/category/$slug'
     | '/lovable/email/suppression'
@@ -740,12 +890,23 @@ export interface FileRouteTypes {
     | '/api/public/cron/booking-emails'
     | '/api/public/payments/mollie'
     | '/api/public/payments/webhook'
+    | '/api/v1/ai/business'
+    | '/api/v1/ai/tours'
+    | '/api/v1/conversations/$id'
+    | '/api/v1/customers/$id'
+    | '/api/v1/tours/$id'
+    | '/api/v1/webhooks/whatsapp'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
     | '/lovable/email/queue/process'
     | '/lovable/email/transactional/preview'
     | '/lovable/email/transactional/send'
     | '/admin/ops/jobs/'
+    | '/api/v1/conversations/'
+    | '/api/v1/customers/'
+    | '/api/v1/tours/'
+    | '/api/v1/conversations/$id/messages'
+    | '/api/v1/tours/slug/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -762,11 +923,13 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/terms'
     | '/unsubscribe'
+    | '/admin/api'
     | '/admin/bookings'
     | '/admin/custom-builder'
     | '/admin/discounts'
     | '/admin/emails'
     | '/admin/faqs'
+    | '/admin/leads'
     | '/admin/login'
     | '/admin/messages'
     | '/admin/orders'
@@ -803,6 +966,9 @@ export interface FileRouteTypes {
     | '/admin/ops/vehicles'
     | '/admin/tours/$id'
     | '/api/public/bookings'
+    | '/api/v1/availability'
+    | '/api/v1/booking-requests'
+    | '/api/v1/leads'
     | '/booking/pay/$id'
     | '/lisbon-guide/category/$slug'
     | '/lovable/email/suppression'
@@ -814,12 +980,23 @@ export interface FileRouteTypes {
     | '/api/public/cron/booking-emails'
     | '/api/public/payments/mollie'
     | '/api/public/payments/webhook'
+    | '/api/v1/ai/business'
+    | '/api/v1/ai/tours'
+    | '/api/v1/conversations/$id'
+    | '/api/v1/customers/$id'
+    | '/api/v1/tours/$id'
+    | '/api/v1/webhooks/whatsapp'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
     | '/lovable/email/queue/process'
     | '/lovable/email/transactional/preview'
     | '/lovable/email/transactional/send'
     | '/admin/ops/jobs'
+    | '/api/v1/conversations'
+    | '/api/v1/customers'
+    | '/api/v1/tours'
+    | '/api/v1/conversations/$id/messages'
+    | '/api/v1/tours/slug/$slug'
   id:
     | '__root__'
     | '/'
@@ -836,11 +1013,13 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/terms'
     | '/unsubscribe'
+    | '/admin/api'
     | '/admin/bookings'
     | '/admin/custom-builder'
     | '/admin/discounts'
     | '/admin/emails'
     | '/admin/faqs'
+    | '/admin/leads'
     | '/admin/login'
     | '/admin/messages'
     | '/admin/orders'
@@ -877,6 +1056,9 @@ export interface FileRouteTypes {
     | '/admin/ops/vehicles'
     | '/admin/tours/$id'
     | '/api/public/bookings'
+    | '/api/v1/availability'
+    | '/api/v1/booking-requests'
+    | '/api/v1/leads'
     | '/booking/pay/$id'
     | '/lisbon-guide/category/$slug'
     | '/lovable/email/suppression'
@@ -888,12 +1070,23 @@ export interface FileRouteTypes {
     | '/api/public/cron/booking-emails'
     | '/api/public/payments/mollie'
     | '/api/public/payments/webhook'
+    | '/api/v1/ai/business'
+    | '/api/v1/ai/tours'
+    | '/api/v1/conversations/$id'
+    | '/api/v1/customers/$id'
+    | '/api/v1/tours/$id'
+    | '/api/v1/webhooks/whatsapp'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
     | '/lovable/email/queue/process'
     | '/lovable/email/transactional/preview'
     | '/lovable/email/transactional/send'
     | '/admin/ops/jobs/'
+    | '/api/v1/conversations/'
+    | '/api/v1/customers/'
+    | '/api/v1/tours/'
+    | '/api/v1/conversations/$id/messages'
+    | '/api/v1/tours/slug/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -911,11 +1104,13 @@ export interface RootRouteChildren {
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
   UnsubscribeRoute: typeof UnsubscribeRoute
+  AdminApiRoute: typeof AdminApiRoute
   AdminBookingsRoute: typeof AdminBookingsRoute
   AdminCustomBuilderRoute: typeof AdminCustomBuilderRoute
   AdminDiscountsRoute: typeof AdminDiscountsRoute
   AdminEmailsRoute: typeof AdminEmailsRoute
   AdminFaqsRoute: typeof AdminFaqsRoute
+  AdminLeadsRoute: typeof AdminLeadsRoute
   AdminLoginRoute: typeof AdminLoginRoute
   AdminMessagesRoute: typeof AdminMessagesRoute
   AdminOrdersRoute: typeof AdminOrdersRoute
@@ -952,6 +1147,9 @@ export interface RootRouteChildren {
   AdminOpsVehiclesRoute: typeof AdminOpsVehiclesRoute
   AdminToursIdRoute: typeof AdminToursIdRoute
   ApiPublicBookingsRoute: typeof ApiPublicBookingsRoute
+  ApiV1AvailabilityRoute: typeof ApiV1AvailabilityRoute
+  ApiV1BookingRequestsRoute: typeof ApiV1BookingRequestsRoute
+  ApiV1LeadsRoute: typeof ApiV1LeadsRoute
   BookingPayIdRoute: typeof BookingPayIdRoute
   LisbonGuideCategorySlugRoute: typeof LisbonGuideCategorySlugRoute
   LovableEmailSuppressionRoute: typeof LovableEmailSuppressionRoute
@@ -963,12 +1161,22 @@ export interface RootRouteChildren {
   ApiPublicCronBookingEmailsRoute: typeof ApiPublicCronBookingEmailsRoute
   ApiPublicPaymentsMollieRoute: typeof ApiPublicPaymentsMollieRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
+  ApiV1AiBusinessRoute: typeof ApiV1AiBusinessRoute
+  ApiV1AiToursRoute: typeof ApiV1AiToursRoute
+  ApiV1ConversationsIdRoute: typeof ApiV1ConversationsIdRouteWithChildren
+  ApiV1CustomersIdRoute: typeof ApiV1CustomersIdRoute
+  ApiV1ToursIdRoute: typeof ApiV1ToursIdRoute
+  ApiV1WebhooksWhatsappRoute: typeof ApiV1WebhooksWhatsappRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
   LovableEmailAuthWebhookRoute: typeof LovableEmailAuthWebhookRoute
   LovableEmailQueueProcessRoute: typeof LovableEmailQueueProcessRoute
   LovableEmailTransactionalPreviewRoute: typeof LovableEmailTransactionalPreviewRoute
   LovableEmailTransactionalSendRoute: typeof LovableEmailTransactionalSendRoute
   AdminOpsJobsIndexRoute: typeof AdminOpsJobsIndexRoute
+  ApiV1ConversationsIndexRoute: typeof ApiV1ConversationsIndexRoute
+  ApiV1CustomersIndexRoute: typeof ApiV1CustomersIndexRoute
+  ApiV1ToursIndexRoute: typeof ApiV1ToursIndexRoute
+  ApiV1ToursSlugSlugRoute: typeof ApiV1ToursSlugSlugRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -1078,6 +1286,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/api': {
+      id: '/admin/api'
+      path: '/admin/api'
+      fullPath: '/admin/api'
+      preLoaderRoute: typeof AdminApiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/bookings': {
       id: '/admin/bookings'
       path: '/admin/bookings'
@@ -1111,6 +1326,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/faqs'
       fullPath: '/admin/faqs'
       preLoaderRoute: typeof AdminFaqsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/leads': {
+      id: '/admin/leads'
+      path: '/admin/leads'
+      fullPath: '/admin/leads'
+      preLoaderRoute: typeof AdminLeadsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/login': {
@@ -1386,6 +1608,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicBookingsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/v1/availability': {
+      id: '/api/v1/availability'
+      path: '/api/v1/availability'
+      fullPath: '/api/v1/availability'
+      preLoaderRoute: typeof ApiV1AvailabilityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/v1/booking-requests': {
+      id: '/api/v1/booking-requests'
+      path: '/api/v1/booking-requests'
+      fullPath: '/api/v1/booking-requests'
+      preLoaderRoute: typeof ApiV1BookingRequestsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/v1/leads': {
+      id: '/api/v1/leads'
+      path: '/api/v1/leads'
+      fullPath: '/api/v1/leads'
+      preLoaderRoute: typeof ApiV1LeadsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/booking/pay/$id': {
       id: '/booking/pay/$id'
       path: '/booking/pay/$id'
@@ -1442,6 +1685,69 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicPaymentsWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/v1/ai/business': {
+      id: '/api/v1/ai/business'
+      path: '/api/v1/ai/business'
+      fullPath: '/api/v1/ai/business'
+      preLoaderRoute: typeof ApiV1AiBusinessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/v1/ai/tours': {
+      id: '/api/v1/ai/tours'
+      path: '/api/v1/ai/tours'
+      fullPath: '/api/v1/ai/tours'
+      preLoaderRoute: typeof ApiV1AiToursRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/v1/conversations/': {
+      id: '/api/v1/conversations/'
+      path: '/api/v1/conversations'
+      fullPath: '/api/v1/conversations/'
+      preLoaderRoute: typeof ApiV1ConversationsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/v1/conversations/$id': {
+      id: '/api/v1/conversations/$id'
+      path: '/api/v1/conversations/$id'
+      fullPath: '/api/v1/conversations/$id'
+      preLoaderRoute: typeof ApiV1ConversationsIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/v1/customers/': {
+      id: '/api/v1/customers/'
+      path: '/api/v1/customers'
+      fullPath: '/api/v1/customers/'
+      preLoaderRoute: typeof ApiV1CustomersIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/v1/customers/$id': {
+      id: '/api/v1/customers/$id'
+      path: '/api/v1/customers/$id'
+      fullPath: '/api/v1/customers/$id'
+      preLoaderRoute: typeof ApiV1CustomersIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/v1/tours/': {
+      id: '/api/v1/tours/'
+      path: '/api/v1/tours'
+      fullPath: '/api/v1/tours/'
+      preLoaderRoute: typeof ApiV1ToursIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/v1/tours/$id': {
+      id: '/api/v1/tours/$id'
+      path: '/api/v1/tours/$id'
+      fullPath: '/api/v1/tours/$id'
+      preLoaderRoute: typeof ApiV1ToursIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/v1/webhooks/whatsapp': {
+      id: '/api/v1/webhooks/whatsapp'
+      path: '/api/v1/webhooks/whatsapp'
+      fullPath: '/api/v1/webhooks/whatsapp'
+      preLoaderRoute: typeof ApiV1WebhooksWhatsappRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/lovable/email/auth/preview': {
       id: '/lovable/email/auth/preview'
       path: '/lovable/email/auth/preview'
@@ -1477,8 +1783,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LovableEmailTransactionalSendRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/v1/conversations/$id/messages': {
+      id: '/api/v1/conversations/$id/messages'
+      path: '/messages'
+      fullPath: '/api/v1/conversations/$id/messages'
+      preLoaderRoute: typeof ApiV1ConversationsIdMessagesRouteImport
+      parentRoute: typeof ApiV1ConversationsIdRoute
+    }
+    '/api/v1/tours/slug/$slug': {
+      id: '/api/v1/tours/slug/$slug'
+      path: '/api/v1/tours/slug/$slug'
+      fullPath: '/api/v1/tours/slug/$slug'
+      preLoaderRoute: typeof ApiV1ToursSlugSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
+
+interface ApiV1ConversationsIdRouteChildren {
+  ApiV1ConversationsIdMessagesRoute: typeof ApiV1ConversationsIdMessagesRoute
+}
+
+const ApiV1ConversationsIdRouteChildren: ApiV1ConversationsIdRouteChildren = {
+  ApiV1ConversationsIdMessagesRoute: ApiV1ConversationsIdMessagesRoute,
+}
+
+const ApiV1ConversationsIdRouteWithChildren =
+  ApiV1ConversationsIdRoute._addFileChildren(ApiV1ConversationsIdRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -1495,11 +1826,13 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
   UnsubscribeRoute: UnsubscribeRoute,
+  AdminApiRoute: AdminApiRoute,
   AdminBookingsRoute: AdminBookingsRoute,
   AdminCustomBuilderRoute: AdminCustomBuilderRoute,
   AdminDiscountsRoute: AdminDiscountsRoute,
   AdminEmailsRoute: AdminEmailsRoute,
   AdminFaqsRoute: AdminFaqsRoute,
+  AdminLeadsRoute: AdminLeadsRoute,
   AdminLoginRoute: AdminLoginRoute,
   AdminMessagesRoute: AdminMessagesRoute,
   AdminOrdersRoute: AdminOrdersRoute,
@@ -1536,6 +1869,9 @@ const rootRouteChildren: RootRouteChildren = {
   AdminOpsVehiclesRoute: AdminOpsVehiclesRoute,
   AdminToursIdRoute: AdminToursIdRoute,
   ApiPublicBookingsRoute: ApiPublicBookingsRoute,
+  ApiV1AvailabilityRoute: ApiV1AvailabilityRoute,
+  ApiV1BookingRequestsRoute: ApiV1BookingRequestsRoute,
+  ApiV1LeadsRoute: ApiV1LeadsRoute,
   BookingPayIdRoute: BookingPayIdRoute,
   LisbonGuideCategorySlugRoute: LisbonGuideCategorySlugRoute,
   LovableEmailSuppressionRoute: LovableEmailSuppressionRoute,
@@ -1547,12 +1883,22 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicCronBookingEmailsRoute: ApiPublicCronBookingEmailsRoute,
   ApiPublicPaymentsMollieRoute: ApiPublicPaymentsMollieRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
+  ApiV1AiBusinessRoute: ApiV1AiBusinessRoute,
+  ApiV1AiToursRoute: ApiV1AiToursRoute,
+  ApiV1ConversationsIdRoute: ApiV1ConversationsIdRouteWithChildren,
+  ApiV1CustomersIdRoute: ApiV1CustomersIdRoute,
+  ApiV1ToursIdRoute: ApiV1ToursIdRoute,
+  ApiV1WebhooksWhatsappRoute: ApiV1WebhooksWhatsappRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
   LovableEmailAuthWebhookRoute: LovableEmailAuthWebhookRoute,
   LovableEmailQueueProcessRoute: LovableEmailQueueProcessRoute,
   LovableEmailTransactionalPreviewRoute: LovableEmailTransactionalPreviewRoute,
   LovableEmailTransactionalSendRoute: LovableEmailTransactionalSendRoute,
   AdminOpsJobsIndexRoute: AdminOpsJobsIndexRoute,
+  ApiV1ConversationsIndexRoute: ApiV1ConversationsIndexRoute,
+  ApiV1CustomersIndexRoute: ApiV1CustomersIndexRoute,
+  ApiV1ToursIndexRoute: ApiV1ToursIndexRoute,
+  ApiV1ToursSlugSlugRoute: ApiV1ToursSlugSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
