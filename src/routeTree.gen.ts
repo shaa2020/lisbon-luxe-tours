@@ -68,6 +68,7 @@ import { Route as AdminOpsVehiclesRouteImport } from './routes/admin.ops.vehicle
 import { Route as AdminToursIndexRouteImport } from './routes/admin.tours.index'
 import { Route as AdminToursIdRouteImport } from './routes/admin.tours.$id'
 import { Route as ApiPublicBookingsRouteImport } from './routes/api/public/bookings'
+import { Route as ApiV1AvailabilityRouteImport } from './routes/api/v1/availability'
 import { Route as BookingPayIdRouteImport } from './routes/booking.pay.$id'
 import { Route as LisbonGuideCategorySlugRouteImport } from './routes/lisbon-guide.category.$slug'
 import { Route as LovableEmailSuppressionRouteImport } from './routes/lovable/email/suppression'
@@ -380,6 +381,11 @@ const ApiPublicBookingsRoute = ApiPublicBookingsRouteImport.update({
   path: '/api/public/bookings',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiV1AvailabilityRoute = ApiV1AvailabilityRouteImport.update({
+  id: '/api/v1/availability',
+  path: '/api/v1/availability',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BookingPayIdRoute = BookingPayIdRouteImport.update({
   id: '/booking/pay/$id',
   path: '/booking/pay/$id',
@@ -522,6 +528,7 @@ export interface FileRoutesByFullPath {
   '/admin/ops/vehicles': typeof AdminOpsVehiclesRoute
   '/admin/tours/$id': typeof AdminToursIdRoute
   '/api/public/bookings': typeof ApiPublicBookingsRoute
+  '/api/v1/availability': typeof ApiV1AvailabilityRoute
   '/booking/pay/$id': typeof BookingPayIdRoute
   '/lisbon-guide/category/$slug': typeof LisbonGuideCategorySlugRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
@@ -599,6 +606,7 @@ export interface FileRoutesByTo {
   '/admin/ops/vehicles': typeof AdminOpsVehiclesRoute
   '/admin/tours/$id': typeof AdminToursIdRoute
   '/api/public/bookings': typeof ApiPublicBookingsRoute
+  '/api/v1/availability': typeof ApiV1AvailabilityRoute
   '/booking/pay/$id': typeof BookingPayIdRoute
   '/lisbon-guide/category/$slug': typeof LisbonGuideCategorySlugRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
@@ -677,6 +685,7 @@ export interface FileRoutesById {
   '/admin/ops/vehicles': typeof AdminOpsVehiclesRoute
   '/admin/tours/$id': typeof AdminToursIdRoute
   '/api/public/bookings': typeof ApiPublicBookingsRoute
+  '/api/v1/availability': typeof ApiV1AvailabilityRoute
   '/booking/pay/$id': typeof BookingPayIdRoute
   '/lisbon-guide/category/$slug': typeof LisbonGuideCategorySlugRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
@@ -756,6 +765,7 @@ export interface FileRouteTypes {
     | '/admin/ops/vehicles'
     | '/admin/tours/$id'
     | '/api/public/bookings'
+    | '/api/v1/availability'
     | '/booking/pay/$id'
     | '/lisbon-guide/category/$slug'
     | '/lovable/email/suppression'
@@ -833,6 +843,7 @@ export interface FileRouteTypes {
     | '/admin/ops/vehicles'
     | '/admin/tours/$id'
     | '/api/public/bookings'
+    | '/api/v1/availability'
     | '/booking/pay/$id'
     | '/lisbon-guide/category/$slug'
     | '/lovable/email/suppression'
@@ -910,6 +921,7 @@ export interface FileRouteTypes {
     | '/admin/ops/vehicles'
     | '/admin/tours/$id'
     | '/api/public/bookings'
+    | '/api/v1/availability'
     | '/booking/pay/$id'
     | '/lisbon-guide/category/$slug'
     | '/lovable/email/suppression'
@@ -988,6 +1000,7 @@ export interface RootRouteChildren {
   AdminOpsVehiclesRoute: typeof AdminOpsVehiclesRoute
   AdminToursIdRoute: typeof AdminToursIdRoute
   ApiPublicBookingsRoute: typeof ApiPublicBookingsRoute
+  ApiV1AvailabilityRoute: typeof ApiV1AvailabilityRoute
   BookingPayIdRoute: typeof BookingPayIdRoute
   LisbonGuideCategorySlugRoute: typeof LisbonGuideCategorySlugRoute
   LovableEmailSuppressionRoute: typeof LovableEmailSuppressionRoute
@@ -1425,6 +1438,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicBookingsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/v1/availability': {
+      id: '/api/v1/availability'
+      path: '/api/v1/availability'
+      fullPath: '/api/v1/availability'
+      preLoaderRoute: typeof ApiV1AvailabilityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/booking/pay/$id': {
       id: '/booking/pay/$id'
       path: '/booking/pay/$id'
@@ -1596,6 +1616,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminOpsVehiclesRoute: AdminOpsVehiclesRoute,
   AdminToursIdRoute: AdminToursIdRoute,
   ApiPublicBookingsRoute: ApiPublicBookingsRoute,
+  ApiV1AvailabilityRoute: ApiV1AvailabilityRoute,
   BookingPayIdRoute: BookingPayIdRoute,
   LisbonGuideCategorySlugRoute: LisbonGuideCategorySlugRoute,
   LovableEmailSuppressionRoute: LovableEmailSuppressionRoute,
