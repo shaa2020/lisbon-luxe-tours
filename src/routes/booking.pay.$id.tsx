@@ -166,22 +166,32 @@ function PayBalancePage() {
 
               {data.paymentsAvailable ? (
                 <>
+                  <div className="mt-6">
+                    <PaypalWallet
+                      amount={data.dueCents / 100}
+                      label={data.tourTitle || "Tuk Tuk 24 tour"}
+                      disabled={busy}
+                      createOrder={startWalletOrder}
+                      onPaid={finishWalletOrder}
+                    />
+                  </div>
                   <button
                     onClick={pay}
                     disabled={busy}
-                    className="mt-6 w-full inline-flex items-center justify-center gap-2 rounded-full bg-[#2bb6f7] px-6 py-3.5 text-sm font-bold tracking-wide uppercase text-white hover:brightness-95 disabled:opacity-60"
+                    className="mt-3 w-full inline-flex items-center justify-center gap-2 rounded-full border border-border bg-transparent px-6 py-3 text-sm font-semibold text-foreground hover:bg-muted disabled:opacity-60"
                   >
                     {busy ? (
                       <Loader2 className="w-4 h-4 animate-spin" />
                     ) : (
                       <Lock className="w-4 h-4" />
                     )}
-                    Pay {money(data.dueCents)} securely
+                    Other ways to pay {money(data.dueCents)}
                   </button>
                   <p className="mt-3 text-center text-xs text-muted-foreground">
-                    Secure checkout · PayPal, cards and more
+                    Secure checkout · PayPal, Google Pay, Apple Pay and cards
                   </p>
                 </>
+
               ) : (
                 <div className="mt-6 rounded-xl border border-amber-300/60 bg-amber-50 dark:bg-amber-950/30 px-4 py-3 text-sm text-amber-900 dark:text-amber-200">
                   {data.paymentsMessage}
