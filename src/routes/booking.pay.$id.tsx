@@ -62,6 +62,23 @@ function PayBalancePage() {
     }
   };
 
+  /** Creates the provider order for the on-site wallet buttons. */
+  const startWalletOrder = async (): Promise<string | null> => {
+    setError(null);
+    try {
+      const res = await startCheckout({ data: { id } });
+      return res.sessionId ?? null;
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Something went wrong. Please try again.");
+      return null;
+    }
+  };
+
+  const finishWalletOrder = (orderId: string) => {
+    window.location.assign(`/booking/success?session_id=${encodeURIComponent(orderId)}`);
+  };
+
+
   if (isLoading) {
     return (
       <main className="min-h-[70vh] grid place-items-center">
