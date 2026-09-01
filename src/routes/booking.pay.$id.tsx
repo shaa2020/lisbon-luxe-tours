@@ -4,6 +4,8 @@ import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { CalendarCheck, CheckCircle2, Loader2, Lock, Users } from "lucide-react";
 import { createBalanceCheckout, getBookingBalance } from "@/lib/balance-pay.functions";
+import { PaypalWallet } from "@/components/site/PaypalWallet";
+
 
 export const Route = createFileRoute("/booking/pay/$id")({
   component: PayBalancePage,
