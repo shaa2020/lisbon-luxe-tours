@@ -25,19 +25,27 @@ A prioritized set of admin improvements focused on saving you time and automatin
 - **Action-needed strip at the top** — new bookings to confirm, unpaid balances, pending reviews, unanswered messages, open change requests — each with a one-click jump.
 - **Booking pipeline** — move bookings Confirmed → Completed → Review requested with one click, firing the right email automatically at each step.
 
-## 3. Quality-of-life
+## 3. Quick booking + deposit payment link (requested)
+
+- **Quick booking creator with deposit slider** — when you add a booking by hand (WhatsApp, phone, walk-in), choose how much to charge now: any amount from **20% to 100%** of the tour total (preset buttons 20/30/50/100% plus a custom field). It shows the exact euro amount and the remaining balance live.
+- **Send the payment link straight to their email** — one click emails the customer a branded payment request with a secure "Pay €X now" button using the existing `/booking/pay/$id` page and PayPal Express. Optional WhatsApp copy-link button for the same URL.
+- **Balance tracking** — after the deposit is paid, the booking shows "Deposit paid, €Y balance due" and you can send a balance request later with the same one click.
+- Customer auto-complete from existing customer records so repeat guests are one keystroke.
+
+## 4. Quality-of-life
 
 - **Global search** (top bar) — find any booking, customer, or job by name, email, or reference instantly.
-- **Keyboard-quick booking creator** — faster manual WhatsApp/phone booking entry with customer auto-complete from `ops_customers`.
 - **Bulk actions** — archive/confirm/email multiple bookings at once.
 - **Export to CSV** — bookings, payments, customers for accounting.
 
 ## Suggested priority
 
-1. Auto sync + automatic reminder/review emails + daily digest (pure automation)
-2. Action-needed strip + booking pipeline (fewer clicks every day)
-3. Revenue trends + global search
-4. Bulk actions, CSV export, smart assignment
+1. Quick booking with 20–100% deposit + emailed payment link
+2. Auto sync + automatic reminder/review emails + daily digest (pure automation)
+3. Automatic lead capture + leads inbox pipeline
+4. Action-needed strip + booking pipeline (fewer clicks every day)
+5. Revenue trends + global search
+6. Bulk actions, CSV export, smart assignment
 
 ## Technical notes
 
