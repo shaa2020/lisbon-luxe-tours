@@ -80,9 +80,11 @@ function Index() {
     <div className="min-h-screen bg-paper text-ink overflow-x-clip">
       <Nav overlay />
       <Hero />
+      <PromoSlot placement="home_hero" />
       <TrustStrip />
       <TestimonialsSection />
       <PopularTours onBook={setBookingTour} />
+      <PromoSlot placement="home_tours" />
       <WhyTravel />
       <Destinations />
       <AboutSection />
