@@ -140,6 +140,7 @@ export function Nav({ overlay = false }: { overlay?: boolean }) {
         </div>
       )}
     </header>
+    </>
   );
 }
 
