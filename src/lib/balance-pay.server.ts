@@ -11,6 +11,10 @@ export type BookingBalance = {
   totalCents: number;
   paidCents: number;
   dueCents: number;
+  /** Amount the customer is asked to pay right now (deposit request or full balance). */
+  requestCents: number;
+  /** True when a partial deposit (not the full balance) is being requested. */
+  isDeposit: boolean;
   status: string;
   paymentStatus: string | null;
   cancelled: boolean;
@@ -28,7 +32,7 @@ export async function computeBookingBalance(
   const { data: b } = await supabase
     .from("bookings")
     .select(
-      "id,tour_title,customer_name,travel_date,travel_time,guests,amount_total,total_estimate,status,payment_status",
+      "id,tour_title,customer_name,travel_date,travel_time,guests,amount_total,total_estimate,status,payment_status,payment_request_cents",
     )
     .eq("id", bookingId)
     .maybeSingle();
@@ -52,6 +56,12 @@ export async function computeBookingBalance(
 
   const dueCents = Math.max(0, totalCents - paidCents);
 
+  // A stored payment request asks for a specific amount now (e.g. a 20%
+  // deposit). It never exceeds what is actually still due.
+  const storedRequest = Number((b as any).payment_request_cents ?? 0);
+  const requestCents =
+    storedRequest > 0 ? Math.min(storedRequest, dueCents) : dueCents;
+
   return {
     bookingId: b.id as string,
     customerFirstName: String(b.customer_name || "there").split(" ")[0],
@@ -62,8 +72,37 @@ export async function computeBookingBalance(
     totalCents,
     paidCents,
     dueCents,
+    requestCents,
+    isDeposit: requestCents > 0 && requestCents < dueCents,
     status: String(b.status || ""),
     paymentStatus: (b.payment_status as string) || null,
     cancelled: b.status === "cancelled",
   };
+}
+
+/**
+ * Recomputes a booking's payment status from the orders ledger after a
+ * payment lands: fully covered → "paid", partially covered → "deposit_paid".
+ * The request marker is cleared once the requested amount has been paid.
+ */
+export async function syncBookingPaymentStatus(
+  supabase: SupabaseClient<Database>,
+  bookingId: string,
+) {
+  const balance = await computeBookingBalance(supabase, bookingId);
+  if (!balance || balance.cancelled || balance.totalCents <= 0) return;
+
+  const paymentStatus =
+    balance.dueCents <= 0 ? "paid" : balance.paidCents > 0 ? "deposit_paid" : null;
+
+  const patch: { payment_status?: string; status?: string; payment_request_cents?: null } = {};
+  if (paymentStatus) {
+    patch.payment_status = paymentStatus;
+    if (balance.paidCents > 0 && balance.status !== "cancelled") patch.status = "confirmed";
+  }
+  if (balance.paidCents >= balance.requestCents) {
+    patch.payment_request_cents = null;
+  }
+  if (Object.keys(patch).length === 0) return;
+  await supabase.from("bookings").update(patch).eq("id", bookingId);
 }

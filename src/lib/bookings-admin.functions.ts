@@ -33,6 +33,9 @@ const createSchema = z.object({
   notes: z.string().max(4000).nullable().optional(),
   internal_notes: z.string().max(4000).nullable().optional(),
   sendConfirmation: z.boolean().default(false),
+  /** Ask the customer to pay this % (20–100) online right away. */
+  depositPercent: z.number().int().min(20).max(100).nullable().optional(),
+  sendPaymentRequest: z.boolean().default(false),
 });
 
 export const adminCreateBooking = createServerFn({ method: "POST" })
@@ -43,13 +46,24 @@ export const adminCreateBooking = createServerFn({ method: "POST" })
     await assertAdmin(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-    const { sendConfirmation, ...row } = data;
+    const { sendConfirmation, depositPercent, sendPaymentRequest, ...row } = data;
+
+    const totalCents =
+      row.amount_total ?? (row.total_estimate != null ? row.total_estimate * 100 : null);
+    const wantsDeposit =
+      sendPaymentRequest && depositPercent != null && totalCents != null && totalCents > 0;
+    const requestCents = wantsDeposit
+      ? Math.max(1, Math.round((totalCents * depositPercent) / 100))
+      : null;
+
     const { data: booking, error } = await supabaseAdmin
       .from("bookings")
       .insert({
         ...row,
         travel_date: row.travel_date || null,
         travel_time: row.travel_time || null,
+        payment_status: requestCents ? "request" : row.payment_status,
+        payment_request_cents: requestCents,
       })
       .select(BOOKING_SELECT)
       .single();
@@ -64,10 +78,76 @@ export const adminCreateBooking = createServerFn({ method: "POST" })
       context.userId,
     );
 
-    if (sendConfirmation) {
+    if (requestCents) {
+      await logEvent(
+        supabaseAdmin,
+        booking.id,
+        "payment_request",
+        `Deposit request of €${(requestCents / 100).toFixed(2)} (${depositPercent}%) emailed`,
+        { request_cents: requestCents, percent: depositPercent },
+        context.userId,
+      );
+      await sendBookingEmail(supabaseAdmin, booking as any, "payment_request", {}, context.userId);
+    } else if (sendConfirmation) {
       await sendBookingEmail(supabaseAdmin, booking as any, "booking_confirmation", {}, context.userId);
     }
     return booking;
+  });
+
+const requestPaymentSchema = z.object({
+  id: z.string().uuid(),
+  percent: z.number().int().min(20).max(100),
+});
+
+/**
+ * Sets the amount the customer is asked to pay now (percent of the total) and
+ * emails them the branded payment request with a secure pay button.
+ */
+export const adminRequestPayment = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => requestPaymentSchema.parse(d))
+  .handler(async ({ data, context }) => {
+    const { assertAdmin, logEvent, sendBookingEmail, BOOKING_SELECT } = await import("./bookings-admin.server");
+    await assertAdmin(context);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { computeBookingBalance } = await import("./balance-pay.server");
+
+    const balance = await computeBookingBalance(supabaseAdmin, data.id);
+    if (!balance) throw new Error("Booking not found");
+    if (balance.cancelled) throw new Error("This booking has been cancelled");
+    if (balance.dueCents <= 0) throw new Error("This booking is already fully paid");
+    if (balance.totalCents <= 0) throw new Error("Set a total for this booking first");
+
+    const requestCents = Math.min(
+      Math.max(1, Math.round((balance.totalCents * data.percent) / 100)),
+      balance.dueCents,
+    );
+
+    const { data: booking, error } = await supabaseAdmin
+      .from("bookings")
+      .update({ payment_request_cents: requestCents, payment_status: "request" })
+      .eq("id", data.id)
+      .select(BOOKING_SELECT)
+      .single();
+    if (error) throw new Error(error.message);
+
+    await logEvent(
+      supabaseAdmin,
+      data.id,
+      "payment_request",
+      `Payment request of €${(requestCents / 100).toFixed(2)} (${data.percent}%) emailed`,
+      { request_cents: requestCents, percent: data.percent },
+      context.userId,
+    );
+
+    const result = await sendBookingEmail(
+      supabaseAdmin,
+      booking as any,
+      "payment_request",
+      {},
+      context.userId,
+    );
+    return { requestCents, ...result };
   });
 
 const updateSchema = z.object({

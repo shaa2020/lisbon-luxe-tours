@@ -34,13 +34,23 @@ export function BookingCreateDialog() {
     notes: "",
     internal_notes: "",
     sendConfirmation: true,
+    requestPayment: false,
+    depositPercent: 20,
   });
+
+  const totalEurNum = f.total === "" ? 0 : Math.max(0, Number(f.total));
+  const depositEur = Math.round(((totalEurNum * f.depositPercent) / 100) * 100) / 100;
+  const remainingEur = Math.max(0, totalEurNum - depositEur);
 
   const set = (k: keyof typeof f, v: unknown) => setF((s) => ({ ...s, [k]: v }));
 
   const submit = async () => {
     if (!f.customer_name.trim() || !f.email.trim()) {
       toast.error("Name and email are required");
+      return;
+    }
+    if (f.requestPayment && totalEurNum <= 0) {
+      toast.error("Set a total before requesting a deposit");
       return;
     }
     setSaving(true);
@@ -64,12 +74,20 @@ export function BookingCreateDialog() {
           notes: f.notes.trim() || null,
           internal_notes: f.internal_notes.trim() || null,
           sendConfirmation: f.sendConfirmation,
+          depositPercent: f.requestPayment ? f.depositPercent : null,
+          sendPaymentRequest: f.requestPayment,
         },
       });
-      toast.success(f.sendConfirmation ? "Booking added and confirmation emailed" : "Booking added");
+      toast.success(
+        f.requestPayment
+          ? `Booking added — payment request for €${depositEur.toFixed(2)} emailed`
+          : f.sendConfirmation
+            ? "Booking added and confirmation emailed"
+            : "Booking added",
+      );
       qc.invalidateQueries({ queryKey: ["admin-bookings"] });
       setOpen(false);
-      setF((s) => ({ ...s, customer_name: "", email: "", phone: "", tour_title: "", notes: "", internal_notes: "", total: "" }));
+      setF((s) => ({ ...s, customer_name: "", email: "", phone: "", tour_title: "", notes: "", internal_notes: "", total: "", requestPayment: false }));
     } catch (err) {
       toast.error((err as Error).message || "Could not create booking");
     } finally {
@@ -170,6 +188,59 @@ export function BookingCreateDialog() {
               <input type="checkbox" checked={f.sendConfirmation} onChange={(e) => set("sendConfirmation", e.target.checked)} />
               Email the customer a booking confirmation
             </label>
+
+            <div className="mt-3 rounded-lg border border-border bg-muted/40 p-4">
+              <label className="flex items-center gap-2 text-sm font-medium">
+                <input
+                  type="checkbox"
+                  checked={f.requestPayment}
+                  onChange={(e) => set("requestPayment", e.target.checked)}
+                />
+                Ask the customer to pay online now (email payment link)
+              </label>
+              {f.requestPayment && (
+                <div className="mt-3">
+                  <p className="text-xs text-muted-foreground mb-2">Charge now — 20% to 100% of the total</p>
+                  <div className="flex flex-wrap items-center gap-2">
+                    {[20, 30, 50, 100].map((p) => (
+                      <button
+                        key={p}
+                        type="button"
+                        onClick={() => set("depositPercent", p)}
+                        className={`rounded-full px-3 py-1.5 text-xs font-semibold border ${
+                          f.depositPercent === p
+                            ? "bg-primary text-primary-foreground border-primary"
+                            : "border-border hover:bg-accent"
+                        }`}
+                      >
+                        {p}%
+                      </button>
+                    ))}
+                    <input
+                      type="number"
+                      min={20}
+                      max={100}
+                      value={f.depositPercent}
+                      onChange={(e) =>
+                        set("depositPercent", Math.min(100, Math.max(20, Number(e.target.value) || 20)))
+                      }
+                      className="w-20 rounded-md border border-border bg-background px-2 py-1.5 text-xs"
+                    />
+                    <span className="text-xs text-muted-foreground">%</span>
+                  </div>
+                  {totalEurNum > 0 ? (
+                    <p className="mt-2 text-xs">
+                      <span className="font-semibold text-foreground">€{depositEur.toFixed(2)}</span>{" "}
+                      <span className="text-muted-foreground">due now · </span>
+                      <span className="font-semibold text-foreground">€{remainingEur.toFixed(2)}</span>{" "}
+                      <span className="text-muted-foreground">left to pay later</span>
+                    </p>
+                  ) : (
+                    <p className="mt-2 text-xs text-amber-600">Enter the total above to see the amounts.</p>
+                  )}
+                </div>
+              )}
+            </div>
 
             <div className="mt-6 flex justify-end gap-2">
               <button onClick={() => setOpen(false)} className="rounded-md border border-border px-4 py-2 text-sm">

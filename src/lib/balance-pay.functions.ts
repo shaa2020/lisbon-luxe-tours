@@ -38,6 +38,7 @@ export const createBalanceCheckout = createServerFn({ method: "POST" })
     if (!balance) throw new Error("Booking not found");
     if (balance.cancelled) throw new Error("This booking has been cancelled.");
     if (balance.dueCents <= 0) throw new Error("This booking is already fully paid.");
+    if (balance.requestCents <= 0) throw new Error("There is no payment due right now.");
 
     const payments = await paymentsStatus(supabaseAdmin);
     if (!payments.available) throw new Error(payments.message);
@@ -54,12 +55,12 @@ export const createBalanceCheckout = createServerFn({ method: "POST" })
     const origin = `${proto}://${host}`;
 
     const payment = await createPayment(supabaseAdmin, {
-      amountCents: balance.dueCents,
-      description: `${booking.tour_title || "Tuk Tuk 24 tour"} — balance payment`,
+      amountCents: balance.requestCents,
+      description: `${booking.tour_title || "Tuk Tuk 24 tour"} — ${balance.isDeposit ? "deposit payment" : "balance payment"}`,
       origin,
       metadata: {
         booking_id: data.id,
-        kind: "balance",
+        kind: balance.isDeposit ? "deposit" : "balance",
       },
     });
 
@@ -67,7 +68,7 @@ export const createBalanceCheckout = createServerFn({ method: "POST" })
       booking_id: data.id,
       stripe_session_id: payment.id,
       provider: payment.provider,
-      amount_total: balance.dueCents,
+      amount_total: balance.requestCents,
       currency: "eur",
       payment_status: "pending",
       customer_name: booking.customer_name,
