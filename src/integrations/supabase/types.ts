@@ -1618,6 +1618,11 @@ export type Database = {
           custom_tour_subtitle: string | null
           custom_tour_title: string | null
           daily_slot_capacity: number
+          exit_popup_code: string | null
+          exit_popup_cta_label: string | null
+          exit_popup_enabled: boolean
+          exit_popup_headline: string | null
+          exit_popup_subtext: string | null
           facebook_url: string | null
           footer_legal: string | null
           footer_tagline: string | null
@@ -1667,6 +1672,11 @@ export type Database = {
           custom_tour_subtitle?: string | null
           custom_tour_title?: string | null
           daily_slot_capacity?: number
+          exit_popup_code?: string | null
+          exit_popup_cta_label?: string | null
+          exit_popup_enabled?: boolean
+          exit_popup_headline?: string | null
+          exit_popup_subtext?: string | null
           facebook_url?: string | null
           footer_legal?: string | null
           footer_tagline?: string | null
@@ -1716,6 +1726,11 @@ export type Database = {
           custom_tour_subtitle?: string | null
           custom_tour_title?: string | null
           daily_slot_capacity?: number
+          exit_popup_code?: string | null
+          exit_popup_cta_label?: string | null
+          exit_popup_enabled?: boolean
+          exit_popup_headline?: string | null
+          exit_popup_subtext?: string | null
           facebook_url?: string | null
           footer_legal?: string | null
           footer_tagline?: string | null

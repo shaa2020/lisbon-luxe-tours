@@ -1,3 +1,4 @@
+import { createContext, createElement, useContext, type ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getPublicSiteSettings } from "./cms.functions";
@@ -42,6 +43,33 @@ export const DEFAULT_OFFER_BAR = {
 export const DEFAULT_WHATSAPP_REPLY_LINE = "We usually reply within minutes";
 
 export type OfferBar = typeof DEFAULT_OFFER_BAR;
+
+export type ExitPopup = {
+  enabled: boolean;
+  headline: string;
+  subtext: string | null;
+  code: string | null;
+  ctaLabel: string;
+};
+
+export const DEFAULT_EXIT_POPUP: ExitPopup = {
+  enabled: false,
+  headline: "Before you go — Lisbon is better from a tuk-tuk",
+  subtext:
+    "Book direct with a local family crew. Instant confirmation, free cancellation up to 24h before your tour.",
+  code: null,
+  ctaLabel: "See tours",
+};
+
+function mapExitPopup(d: any): ExitPopup {
+  return {
+    enabled: d?.exit_popup_enabled === true,
+    headline: (d?.exit_popup_headline || "").trim() || DEFAULT_EXIT_POPUP.headline,
+    subtext: (d?.exit_popup_subtext || "").trim() || null,
+    code: (d?.exit_popup_code || "").trim() || null,
+    ctaLabel: (d?.exit_popup_cta_label || "").trim() || DEFAULT_EXIT_POPUP.ctaLabel,
+  };
+}
 
 export type PromoBannerTheme = "gold" | "ink" | "sunset";
 
@@ -129,6 +157,7 @@ export type SiteBrand = {
   hotelPickupFeeCents: number;
   offerBar: OfferBar;
   promoBanner: PromoBanner;
+  exitPopup: ExitPopup;
   groupTiers: GroupTier[];
   groupDiscountEnabled: boolean;
   whatsappReplyLine: string;
@@ -177,6 +206,7 @@ export function mapSiteBrand(data: any): SiteBrand {
       Number((data as any)?.hotel_pickup_fee_cents ?? DEFAULT_HOTEL_PICKUP_FEE_CENTS) || 0,
     offerBar: mapOfferBar(data),
     promoBanner: mapPromoBanner(data),
+    exitPopup: mapExitPopup(data),
     groupTiers: parseGroupTiers((data as any)?.group_discount_tiers),
     groupDiscountEnabled: (data as any)?.group_discount_enabled !== false,
     whatsappReplyLine: (data as any)?.whatsapp_reply_line || DEFAULT_WHATSAPP_REPLY_LINE,
@@ -184,13 +214,26 @@ export function mapSiteBrand(data: any): SiteBrand {
   };
 }
 
+const SiteBrandContext = createContext<SiteBrand | null>(null);
+
+/**
+ * Seeds the site brand synchronously from route loader data so the server
+ * render and the client's first render are identical (no hydration mismatch,
+ * no logo/hero flash).
+ */
+export function SiteBrandProvider({ brand, children }: { brand: SiteBrand; children: ReactNode }) {
+  return createElement(SiteBrandContext.Provider, { value: brand }, children);
+}
+
 export function useSiteBrand() {
   const fetchBrand = useServerFn(getPublicSiteSettings);
+  const seeded = useContext(SiteBrandContext);
 
   const query = useQuery({
     queryKey: SITE_BRAND_KEY,
     staleTime: 5 * 60_000,
     queryFn: async (): Promise<SiteBrand> => mapSiteBrand(await fetchBrand()),
+    initialData: seeded ?? undefined,
 
     placeholderData: {
       brandName: DEFAULT_BRAND_NAME,
@@ -203,6 +246,7 @@ export function useSiteBrand() {
       hotelPickupFeeCents: DEFAULT_HOTEL_PICKUP_FEE_CENTS,
       offerBar: DEFAULT_OFFER_BAR,
       promoBanner: DEFAULT_PROMO_BANNER,
+      exitPopup: DEFAULT_EXIT_POPUP,
       groupTiers: DEFAULT_GROUP_TIERS,
       groupDiscountEnabled: true,
       whatsappReplyLine: DEFAULT_WHATSAPP_REPLY_LINE,
@@ -222,6 +266,7 @@ export function useSiteBrand() {
     hotelPickupFeeCents: query.data?.hotelPickupFeeCents ?? DEFAULT_HOTEL_PICKUP_FEE_CENTS,
     offerBar: query.data?.offerBar ?? DEFAULT_OFFER_BAR,
     promoBanner: query.data?.promoBanner ?? DEFAULT_PROMO_BANNER,
+    exitPopup: query.data?.exitPopup ?? DEFAULT_EXIT_POPUP,
     groupTiers: query.data?.groupTiers ?? DEFAULT_GROUP_TIERS,
     groupDiscountEnabled: query.data?.groupDiscountEnabled ?? true,
     whatsappReplyLine: query.data?.whatsappReplyLine ?? DEFAULT_WHATSAPP_REPLY_LINE,

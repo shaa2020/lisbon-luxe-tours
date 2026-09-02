@@ -262,6 +262,24 @@ export function useReviewStatsBySlug() {
   });
 }
 
+/** Site-wide approved review count + average — for hero/footer trust badges. */
+export function useReviewSummary() {
+  return useQuery({
+    queryKey: ["reviews", "summary"],
+    staleTime: 60_000,
+    queryFn: async (): Promise<{ count: number; average: number }> => {
+      const { data, error } = await supabase
+        .from("reviews_public" as never)
+        .select("rating");
+      if (error) throw error;
+      const rows = (data ?? []) as unknown as { rating: number }[];
+      const count = rows.length;
+      const average = count ? rows.reduce((s, r) => s + r.rating, 0) / count : 0;
+      return { count, average };
+    },
+  });
+}
+
 /** All approved reviews, newest first — for the public /reviews page. */
 export function useAllPublicReviews() {
   return useQuery({

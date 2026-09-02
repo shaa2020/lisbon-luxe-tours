@@ -108,6 +108,11 @@ function AdminSettings() {
     promo_banner_ends_at: "",
     whatsapp_reply_line: "We usually reply within minutes",
     google_review_url: "",
+    exit_popup_enabled: false,
+    exit_popup_headline: "",
+    exit_popup_subtext: "",
+    exit_popup_code: "",
+    exit_popup_cta_label: "See tours",
     group_discount_enabled: true,
     group_discount_tiers: DEFAULT_GROUP_TIERS as GroupTier[],
   });
@@ -151,6 +156,11 @@ function AdminSettings() {
       promo_banner_ends_at: toLocalInput(d.promo_banner_ends_at),
       whatsapp_reply_line: d.whatsapp_reply_line ?? "We usually reply within minutes",
       google_review_url: d.google_review_url ?? "",
+      exit_popup_enabled: d.exit_popup_enabled === true,
+      exit_popup_headline: d.exit_popup_headline ?? "",
+      exit_popup_subtext: d.exit_popup_subtext ?? "",
+      exit_popup_code: d.exit_popup_code ?? "",
+      exit_popup_cta_label: d.exit_popup_cta_label ?? "See tours",
       group_discount_enabled: d.group_discount_enabled !== false,
       group_discount_tiers: parseGroupTiers(d.group_discount_tiers),
     });
@@ -767,6 +777,70 @@ function AdminSettings() {
 
           <button type="button" onClick={saveBiz} disabled={savingBiz} className={btn}>
             {savingBiz ? "Saving…" : "Save promotional banner"}
+          </button>
+        </section>
+
+        <section className={card}>
+          <div>
+            <p className="text-sm font-semibold text-foreground">Exit popup</p>
+            <p className="text-xs text-muted-foreground">
+              Shown once per session when a visitor is about to leave the site (or after 45 seconds on mobile).
+              Never shown on booking, invoice or admin pages.
+            </p>
+          </div>
+
+          <label className="flex items-center gap-2 text-sm">
+            <input
+              type="checkbox"
+              checked={biz.exit_popup_enabled}
+              onChange={(e) => setBiz((b) => ({ ...b, exit_popup_enabled: e.target.checked }))}
+            />
+            Show the exit popup
+          </label>
+
+          <label className="block space-y-1">
+            <span className="text-xs font-medium text-foreground">Headline</span>
+            <input
+              value={biz.exit_popup_headline}
+              onChange={(e) => setBiz((b) => ({ ...b, exit_popup_headline: e.target.value }))}
+              className={input}
+              placeholder="Before you go — Lisbon is better from a tuk-tuk"
+            />
+          </label>
+
+          <label className="block space-y-1">
+            <span className="text-xs font-medium text-foreground">Sub-line (optional)</span>
+            <input
+              value={biz.exit_popup_subtext}
+              onChange={(e) => setBiz((b) => ({ ...b, exit_popup_subtext: e.target.value }))}
+              className={input}
+              placeholder="Instant confirmation, free cancellation up to 24h"
+            />
+          </label>
+
+          <div className="grid grid-cols-2 gap-3">
+            <label className="block space-y-1">
+              <span className="text-xs font-medium text-foreground">Promo code (optional)</span>
+              <input
+                value={biz.exit_popup_code}
+                onChange={(e) => setBiz((b) => ({ ...b, exit_popup_code: e.target.value.toUpperCase() }))}
+                className={input}
+                placeholder="DIRECT10"
+              />
+            </label>
+            <label className="block space-y-1">
+              <span className="text-xs font-medium text-foreground">Button label</span>
+              <input
+                value={biz.exit_popup_cta_label}
+                onChange={(e) => setBiz((b) => ({ ...b, exit_popup_cta_label: e.target.value }))}
+                className={input}
+                placeholder="See tours"
+              />
+            </label>
+          </div>
+
+          <button type="button" onClick={saveBiz} disabled={savingBiz} className={btn}>
+            {savingBiz ? "Saving…" : "Save exit popup"}
           </button>
         </section>
 

@@ -9,26 +9,32 @@ import { BookingModal } from "@/components/site/BookingModal";
 import { TestimonialsSection } from "@/components/site/TestimonialsSection";
 import { TrustStrip } from "@/components/site/TrustStrip";
 import { StickyBookBar } from "@/components/site/StickyBookBar";
-import { useBlogPosts, useTours, tourPricing, toursQueryOptions, type Tour } from "@/lib/cms";
+import { mapPost, tourPricing, toursQueryOptions, type BlogPost, type Tour } from "@/lib/cms";
 import { MediaImage } from "@/components/site/MediaImage";
 import { HeroSlideshow, useSlideRotation } from "@/components/site/HeroSlideshow";
 
 import { trackBookingCtaClick } from "@/lib/analytics";
 import { subscribeToNewsletter } from "@/lib/subscribers.functions";
-import { useSiteBrand, mapSiteBrand, SITE_BRAND_KEY } from "@/lib/brand";
-import { getPublicSiteSettings } from "@/lib/cms.functions";
+import { useSiteBrand, mapSiteBrand, SITE_BRAND_KEY, SiteBrandProvider } from "@/lib/brand";
+import { useReviewSummary } from "@/lib/reviews";
+import { StarRating } from "@/components/site/StarRating";
+import { getPublicSiteSettings, getPublishedBlogPosts } from "@/lib/cms.functions";
 
 export const Route = createFileRoute("/")({
   loader: async ({ context }) => {
-    const [brand] = await Promise.all([
+    const [brand, tours, blogPosts] = await Promise.all([
       context.queryClient.ensureQueryData({
         queryKey: SITE_BRAND_KEY,
         staleTime: 5 * 60_000,
         queryFn: async () => mapSiteBrand(await getPublicSiteSettings()),
       }),
       context.queryClient.ensureQueryData(toursQueryOptions),
+      (async (): Promise<BlogPost[]> =>
+        ((await getPublishedBlogPosts()) ?? []).map((r) => mapPost(r as never)))(),
     ]);
-    return { heroImage: brand.heroSlides?.[0]?.image_url ?? brand.heroImageUrl ?? null };
+    const prices = tours.map((t) => tourPricing(t).current).filter((n) => n > 0);
+    const fromPrice = prices.length ? Math.min(...prices) : null;
+    return { brand, fromPrice, tours, blogPosts };
   },
   head: ({ loaderData }) => ({
     meta: [
@@ -52,20 +58,25 @@ export const Route = createFileRoute("/")({
       },
       { property: "og:url", content: "https://tuktuk24lisbon.com/" },
     ],
-    links: [
-      { rel: "canonical", href: "https://tuktuk24lisbon.com/" },
-      ...(loaderData?.heroImage
-        ? [{ rel: "preload", as: "image", href: loaderData.heroImage, fetchpriority: "high" }]
-        : []),
-    ],
-
+    links: (() => {
+      const heroImage =
+        loaderData?.brand?.heroSlides?.[0]?.image_url ?? loaderData?.brand?.heroImageUrl ?? null;
+      return [
+        { rel: "canonical", href: "https://tuktuk24lisbon.com/" },
+        ...(heroImage
+          ? [{ rel: "preload", as: "image", href: heroImage, fetchPriority: "high" as const }]
+          : []),
+      ];
+    })(),
   }),
   component: Index,
 });
 
 function Index() {
   const [bookingTour, setBookingTour] = useState<Tour | null>(null);
+  const { brand } = Route.useLoaderData();
   return (
+    <SiteBrandProvider brand={brand}>
     <div className="min-h-screen bg-paper text-ink overflow-x-clip">
       <Nav overlay />
       <Hero />
@@ -87,6 +98,7 @@ function Index() {
         onOpenChange={(v) => !v && setBookingTour(null)}
       />
     </div>
+    </SiteBrandProvider>
   );
 }
 
@@ -101,9 +113,8 @@ function Hero() {
   const usableSlides = slides.filter((s) => !!s.image_url);
   const [activeSlide] = useSlideRotation(usableSlides.length);
   const currentSlide = usableSlides[activeSlide] ?? slides[0];
-  const { data: allTours = [] } = useTours();
-  const prices = allTours.map((t) => tourPricing(t).current).filter((n) => n > 0);
-  const fromPrice = prices.length ? Math.min(...prices) : null;
+  const { fromPrice } = Route.useLoaderData();
+  const { data: reviewSummary } = useReviewSummary();
 
   return (
     <section className="relative">
@@ -154,6 +165,19 @@ function Hero() {
               WhatsApp us
             </WhatsappInline>
           </div>
+
+          {reviewSummary && reviewSummary.count > 0 && (
+            <Link
+              to="/reviews"
+              className="mt-6 inline-flex items-center gap-2.5 rounded-full border border-white/25 bg-white/10 backdrop-blur px-4 py-2 hover:bg-white/20 transition-colors"
+            >
+              <StarRating value={reviewSummary.average} readOnly size={13} />
+              <span className="text-[12px] text-white font-medium">
+                {reviewSummary.average.toFixed(1)} · {reviewSummary.count} verified review
+                {reviewSummary.count === 1 ? "" : "s"}
+              </span>
+            </Link>
+          )}
 
           <ul className="mt-5 flex flex-wrap justify-center gap-x-5 gap-y-1.5 text-[12px] text-white/80 px-4">
             {[
@@ -401,7 +425,7 @@ function WhyTravel() {
 /* ============================== POPULAR TOURS ============================== */
 
 function PopularTours({ onBook }: { onBook: (t: Tour) => void }) {
-  const { data: tours = [] } = useTours();
+  const { tours } = Route.useLoaderData();
   const { offerBar } = useSiteBrand();
 
   return (
@@ -496,7 +520,7 @@ function PopularCard({ tour, onBook }: { tour: Tour; onBook: () => void }) {
 /* ============================== DESTINATIONS ============================== */
 
 function Destinations() {
-  const { data: tours = [] } = useTours();
+  const { tours } = Route.useLoaderData();
   // Destination imagery is taken from the live tour catalogue so it always
   // reflects what admins uploaded — never a bundled/stale photo.
   const byCategory = (needle: string) =>
@@ -568,7 +592,7 @@ function Destinations() {
 /* ============================== GALLERY ============================== */
 
 function Gallery() {
-  const { data: tours = [] } = useTours();
+  const { tours } = Route.useLoaderData();
   const pool = tours.map((t) => t.image).filter(Boolean);
   const imgs = Array.from({ length: 12 }, (_, i) => (pool.length ? pool[i % pool.length] : null));
   return (
@@ -615,7 +639,7 @@ function Gallery() {
 /* ============================== TRAVEL TIPS + SIGNUP ============================== */
 
 function TravelTipsAndSignup() {
-  const { data: blogPosts = [] } = useBlogPosts();
+  const { blogPosts } = Route.useLoaderData();
   const tips = blogPosts.slice(0, 2);
   return (
     <section className="container-x py-20 md:py-28">
