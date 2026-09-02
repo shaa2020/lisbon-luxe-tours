@@ -9,6 +9,7 @@ import { BookingModal } from "@/components/site/BookingModal";
 import { TestimonialsSection } from "@/components/site/TestimonialsSection";
 import { TrustStrip } from "@/components/site/TrustStrip";
 import { StickyBookBar } from "@/components/site/StickyBookBar";
+import { PromoSlot } from "@/components/promo/PromoSlot";
 import { mapPost, tourPricing, toursQueryOptions, type BlogPost, type Tour } from "@/lib/cms";
 import { MediaImage } from "@/components/site/MediaImage";
 import { HeroSlideshow, useSlideRotation } from "@/components/site/HeroSlideshow";

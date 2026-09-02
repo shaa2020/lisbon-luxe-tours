@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { BrandLogo } from "@/components/site/BrandLogo";
 import { useSiteBrand } from "@/lib/brand";
+import { PromoTopBar } from "@/components/promo/PromoSlot";
 
 export function Nav({ overlay = false }: { overlay?: boolean }) {
   // overlay kept for API compat but ignored — header is always visible & solid
@@ -29,7 +30,9 @@ export function Nav({ overlay = false }: { overlay?: boolean }) {
   ] as const;
 
   return (
-    <header className="fixed top-0 inset-x-0 z-50 bg-white/95 backdrop-blur-md border-b border-border shadow-[0_2px_20px_rgba(30,58,95,0.06)]">
+    <>
+    <PromoTopBar />
+    <header style={{ top: "var(--tt24-top-promo, 0px)" }} className="fixed inset-x-0 z-50 bg-white/95 backdrop-blur-md border-b border-border shadow-[0_2px_20px_rgba(30,58,95,0.06)]">
       {/* Top utility strip — desktop only */}
       <div className="hidden md:block bg-ink text-white">
         <div className="container-x flex items-center justify-between h-9 text-[11px]">

@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import type { Tour } from "@/lib/cms";
 import { tourPricing } from "@/lib/cms";
 import { MediaImage } from "@/components/site/MediaImage";
+import { PromoSlot } from "@/components/promo/PromoSlot";
 
 
 export function TourCard({ tour }: { tour: Tour; offset?: boolean }) {
@@ -13,6 +14,7 @@ export function TourCard({ tour }: { tour: Tour; offset?: boolean }) {
       className="group block bg-white rounded-xl overflow-hidden shadow-[0_4px_20px_rgba(30,58,95,0.06)] hover:shadow-[0_20px_40px_rgba(30,58,95,0.12)] hover:-translate-y-1 transition-all duration-500"
     >
       <div className="relative aspect-[16/10] overflow-hidden">
+        <PromoSlot placement="tour_card" tourSlug={tour.slug} />
         <MediaImage
           src={tour.image}
           alt={tour.title}
