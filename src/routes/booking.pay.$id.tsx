@@ -177,9 +177,15 @@ function PayBalancePage() {
                     <span>−{money(data.paidCents)}</span>
                   </div>
                   <div className="flex justify-between pt-1.5 border-t border-border font-bold text-foreground text-base">
-                    <span>Due now</span>
-                    <span>{money(data.dueCents)}</span>
+                    <span>{data.isDeposit ? "Deposit due now" : "Due now"}</span>
+                    <span>{money(data.requestCents)}</span>
                   </div>
+                  {data.isDeposit && (
+                    <div className="flex justify-between text-muted-foreground text-xs">
+                      <span>Remaining balance (pay later)</span>
+                      <span>{money(data.dueCents - data.requestCents)}</span>
+                    </div>
+                  )}
                 </div>
               </div>
 

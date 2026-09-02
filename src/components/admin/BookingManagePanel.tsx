@@ -10,6 +10,7 @@ import {
   adminSendBookingEmail,
   adminPreviewBookingEmail,
   adminBookingTimeline,
+  adminRequestPayment,
 } from "@/lib/bookings-admin.functions";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -57,6 +58,30 @@ export function BookingManagePanel({ booking }: { booking: Booking }) {
   });
 
   const [templateKey, setTemplateKey] = useState("booking_confirmation");
+  const requestPayment = useServerFn(adminRequestPayment);
+  const [reqPct, setReqPct] = useState(20);
+  const totalCents = booking.total_estimate != null ? Math.round(Number(booking.total_estimate) * 100) : 0;
+  const reqCents = totalCents ? Math.max(1, Math.round((totalCents * reqPct) / 100)) : 0;
+  const payUrl = `https://tuktuk24lisbon.com/booking/pay/${booking.id}`;
+  const waText = encodeURIComponent(
+    `Hello ${booking.customer_name.split(" ")[0]}! To secure your Tuk Tuk 24 booking, please pay €${(reqCents / 100).toFixed(2)} here: ${payUrl}`,
+  );
+  const waHref = booking.phone
+    ? `https://wa.me/${String(booking.phone).replace(/\D/g, "")}?text=${waText}`
+    : `https://wa.me/?text=${waText}`;
+
+  const doRequestPayment = async () => {
+    setBusy(true);
+    try {
+      await requestPayment({ data: { id: booking.id, percent: reqPct } });
+      toast.success(`Payment request for €${(reqCents / 100).toFixed(2)} emailed to ${booking.email}`);
+      refresh();
+    } catch (err) {
+      toast.error((err as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  };
   const [ov, setOv] = useState({
     subject: "",
     heading: "",

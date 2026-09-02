@@ -44,10 +44,8 @@ export const Route = createFileRoute("/api/public/payments/mollie")({
             .eq("stripe_session_id", paymentId);
 
           if (paid && bookingId && !modificationId) {
-            await supabaseAdmin
-              .from("bookings")
-              .update({ payment_status: "paid", status: "confirmed" })
-              .eq("id", bookingId);
+            const { syncBookingPaymentStatus } = await import("@/lib/balance-pay.server");
+            await syncBookingPaymentStatus(supabaseAdmin, bookingId);
           }
 
           if (paid && modificationId) {

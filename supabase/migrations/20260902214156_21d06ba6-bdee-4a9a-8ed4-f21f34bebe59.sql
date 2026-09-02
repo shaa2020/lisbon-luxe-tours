@@ -1,0 +1,2 @@
+ALTER TABLE public.bookings ADD COLUMN IF NOT EXISTS payment_request_cents integer;
+COMMENT ON COLUMN public.bookings.payment_request_cents IS 'Amount the customer is currently being asked to pay online (deposit requests). NULL means the full outstanding balance is due.';

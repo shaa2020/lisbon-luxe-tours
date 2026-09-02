@@ -78,20 +78,30 @@ export async function resolveBookingEmail(
     if (!ctaLabel) ctaLabel = "Download PDF invoice";
   }
   if (templateKey === "payment_request") {
-    // Point the button at the secure pay-balance page and spell out the money.
+    // Point the button at the secure pay page and spell out the money. When a
+    // deposit request is stored, the customer is asked for that amount only.
     const { computeBookingBalance } = await import("./balance-pay.server");
     const balance = await computeBookingBalance(admin, booking.id);
     if (balance) {
       const eur = (c: number) => `€${(c / 100).toFixed(2)}`;
       if (!ctaUrl) ctaUrl = `https://tuktuk24lisbon.com/booking/pay/${booking.id}`;
       if (!ctaLabel)
-        ctaLabel = balance.dueCents > 0 ? `Pay ${eur(balance.dueCents)} securely now` : "View booking";
+        ctaLabel =
+          balance.requestCents > 0 ? `Pay ${eur(balance.requestCents)} securely now` : "View booking";
       if (showDetails) {
         rows = rows.filter((r) => r.label !== "Total");
         rows.push({ label: "Booking total", value: eur(balance.totalCents) });
         if (balance.paidCents > 0)
           rows.push({ label: "Already paid", value: eur(balance.paidCents) });
-        rows.push({ label: "Balance due", value: eur(balance.dueCents) });
+        rows.push({
+          label: balance.isDeposit ? "Deposit due now" : "Balance due",
+          value: eur(balance.requestCents),
+        });
+        if (balance.isDeposit)
+          rows.push({
+            label: "Remaining after deposit",
+            value: eur(balance.dueCents - balance.requestCents),
+          });
       }
     }
   }

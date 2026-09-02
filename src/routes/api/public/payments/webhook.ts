@@ -57,10 +57,8 @@ async function markPaid(session: Record<string, unknown>) {
     .eq("stripe_session_id", sessionId);
 
   if (bookingId && !modificationId) {
-    await supabaseAdmin
-      .from("bookings")
-      .update({ payment_status: "paid", status: "confirmed" })
-      .eq("id", bookingId);
+    const { syncBookingPaymentStatus } = await import("@/lib/balance-pay.server");
+    await syncBookingPaymentStatus(supabaseAdmin, bookingId);
   }
 
   if (modificationId) {

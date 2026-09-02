@@ -266,6 +266,7 @@ export type Database = {
           id: string
           internal_notes: string | null
           notes: string | null
+          payment_request_cents: number | null
           payment_status: string
           phone: string | null
           refund_cents: number
@@ -293,6 +294,7 @@ export type Database = {
           id?: string
           internal_notes?: string | null
           notes?: string | null
+          payment_request_cents?: number | null
           payment_status?: string
           phone?: string | null
           refund_cents?: number
@@ -320,6 +322,7 @@ export type Database = {
           id?: string
           internal_notes?: string | null
           notes?: string | null
+          payment_request_cents?: number | null
           payment_status?: string
           phone?: string | null
           refund_cents?: number
