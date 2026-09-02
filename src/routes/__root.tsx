@@ -85,8 +85,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
 
-      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/76264757-16b0-4de3-8741-88f13d8b4088" },
-      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/76264757-16b0-4de3-8741-88f13d8b4088" },
+      { property: "og:image", content: "https://tuktuk24lisbon.com/__l5e/assets-v1/4c6e5056-d7f4-4af3-888c-8b7be3d509d9/social-banner.png" },
+      { name: "twitter:image", content: "https://tuktuk24lisbon.com/__l5e/assets-v1/4c6e5056-d7f4-4af3-888c-8b7be3d509d9/social-banner.png" },
       { name: "theme-color", content: "#1e3a5f" },
       { name: "apple-mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
