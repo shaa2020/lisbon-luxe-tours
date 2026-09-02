@@ -1,0 +1,1 @@
+GRANT SELECT (source, source_url, author_photo_url) ON public.reviews TO authenticated;
