@@ -22,7 +22,7 @@ import { getPublicSiteSettings } from "@/lib/cms.functions";
 
 export const Route = createFileRoute("/")({
   loader: async ({ context }) => {
-    const [brand] = await Promise.all([
+    const [brand, tours] = await Promise.all([
       context.queryClient.ensureQueryData({
         queryKey: SITE_BRAND_KEY,
         staleTime: 5 * 60_000,
@@ -30,7 +30,9 @@ export const Route = createFileRoute("/")({
       }),
       context.queryClient.ensureQueryData(toursQueryOptions),
     ]);
-    return { brand };
+    const prices = tours.map((t) => tourPricing(t).current).filter((n) => n > 0);
+    const fromPrice = prices.length ? Math.min(...prices) : null;
+    return { brand, fromPrice };
   },
   head: ({ loaderData }) => ({
     meta: [
@@ -109,10 +111,8 @@ function Hero() {
   const usableSlides = slides.filter((s) => !!s.image_url);
   const [activeSlide] = useSlideRotation(usableSlides.length);
   const currentSlide = usableSlides[activeSlide] ?? slides[0];
-  const { data: allTours = [] } = useTours();
+  const { fromPrice } = Route.useLoaderData();
   const { data: reviewSummary } = useReviewSummary();
-  const prices = allTours.map((t) => tourPricing(t).current).filter((n) => n > 0);
-  const fromPrice = prices.length ? Math.min(...prices) : null;
 
   return (
     <section className="relative">
