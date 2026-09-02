@@ -9,6 +9,7 @@ import { BookingModal } from "@/components/site/BookingModal";
 import { TestimonialsSection } from "@/components/site/TestimonialsSection";
 import { TrustStrip } from "@/components/site/TrustStrip";
 import { StickyBookBar } from "@/components/site/StickyBookBar";
+import { PromoSlot } from "@/components/promo/PromoSlot";
 import { mapPost, tourPricing, toursQueryOptions, type BlogPost, type Tour } from "@/lib/cms";
 import { MediaImage } from "@/components/site/MediaImage";
 import { HeroSlideshow, useSlideRotation } from "@/components/site/HeroSlideshow";
@@ -80,9 +81,11 @@ function Index() {
     <div className="min-h-screen bg-paper text-ink overflow-x-clip">
       <Nav overlay />
       <Hero />
+      <PromoSlot placement="home_hero" />
       <TrustStrip />
       <TestimonialsSection />
       <PopularTours onBook={setBookingTour} />
+      <PromoSlot placement="home_tours" />
       <WhyTravel />
       <Destinations />
       <AboutSection />

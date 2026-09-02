@@ -56,6 +56,7 @@ const GROUPS: NavGroup[] = [
       { to: "/admin/tours", label: "Tours", icon: Map, desc: "Catalogue and pricing", perm: "tours.manage" },
       { to: "/admin/custom-builder", label: "Custom builder", icon: Sparkles, desc: "Build-your-own options", perm: "tours.manage" },
       { to: "/admin/discounts", label: "Discounts", icon: Tag, desc: "Promo codes", perm: "discounts.manage" },
+      { to: "/admin/promotions", label: "Promotions", icon: Megaphone, desc: "Banners and campaigns", perm: "settings.manage" },
     ],
   },
   {

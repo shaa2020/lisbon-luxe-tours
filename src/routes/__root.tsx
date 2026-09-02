@@ -10,6 +10,7 @@ import {
 import { AuthProvider } from "@/lib/auth";
 import { Toaster } from "@/components/ui/sonner";
 import { ExitPopup } from "@/components/site/ExitPopup";
+import { PromoSlot } from "@/components/promo/PromoSlot";
 import { gtmHeadScript, GtmNoScript, GtmPageViews, gtagSrc, gtagInitScript } from "@/components/analytics/Gtm";
 
 import appCss from "../styles.css?url";
@@ -191,6 +192,7 @@ function RootComponent() {
         <GtmPageViews />
         <Outlet />
         <ExitPopup />
+        <PromoSlot placement="overlay" />
         <Toaster />
       </AuthProvider>
     </QueryClientProvider>

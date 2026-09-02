@@ -6,6 +6,7 @@ import { MediaImage } from "@/components/site/MediaImage";
 import { Footer } from "@/components/site/Footer";
 import { WhatsappFab } from "@/components/site/Whatsapp";
 import { TourBookingPanel } from "@/components/site/TourBookingPanel";
+import { PromoSlot } from "@/components/promo/PromoSlot";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { ReviewsSection } from "@/components/site/ReviewsSection";
 import { StarRating } from "@/components/site/StarRating";
@@ -138,6 +139,7 @@ function TourPage() {
       <a id="top" />
       <TourViewTracker tour={tour} value={pricing.current} />
       <Nav overlay />
+      <PromoSlot placement="tour_page" tourSlug={tour.slug} />
 
       {/* Hero */}
       <section className="relative h-[70vh] min-h-[480px] overflow-hidden bg-ink">
