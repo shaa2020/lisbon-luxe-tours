@@ -100,7 +100,7 @@ export function useAdminBadges() {
           .eq("status", "new"),
         supabase
           .from("reviews")
-          .select("*", { count: "exact", head: true })
+          .select("id", { count: "exact", head: true })
           .eq("status", "pending"),
       ]);
       return {
