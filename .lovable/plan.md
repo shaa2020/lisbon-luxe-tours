@@ -10,6 +10,14 @@ A prioritized set of admin improvements focused on saving you time and automatin
 - **Abandoned-checkout nudge** — someone starts booking but never pays → automatic polite WhatsApp-style email after a few hours with a link to finish.
 - **Smart assignment hints** — on the Ops day sheet, suggest driver/vehicle per job based on capacity and who's already assigned that day.
 
+## 1b. Automatic lead generation
+
+- **Every enquiry becomes a lead automatically** — contact form, WhatsApp clicks, booking-starts, exit-popup code copies, and custom-tour builds all create a row in the existing `leads` table with the source tagged. You never lose a potential customer.
+- **Abandoned bookings → leads** — someone picks a date/tour but never pays → saved as a lead with tour + date details, then the auto-nudge email goes out.
+- **Leads inbox in admin** — the existing `/admin/leads` page upgraded: status pipeline (New → Contacted → Quoted → Won/Lost), one-click "Convert to booking", and quick WhatsApp reply buttons.
+- **Auto follow-up sequence** — lead with no reply after 24h gets a gentle follow-up email/WhatsApp template suggestion; you approve with one click.
+- **Lead source report** — see which channels (Google, WhatsApp, exit popup, custom builder) actually bring customers, so you know where to spend.
+
 ## 2. Dashboard upgrades (see the business at a glance)
 
 - **Revenue trends** — this week/month vs last, with a small chart and % change.
