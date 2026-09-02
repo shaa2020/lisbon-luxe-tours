@@ -64,7 +64,7 @@ export const Route = createFileRoute("/")({
       return [
         { rel: "canonical", href: "https://tuktuk24lisbon.com/" },
         ...(heroImage
-          ? [{ rel: "preload", as: "image", href: heroImage, fetchpriority: "high" }]
+          ? [{ rel: "preload", as: "image", href: heroImage, fetchPriority: "high" }]
           : []),
       ];
     })(),
