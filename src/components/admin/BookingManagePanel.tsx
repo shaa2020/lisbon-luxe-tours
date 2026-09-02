@@ -251,6 +251,55 @@ export function BookingManagePanel({ booking }: { booking: Booking }) {
         ))}
       </div>
 
+      {totalCents > 0 && booking.payment_status !== "paid" && booking.status !== "cancelled" && (
+        <div className="mt-4 rounded-lg border border-border bg-muted/40 p-3.5">
+          <p className="text-xs font-semibold">Ask the customer to pay online now</p>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            Emails a branded payment link (also handy for WhatsApp).
+          </p>
+          <div className="mt-2 flex flex-wrap items-center gap-1.5">
+            {[20, 30, 50, 100].map((p) => (
+              <button
+                key={p}
+                type="button"
+                onClick={() => setReqPct(p)}
+                className={`rounded-full px-2.5 py-1 text-xs font-semibold border ${
+                  reqPct === p
+                    ? "bg-primary text-primary-foreground border-primary"
+                    : "border-border hover:bg-accent"
+                }`}
+              >
+                {p}%
+              </button>
+            ))}
+            <span className="text-xs">
+              <strong>€{(reqCents / 100).toFixed(2)}</strong>
+              <span className="text-muted-foreground"> now · €{((totalCents - reqCents) / 100).toFixed(2)} later</span>
+            </span>
+          </div>
+          <div className="mt-2.5 flex flex-wrap gap-2">
+            <button
+              type="button"
+              disabled={busy}
+              onClick={doRequestPayment}
+              className="inline-flex items-center gap-1.5 rounded-md bg-foreground text-background px-3 py-1.5 text-xs font-semibold disabled:opacity-50"
+            >
+              {busy ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Mail className="w-3.5 h-3.5" />}
+              Email payment request
+            </button>
+            <a
+              href={waHref}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-1.5 text-xs font-semibold hover:bg-accent"
+            >
+              <Send className="w-3.5 h-3.5" /> WhatsApp link
+            </a>
+          </div>
+        </div>
+      )}
+
+
       {tab === "details" && (
         <>
           <div className="grid sm:grid-cols-2 gap-4">
