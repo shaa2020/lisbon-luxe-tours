@@ -38,14 +38,23 @@ A prioritized set of admin improvements focused on saving you time and automatin
 - **Bulk actions** — archive/confirm/email multiple bookings at once.
 - **Export to CSV** — bookings, payments, customers for accounting.
 
+## 5. Admin UI improvements
+
+- **Command-center dashboard** — the home screen becomes your morning cockpit: today's tours timeline, money in/out, and the action-needed strip — you see everything that matters in one screen.
+- **Consistent card & table system** — unify paddings, badges, status colors, and empty states across all admin pages so every screen feels like one polished product.
+- **Mobile-first admin** — bottom tab bar on phones (Dashboard, Bookings, Ops, Leads, More) so you can run the business from your pocket between tours.
+- **Status color language** — one consistent color for each state everywhere (green = paid/confirmed, amber = pending/deposit, red = cancelled/overdue, blue = completed).
+- **Collapsible sidebar with favorites** — pin your 3 most-used pages to the top.
+
 ## Suggested priority
 
 1. Quick booking with 20–100% deposit + emailed payment link
 2. Auto sync + automatic reminder/review emails + daily digest (pure automation)
 3. Automatic lead capture + leads inbox pipeline
 4. Action-needed strip + booking pipeline (fewer clicks every day)
-5. Revenue trends + global search
-6. Bulk actions, CSV export, smart assignment
+5. Admin UI: command-center dashboard + mobile tab bar + consistent status colors
+6. Revenue trends + global search
+7. Bulk actions, CSV export, smart assignment
 
 ## Technical notes
 
