@@ -15,7 +15,9 @@ import { HeroSlideshow, useSlideRotation } from "@/components/site/HeroSlideshow
 
 import { trackBookingCtaClick } from "@/lib/analytics";
 import { subscribeToNewsletter } from "@/lib/subscribers.functions";
-import { useSiteBrand, mapSiteBrand, SITE_BRAND_KEY } from "@/lib/brand";
+import { useSiteBrand, mapSiteBrand, SITE_BRAND_KEY, SiteBrandProvider } from "@/lib/brand";
+import { useReviewSummary } from "@/lib/reviews";
+import { StarRating } from "@/components/site/StarRating";
 import { getPublicSiteSettings } from "@/lib/cms.functions";
 
 export const Route = createFileRoute("/")({
@@ -28,7 +30,7 @@ export const Route = createFileRoute("/")({
       }),
       context.queryClient.ensureQueryData(toursQueryOptions),
     ]);
-    return { heroImage: brand.heroSlides?.[0]?.image_url ?? brand.heroImageUrl ?? null };
+    return { brand };
   },
   head: ({ loaderData }) => ({
     meta: [
@@ -52,20 +54,25 @@ export const Route = createFileRoute("/")({
       },
       { property: "og:url", content: "https://tuktuk24lisbon.com/" },
     ],
-    links: [
-      { rel: "canonical", href: "https://tuktuk24lisbon.com/" },
-      ...(loaderData?.heroImage
-        ? [{ rel: "preload", as: "image", href: loaderData.heroImage, fetchpriority: "high" }]
-        : []),
-    ],
-
+    links: (() => {
+      const heroImage =
+        loaderData?.brand?.heroSlides?.[0]?.image_url ?? loaderData?.brand?.heroImageUrl ?? null;
+      return [
+        { rel: "canonical", href: "https://tuktuk24lisbon.com/" },
+        ...(heroImage
+          ? [{ rel: "preload", as: "image", href: heroImage, fetchpriority: "high" }]
+          : []),
+      ];
+    })(),
   }),
   component: Index,
 });
 
 function Index() {
   const [bookingTour, setBookingTour] = useState<Tour | null>(null);
+  const { brand } = Route.useLoaderData();
   return (
+    <SiteBrandProvider brand={brand}>
     <div className="min-h-screen bg-paper text-ink overflow-x-clip">
       <Nav overlay />
       <Hero />
@@ -87,6 +94,7 @@ function Index() {
         onOpenChange={(v) => !v && setBookingTour(null)}
       />
     </div>
+    </SiteBrandProvider>
   );
 }
 
@@ -102,6 +110,7 @@ function Hero() {
   const [activeSlide] = useSlideRotation(usableSlides.length);
   const currentSlide = usableSlides[activeSlide] ?? slides[0];
   const { data: allTours = [] } = useTours();
+  const { data: reviewSummary } = useReviewSummary();
   const prices = allTours.map((t) => tourPricing(t).current).filter((n) => n > 0);
   const fromPrice = prices.length ? Math.min(...prices) : null;
 
@@ -154,6 +163,19 @@ function Hero() {
               WhatsApp us
             </WhatsappInline>
           </div>
+
+          {reviewSummary && reviewSummary.count > 0 && (
+            <Link
+              to="/reviews"
+              className="mt-6 inline-flex items-center gap-2.5 rounded-full border border-white/25 bg-white/10 backdrop-blur px-4 py-2 hover:bg-white/20 transition-colors"
+            >
+              <StarRating value={reviewSummary.average} readOnly size={13} />
+              <span className="text-[12px] text-white font-medium">
+                {reviewSummary.average.toFixed(1)} · {reviewSummary.count} verified review
+                {reviewSummary.count === 1 ? "" : "s"}
+              </span>
+            </Link>
+          )}
 
           <ul className="mt-5 flex flex-wrap justify-center gap-x-5 gap-y-1.5 text-[12px] text-white/80 px-4">
             {[
