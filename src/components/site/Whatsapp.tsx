@@ -3,8 +3,6 @@ import { X } from "lucide-react";
 import { useSiteBrand } from "@/lib/brand";
 import { trackWhatsappClick } from "@/lib/analytics";
 import { PromoSlot } from "@/components/promo/PromoSlot";
-import { OfferBar } from "@/components/site/OfferBar";
-import { PromoBanner } from "@/components/site/PromoBanner";
 
 /** Builds a wa.me link with a context-aware pre-filled message. */
 export function whatsappHref(phone: string, message?: string) {
@@ -113,8 +111,6 @@ export function WhatsappFab() {
       {/* Single fixed bottom stack — promo banner and offer bar never overlap. */}
       <div id="tt24-bottom-stack" className="fixed bottom-0 inset-x-0 z-40 flex flex-col">
         <PromoSlot placement="bottom" />
-        <PromoBanner />
-        <OfferBar />
       </div>
 
       {showPrompt && (
