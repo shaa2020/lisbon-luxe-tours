@@ -9,25 +9,34 @@ import {
 } from "@tanstack/react-router";
 import { AuthProvider } from "@/lib/auth";
 import { Toaster } from "@/components/ui/sonner";
+import { ExitPopup } from "@/components/site/ExitPopup";
 import { gtmHeadScript, GtmNoScript, GtmPageViews, gtagSrc, gtagInitScript } from "@/components/analytics/Gtm";
 
 import appCss from "../styles.css?url";
 
 function NotFoundComponent() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
+    <div className="flex min-h-screen items-center justify-center bg-paper px-4">
       <div className="max-w-md text-center">
-        <h1 className="text-7xl font-bold text-foreground">404</h1>
-        <h2 className="mt-4 text-xl font-semibold text-foreground">Page not found</h2>
-        <p className="mt-2 text-sm text-muted-foreground">
-          The page you're looking for doesn't exist or has been moved.
+        <p className="eyebrow text-gold mb-3">404 — Wrong turn</p>
+        <h1 className="font-display text-4xl md:text-5xl font-bold text-ink leading-tight">
+          Lost in Lisbon?
+        </h1>
+        <p className="mt-4 text-sm text-body leading-relaxed">
+          This page doesn't exist — but the best views in the city are only a short ride away.
         </p>
-        <div className="mt-6">
+        <div className="mt-8 flex flex-col sm:flex-row justify-center gap-3">
+          <Link
+            to="/tours"
+            className="inline-flex items-center justify-center rounded-full bg-gold px-7 py-3.5 text-[12px] font-semibold uppercase tracking-widest text-white transition-colors hover:bg-ink"
+          >
+            See our tours →
+          </Link>
           <Link
             to="/"
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            className="inline-flex items-center justify-center rounded-full border border-border px-7 py-3.5 text-[12px] font-semibold uppercase tracking-widest text-ink transition-colors hover:border-gold"
           >
-            Go home
+            Back home
           </Link>
         </div>
       </div>
@@ -181,6 +190,7 @@ function RootComponent() {
       <AuthProvider>
         <GtmPageViews />
         <Outlet />
+        <ExitPopup />
         <Toaster />
       </AuthProvider>
     </QueryClientProvider>

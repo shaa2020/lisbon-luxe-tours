@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { trackEmailClick, trackPhoneClick, trackWhatsappClick } from "@/lib/analytics";
 
 export function Footer() {
-  const { brandName, business } = useSiteBrand();
+  const { brandName, business, googleReviewUrl } = useSiteBrand();
   const waHref = `https://wa.me/${(business.whatsappPhone || "").replace(/[^\d]/g, "")}`;
   const [email, setEmail] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -125,6 +125,17 @@ export function Footer() {
               </a>
             ))}
           </div>
+          {googleReviewUrl && (
+            <a
+              href={googleReviewUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="mt-4 inline-flex items-center gap-2 rounded-full border border-border bg-cloud px-4 py-2 text-[12px] text-ink hover:border-gold transition-colors"
+            >
+              <span className="text-gold tracking-[0.1em]">★★★★★</span>
+              Review us on Google
+            </a>
+          )}
         </div>
       </div>
 
