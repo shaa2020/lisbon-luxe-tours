@@ -9,7 +9,7 @@ import { BookingModal } from "@/components/site/BookingModal";
 import { TestimonialsSection } from "@/components/site/TestimonialsSection";
 import { TrustStrip } from "@/components/site/TrustStrip";
 import { StickyBookBar } from "@/components/site/StickyBookBar";
-import { useBlogPosts, useTours, tourPricing, toursQueryOptions, type Tour } from "@/lib/cms";
+import { mapPost, tourPricing, toursQueryOptions, type BlogPost, type Tour } from "@/lib/cms";
 import { MediaImage } from "@/components/site/MediaImage";
 import { HeroSlideshow, useSlideRotation } from "@/components/site/HeroSlideshow";
 
@@ -18,21 +18,23 @@ import { subscribeToNewsletter } from "@/lib/subscribers.functions";
 import { useSiteBrand, mapSiteBrand, SITE_BRAND_KEY, SiteBrandProvider } from "@/lib/brand";
 import { useReviewSummary } from "@/lib/reviews";
 import { StarRating } from "@/components/site/StarRating";
-import { getPublicSiteSettings } from "@/lib/cms.functions";
+import { getPublicSiteSettings, getPublishedBlogPosts } from "@/lib/cms.functions";
 
 export const Route = createFileRoute("/")({
   loader: async ({ context }) => {
-    const [brand, tours] = await Promise.all([
+    const [brand, tours, blogPosts] = await Promise.all([
       context.queryClient.ensureQueryData({
         queryKey: SITE_BRAND_KEY,
         staleTime: 5 * 60_000,
         queryFn: async () => mapSiteBrand(await getPublicSiteSettings()),
       }),
       context.queryClient.ensureQueryData(toursQueryOptions),
+      (async (): Promise<BlogPost[]> =>
+        ((await getPublishedBlogPosts()) ?? []).map((r) => mapPost(r as never)))(),
     ]);
     const prices = tours.map((t) => tourPricing(t).current).filter((n) => n > 0);
     const fromPrice = prices.length ? Math.min(...prices) : null;
-    return { brand, fromPrice, tours };
+    return { brand, fromPrice, tours, blogPosts };
   },
   head: ({ loaderData }) => ({
     meta: [
@@ -518,7 +520,7 @@ function PopularCard({ tour, onBook }: { tour: Tour; onBook: () => void }) {
 /* ============================== DESTINATIONS ============================== */
 
 function Destinations() {
-  const { data: tours = [] } = useTours();
+  const { tours } = Route.useLoaderData();
   // Destination imagery is taken from the live tour catalogue so it always
   // reflects what admins uploaded — never a bundled/stale photo.
   const byCategory = (needle: string) =>
@@ -590,7 +592,7 @@ function Destinations() {
 /* ============================== GALLERY ============================== */
 
 function Gallery() {
-  const { data: tours = [] } = useTours();
+  const { tours } = Route.useLoaderData();
   const pool = tours.map((t) => t.image).filter(Boolean);
   const imgs = Array.from({ length: 12 }, (_, i) => (pool.length ? pool[i % pool.length] : null));
   return (
@@ -637,7 +639,7 @@ function Gallery() {
 /* ============================== TRAVEL TIPS + SIGNUP ============================== */
 
 function TravelTipsAndSignup() {
-  const { data: blogPosts = [] } = useBlogPosts();
+  const { blogPosts } = Route.useLoaderData();
   const tips = blogPosts.slice(0, 2);
   return (
     <section className="container-x py-20 md:py-28">
