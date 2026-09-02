@@ -1539,6 +1539,107 @@ export type Database = {
         }
         Relationships: []
       }
+      promotion_events: {
+        Row: {
+          created_at: string
+          id: string
+          kind: string
+          promotion_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          kind: string
+          promotion_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          kind?: string
+          promotion_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "promotion_events_promotion_id_fkey"
+            columns: ["promotion_id"]
+            isOneToOne: false
+            referencedRelation: "promotions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      promotions: {
+        Row: {
+          badge_text: string | null
+          code: string | null
+          created_at: string
+          cta_label: string | null
+          cta_url: string | null
+          design: string
+          dismiss_days: number
+          dismiss_rule: string
+          enabled: boolean
+          ends_at: string | null
+          headline: string
+          id: string
+          image_url: string | null
+          name: string
+          placement: string
+          priority: number
+          starts_at: string | null
+          subtext: string | null
+          target: string
+          target_slug: string | null
+          updated_at: string
+        }
+        Insert: {
+          badge_text?: string | null
+          code?: string | null
+          created_at?: string
+          cta_label?: string | null
+          cta_url?: string | null
+          design?: string
+          dismiss_days?: number
+          dismiss_rule?: string
+          enabled?: boolean
+          ends_at?: string | null
+          headline?: string
+          id?: string
+          image_url?: string | null
+          name: string
+          placement?: string
+          priority?: number
+          starts_at?: string | null
+          subtext?: string | null
+          target?: string
+          target_slug?: string | null
+          updated_at?: string
+        }
+        Update: {
+          badge_text?: string | null
+          code?: string | null
+          created_at?: string
+          cta_label?: string | null
+          cta_url?: string | null
+          design?: string
+          dismiss_days?: number
+          dismiss_rule?: string
+          enabled?: boolean
+          ends_at?: string | null
+          headline?: string
+          id?: string
+          image_url?: string | null
+          name?: string
+          placement?: string
+          priority?: number
+          starts_at?: string | null
+          subtext?: string | null
+          target?: string
+          target_slug?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       reviews: {
         Row: {
           author_email: string | null
