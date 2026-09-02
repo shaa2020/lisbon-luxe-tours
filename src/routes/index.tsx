@@ -32,7 +32,7 @@ export const Route = createFileRoute("/")({
     ]);
     const prices = tours.map((t) => tourPricing(t).current).filter((n) => n > 0);
     const fromPrice = prices.length ? Math.min(...prices) : null;
-    return { brand, fromPrice };
+    return { brand, fromPrice, tours };
   },
   head: ({ loaderData }) => ({
     meta: [
@@ -423,7 +423,7 @@ function WhyTravel() {
 /* ============================== POPULAR TOURS ============================== */
 
 function PopularTours({ onBook }: { onBook: (t: Tour) => void }) {
-  const { data: tours = [] } = useTours();
+  const { tours } = Route.useLoaderData();
   const { offerBar } = useSiteBrand();
 
   return (
