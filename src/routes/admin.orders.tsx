@@ -109,7 +109,7 @@ function OrdersPage() {
     isFetching,
   } = useQuery({
     queryKey: ["admin-orders"],
-    queryFn: () => listOrders({ data: {} } as any),
+    queryFn: () => listOrders({} as any),
     refetchInterval: 30000,
   });
 
@@ -566,7 +566,6 @@ function OrdersPage() {
                   {o.booking_id && (
                     <Link
                       to="/admin/bookings"
-                      search={{ q: o.booking_id } as any}
                       className="inline-flex items-center gap-1.5 rounded-md border border-border bg-card px-3 py-2 text-sm font-medium hover:border-primary"
                     >
                       <ExternalLink className="w-4 h-4" />
