@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { useAuth } from "@/lib/auth";
 import { useSiteBrand } from "@/lib/brand";
 import { useAdminBadges } from "@/lib/admin-stats";
+import { useAdminPromotions, isPromotionLive } from "@/lib/promotions";
 import {
   LayoutDashboard,
   Map,
@@ -118,7 +119,9 @@ function Badge({ n, small = false }: { n: number; small?: boolean }) {
 
 export function AdminShell({ children, requires }: { children: ReactNode; requires?: Permission }) {
   const { user, isAdmin, role, can, loading, signOut } = useAuth();
-  const { brandName, logoUrl, business, promoBanner } = useSiteBrand();
+  const { brandName, logoUrl, business } = useSiteBrand();
+  const { data: allPromotions } = useAdminPromotions();
+  const livePromotions = (allPromotions ?? []).filter((p) => isPromotionLive(p));
   const navigate = useNavigate();
   const { location } = useRouterState();
   const { data: badges } = useAdminBadges();
