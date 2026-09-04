@@ -236,12 +236,12 @@ export function AdminShell({ children, requires }: { children: ReactNode; requir
       </nav>
 
       <div className="p-3 space-y-3">
-        {promoBanner.enabled && (
+        {livePromotions.length > 0 && (
           <div className="rounded-xl border border-primary/30 bg-primary/5 px-3 py-2">
             <p className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-primary">
-              <Megaphone className="w-3 h-3" /> Promo live
+              <Megaphone className="w-3 h-3" /> {livePromotions.length} promo live
             </p>
-            <p className="mt-0.5 text-[11px] text-muted-foreground line-clamp-2">{promoBanner.headline}</p>
+            <p className="mt-0.5 text-[11px] text-muted-foreground line-clamp-2">{livePromotions[0].headline}</p>
           </div>
         )}
         <div className="rounded-2xl border border-border bg-muted/40 p-3">
