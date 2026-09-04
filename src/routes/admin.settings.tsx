@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { DEFAULT_GROUP_TIERS, parseGroupTiers, type GroupTier } from "@/lib/pricing";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
