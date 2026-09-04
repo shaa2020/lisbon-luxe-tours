@@ -582,5 +582,5 @@ export const PROMO_COMPONENTS: Record<string, (v: PromoViewProps) => ReactNode> 
 
 export function PromoView(props: PromoViewProps) {
   const Comp = PROMO_COMPONENTS[props.p.design] ?? ClassicGold;
-  return <>{Comp(props)}</>;
+  return <Comp {...props} />;
 }
