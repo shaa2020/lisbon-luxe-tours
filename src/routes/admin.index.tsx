@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Map, BookOpen, CalendarCheck, Mail, CreditCard, Star, Euro, Users, TrendingUp, Megaphone } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { AdminShell, AdminCard } from "@/components/admin/AdminShell";
-import { useSiteBrand, isPromoBannerLive } from "@/lib/brand";
+import { useAdminPromotions, isPromotionLive } from "@/lib/promotions";
 import { useAuth } from "@/lib/auth";
 import { useRevenueStats, useUpcomingThisWeek, useAdminBadges } from "@/lib/admin-stats";
 
@@ -220,28 +220,28 @@ function AdminDashboard() {
           <AdminCard className="p-5 space-y-3">
             <div className="flex items-center gap-2">
               <Megaphone className="w-4 h-4 text-primary" />
-              <p className="text-sm font-semibold text-foreground">Promotional banner</p>
+              <p className="text-sm font-semibold text-foreground">Promotions</p>
             </div>
             {promoLive ? (
               <>
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 text-emerald-700 border border-emerald-500/30 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider">
-                  Live on the site
+                  {livePromotions.length} live on the site
                 </span>
-                <p className="text-sm text-foreground leading-snug">{promoBanner.headline}</p>
-                {promoBanner.code && (
-                  <p className="font-mono text-[11px] tracking-[0.2em] text-muted-foreground">{promoBanner.code}</p>
+                <p className="text-sm text-foreground leading-snug">{livePromotions[0].headline}</p>
+                {livePromotions[0].code && (
+                  <p className="font-mono text-[11px] tracking-[0.2em] text-muted-foreground">{livePromotions[0].code}</p>
                 )}
               </>
             ) : (
               <p className="text-xs text-muted-foreground">
-                No campaign running. Add a headline, promo code and button to show a banner across the site.
+                No campaign running. Create a banner and choose where it appears on the site.
               </p>
             )}
             <Link
-              to="/admin/settings"
+              to="/admin/promotions"
               className="inline-flex rounded-md bg-primary px-3.5 py-2 text-xs font-semibold text-primary-foreground"
             >
-              {promoLive ? "Edit banner" : "Create banner"}
+              {promoLive ? "Manage promotions" : "Create promotion"}
             </Link>
           </AdminCard>
           )}
