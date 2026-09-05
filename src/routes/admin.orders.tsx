@@ -604,7 +604,8 @@ function OrdersPage() {
                       WhatsApp
                     </a>
                   )}
-                  {canRefund && o.payment_status === "paid" && (
+                  {canRefund &&
+                    (o.payment_status === "paid" || o.payment_status === "partially_refunded") && (
                     <button
                       onClick={() => handleRefund(o)}
                       disabled={isBusy}
