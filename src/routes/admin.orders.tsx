@@ -45,7 +45,14 @@ export const Route = createFileRoute("/admin/orders")({
   component: OrdersPage,
 });
 
-const STATUSES = ["paid", "pending", "failed", "refunded", "rescheduled"] as const;
+const STATUSES = [
+  "paid",
+  "pending",
+  "failed",
+  "partially_refunded",
+  "refunded",
+  "rescheduled",
+] as const;
 const PROVIDERS = ["paypal", "mollie", "stripe", "manual"] as const;
 const RANGES = [
   { key: "all", label: "All time", days: 0 },
