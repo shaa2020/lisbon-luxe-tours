@@ -69,6 +69,7 @@ function statusBadge(s: string) {
     pending: "bg-amber-500/10 text-amber-700 border-amber-500/30",
     failed: "bg-red-500/10 text-red-700 border-red-500/30",
     refunded: "bg-slate-500/10 text-slate-700 border-slate-500/30",
+    partially_refunded: "bg-orange-500/10 text-orange-700 border-orange-500/30",
     rescheduled: "bg-sky-500/10 text-sky-700 border-sky-500/30",
   };
   return map[s] || map.pending;
