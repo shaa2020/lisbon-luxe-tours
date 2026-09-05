@@ -269,7 +269,16 @@ export const adminSetOrderStatus = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) =>
     orderIdSchema
-      .extend({ status: z.enum(["paid", "pending", "failed", "refunded", "rescheduled"]) })
+      .extend({
+        status: z.enum([
+          "paid",
+          "pending",
+          "failed",
+          "partially_refunded",
+          "refunded",
+          "rescheduled",
+        ]),
+      })
       .parse(d),
   )
   .handler(async ({ data, context }) => {
