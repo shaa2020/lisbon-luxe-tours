@@ -52,9 +52,10 @@ function AdminDashboard() {
   const revenue = useRevenueStats();
   const upcoming = useUpcomingThisWeek();
   const badges = useAdminBadges();
-  const { promoBanner } = useSiteBrand();
   const { can } = useAuth();
-  const promoLive = isPromoBannerLive(promoBanner);
+  const { data: allPromotions } = useAdminPromotions();
+  const livePromotions = (allPromotions ?? []).filter((p) => isPromotionLive(p));
+  const promoLive = livePromotions.length > 0;
 
   const fmtEur = (v: number | undefined) =>
     v == null ? "—" : `€${v.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
