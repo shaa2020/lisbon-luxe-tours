@@ -67,9 +67,11 @@ export const adminListOrders = createServerFn({ method: "POST" })
         .in("id", bookingIds);
 
       // Paid orders per booking = how much has actually been collected.
+      // Partially refunded orders were still collected, so they keep counting.
       const paidByBooking = new Map<string, number>();
       for (const o of orders ?? []) {
-        if (!o.booking_id || o.payment_status !== "paid") continue;
+        if (!o.booking_id) continue;
+        if (o.payment_status !== "paid" && o.payment_status !== "partially_refunded") continue;
         paidByBooking.set(
           o.booking_id,
           (paidByBooking.get(o.booking_id) ?? 0) + Number(o.amount_total || 0),
