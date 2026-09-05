@@ -45,7 +45,14 @@ export const Route = createFileRoute("/admin/orders")({
   component: OrdersPage,
 });
 
-const STATUSES = ["paid", "pending", "failed", "refunded", "rescheduled"] as const;
+const STATUSES = [
+  "paid",
+  "pending",
+  "failed",
+  "partially_refunded",
+  "refunded",
+  "rescheduled",
+] as const;
 const PROVIDERS = ["paypal", "mollie", "stripe", "manual"] as const;
 const RANGES = [
   { key: "all", label: "All time", days: 0 },
@@ -62,6 +69,7 @@ function statusBadge(s: string) {
     pending: "bg-amber-500/10 text-amber-700 border-amber-500/30",
     failed: "bg-red-500/10 text-red-700 border-red-500/30",
     refunded: "bg-slate-500/10 text-slate-700 border-slate-500/30",
+    partially_refunded: "bg-orange-500/10 text-orange-700 border-orange-500/30",
     rescheduled: "bg-sky-500/10 text-sky-700 border-sky-500/30",
   };
   return map[s] || map.pending;
@@ -256,17 +264,30 @@ function OrdersPage() {
   const visible = filtered.slice(current * PAGE_SIZE, current * PAGE_SIZE + PAGE_SIZE);
 
   const stats = useMemo(() => {
-    const paid = orders.filter((o) => o.payment_status === "paid");
-    const revenue = paid.reduce((s, o) => s + o.amount_total, 0);
+    const paid = orders.filter(
+      (o) => o.payment_status === "paid" || o.payment_status === "partially_refunded",
+    );
+    const grossRevenue = paid.reduce((s, o) => s + o.amount_total, 0);
     const monthStart = new Date();
     monthStart.setDate(1);
     monthStart.setHours(0, 0, 0, 0);
     const thisMonth = paid
       .filter((o) => new Date(o.created_at) >= monthStart)
       .reduce((s, o) => s + o.amount_total, 0);
-    const refunded = orders
-      .filter((o) => o.payment_status === "refunded")
-      .reduce((s, o) => s + (o.booking?.refund_cents || o.amount_total), 0);
+    // Refunds live on the booking, so count each booking once; standalone
+    // refunded orders (no booking) count their own amount.
+    const refundedByBooking = new Map<string, number>();
+    let refundedStandalone = 0;
+    for (const o of orders) {
+      if (o.booking) {
+        if (o.booking.refund_cents > 0) refundedByBooking.set(o.booking.id, o.booking.refund_cents);
+      } else if (o.payment_status === "refunded") {
+        refundedStandalone += o.amount_total;
+      }
+    }
+    const refunded =
+      Array.from(refundedByBooking.values()).reduce((s, v) => s + v, 0) + refundedStandalone;
+    const revenue = Math.max(0, grossRevenue - refunded);
     const outstanding = Array.from(
       new Map(
         orders.filter((o) => o.booking).map((o) => [o.booking!.id, o.booking!.dueCents]),
@@ -583,7 +604,8 @@ function OrdersPage() {
                       WhatsApp
                     </a>
                   )}
-                  {canRefund && o.payment_status === "paid" && (
+                  {canRefund &&
+                    (o.payment_status === "paid" || o.payment_status === "partially_refunded") && (
                     <button
                       onClick={() => handleRefund(o)}
                       disabled={isBusy}

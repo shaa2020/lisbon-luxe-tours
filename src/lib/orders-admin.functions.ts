@@ -67,9 +67,11 @@ export const adminListOrders = createServerFn({ method: "POST" })
         .in("id", bookingIds);
 
       // Paid orders per booking = how much has actually been collected.
+      // Partially refunded orders were still collected, so they keep counting.
       const paidByBooking = new Map<string, number>();
       for (const o of orders ?? []) {
-        if (!o.booking_id || o.payment_status !== "paid") continue;
+        if (!o.booking_id) continue;
+        if (o.payment_status !== "paid" && o.payment_status !== "partially_refunded") continue;
         paidByBooking.set(
           o.booking_id,
           (paidByBooking.get(o.booking_id) ?? 0) + Number(o.amount_total || 0),
@@ -211,23 +213,35 @@ export const adminRefundOrder = createServerFn({ method: "POST" })
     if (data.refundCents > Number(order.amount_total || 0))
       throw new Error("Refund cannot exceed the amount paid on this order");
 
+    const orderAmount = Number(order.amount_total || 0);
+    const isFullOrderRefund = data.refundCents >= orderAmount;
+
     const { error: orderErr } = await supabaseAdmin
       .from("orders")
-      .update({ payment_status: "refunded" })
+      .update({ payment_status: isFullOrderRefund ? "refunded" : "partially_refunded" })
       .eq("id", data.orderId);
     if (orderErr) throw new Error(orderErr.message);
 
     if (order.booking_id) {
       const { data: current } = await supabaseAdmin
         .from("bookings")
-        .select("refund_cents")
+        .select("refund_cents,amount_total,total_estimate")
         .eq("id", order.booking_id)
         .maybeSingle();
       const total = Number(current?.refund_cents || 0) + data.refundCents;
+      const bookingTotal =
+        current?.amount_total != null
+          ? Number(current.amount_total)
+          : current?.total_estimate != null
+            ? Math.round(Number(current.total_estimate) * 100)
+            : orderAmount;
 
       const { data: booking, error } = await supabaseAdmin
         .from("bookings")
-        .update({ refund_cents: total, payment_status: "refunded" })
+        .update({
+          refund_cents: total,
+          payment_status: total >= bookingTotal && bookingTotal > 0 ? "refunded" : "partially_refunded",
+        })
         .eq("id", order.booking_id)
         .select(BOOKING_SELECT)
         .single();
@@ -255,7 +269,16 @@ export const adminSetOrderStatus = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) =>
     orderIdSchema
-      .extend({ status: z.enum(["paid", "pending", "failed", "refunded", "rescheduled"]) })
+      .extend({
+        status: z.enum([
+          "paid",
+          "pending",
+          "failed",
+          "partially_refunded",
+          "refunded",
+          "rescheduled",
+        ]),
+      })
       .parse(d),
   )
   .handler(async ({ data, context }) => {
