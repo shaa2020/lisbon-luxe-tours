@@ -35,8 +35,18 @@ export function MediaImage({
 }: MediaImageProps) {
   const [loadedSrc, setLoadedSrc] = useState<string | null>(null);
   const [failedSrc, setFailedSrc] = useState<string | null>(null);
+  const imgRef = useRef<HTMLImageElement | null>(null);
   const loaded = Boolean(src && loadedSrc === src);
   const failed = Boolean(src && failedSrc === src);
+
+  // SSR/cached images can finish loading before React attaches onLoad,
+  // which would leave the image invisible forever. Detect that on mount.
+  useEffect(() => {
+    const img = imgRef.current;
+    if (img && src && img.complete && img.naturalWidth > 0) {
+      setLoadedSrc(src);
+    }
+  }, [src]);
 
   const showSkeleton = !src || failed || !loaded;
 
