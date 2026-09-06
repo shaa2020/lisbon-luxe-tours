@@ -63,6 +63,7 @@ export function MediaImage({
       {src && !failed && (
         <img
           key={src}
+          ref={imgRef}
           src={src}
           alt={alt}
           loading={loading}
