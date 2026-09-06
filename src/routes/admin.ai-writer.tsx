@@ -458,7 +458,7 @@ function KnowledgeTab() {
             <p className="text-sm text-muted-foreground">No facts yet. Add a few so the writer knows your business.</p>
           </div>
         ) : (
-          data.map((k) => (
+          data.map((k: { id: string; label: string; category: string; content: string }) => (
             <div key={k.id} className="rounded-xl border border-border bg-card p-4">
               <div className="flex items-start justify-between gap-3">
                 <div>
@@ -514,7 +514,7 @@ function HistoryTab() {
           </tr>
         </thead>
         <tbody>
-          {data.entries.map((e) => (
+          {data.entries.map((e: { id: string; topic: string; primary_keyword: string | null; word_count: number | null; post_id: string | null; created_at: string }) => (
             <tr key={e.id} className="border-t border-border">
               <td className="p-3 text-foreground">{e.topic}</td>
               <td className="p-3 hidden sm:table-cell text-muted-foreground">{e.primary_keyword ?? "—"}</td>
