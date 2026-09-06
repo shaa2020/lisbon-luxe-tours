@@ -20,6 +20,7 @@ import {
   HelpCircle,
   Settings,
   Compass,
+  MapPin,
   Gauge,
   Megaphone,
   Tag,
