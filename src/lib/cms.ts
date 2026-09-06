@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { tourImage, blogImage } from "./fallback-images";
 import { versionedUrl } from "./media";
-import { mapTourOption, sortOptions, type TourOption, type TourOptionRow } from "./tour-options";
+import { mapTourOption, optionPrice, sortOptions, type TourOption, type TourOptionRow } from "./tour-options";
 import {
   getPublishedBlogPostBySlug,
   getPublishedBlogPosts,
@@ -222,7 +222,22 @@ export const tourCategories = [
   { slug: "custom", title: "Custom Tours" },
 ];
 
-export function tourPricing(tour: Pick<Tour, "priceFrom" | "salePrice">) {
+export function tourPricing(tour: Pick<Tour, "priceFrom" | "salePrice"> & { options?: TourOption[] }) {
+  // Multi-duration tours advertise the cheapest active option as their "from" price.
+  const opts = (tour.options ?? []).filter((o) => o.isActive);
+  if (opts.length > 0) {
+    const cheapest = opts.reduce((a, b) => (optionPrice(b) < optionPrice(a) ? b : a));
+    const original = cheapest.price;
+    const sale = cheapest.salePrice;
+    const current = sale ?? original;
+    return {
+      original,
+      sale,
+      current,
+      onSale: sale !== null,
+      discountPct: sale ? Math.round(((original - sale) / original) * 100) : 0,
+    };
+  }
   const original = tour.priceFrom;
   const sale =
     typeof tour.salePrice === "number" && tour.salePrice > 0 && tour.salePrice < original
