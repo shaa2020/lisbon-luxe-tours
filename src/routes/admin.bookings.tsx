@@ -51,6 +51,7 @@ type Booking = {
   email: string;
   phone: string | null;
   travel_date: string | null;
+  option_duration_label?: string | null;
   guests: number;
   notes: string | null;
   total_estimate: number | null;
@@ -533,6 +534,7 @@ function BookingsInbox() {
                 <p className="flex items-center gap-2">
                   <Users className="w-4 h-4 text-muted-foreground" />
                   {b.guests} guest{b.guests === 1 ? "" : "s"}
+                  {b.option_duration_label ? ` · ${b.option_duration_label}` : ""}
                 </p>
               </div>
 
