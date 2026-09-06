@@ -125,8 +125,8 @@ export function TourOptionsManager({ tourId }: { tourId: string }) {
     for (let i = 0; i < rows.length; i++) {
       const r = rows[i];
       const res = r.id.startsWith("new-")
-        ? await supabase.from("tour_options").insert(payloads[i]).select("id").single()
-        : await supabase.from("tour_options").update(payloads[i]).eq("id", r.id).select("id").single();
+        ? await supabase.from("tour_options").insert(payloads[i] as never).select("id").single()
+        : await supabase.from("tour_options").update(payloads[i] as never).eq("id", r.id).select("id").single();
       if (res.error) {
         setSaving(false);
         return toast.error(res.error.message);
