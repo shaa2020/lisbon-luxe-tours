@@ -67,11 +67,38 @@ export const requestBooking = createServerFn({ method: "POST" })
         guests: z.number().int().min(2).max(20),
         notes: z.string().max(2000).optional().nullable(),
         amount: z.number().int().min(0).max(500000),
+        tour_option_id: z.string().uuid().optional().nullable(),
       })
       .parse(data),
   )
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    // Snapshot the chosen duration option so the request keeps its own prices.
+    type OptionRow = {
+      id: string;
+      duration_label: string | null;
+      duration_minutes: number | null;
+      price: number | string | null;
+      sale_price: number | string | null;
+      badge: string | null;
+      is_active: boolean | null;
+    };
+    let option: OptionRow | null = null;
+    if (data.tour_option_id) {
+      const { data: row } = await supabaseAdmin
+        .from("tour_options")
+        .select("id, duration_label, duration_minutes, price, sale_price, badge, is_active")
+        .eq("id", data.tour_option_id)
+        .maybeSingle();
+      option = (row as unknown as OptionRow | null) ?? null;
+      if (!option || option.is_active === false) {
+        throw new Error("That duration option is no longer available. Please choose another.");
+      }
+    }
+    const optBase = option ? Math.max(0, Number(option.price) || 0) : 0;
+    const optSaleRaw = option?.sale_price == null ? null : Number(option.sale_price);
+    const optSale = optSaleRaw != null && optSaleRaw > 0 && optSaleRaw < optBase ? optSaleRaw : null;
 
     const { data: booking, error } = await supabaseAdmin
       .from("bookings")
@@ -84,9 +111,17 @@ export const requestBooking = createServerFn({ method: "POST" })
         travel_date: data.travel_date || null,
         travel_time: data.time || null,
         guests: data.guests,
+        tour_option_id: option?.id ?? null,
+        option_label: option && option.badge && option.badge !== "none" ? option.badge : null,
+        option_duration_label: option?.duration_label || null,
+        option_duration_minutes: option ? Math.max(1, Math.round(Number(option.duration_minutes) || 60)) : null,
+        option_base_price_cents: option ? Math.round(optBase * 100) : null,
+        option_sale_price_cents: optSale == null ? null : Math.round(optSale * 100),
+        option_price_cents: option ? Math.round((optSale ?? optBase) * 100) : null,
         notes: [
           "Reserve now, pay later request (24h hold).",
           data.time ? `Preferred time: ${data.time}` : null,
+          option?.duration_label ? `Duration: ${option.duration_label}` : null,
           data.notes,
         ]
           .filter(Boolean)

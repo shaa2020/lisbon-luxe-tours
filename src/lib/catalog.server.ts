@@ -106,16 +106,67 @@ export async function assertSlotAvailable(
  * checkout always re-prices from the tour row, the group discount tiers and the
  * hotel pickup fee stored in the database.
  */
+export type TourOptionSnapshot = {
+  id: string;
+  label: string;
+  durationLabel: string;
+  durationMinutes: number;
+  basePriceCents: number;
+  salePriceCents: number | null;
+  pricePerPersonCents: number;
+};
+
 export async function quoteTourCents(
   supabase: SupabaseClient<Database>,
-  input: { slug: string; guests: number; pickupRequested: boolean },
-): Promise<{ totalCents: number; perPersonCents: number; pickupFeeCents: number; guests: number } | null> {
+  input: { slug: string; guests: number; pickupRequested: boolean; optionId?: string | null },
+): Promise<{
+  totalCents: number;
+  perPersonCents: number;
+  pickupFeeCents: number;
+  guests: number;
+  option: TourOptionSnapshot | null;
+} | null> {
   const { data: tour } = await supabase
     .from("tours")
-    .select("price_from, sale_price, per_person_pricing")
+    .select("id, price_from, sale_price, per_person_pricing")
     .eq("slug", input.slug)
     .maybeSingle();
   if (!tour) return null;
+
+  // A selected duration option replaces the tour's own per-person price.
+  let option: TourOptionSnapshot | null = null;
+  if (input.optionId) {
+    const { data: opt } = await supabase
+      .from("tour_options")
+      .select("id, duration_label, duration_minutes, price, sale_price, badge, is_active, tour_id")
+      .eq("id", input.optionId)
+      .maybeSingle();
+    const row = opt as never as {
+      id: string;
+      duration_label: string | null;
+      duration_minutes: number | null;
+      price: number | string | null;
+      sale_price: number | string | null;
+      badge: string | null;
+      is_active: boolean | null;
+      tour_id: string;
+    } | null;
+    if (!row || row.is_active === false || row.tour_id !== (tour as { id: string }).id) {
+      throw new Error("That duration option is no longer available. Please choose another.");
+    }
+    const base = Math.max(0, Number(row.price) || 0);
+    const saleRaw = row.sale_price == null ? null : Number(row.sale_price);
+    const sale = saleRaw != null && saleRaw > 0 && saleRaw < base ? saleRaw : null;
+    option = {
+      id: row.id,
+      label: row.badge && row.badge !== "none" ? row.badge : "",
+      durationLabel: (row.duration_label || "").trim(),
+      durationMinutes: Math.max(1, Math.round(Number(row.duration_minutes) || 60)),
+      basePriceCents: Math.round(base * 100),
+      salePriceCents: sale == null ? null : Math.round(sale * 100),
+      pricePerPersonCents: Math.round((sale ?? base) * 100),
+    };
+  }
 
   const { data: settings } = await supabase
     .from("site_settings")
@@ -124,7 +175,9 @@ export async function quoteTourCents(
     .maybeSingle();
 
   const pickupFeeCents = Math.max(0, Number((settings as never as { hotel_pickup_fee_cents?: number })?.hotel_pickup_fee_cents ?? 0));
-  const perPersonEuros = Number(tour.sale_price ?? tour.price_from) || 0;
+  const perPersonEuros = option
+    ? option.pricePerPersonCents / 100
+    : Number(tour.sale_price ?? tour.price_from) || 0;
   if (perPersonEuros <= 0) return null;
 
   const q = quote({
@@ -142,5 +195,6 @@ export async function quoteTourCents(
     perPersonCents: Math.round(q.effectivePerPerson * 100),
     pickupFeeCents: Math.round(q.pickup * 100),
     guests: q.guests,
+    option,
   };
 }

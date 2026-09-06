@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { TourOptionsManager } from "@/components/admin/TourOptionsManager";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { AiTourBuilder } from "@/components/admin/AiTourBuilder";
 import type { AiTourDraft } from "@/lib/ai-tour.functions";
@@ -433,6 +434,8 @@ function TourEditPage() {
               />
             </Field>
           </div>
+
+          {!isNew && <TourOptionsManager tourId={id} />}
         </div>
 
         <aside className="space-y-5">

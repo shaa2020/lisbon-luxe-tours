@@ -22,6 +22,8 @@ const checkoutInput = z.object({
   pickup: z.boolean().optional().nullable(),
   /** Optional promo code — always re-validated and re-priced on the server. */
   discount_code: z.string().trim().max(40).optional().nullable(),
+  /** Selected duration option (multi-duration tours only). */
+  tour_option_id: z.string().uuid().optional().nullable(),
 });
 
 
@@ -40,7 +42,9 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
       slug: data.tour_slug,
       guests: data.guests,
       pickupRequested: data.pickup === true,
+      optionId: data.tour_option_id ?? null,
     });
+    const chosenOption = serverQuote?.option ?? null;
     const amountCents = serverQuote?.totalCents ?? data.amount;
     const guestCount = serverQuote?.guests ?? data.guests;
 
@@ -89,8 +93,18 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
         travel_date: data.travel_date || null,
         travel_time: data.time || null,
         guests: guestCount,
+        // Permanent snapshot of the chosen duration option — later admin price
+        // changes must never alter this booking.
+        tour_option_id: chosenOption?.id ?? null,
+        option_label: chosenOption?.label || null,
+        option_duration_label: chosenOption?.durationLabel || null,
+        option_duration_minutes: chosenOption?.durationMinutes ?? null,
+        option_base_price_cents: chosenOption?.basePriceCents ?? null,
+        option_sale_price_cents: chosenOption?.salePriceCents ?? null,
+        option_price_cents: chosenOption?.pricePerPersonCents ?? null,
         notes: [
           data.time ? `Preferred time: ${data.time}` : null,
+          chosenOption?.durationLabel ? `Duration: ${chosenOption.durationLabel}` : null,
           discountCode ? `Promo code ${discountCode} applied (−€${(discountCents / 100).toFixed(2)})` : null,
           depositNote,
           data.notes,
@@ -124,6 +138,9 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
           { label: "Email", value: data.email },
           { label: "Phone / WhatsApp", value: data.phone || "—" },
           { label: "Date", value: `${data.travel_date || "—"}${data.time ? ` · ${data.time}` : ""}` },
+          ...(chosenOption?.durationLabel
+            ? [{ label: "Duration", value: chosenOption.durationLabel }]
+            : []),
           { label: "Guests", value: String(guestCount) },
           { label: "Total", value: `€${(payableCents / 100).toFixed(2)}` },
         ],

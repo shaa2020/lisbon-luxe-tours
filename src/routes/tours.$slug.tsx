@@ -11,6 +11,8 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import { ReviewsSection } from "@/components/site/ReviewsSection";
 import { StarRating } from "@/components/site/StarRating";
 import { useTour, useTours, tourPricing, mapTour } from "@/lib/cms";
+import { activeOptions, optionPrice, resolveContent } from "@/lib/tour-options";
+import { DurationOptions } from "@/components/site/DurationOptions";
 import { getPublishedTourBySlug } from "@/lib/cms.functions";
 import { aggregateReviews, useTourReviews } from "@/lib/reviews";
 import { useEffect } from "react";
@@ -91,6 +93,7 @@ function TourPage() {
   const { data: reviews = [] } = useTourReviews(slug);
   const reviewStats = aggregateReviews(reviews);
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [optionId, setOptionId] = useState<string | null>(null);
 
   if (isLoading) {
     return (
@@ -132,7 +135,23 @@ function TourPage() {
   }
 
   const related = allTours.filter((t) => t.slug !== tour.slug).slice(0, 3);
-  const pricing = tourPricing(tour);
+  const options = activeOptions(tour.options);
+  const selectedOption = options.find((o) => o.id === optionId) ?? options[0] ?? null;
+  // Option content when it exists, otherwise the main tour content.
+  const highlights = resolveContent(selectedOption?.highlights, tour.highlights);
+  const itinerary = resolveContent(selectedOption?.itinerary, tour.itinerary);
+  const included = resolveContent(selectedOption?.included, tour.included);
+  const notIncluded = resolveContent(selectedOption?.notIncluded, tour.notIncluded);
+  const durationLabel = selectedOption?.durationLabel || tour.duration;
+  const pricing = selectedOption
+    ? {
+        original: selectedOption.price,
+        sale: selectedOption.salePrice,
+        current: optionPrice(selectedOption),
+        onSale: selectedOption.salePrice != null,
+        discountPct: 0,
+      }
+    : tourPricing(tour);
 
   return (
     <div className="min-h-screen bg-paper text-ink overflow-x-clip pb-24 lg:pb-0">
@@ -162,7 +181,7 @@ function TourPage() {
               <span className="text-white">{tour.category}</span>
             </nav>
             <p className="eyebrow text-gold mb-3 animate-[fade-up_0.8s_var(--ease-out-expo)_both]">
-              {tour.category} · {tour.duration}
+              {tour.category} · {durationLabel}
             </p>
             <h1 className="font-display font-bold text-4xl md:text-6xl text-white max-w-3xl leading-[1.05] mb-5 animate-[fade-up_1s_var(--ease-out-expo)_both]">
               {tour.title}
@@ -175,7 +194,7 @@ function TourPage() {
                   : <>New tour · be the first to review</>}
               </span>
               {tour.tagline && <span className="flex items-center gap-1.5">📍 {tour.tagline}</span>}
-              <span className="flex items-center gap-1.5">⏱ {tour.duration}</span>
+              <span className="flex items-center gap-1.5">⏱ {durationLabel}</span>
             </div>
           </div>
         </div>
@@ -188,14 +207,30 @@ function TourPage() {
             <p className="eyebrow text-gold mb-3">Overview</p>
             <h2 className="font-display text-2xl md:text-3xl font-bold text-ink mb-4">About this experience</h2>
             <p className="text-body text-lg leading-relaxed">{tour.description}</p>
+            {selectedOption?.shortDescription && (
+              <p key={selectedOption.id} className="mt-4 text-body leading-relaxed animate-fade-in">
+                <span className="font-medium text-ink">{selectedOption.durationLabel}:</span>{" "}
+                {selectedOption.shortDescription}
+              </p>
+            )}
           </div>
 
-          {tour.highlights.length > 0 && (
+          {options.length > 0 && (
+            <div>
+              <p className="eyebrow text-gold mb-3">Durations</p>
+              <h2 className="font-display text-2xl md:text-3xl font-bold text-ink mb-6">
+                Choose your tour duration
+              </h2>
+              <DurationOptions options={options} selectedId={selectedOption?.id ?? null} onSelect={setOptionId} />
+            </div>
+          )}
+
+          {highlights.length > 0 && (
             <div>
               <p className="eyebrow text-gold mb-3">Highlights</p>
               <h2 className="font-display text-2xl md:text-3xl font-bold text-ink mb-6">What makes it special</h2>
               <div className="grid sm:grid-cols-2 gap-3">
-                {tour.highlights.map((h) => (
+                {highlights.map((h) => (
                   <div key={h} className="flex items-start gap-3 px-5 py-4 bg-cloud/60 rounded-xl border border-border">
                     <span className="shrink-0 w-6 h-6 rounded-full bg-gold/15 text-gold flex items-center justify-center text-[12px] font-bold">✓</span>
                     <span className="text-sm text-ink">{h}</span>
@@ -205,12 +240,12 @@ function TourPage() {
             </div>
           )}
 
-          {tour.itinerary.length > 0 && (
+          {itinerary.length > 0 && (
             <div>
               <p className="eyebrow text-gold mb-3">Itinerary</p>
               <h2 className="font-display text-2xl md:text-3xl font-bold text-ink mb-8">A day, hour by hour</h2>
               <ol className="border-l-2 border-gold/30 space-y-8 pl-8">
-                {tour.itinerary.map((step, i) => (
+                {itinerary.map((step, i) => (
                   <li key={i} className="relative">
                     <span className="absolute -left-[41px] top-1 w-5 h-5 rounded-full bg-gold ring-4 ring-paper" />
                     <p className="text-[11px] font-semibold uppercase tracking-widest text-gold mb-1">{step.time}</p>
@@ -222,12 +257,12 @@ function TourPage() {
             </div>
           )}
 
-          {(tour.included.length > 0 || tour.notIncluded.length > 0) && (
+          {(included.length > 0 || notIncluded.length > 0) && (
             <div className="grid sm:grid-cols-2 gap-8 p-7 bg-cloud/60 rounded-2xl border border-border">
               <div>
                 <p className="eyebrow text-gold mb-4">What's Included</p>
                 <ul className="space-y-3">
-                  {tour.included.map((i) => (
+                  {included.map((i) => (
                     <li key={i} className="flex gap-3 text-sm text-ink">
                       <span className="text-gold font-bold">✓</span> {i}
                     </li>
@@ -237,7 +272,7 @@ function TourPage() {
               <div>
                 <p className="eyebrow text-ink/50 mb-4">Not Included</p>
                 <ul className="space-y-3">
-                  {tour.notIncluded.map((i) => (
+                  {notIncluded.map((i) => (
                     <li key={i} className="flex gap-3 text-sm text-body">
                       <span className="text-ink/30">✕</span> {i}
                     </li>
@@ -264,7 +299,7 @@ function TourPage() {
 
         {/* Sticky booking panel (desktop) */}
         <aside className="hidden lg:block lg:sticky lg:top-28 h-fit">
-          <TourBookingPanel tour={tour} />
+          <TourBookingPanel tour={tour} selectedOption={selectedOption} onSelectOption={setOptionId} />
           <a
             href="https://wa.me/351922024690"
             onClick={() => trackWhatsappClick("tour_detail_concierge")}
@@ -327,7 +362,7 @@ function TourPage() {
             <SheetTitle className="font-display text-xl text-ink">{tour.title}</SheetTitle>
           </SheetHeader>
           <div className="px-5 pb-8">
-            <TourBookingPanel tour={tour} compact />
+            <TourBookingPanel tour={tour} compact selectedOption={selectedOption} onSelectOption={setOptionId} />
           </div>
         </SheetContent>
       </Sheet>

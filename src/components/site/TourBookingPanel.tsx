@@ -20,12 +20,39 @@ import { WhatsappInline } from "@/components/site/Whatsapp";
 import { StarRating } from "@/components/site/StarRating";
 import { useReviewStatsBySlug } from "@/lib/reviews";
 import { quote, MIN_GUESTS, MAX_GUESTS } from "@/lib/pricing";
+import { DurationOptions } from "@/components/site/DurationOptions";
+import { activeOptions, optionPrice, type TourOption } from "@/lib/tour-options";
 
 const TIME_SLOTS = ["09:00", "10:30", "13:00", "15:00", "17:00", "18:30"];
 
-export function TourBookingPanel({ tour }: { tour: Tour; compact?: boolean }) {
+export function TourBookingPanel({
+  tour,
+  selectedOption,
+  onSelectOption,
+}: {
+  tour: Tour;
+  compact?: boolean;
+  /** Selected duration option, for tours that offer several. */
+  selectedOption?: TourOption | null;
+  onSelectOption?: (id: string) => void;
+}) {
   const checkoutFn = useServerFn(createCheckoutSession);
-  const pricing = tourPricing(tour);
+  const options = activeOptions(tour.options);
+  const chosen = selectedOption ?? options[0] ?? null;
+  const basePricing = tourPricing(tour);
+  // A selected duration option overrides the tour's own price and duration.
+  const pricing = chosen
+    ? {
+        original: chosen.price,
+        sale: chosen.salePrice,
+        current: optionPrice(chosen),
+        onSale: chosen.salePrice != null,
+        discountPct: chosen.salePrice != null
+          ? Math.round(((chosen.price - chosen.salePrice) / chosen.price) * 100)
+          : 0,
+      }
+    : basePricing;
+  const durationLabel = chosen?.durationLabel || tour.duration;
   const { hotelPickupFeeCents, groupTiers, groupDiscountEnabled } = useSiteBrand();
   const perPersonPricing = tour.perPersonPricing !== false;
   const minGuests = perPersonPricing ? MIN_GUESTS : 1;
@@ -103,6 +130,7 @@ export function TourBookingPanel({ tour }: { tour: Tour; compact?: boolean }) {
           pickup,
           notes: pickup ? `Hotel pickup & drop-off requested (+EUR ${pickupFee})` : null,
           amount: total * 100,
+          tour_option_id: chosen?.id ?? null,
         },
       });
       setReference(res.reference);
@@ -137,6 +165,7 @@ export function TourBookingPanel({ tour }: { tour: Tour; compact?: boolean }) {
           amount: Math.round(subtotal * 100),
           deposit_pct: depositPct,
           discount_code: promo?.code ?? null,
+          tour_option_id: chosen?.id ?? null,
           image_url: tour.image?.startsWith("http") ? tour.image : null,
 
         },
@@ -202,6 +231,7 @@ export function TourBookingPanel({ tour }: { tour: Tour; compact?: boolean }) {
         amount: Math.round(subtotal * 100),
         deposit_pct: depositPct,
         discount_code: promo?.code ?? null,
+        tour_option_id: chosen?.id ?? null,
         image_url: tour.image?.startsWith("http") ? tour.image : null,
       },
     });
@@ -252,7 +282,7 @@ export function TourBookingPanel({ tour }: { tour: Tour; compact?: boolean }) {
 
       {/* Trust details */}
       <div className="p-6 grid grid-cols-2 gap-y-4 gap-x-2">
-        <Detail icon={<Clock className="w-4 h-4" />} label={tour.duration} />
+        <Detail icon={<Clock className="w-4 h-4" />} label={durationLabel} />
         <Detail icon={<Globe2 className="w-4 h-4" />} label="EN / PT Guide" />
         <Detail
           icon={<ShieldCheck className="w-4 h-4" />}
@@ -281,6 +311,21 @@ export function TourBookingPanel({ tour }: { tour: Tour; compact?: boolean }) {
 
       {/* Controls */}
       <div className="px-6 pb-6 space-y-5">
+        {/* Duration options */}
+        {options.length > 0 && (
+          <div>
+            <label className="text-[10px] uppercase tracking-widest text-body font-bold block mb-2">
+              Choose your tour duration
+            </label>
+            <DurationOptions
+              options={options}
+              selectedId={chosen?.id ?? null}
+              onSelect={(id) => onSelectOption?.(id)}
+              compact
+            />
+          </div>
+        )}
+
         {/* Date */}
         <div>
           <label className="text-[10px] uppercase tracking-widest text-body font-bold block mb-2">Select Date</label>
