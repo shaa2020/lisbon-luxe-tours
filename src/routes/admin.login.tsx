@@ -41,7 +41,13 @@ function AdminLoginPage() {
 
   useEffect(() => {
     if (!loading && user && isAdmin) {
-      navigate({ to: redirect || "/admin" });
+      const target = redirect || "/admin";
+      // Keep query strings (e.g. the app-connection consent link) intact.
+      if (target.startsWith("/") && !target.startsWith("//") && target.includes("?")) {
+        window.location.href = target;
+        return;
+      }
+      navigate({ to: target });
     }
   }, [loading, user, isAdmin, navigate, redirect]);
 

@@ -1,4 +1,5 @@
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
+import { mcpPlugin } from "@lovable.dev/mcp-js/stacks/tanstack/vite";
 import { loadEnv } from "vite";
 
 // Load all env vars (including non-VITE_ server secrets like
@@ -13,4 +14,5 @@ export default defineConfig({
   tanstackStart: {
     server: { entry: "server" },
   },
+  plugins: [mcpPlugin()],
 });
