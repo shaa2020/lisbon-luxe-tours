@@ -266,6 +266,12 @@ export type Database = {
           id: string
           internal_notes: string | null
           notes: string | null
+          option_base_price_cents: number | null
+          option_duration_label: string | null
+          option_duration_minutes: number | null
+          option_label: string | null
+          option_price_cents: number | null
+          option_sale_price_cents: number | null
           payment_request_cents: number | null
           payment_status: string
           phone: string | null
@@ -275,6 +281,7 @@ export type Database = {
           source: string
           status: string
           total_estimate: number | null
+          tour_option_id: string | null
           tour_slug: string | null
           tour_title: string | null
           travel_date: string | null
@@ -294,6 +301,12 @@ export type Database = {
           id?: string
           internal_notes?: string | null
           notes?: string | null
+          option_base_price_cents?: number | null
+          option_duration_label?: string | null
+          option_duration_minutes?: number | null
+          option_label?: string | null
+          option_price_cents?: number | null
+          option_sale_price_cents?: number | null
           payment_request_cents?: number | null
           payment_status?: string
           phone?: string | null
@@ -303,6 +316,7 @@ export type Database = {
           source?: string
           status?: string
           total_estimate?: number | null
+          tour_option_id?: string | null
           tour_slug?: string | null
           tour_title?: string | null
           travel_date?: string | null
@@ -322,6 +336,12 @@ export type Database = {
           id?: string
           internal_notes?: string | null
           notes?: string | null
+          option_base_price_cents?: number | null
+          option_duration_label?: string | null
+          option_duration_minutes?: number | null
+          option_label?: string | null
+          option_price_cents?: number | null
+          option_sale_price_cents?: number | null
           payment_request_cents?: number | null
           payment_status?: string
           phone?: string | null
@@ -331,12 +351,21 @@ export type Database = {
           source?: string
           status?: string
           total_estimate?: number | null
+          tour_option_id?: string | null
           tour_slug?: string | null
           tour_title?: string | null
           travel_date?: string | null
           travel_time?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "bookings_tour_option_id_fkey"
+            columns: ["tour_option_id"]
+            isOneToOne: false
+            referencedRelation: "tour_options"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       contact_messages: {
         Row: {
@@ -1911,6 +1940,77 @@ export type Database = {
           reason?: string
         }
         Relationships: []
+      }
+      tour_options: {
+        Row: {
+          badge: string
+          created_at: string
+          duration_label: string
+          duration_minutes: number
+          highlights: Json
+          id: string
+          included: Json
+          is_active: boolean
+          is_best_value: boolean
+          is_recommended: boolean
+          itinerary: Json
+          not_included: Json
+          price: number
+          sale_price: number | null
+          short_description: string | null
+          sort_order: number
+          tour_id: string
+          updated_at: string
+        }
+        Insert: {
+          badge?: string
+          created_at?: string
+          duration_label?: string
+          duration_minutes?: number
+          highlights?: Json
+          id?: string
+          included?: Json
+          is_active?: boolean
+          is_best_value?: boolean
+          is_recommended?: boolean
+          itinerary?: Json
+          not_included?: Json
+          price?: number
+          sale_price?: number | null
+          short_description?: string | null
+          sort_order?: number
+          tour_id: string
+          updated_at?: string
+        }
+        Update: {
+          badge?: string
+          created_at?: string
+          duration_label?: string
+          duration_minutes?: number
+          highlights?: Json
+          id?: string
+          included?: Json
+          is_active?: boolean
+          is_best_value?: boolean
+          is_recommended?: boolean
+          itinerary?: Json
+          not_included?: Json
+          price?: number
+          sale_price?: number | null
+          short_description?: string | null
+          sort_order?: number
+          tour_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tour_options_tour_id_fkey"
+            columns: ["tour_id"]
+            isOneToOne: false
+            referencedRelation: "tours"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       tours: {
         Row: {

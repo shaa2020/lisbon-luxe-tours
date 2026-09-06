@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { tourImage, blogImage } from "./fallback-images";
 import { versionedUrl } from "./media";
+import { mapTourOption, sortOptions, type TourOption, type TourOptionRow } from "./tour-options";
 import {
   getPublishedBlogPostBySlug,
   getPublishedBlogPosts,
@@ -31,6 +32,8 @@ export type Tour = {
   featured?: boolean;
   published?: boolean;
   sort_order?: number;
+  /** Optional multi-duration options. Empty for legacy single-duration tours. */
+  options?: TourOption[];
 };
 
 export type BlogPost = {
@@ -81,6 +84,7 @@ type TourRow = {
   published: boolean;
   sort_order: number;
   per_person_pricing?: boolean | null;
+  tour_options?: TourOptionRow[] | null;
   updated_at?: string | null;
 };
 
@@ -122,6 +126,7 @@ export function mapTour(row: TourRow): Tour {
     featured: row.featured,
     published: row.published,
     sort_order: row.sort_order,
+    options: sortOptions((row.tour_options ?? []).map(mapTourOption)),
   };
 }
 

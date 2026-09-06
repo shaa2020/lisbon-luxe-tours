@@ -20,7 +20,24 @@ const TOUR_SELECT = `
   published,
   sort_order,
   per_person_pricing,
-  updated_at
+  updated_at,
+  tour_options (
+    id,
+    duration_minutes,
+    duration_label,
+    price,
+    sale_price,
+    short_description,
+    badge,
+    is_recommended,
+    is_best_value,
+    sort_order,
+    is_active,
+    highlights,
+    itinerary,
+    included,
+    not_included
+  )
 `;
 
 const BLOG_SELECT = `
