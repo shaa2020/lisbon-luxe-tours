@@ -3,6 +3,8 @@ import { redirectToCheckout } from "@/lib/redirect-to-checkout";
 import { format } from "date-fns";
 import { CalendarIcon, Users, Clock, MapPin, Check, CreditCard, Loader2 } from "lucide-react";
 import { type Tour, tourPricing } from "@/lib/cms";
+import { DurationOptions } from "@/components/site/DurationOptions";
+import { activeOptions, optionPrice } from "@/lib/tour-options";
 import {
   Dialog,
   DialogContent,
@@ -53,9 +55,17 @@ export function BookingModal({
   const [submitted, setSubmitted] = useState(false);
   const [paying, setPaying] = useState(false);
 
+  const [optionId, setOptionId] = useState<string | null>(null);
+
   if (!tour) return null;
 
-  const pricing = tourPricing(tour);
+  const options = activeOptions(tour.options);
+  const selectedOption = options.find((o) => o.id === optionId) ?? options[0] ?? null;
+  const basePricing = tourPricing(tour);
+  const pricing = selectedOption
+    ? { current: optionPrice(selectedOption), original: selectedOption.price }
+    : basePricing;
+  const durationLabel = selectedOption?.durationLabel || tour.duration;
   const perPersonPricing = tour.perPersonPricing !== false;
   const q = quote({
     perPerson: pricing.current,
@@ -69,6 +79,7 @@ export function BookingModal({
   const reset = () => {
     setDate(defaultDate ? new Date(`${defaultDate}T00:00:00`) : undefined);
     setTime(""); setGuests(defaultGuests && defaultGuests > 0 ? defaultGuests : 2);
+    setOptionId(null);
     setName(""); setContact(""); setPhone(""); setSubmitted(false); setPaying(false);
   };
 
@@ -87,6 +98,7 @@ export function BookingModal({
       `Hello Tuk Tuk 24! I'd like to book a tour.`,
       ``,
       `Tour: ${tour.title}`,
+      `Duration: ${durationLabel}`,
       date ? `Date: ${format(date, "EEEE, d MMM yyyy")}` : null,
       time ? `Time: ${time}` : null,
       `Guests: ${guests}`,
@@ -130,6 +142,7 @@ export function BookingModal({
           guests,
           amount: total * 100,
           image_url: tour.image?.startsWith("http") ? tour.image : null,
+          tour_option_id: selectedOption?.id ?? null,
         },
       });
       if (res.mode === "pay" && res.url) {
@@ -163,6 +176,7 @@ export function BookingModal({
         guests,
         amount: total * 100,
         image_url: tour.image?.startsWith("http") ? tour.image : null,
+        tour_option_id: selectedOption?.id ?? null,
       },
     });
     if (res.mode !== "pay") {
@@ -196,6 +210,7 @@ export function BookingModal({
             </DialogHeader>
             <div className="mt-8 inline-flex flex-col gap-2 text-sm text-body text-left border border-border rounded-xl p-5 bg-cloud/40">
               <p><span className="text-ink/50">Tour ·</span> <span className="text-ink font-medium">{tour.title}</span></p>
+              <p><span className="text-ink/50">Duration ·</span> <span className="text-ink">{durationLabel}</span></p>
               {date && <p><span className="text-ink/50">Date ·</span> <span className="text-ink">{format(date, "EEEE, d MMMM yyyy")}</span></p>}
               {time && <p><span className="text-ink/50">Time ·</span> <span className="text-ink">{time}</span></p>}
               <p><span className="text-ink/50">Guests ·</span> <span className="text-ink">{guests}</span></p>
@@ -222,7 +237,7 @@ export function BookingModal({
                   {tour.title}
                 </h3>
                 <div className="mt-auto space-y-2.5 text-sm text-white/85">
-                  <div className="flex items-center gap-2.5"><Clock className="w-4 h-4 text-gold" />{tour.duration}</div>
+                  <div className="flex items-center gap-2.5"><Clock className="w-4 h-4 text-gold" />{durationLabel}</div>
                   <div className="flex items-center gap-2.5"><MapPin className="w-4 h-4 text-gold" />{tour.tagline}</div>
                   <div className="flex items-center gap-2.5"><span className="text-gold text-base">★</span>4.9 · private tour</div>
                 </div>
@@ -237,6 +252,19 @@ export function BookingModal({
                   Reserve in under a minute — no payment yet.
                 </DialogDescription>
               </DialogHeader>
+
+              {/* Duration options (only for multi-duration tours) */}
+              {options.length > 0 && (
+                <div>
+                  <label className="text-[11px] font-semibold uppercase tracking-widest text-ink/60 block mb-2">Duration</label>
+                  <DurationOptions
+                    compact
+                    options={options}
+                    selectedId={selectedOption?.id ?? null}
+                    onSelect={setOptionId}
+                  />
+                </div>
+              )}
 
               {/* Date */}
               <div>
