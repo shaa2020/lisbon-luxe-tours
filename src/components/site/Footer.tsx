@@ -137,6 +137,19 @@ export function Footer() {
             </a>
           )}
         </div>
+
+        <div className="md:col-span-12 border-t border-border pt-8">
+          <h4 className="font-display font-semibold text-ink mb-4">Where we go</h4>
+          <ul className="flex flex-wrap gap-x-6 gap-y-3 text-sm text-body">
+            <li><Link to="/lisbon-private-tours" className="hover:text-gold transition-colors">Private tours in Lisbon</Link></li>
+            <li><Link to="/alfama-tuk-tuk-tours" className="hover:text-gold transition-colors">Alfama tuk tuk tours</Link></li>
+            <li><Link to="/belem-tuk-tuk-tours" className="hover:text-gold transition-colors">Belém tuk tuk tours</Link></li>
+            <li><Link to="/sintra-private-tours" className="hover:text-gold transition-colors">Sintra private tours</Link></li>
+            <li><Link to="/cascais-private-tours" className="hover:text-gold transition-colors">Cascais private tours</Link></li>
+            <li><Link to="/cabo-da-roca-tours" className="hover:text-gold transition-colors">Cabo da Roca tours</Link></li>
+            <li><Link to="/tours/pricing-guide" className="hover:text-gold transition-colors">Tuk tuk tour prices</Link></li>
+          </ul>
+        </div>
       </div>
 
       <div className="border-t border-border">

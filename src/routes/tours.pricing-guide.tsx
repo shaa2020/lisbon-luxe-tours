@@ -35,7 +35,7 @@ export const Route = createFileRoute("/tours/pricing-guide")({
               name: "How much does a tuk-tuk tour in Lisbon cost?",
               acceptedAnswer: {
                 "@type": "Answer",
-                text: "Private tuk-tuk tours in Lisbon are usually priced per tuk-tuk, not per person. Short 1–2 hour city routes start at the lower end of our price list, while half-day and full-day trips to Sintra, Belém or Cascais cost more because of distance and driver time.",
+                text: "Our private tuk-tuk tours in Lisbon are priced per person, with a minimum of 2 guests per booking. Short 1–2 hour city routes start at the lower end of our price list, while half-day and full-day trips to Sintra, Belém or Cascais cost more because of distance and driver time.",
               },
             },
             {
@@ -43,7 +43,7 @@ export const Route = createFileRoute("/tours/pricing-guide")({
               name: "Is the price per person or per tuk-tuk?",
               acceptedAnswer: {
                 "@type": "Answer",
-                text: "Our tours are private and priced per tuk-tuk for the whole group, so two people and four people pay the same base price for the same route.",
+                text: "Prices are per person, with a minimum of 2 guests. The tuk-tuk is still private to your group — a two-person booking pays twice the listed per-person rate, and each extra guest adds one more person to the total.",
               },
             },
             {
@@ -102,7 +102,7 @@ function PricingGuidePage() {
               <>
                 {" "}
                 Today our tours run from <strong>€{cheapest}</strong> to{" "}
-                <strong>€{dearest}</strong> per tuk-tuk.
+                <strong>€{dearest}</strong> per person, minimum 2 guests.
               </>
             ) : null}
           </p>

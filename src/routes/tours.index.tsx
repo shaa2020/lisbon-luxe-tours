@@ -34,6 +34,24 @@ export const Route = createFileRoute("/tours/")({
       { property: "og:url", content: "https://tuktuk24lisbon.com/tours" },
     ],
     links: [{ rel: "canonical", href: "https://tuktuk24lisbon.com/tours" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            { "@type": "ListItem", position: 1, name: "Home", item: "https://tuktuk24lisbon.com/" },
+            {
+              "@type": "ListItem",
+              position: 2,
+              name: "Tours",
+              item: "https://tuktuk24lisbon.com/tours",
+            },
+          ],
+        }),
+      },
+    ],
   }),
   validateSearch: (
     search: Record<string, unknown>,
@@ -167,12 +185,13 @@ function ToursPage() {
           <div className="container-x relative h-full flex flex-col justify-center text-white">
             <p className="eyebrow text-white/80 mb-3">Lisbon · Sintra · Belém · Cascais</p>
             <h1 className="font-display font-bold text-white text-4xl md:text-6xl mb-4 leading-[1.05] max-w-3xl [text-shadow:0_2px_18px_rgba(0,0,0,0.35)]">
-              {tours.length > 0 ? `${tours.length} private tours` : "Private tours"}, driven by
-              people who live here.
+              Private tuk tuk tours in Lisbon
+              {tours.length > 0 ? `, all ${tours.length} of them` : ""}, driven by people who live
+              here.
             </h1>
             <p className="text-white/85 max-w-xl text-sm md:text-base leading-relaxed">
-              Every tour below is private — your group only. Prices are the full price for the
-              vehicle, not per person, and we tell you the route before you pay.
+              Every tour below is private — your group only. Prices are per person with a minimum
+              of 2 guests, and we tell you the route before you pay.
             </p>
           </div>
         </div>
