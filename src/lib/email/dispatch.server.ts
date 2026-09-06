@@ -18,6 +18,7 @@ export type BookingRecord = {
   phone: string | null;
   travel_date: string | null;
   travel_time?: string | null;
+  option_duration_label?: string | null;
   guests: number;
   total_estimate: number | null;
   amount_total: number | null;
@@ -52,6 +53,7 @@ export function bookingRows(b: BookingRecord): EmailRow[] {
         }) + (b.travel_time ? ` · ${b.travel_time}` : ""),
     });
   }
+  if (b.option_duration_label) rows.push({ label: "Duration", value: b.option_duration_label });
   rows.push({ label: "Guests", value: String(b.guests) });
   const totalCents =
     b.amount_total != null
