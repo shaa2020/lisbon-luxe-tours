@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type MediaImageProps = {
   /** Current image URL from the database. Empty/null renders a skeleton. */
