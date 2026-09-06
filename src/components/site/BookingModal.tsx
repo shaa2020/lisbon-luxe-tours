@@ -3,6 +3,8 @@ import { redirectToCheckout } from "@/lib/redirect-to-checkout";
 import { format } from "date-fns";
 import { CalendarIcon, Users, Clock, MapPin, Check, CreditCard, Loader2 } from "lucide-react";
 import { type Tour, tourPricing } from "@/lib/cms";
+import { DurationOptions } from "@/components/site/DurationOptions";
+import { activeOptions, optionPrice } from "@/lib/tour-options";
 import {
   Dialog,
   DialogContent,
@@ -53,9 +55,17 @@ export function BookingModal({
   const [submitted, setSubmitted] = useState(false);
   const [paying, setPaying] = useState(false);
 
+  const [optionId, setOptionId] = useState<string | null>(null);
+
   if (!tour) return null;
 
-  const pricing = tourPricing(tour);
+  const options = activeOptions(tour.options);
+  const selectedOption = options.find((o) => o.id === optionId) ?? options[0] ?? null;
+  const basePricing = tourPricing(tour);
+  const pricing = selectedOption
+    ? { current: optionPrice(selectedOption), original: selectedOption.price }
+    : basePricing;
+  const durationLabel = selectedOption?.durationLabel || tour.duration;
   const perPersonPricing = tour.perPersonPricing !== false;
   const q = quote({
     perPerson: pricing.current,
@@ -69,6 +79,7 @@ export function BookingModal({
   const reset = () => {
     setDate(defaultDate ? new Date(`${defaultDate}T00:00:00`) : undefined);
     setTime(""); setGuests(defaultGuests && defaultGuests > 0 ? defaultGuests : 2);
+    setOptionId(null);
     setName(""); setContact(""); setPhone(""); setSubmitted(false); setPaying(false);
   };
 
