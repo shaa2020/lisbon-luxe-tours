@@ -11,8 +11,12 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AboutRouteImport } from './routes/about'
+import { Route as AlfamaTukTukToursRouteImport } from './routes/alfama-tuk-tuk-tours'
+import { Route as BelemTukTukToursRouteImport } from './routes/belem-tuk-tuk-tours'
 import { Route as BookATourRouteImport } from './routes/book-a-tour'
 import { Route as BuildYourOwnTourRouteImport } from './routes/build-your-own-tour'
+import { Route as CaboDaRocaToursRouteImport } from './routes/cabo-da-roca-tours'
+import { Route as CascaisPrivateToursRouteImport } from './routes/cascais-private-tours'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CookiesRouteImport } from './routes/cookies'
 import { Route as FaqRouteImport } from './routes/faq'
@@ -116,6 +120,16 @@ const AboutRoute = AboutRouteImport.update({
   path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AlfamaTukTukToursRoute = AlfamaTukTukToursRouteImport.update({
+  id: '/alfama-tuk-tuk-tours',
+  path: '/alfama-tuk-tuk-tours',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BelemTukTukToursRoute = BelemTukTukToursRouteImport.update({
+  id: '/belem-tuk-tuk-tours',
+  path: '/belem-tuk-tuk-tours',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BookATourRoute = BookATourRouteImport.update({
   id: '/book-a-tour',
   path: '/book-a-tour',
@@ -124,6 +138,16 @@ const BookATourRoute = BookATourRouteImport.update({
 const BuildYourOwnTourRoute = BuildYourOwnTourRouteImport.update({
   id: '/build-your-own-tour',
   path: '/build-your-own-tour',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CaboDaRocaToursRoute = CaboDaRocaToursRouteImport.update({
+  id: '/cabo-da-roca-tours',
+  path: '/cabo-da-roca-tours',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CascaisPrivateToursRoute = CascaisPrivateToursRouteImport.update({
+  id: '/cascais-private-tours',
+  path: '/cascais-private-tours',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContactRoute = ContactRouteImport.update({
@@ -597,8 +621,12 @@ const ApiV1ToursSlugSlugRoute = ApiV1ToursSlugSlugRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/alfama-tuk-tuk-tours': typeof AlfamaTukTukToursRoute
+  '/belem-tuk-tuk-tours': typeof BelemTukTukToursRoute
   '/book-a-tour': typeof BookATourRoute
   '/build-your-own-tour': typeof BuildYourOwnTourRoute
+  '/cabo-da-roca-tours': typeof CaboDaRocaToursRoute
+  '/cascais-private-tours': typeof CascaisPrivateToursRoute
   '/contact': typeof ContactRoute
   '/cookies': typeof CookiesRoute
   '/faq': typeof FaqRoute
@@ -695,8 +723,12 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/alfama-tuk-tuk-tours': typeof AlfamaTukTukToursRoute
+  '/belem-tuk-tuk-tours': typeof BelemTukTukToursRoute
   '/book-a-tour': typeof BookATourRoute
   '/build-your-own-tour': typeof BuildYourOwnTourRoute
+  '/cabo-da-roca-tours': typeof CaboDaRocaToursRoute
+  '/cascais-private-tours': typeof CascaisPrivateToursRoute
   '/contact': typeof ContactRoute
   '/cookies': typeof CookiesRoute
   '/faq': typeof FaqRoute
@@ -794,8 +826,12 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/alfama-tuk-tuk-tours': typeof AlfamaTukTukToursRoute
+  '/belem-tuk-tuk-tours': typeof BelemTukTukToursRoute
   '/book-a-tour': typeof BookATourRoute
   '/build-your-own-tour': typeof BuildYourOwnTourRoute
+  '/cabo-da-roca-tours': typeof CaboDaRocaToursRoute
+  '/cascais-private-tours': typeof CascaisPrivateToursRoute
   '/contact': typeof ContactRoute
   '/cookies': typeof CookiesRoute
   '/faq': typeof FaqRoute
@@ -894,8 +930,12 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
+    | '/alfama-tuk-tuk-tours'
+    | '/belem-tuk-tuk-tours'
     | '/book-a-tour'
     | '/build-your-own-tour'
+    | '/cabo-da-roca-tours'
+    | '/cascais-private-tours'
     | '/contact'
     | '/cookies'
     | '/faq'
@@ -992,8 +1032,12 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/about'
+    | '/alfama-tuk-tuk-tours'
+    | '/belem-tuk-tuk-tours'
     | '/book-a-tour'
     | '/build-your-own-tour'
+    | '/cabo-da-roca-tours'
+    | '/cascais-private-tours'
     | '/contact'
     | '/cookies'
     | '/faq'
@@ -1090,8 +1134,12 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/about'
+    | '/alfama-tuk-tuk-tours'
+    | '/belem-tuk-tuk-tours'
     | '/book-a-tour'
     | '/build-your-own-tour'
+    | '/cabo-da-roca-tours'
+    | '/cascais-private-tours'
     | '/contact'
     | '/cookies'
     | '/faq'
@@ -1189,8 +1237,12 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  AlfamaTukTukToursRoute: typeof AlfamaTukTukToursRoute
+  BelemTukTukToursRoute: typeof BelemTukTukToursRoute
   BookATourRoute: typeof BookATourRoute
   BuildYourOwnTourRoute: typeof BuildYourOwnTourRoute
+  CaboDaRocaToursRoute: typeof CaboDaRocaToursRoute
+  CascaisPrivateToursRoute: typeof CascaisPrivateToursRoute
   ContactRoute: typeof ContactRoute
   CookiesRoute: typeof CookiesRoute
   FaqRoute: typeof FaqRoute
@@ -1300,6 +1352,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/alfama-tuk-tuk-tours': {
+      id: '/alfama-tuk-tuk-tours'
+      path: '/alfama-tuk-tuk-tours'
+      fullPath: '/alfama-tuk-tuk-tours'
+      preLoaderRoute: typeof AlfamaTukTukToursRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/belem-tuk-tuk-tours': {
+      id: '/belem-tuk-tuk-tours'
+      path: '/belem-tuk-tuk-tours'
+      fullPath: '/belem-tuk-tuk-tours'
+      preLoaderRoute: typeof BelemTukTukToursRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/book-a-tour': {
       id: '/book-a-tour'
       path: '/book-a-tour'
@@ -1312,6 +1378,20 @@ declare module '@tanstack/react-router' {
       path: '/build-your-own-tour'
       fullPath: '/build-your-own-tour'
       preLoaderRoute: typeof BuildYourOwnTourRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cabo-da-roca-tours': {
+      id: '/cabo-da-roca-tours'
+      path: '/cabo-da-roca-tours'
+      fullPath: '/cabo-da-roca-tours'
+      preLoaderRoute: typeof CaboDaRocaToursRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cascais-private-tours': {
+      id: '/cascais-private-tours'
+      path: '/cascais-private-tours'
+      fullPath: '/cascais-private-tours'
+      preLoaderRoute: typeof CascaisPrivateToursRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contact': {
@@ -1975,8 +2055,12 @@ const ApiV1ConversationsIdRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  AlfamaTukTukToursRoute: AlfamaTukTukToursRoute,
+  BelemTukTukToursRoute: BelemTukTukToursRoute,
   BookATourRoute: BookATourRoute,
   BuildYourOwnTourRoute: BuildYourOwnTourRoute,
+  CaboDaRocaToursRoute: CaboDaRocaToursRoute,
+  CascaisPrivateToursRoute: CascaisPrivateToursRoute,
   ContactRoute: ContactRoute,
   CookiesRoute: CookiesRoute,
   FaqRoute: FaqRoute,

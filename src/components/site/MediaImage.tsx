@@ -10,6 +10,9 @@ type MediaImageProps = {
   loading?: "lazy" | "eager";
   fetchPriority?: "high" | "low" | "auto";
   sizes?: string;
+  /** Intrinsic pixel size — sets width/height so the browser reserves space (no layout shift). */
+  width?: number;
+  height?: number;
 };
 
 /**
@@ -27,6 +30,8 @@ export function MediaImage({
   loading = "lazy",
   fetchPriority,
   sizes,
+  width,
+  height,
 }: MediaImageProps) {
   const [loadedSrc, setLoadedSrc] = useState<string | null>(null);
   const [failedSrc, setFailedSrc] = useState<string | null>(null);
@@ -53,6 +58,9 @@ export function MediaImage({
           loading={loading}
           fetchPriority={fetchPriority}
           sizes={sizes}
+          width={width}
+          height={height}
+          decoding="async"
           onLoad={() => setLoadedSrc(src)}
           onError={() => setFailedSrc(src)}
           className={`${className} transition-opacity duration-300 ${loaded ? "opacity-100" : "opacity-0"}`}

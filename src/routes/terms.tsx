@@ -49,7 +49,7 @@ function TermsPage() {
 
             <h2 className="font-display text-xl font-semibold text-ink mt-8 mb-3">2. Pricing</h2>
             <p className="text-body leading-relaxed">
-              Prices are quoted per private group, not per person, unless otherwise stated. The maximum group size depends on the vehicle selected. Hotel pick-up and drop-off in central Lisbon is available for an additional €20 fee unless stated otherwise.
+              Prices are quoted per person, with a minimum of 2 guests per booking, unless otherwise stated. Every tour is private to your group. The maximum group size depends on the vehicle selected. Hotel pick-up and drop-off in central Lisbon is available for an additional €20 fee unless stated otherwise.
             </p>
 
             <h2 className="font-display text-xl font-semibold text-ink mt-8 mb-3">3. Cancellation policy</h2>

@@ -56,6 +56,23 @@ export const Route = createFileRoute("/journal/$slug")({
                 },
               }),
             },
+            {
+              type: "application/ld+json",
+              children: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "BreadcrumbList",
+                itemListElement: [
+                  { "@type": "ListItem", position: 1, name: "Home", item: "https://tuktuk24lisbon.com/" },
+                  {
+                    "@type": "ListItem",
+                    position: 2,
+                    name: "Journal",
+                    item: "https://tuktuk24lisbon.com/journal",
+                  },
+                  { "@type": "ListItem", position: 3, name: post.title, item: canonical },
+                ],
+              }),
+            },
           ]
         : [],
     };

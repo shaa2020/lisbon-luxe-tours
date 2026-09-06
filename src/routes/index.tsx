@@ -39,13 +39,13 @@ export const Route = createFileRoute("/")({
   },
   head: ({ loaderData }) => ({
     meta: [
-      { title: "Private Tuk-Tuk Tours in Lisbon — Tuk Tuk 24" },
+      { title: "Private Tuk Tuk Tours in Lisbon | TukTuk24" },
       {
         name: "description",
         content:
-          "Private tuk-tuk tours around Lisbon with local drivers. Alfama, Belém, Sintra, sunset rides — small groups, flat prices, easy booking.",
+          "Private electric tuk tuk tours in Lisbon with local drivers. Explore Alfama, Belém, Sintra and Cascais at your own pace — per-person prices, book online in minutes.",
       },
-      { property: "og:title", content: "Private Tuk-Tuk Tours in Lisbon — Tuk Tuk 24" },
+      { property: "og:title", content: "Private Tuk Tuk Tours in Lisbon | TukTuk24" },
       {
         property: "og:description",
         content:
@@ -144,12 +144,13 @@ function Hero() {
             </span>
 
             <span className="mt-2 text-white/90 text-[13px] md:text-[15px] uppercase tracking-[0.28em]">
-              Private Tuk-Tuk Tours in Lisbon
+              Private Tuk Tuk Tours in Lisbon
             </span>
           </h1>
 
           <p className="mt-4 md:mt-5 max-w-xl text-white/85 text-[14px] md:text-[16px] leading-relaxed px-4">
-            Private tuk-tuk tours with local drivers. Small groups, flat prices, your pace.
+            Private electric tuk tuk tours with local Lisbon drivers — Alfama, Belém, Sintra and
+            Cascais, at your own pace.
           </p>
 
           <div className="mt-6 flex flex-col sm:flex-row items-center gap-3">

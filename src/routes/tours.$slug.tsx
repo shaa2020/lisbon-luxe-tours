@@ -74,6 +74,52 @@ export const Route = createFileRoute("/tours/$slug")({
                   priceCurrency: "EUR",
                   availability: "https://schema.org/InStock",
                   url,
+                  ...(tour.perPersonPricing === false
+                    ? {}
+                    : {
+                        priceSpecification: {
+                          "@type": "UnitPriceSpecification",
+                          price: tour.salePrice ?? tour.priceFrom,
+                          priceCurrency: "EUR",
+                          unitText: "per person",
+                          eligibleQuantity: {
+                            "@type": "QuantitativeValue",
+                            minValue: 2,
+                            unitText: "guests",
+                          },
+                        },
+                      }),
+                },
+              }),
+            },
+            {
+              type: "application/ld+json",
+              children: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "TouristTrip",
+                name: tour.title,
+                description: tour.description,
+                image: tour.image,
+                url,
+                touristType: "Leisure travellers",
+                inLanguage: "en",
+                provider: { "@id": "https://tuktuk24lisbon.com/#org" },
+                itinerary: {
+                  "@type": "ItemList",
+                  itemListElement: [
+                    {
+                      "@type": "ListItem",
+                      position: 1,
+                      item: { "@type": "Place", name: "Lisbon, Portugal" },
+                    },
+                  ],
+                },
+                offers: {
+                  "@type": "Offer",
+                  price: tour.salePrice ?? tour.priceFrom,
+                  priceCurrency: "EUR",
+                  availability: "https://schema.org/InStock",
+                  url,
                 },
               }),
             },
