@@ -111,50 +111,83 @@ export type Database = {
       }
       blog_posts: {
         Row: {
+          author_name: string | null
+          canonical_url: string | null
           category: string
           comments: number
           content: Json
           created_at: string
           excerpt: string
           id: string
+          image_alt: string | null
           image_url: string | null
+          last_verified_at: string | null
+          meta_description: string | null
+          noindex: boolean
+          og_image_url: string | null
+          primary_keyword: string | null
           published: boolean
           published_at: string
           read_time: string
+          secondary_keywords: string[] | null
+          seo_title: string | null
           shares: number
           slug: string
+          tags: string[] | null
           title: string
           updated_at: string
         }
         Insert: {
+          author_name?: string | null
+          canonical_url?: string | null
           category?: string
           comments?: number
           content?: Json
           created_at?: string
           excerpt?: string
           id?: string
+          image_alt?: string | null
           image_url?: string | null
+          last_verified_at?: string | null
+          meta_description?: string | null
+          noindex?: boolean
+          og_image_url?: string | null
+          primary_keyword?: string | null
           published?: boolean
           published_at?: string
           read_time?: string
+          secondary_keywords?: string[] | null
+          seo_title?: string | null
           shares?: number
           slug: string
+          tags?: string[] | null
           title: string
           updated_at?: string
         }
         Update: {
+          author_name?: string | null
+          canonical_url?: string | null
           category?: string
           comments?: number
           content?: Json
           created_at?: string
           excerpt?: string
           id?: string
+          image_alt?: string | null
           image_url?: string | null
+          last_verified_at?: string | null
+          meta_description?: string | null
+          noindex?: boolean
+          og_image_url?: string | null
+          primary_keyword?: string | null
           published?: boolean
           published_at?: string
           read_time?: string
+          secondary_keywords?: string[] | null
+          seo_title?: string | null
           shares?: number
           slug?: string
+          tags?: string[] | null
           title?: string
           updated_at?: string
         }
@@ -367,6 +400,39 @@ export type Database = {
           },
         ]
       }
+      business_knowledge: {
+        Row: {
+          active: boolean
+          category: string
+          content: string
+          created_at: string
+          id: string
+          label: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          category?: string
+          content: string
+          created_at?: string
+          id?: string
+          label: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          category?: string
+          content?: string
+          created_at?: string
+          id?: string
+          label?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       contact_messages: {
         Row: {
           created_at: string
@@ -537,6 +603,81 @@ export type Database = {
           image_url?: string | null
           name?: string
           price_cents?: number
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      destinations: {
+        Row: {
+          body_sections: Json
+          canonical_url: string | null
+          created_at: string
+          faqs: Json
+          heading: string | null
+          id: string
+          image_alt: string | null
+          image_url: string | null
+          intro: string | null
+          last_verified_at: string | null
+          meta_description: string | null
+          name: string
+          noindex: boolean
+          og_image_url: string | null
+          primary_keyword: string | null
+          published: boolean
+          related_tour_slugs: string[]
+          secondary_keywords: string[] | null
+          seo_title: string | null
+          slug: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          body_sections?: Json
+          canonical_url?: string | null
+          created_at?: string
+          faqs?: Json
+          heading?: string | null
+          id?: string
+          image_alt?: string | null
+          image_url?: string | null
+          intro?: string | null
+          last_verified_at?: string | null
+          meta_description?: string | null
+          name: string
+          noindex?: boolean
+          og_image_url?: string | null
+          primary_keyword?: string | null
+          published?: boolean
+          related_tour_slugs?: string[]
+          secondary_keywords?: string[] | null
+          seo_title?: string | null
+          slug: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          body_sections?: Json
+          canonical_url?: string | null
+          created_at?: string
+          faqs?: Json
+          heading?: string | null
+          id?: string
+          image_alt?: string | null
+          image_url?: string | null
+          intro?: string | null
+          last_verified_at?: string | null
+          meta_description?: string | null
+          name?: string
+          noindex?: boolean
+          og_image_url?: string | null
+          primary_keyword?: string | null
+          published?: boolean
+          related_tour_slugs?: string[]
+          secondary_keywords?: string[] | null
+          seo_title?: string | null
+          slug?: string
           sort_order?: number
           updated_at?: string
         }
@@ -1734,6 +1875,42 @@ export type Database = {
           },
         ]
       }
+      seo_keywords: {
+        Row: {
+          created_at: string
+          id: string
+          intent: string
+          keyword: string
+          notes: string | null
+          priority: string
+          status: string
+          target_path: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          intent?: string
+          keyword: string
+          notes?: string | null
+          priority?: string
+          status?: string
+          target_path?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          intent?: string
+          keyword?: string
+          notes?: string | null
+          priority?: string
+          status?: string
+          target_path?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       site_settings: {
         Row: {
           about_image_url: string | null
@@ -2014,6 +2191,7 @@ export type Database = {
       }
       tours: {
         Row: {
+          canonical_url: string | null
           category: string
           category_slug: string
           created_at: string
@@ -2022,14 +2200,21 @@ export type Database = {
           featured: boolean
           highlights: Json
           id: string
+          image_alt: string | null
           image_url: string | null
           included: Json
           itinerary: Json
+          meta_description: string | null
+          noindex: boolean
           not_included: Json
+          og_image_url: string | null
           per_person_pricing: boolean
           price_from: number
+          primary_keyword: string | null
           published: boolean
           sale_price: number | null
+          secondary_keywords: string[] | null
+          seo_title: string | null
           slug: string
           sort_order: number
           tagline: string | null
@@ -2037,6 +2222,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          canonical_url?: string | null
           category: string
           category_slug: string
           created_at?: string
@@ -2045,14 +2231,21 @@ export type Database = {
           featured?: boolean
           highlights?: Json
           id?: string
+          image_alt?: string | null
           image_url?: string | null
           included?: Json
           itinerary?: Json
+          meta_description?: string | null
+          noindex?: boolean
           not_included?: Json
+          og_image_url?: string | null
           per_person_pricing?: boolean
           price_from?: number
+          primary_keyword?: string | null
           published?: boolean
           sale_price?: number | null
+          secondary_keywords?: string[] | null
+          seo_title?: string | null
           slug: string
           sort_order?: number
           tagline?: string | null
@@ -2060,6 +2253,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          canonical_url?: string | null
           category?: string
           category_slug?: string
           created_at?: string
@@ -2068,14 +2262,21 @@ export type Database = {
           featured?: boolean
           highlights?: Json
           id?: string
+          image_alt?: string | null
           image_url?: string | null
           included?: Json
           itinerary?: Json
+          meta_description?: string | null
+          noindex?: boolean
           not_included?: Json
+          og_image_url?: string | null
           per_person_pricing?: boolean
           price_from?: number
+          primary_keyword?: string | null
           published?: boolean
           sale_price?: number | null
+          secondary_keywords?: string[] | null
+          seo_title?: string | null
           slug?: string
           sort_order?: number
           tagline?: string | null

@@ -20,6 +20,7 @@ import {
   HelpCircle,
   Settings,
   Compass,
+  MapPin,
   Gauge,
   Megaphone,
   Tag,
@@ -76,6 +77,7 @@ const GROUPS: NavGroup[] = [
     items: [
       { to: "/admin/blog", label: "Journal", icon: BookOpen, desc: "Stories and news", perm: "content.manage" },
       { to: "/admin/guide", label: "Travel guide", icon: Compass, desc: "SEO guide hub", perm: "content.manage" },
+      { to: "/admin/destinations", label: "Destinations", icon: MapPin, desc: "Area pages for Google", perm: "content.manage" },
       { to: "/admin/reviews", label: "Reviews", icon: Star, desc: "Approve guest reviews", perm: "reviews.manage" },
       { to: "/admin/faqs", label: "FAQs", icon: HelpCircle, desc: "Questions and answers", perm: "faqs.manage" },
     ],

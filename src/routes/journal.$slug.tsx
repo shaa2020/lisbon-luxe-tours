@@ -14,8 +14,13 @@ export const Route = createFileRoute("/journal/$slug")({
   head: ({ params, loaderData }) => {
     const post = loaderData?.post;
     const url = `https://tuktuk24lisbon.com/journal/${params.slug}`;
-    const title = post ? `${post.title} — Journal | Tuk Tuk 24` : `Journal — Tuk Tuk 24`;
-    const description = post?.excerpt?.slice(0, 158) ?? "Stories and travel guides from Tuk Tuk 24 in Lisbon, Portugal.";
+    const canonical = post?.canonicalUrl || url;
+    const title = post?.seoTitle || (post ? `${post.title} — Journal | Tuk Tuk 24` : `Journal — Tuk Tuk 24`);
+    const description =
+      post?.metaDescription ||
+      post?.excerpt?.slice(0, 158) ||
+      "Stories and travel guides from Tuk Tuk 24 in Lisbon, Portugal.";
+    const shareImage = post?.ogImageUrl || post?.image;
     return {
       meta: [
         { title },
@@ -24,9 +29,12 @@ export const Route = createFileRoute("/journal/$slug")({
         { property: "og:description", content: description },
         { property: "og:type", content: "article" },
         { property: "og:url", content: url },
-        ...(post?.image ? [{ property: "og:image", content: post.image }, { name: "twitter:image", content: post.image }] : []),
+        ...(shareImage
+          ? [{ property: "og:image", content: shareImage }, { name: "twitter:image", content: shareImage }]
+          : []),
+        ...(post?.noindex ? [{ name: "robots", content: "noindex, follow" }] : []),
       ],
-      links: [{ rel: "canonical", href: url }],
+      links: [{ rel: "canonical", href: canonical }],
       scripts: post
         ? [
             {
@@ -39,7 +47,13 @@ export const Route = createFileRoute("/journal/$slug")({
                 image: post.image,
                 datePublished: post.date,
                 author: { "@type": "Organization", name: "Tuk Tuk 24" },
-                mainEntityOfPage: url,
+                dateModified: post.lastVerifiedAt ?? undefined,
+                mainEntityOfPage: canonical,
+                publisher: {
+                  "@type": "Organization",
+                  name: "Tuk Tuk 24",
+                  "@id": "https://tuktuk24lisbon.com/#org",
+                },
               }),
             },
           ]

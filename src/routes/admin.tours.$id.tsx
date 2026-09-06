@@ -10,6 +10,13 @@ import { tourCategories } from "@/lib/cms";
 import { slugify, uploadMediaFile } from "@/lib/admin-helpers";
 import { Sparkles } from "lucide-react";
 import { toast } from "sonner";
+import {
+  SeoFieldsEditor,
+  emptySeo,
+  seoFromRow,
+  seoToPayload,
+  type SeoFormValue,
+} from "@/components/admin/SeoFieldsEditor";
 
 export const Route = createFileRoute("/admin/tours/$id")({
   validateSearch: (search: Record<string, unknown>): { ai?: true } =>
@@ -96,6 +103,7 @@ function TourEditPage() {
   const [form, setForm] = useState<TourForm>(empty);
   const [loading, setLoading] = useState(!isNew);
   const [saving, setSaving] = useState(false);
+  const [seo, setSeo] = useState<SeoFormValue>(emptySeo);
   const [uploading, setUploading] = useState(false);
   const { ai } = Route.useSearch();
   const [aiOpen, setAiOpen] = useState(!!ai);
@@ -158,6 +166,7 @@ function TourEditPage() {
         published: data.published,
         sort_order: data.sort_order,
       });
+      setSeo(seoFromRow(data as unknown as Record<string, unknown>));
       setLoading(false);
     })();
   }, [id, isNew]);
@@ -216,6 +225,7 @@ function TourEditPage() {
       featured: form.featured,
       published: form.published,
       sort_order: Number(form.sort_order) || 0,
+      ...seoToPayload(seo),
     };
     const res = isNew
       ? await supabase.from("tours").insert(payload).select("id").single()
@@ -436,6 +446,14 @@ function TourEditPage() {
           </div>
 
           {!isNew && <TourOptionsManager tourId={id} />}
+
+          <SeoFieldsEditor
+            value={seo}
+            onChange={(patch) => setSeo((prev) => ({ ...prev, ...patch }))}
+            previewUrl={`https://tuktuk24lisbon.com/tours/${form.slug || "your-tour"}`}
+            fallbackTitle={form.title ? `${form.title} | Tuk Tuk 24 Lisbon` : undefined}
+            fallbackDescription={form.tagline || form.description?.slice(0, 158) || undefined}
+          />
         </div>
 
         <aside className="space-y-5">

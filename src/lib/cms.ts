@@ -10,7 +10,43 @@ import {
   getPublishedTours,
 } from "./cms.functions";
 
-export type Tour = {
+/** Optional per-page SEO overrides. Empty values fall back to generated text. */
+export type SeoFields = {
+  seoTitle?: string | null;
+  metaDescription?: string | null;
+  primaryKeyword?: string | null;
+  secondaryKeywords?: string[];
+  canonicalUrl?: string | null;
+  ogImageUrl?: string | null;
+  imageAlt?: string | null;
+  noindex?: boolean;
+};
+
+type SeoRow = {
+  seo_title?: string | null;
+  meta_description?: string | null;
+  primary_keyword?: string | null;
+  secondary_keywords?: string[] | null;
+  canonical_url?: string | null;
+  og_image_url?: string | null;
+  image_alt?: string | null;
+  noindex?: boolean | null;
+};
+
+export function mapSeo(row: SeoRow): SeoFields {
+  return {
+    seoTitle: row.seo_title ?? null,
+    metaDescription: row.meta_description ?? null,
+    primaryKeyword: row.primary_keyword ?? null,
+    secondaryKeywords: Array.isArray(row.secondary_keywords) ? row.secondary_keywords : [],
+    canonicalUrl: row.canonical_url ?? null,
+    ogImageUrl: row.og_image_url ?? null,
+    imageAlt: row.image_alt ?? null,
+    noindex: row.noindex === true,
+  };
+}
+
+export type Tour = SeoFields & {
   id?: string;
   slug: string;
   title: string;
@@ -36,7 +72,10 @@ export type Tour = {
   options?: TourOption[];
 };
 
-export type BlogPost = {
+export type BlogPost = SeoFields & {
+  authorName?: string | null;
+  tags?: string[];
+  lastVerifiedAt?: string | null;
   id: string;
   slug: string;
   title: string;
@@ -86,7 +125,7 @@ type TourRow = {
   per_person_pricing?: boolean | null;
   tour_options?: TourOptionRow[] | null;
   updated_at?: string | null;
-};
+} & SeoRow;
 
 type BlogRow = {
   id: string;
@@ -102,7 +141,10 @@ type BlogRow = {
   published_at: string;
   published: boolean;
   updated_at?: string | null;
-};
+  author_name?: string | null;
+  tags?: string[] | null;
+  last_verified_at?: string | null;
+} & SeoRow;
 
 export function mapTour(row: TourRow): Tour {
   return {
@@ -127,6 +169,7 @@ export function mapTour(row: TourRow): Tour {
     published: row.published,
     sort_order: row.sort_order,
     options: sortOptions((row.tour_options ?? []).map(mapTourOption)),
+    ...mapSeo(row),
   };
 }
 
@@ -148,6 +191,10 @@ export function mapPost(row: BlogRow): BlogPost {
       ? row.published_at
       : `${d.getMonth() + 1}/${d.getDate()}/${d.getFullYear()}`,
     published: row.published,
+    authorName: row.author_name ?? null,
+    tags: Array.isArray(row.tags) ? row.tags : [],
+    lastVerifiedAt: row.last_verified_at ?? null,
+    ...mapSeo(row),
   };
 }
 

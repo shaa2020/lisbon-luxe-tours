@@ -29,6 +29,7 @@ import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminApiRouteImport } from './routes/admin.api'
 import { Route as AdminBookingsRouteImport } from './routes/admin.bookings'
 import { Route as AdminCustomBuilderRouteImport } from './routes/admin.custom-builder'
+import { Route as AdminDestinationsRouteImport } from './routes/admin.destinations'
 import { Route as AdminDiscountsRouteImport } from './routes/admin.discounts'
 import { Route as AdminEmailsRouteImport } from './routes/admin.emails'
 import { Route as AdminFaqsRouteImport } from './routes/admin.faqs'
@@ -44,6 +45,8 @@ import { Route as AdminTeamRouteImport } from './routes/admin.team'
 import { Route as BookingCancelledRouteImport } from './routes/booking.cancelled'
 import { Route as BookingManageRouteImport } from './routes/booking.manage'
 import { Route as BookingSuccessRouteImport } from './routes/booking.success'
+import { Route as DestinationsIndexRouteImport } from './routes/destinations.index'
+import { Route as DestinationsSlugRouteImport } from './routes/destinations.$slug'
 import { Route as EmailUnsubscribeRouteImport } from './routes/email/unsubscribe'
 import { Route as InvoiceIdRouteImport } from './routes/invoice.$id'
 import { Route as JournalIndexRouteImport } from './routes/journal.index'
@@ -203,6 +206,11 @@ const AdminCustomBuilderRoute = AdminCustomBuilderRouteImport.update({
   path: '/admin/custom-builder',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminDestinationsRoute = AdminDestinationsRouteImport.update({
+  id: '/admin/destinations',
+  path: '/admin/destinations',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminDiscountsRoute = AdminDiscountsRouteImport.update({
   id: '/admin/discounts',
   path: '/admin/discounts',
@@ -276,6 +284,16 @@ const BookingManageRoute = BookingManageRouteImport.update({
 const BookingSuccessRoute = BookingSuccessRouteImport.update({
   id: '/booking/success',
   path: '/booking/success',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DestinationsIndexRoute = DestinationsIndexRouteImport.update({
+  id: '/destinations/',
+  path: '/destinations/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DestinationsSlugRoute = DestinationsSlugRouteImport.update({
+  id: '/destinations/$slug',
+  path: '/destinations/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EmailUnsubscribeRoute = EmailUnsubscribeRouteImport.update({
@@ -590,6 +608,7 @@ export interface FileRoutesByFullPath {
   '/admin/api': typeof AdminApiRoute
   '/admin/bookings': typeof AdminBookingsRoute
   '/admin/custom-builder': typeof AdminCustomBuilderRoute
+  '/admin/destinations': typeof AdminDestinationsRoute
   '/admin/discounts': typeof AdminDiscountsRoute
   '/admin/emails': typeof AdminEmailsRoute
   '/admin/faqs': typeof AdminFaqsRoute
@@ -605,6 +624,7 @@ export interface FileRoutesByFullPath {
   '/booking/cancelled': typeof BookingCancelledRoute
   '/booking/manage': typeof BookingManageRoute
   '/booking/success': typeof BookingSuccessRoute
+  '/destinations/$slug': typeof DestinationsSlugRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/invoice/$id': typeof InvoiceIdRoute
   '/journal/$slug': typeof JournalSlugRoute
@@ -613,6 +633,7 @@ export interface FileRoutesByFullPath {
   '/tours/custom': typeof ToursCustomRoute
   '/tours/pricing-guide': typeof ToursPricingGuideRoute
   '/admin/': typeof AdminIndexRoute
+  '/destinations/': typeof DestinationsIndexRoute
   '/journal/': typeof JournalIndexRoute
   '/lisbon-guide/': typeof LisbonGuideIndexRoute
   '/tours/': typeof ToursIndexRoute
@@ -684,6 +705,7 @@ export interface FileRoutesByTo {
   '/admin/api': typeof AdminApiRoute
   '/admin/bookings': typeof AdminBookingsRoute
   '/admin/custom-builder': typeof AdminCustomBuilderRoute
+  '/admin/destinations': typeof AdminDestinationsRoute
   '/admin/discounts': typeof AdminDiscountsRoute
   '/admin/emails': typeof AdminEmailsRoute
   '/admin/faqs': typeof AdminFaqsRoute
@@ -699,6 +721,7 @@ export interface FileRoutesByTo {
   '/booking/cancelled': typeof BookingCancelledRoute
   '/booking/manage': typeof BookingManageRoute
   '/booking/success': typeof BookingSuccessRoute
+  '/destinations/$slug': typeof DestinationsSlugRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/invoice/$id': typeof InvoiceIdRoute
   '/journal/$slug': typeof JournalSlugRoute
@@ -707,6 +730,7 @@ export interface FileRoutesByTo {
   '/tours/custom': typeof ToursCustomRoute
   '/tours/pricing-guide': typeof ToursPricingGuideRoute
   '/admin': typeof AdminIndexRoute
+  '/destinations': typeof DestinationsIndexRoute
   '/journal': typeof JournalIndexRoute
   '/lisbon-guide': typeof LisbonGuideIndexRoute
   '/tours': typeof ToursIndexRoute
@@ -779,6 +803,7 @@ export interface FileRoutesById {
   '/admin/api': typeof AdminApiRoute
   '/admin/bookings': typeof AdminBookingsRoute
   '/admin/custom-builder': typeof AdminCustomBuilderRoute
+  '/admin/destinations': typeof AdminDestinationsRoute
   '/admin/discounts': typeof AdminDiscountsRoute
   '/admin/emails': typeof AdminEmailsRoute
   '/admin/faqs': typeof AdminFaqsRoute
@@ -794,6 +819,7 @@ export interface FileRoutesById {
   '/booking/cancelled': typeof BookingCancelledRoute
   '/booking/manage': typeof BookingManageRoute
   '/booking/success': typeof BookingSuccessRoute
+  '/destinations/$slug': typeof DestinationsSlugRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/invoice/$id': typeof InvoiceIdRoute
   '/journal/$slug': typeof JournalSlugRoute
@@ -802,6 +828,7 @@ export interface FileRoutesById {
   '/tours/custom': typeof ToursCustomRoute
   '/tours/pricing-guide': typeof ToursPricingGuideRoute
   '/admin/': typeof AdminIndexRoute
+  '/destinations/': typeof DestinationsIndexRoute
   '/journal/': typeof JournalIndexRoute
   '/lisbon-guide/': typeof LisbonGuideIndexRoute
   '/tours/': typeof ToursIndexRoute
@@ -875,6 +902,7 @@ export interface FileRouteTypes {
     | '/admin/api'
     | '/admin/bookings'
     | '/admin/custom-builder'
+    | '/admin/destinations'
     | '/admin/discounts'
     | '/admin/emails'
     | '/admin/faqs'
@@ -890,6 +918,7 @@ export interface FileRouteTypes {
     | '/booking/cancelled'
     | '/booking/manage'
     | '/booking/success'
+    | '/destinations/$slug'
     | '/email/unsubscribe'
     | '/invoice/$id'
     | '/journal/$slug'
@@ -898,6 +927,7 @@ export interface FileRouteTypes {
     | '/tours/custom'
     | '/tours/pricing-guide'
     | '/admin/'
+    | '/destinations/'
     | '/journal/'
     | '/lisbon-guide/'
     | '/tours/'
@@ -969,6 +999,7 @@ export interface FileRouteTypes {
     | '/admin/api'
     | '/admin/bookings'
     | '/admin/custom-builder'
+    | '/admin/destinations'
     | '/admin/discounts'
     | '/admin/emails'
     | '/admin/faqs'
@@ -984,6 +1015,7 @@ export interface FileRouteTypes {
     | '/booking/cancelled'
     | '/booking/manage'
     | '/booking/success'
+    | '/destinations/$slug'
     | '/email/unsubscribe'
     | '/invoice/$id'
     | '/journal/$slug'
@@ -992,6 +1024,7 @@ export interface FileRouteTypes {
     | '/tours/custom'
     | '/tours/pricing-guide'
     | '/admin'
+    | '/destinations'
     | '/journal'
     | '/lisbon-guide'
     | '/tours'
@@ -1063,6 +1096,7 @@ export interface FileRouteTypes {
     | '/admin/api'
     | '/admin/bookings'
     | '/admin/custom-builder'
+    | '/admin/destinations'
     | '/admin/discounts'
     | '/admin/emails'
     | '/admin/faqs'
@@ -1078,6 +1112,7 @@ export interface FileRouteTypes {
     | '/booking/cancelled'
     | '/booking/manage'
     | '/booking/success'
+    | '/destinations/$slug'
     | '/email/unsubscribe'
     | '/invoice/$id'
     | '/journal/$slug'
@@ -1086,6 +1121,7 @@ export interface FileRouteTypes {
     | '/tours/custom'
     | '/tours/pricing-guide'
     | '/admin/'
+    | '/destinations/'
     | '/journal/'
     | '/lisbon-guide/'
     | '/tours/'
@@ -1158,6 +1194,7 @@ export interface RootRouteChildren {
   AdminApiRoute: typeof AdminApiRoute
   AdminBookingsRoute: typeof AdminBookingsRoute
   AdminCustomBuilderRoute: typeof AdminCustomBuilderRoute
+  AdminDestinationsRoute: typeof AdminDestinationsRoute
   AdminDiscountsRoute: typeof AdminDiscountsRoute
   AdminEmailsRoute: typeof AdminEmailsRoute
   AdminFaqsRoute: typeof AdminFaqsRoute
@@ -1173,6 +1210,7 @@ export interface RootRouteChildren {
   BookingCancelledRoute: typeof BookingCancelledRoute
   BookingManageRoute: typeof BookingManageRoute
   BookingSuccessRoute: typeof BookingSuccessRoute
+  DestinationsSlugRoute: typeof DestinationsSlugRoute
   EmailUnsubscribeRoute: typeof EmailUnsubscribeRoute
   InvoiceIdRoute: typeof InvoiceIdRoute
   JournalSlugRoute: typeof JournalSlugRoute
@@ -1181,6 +1219,7 @@ export interface RootRouteChildren {
   ToursCustomRoute: typeof ToursCustomRoute
   ToursPricingGuideRoute: typeof ToursPricingGuideRoute
   AdminIndexRoute: typeof AdminIndexRoute
+  DestinationsIndexRoute: typeof DestinationsIndexRoute
   JournalIndexRoute: typeof JournalIndexRoute
   LisbonGuideIndexRoute: typeof LisbonGuideIndexRoute
   ToursIndexRoute: typeof ToursIndexRoute
@@ -1374,6 +1413,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminCustomBuilderRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/destinations': {
+      id: '/admin/destinations'
+      path: '/admin/destinations'
+      fullPath: '/admin/destinations'
+      preLoaderRoute: typeof AdminDestinationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/discounts': {
       id: '/admin/discounts'
       path: '/admin/discounts'
@@ -1477,6 +1523,20 @@ declare module '@tanstack/react-router' {
       path: '/booking/success'
       fullPath: '/booking/success'
       preLoaderRoute: typeof BookingSuccessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/destinations/': {
+      id: '/destinations/'
+      path: '/destinations'
+      fullPath: '/destinations/'
+      preLoaderRoute: typeof DestinationsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/destinations/$slug': {
+      id: '/destinations/$slug'
+      path: '/destinations/$slug'
+      fullPath: '/destinations/$slug'
+      preLoaderRoute: typeof DestinationsSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/email/unsubscribe': {
@@ -1913,6 +1973,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminApiRoute: AdminApiRoute,
   AdminBookingsRoute: AdminBookingsRoute,
   AdminCustomBuilderRoute: AdminCustomBuilderRoute,
+  AdminDestinationsRoute: AdminDestinationsRoute,
   AdminDiscountsRoute: AdminDiscountsRoute,
   AdminEmailsRoute: AdminEmailsRoute,
   AdminFaqsRoute: AdminFaqsRoute,
@@ -1928,6 +1989,7 @@ const rootRouteChildren: RootRouteChildren = {
   BookingCancelledRoute: BookingCancelledRoute,
   BookingManageRoute: BookingManageRoute,
   BookingSuccessRoute: BookingSuccessRoute,
+  DestinationsSlugRoute: DestinationsSlugRoute,
   EmailUnsubscribeRoute: EmailUnsubscribeRoute,
   InvoiceIdRoute: InvoiceIdRoute,
   JournalSlugRoute: JournalSlugRoute,
@@ -1936,6 +1998,7 @@ const rootRouteChildren: RootRouteChildren = {
   ToursCustomRoute: ToursCustomRoute,
   ToursPricingGuideRoute: ToursPricingGuideRoute,
   AdminIndexRoute: AdminIndexRoute,
+  DestinationsIndexRoute: DestinationsIndexRoute,
   JournalIndexRoute: JournalIndexRoute,
   LisbonGuideIndexRoute: LisbonGuideIndexRoute,
   ToursIndexRoute: ToursIndexRoute,
