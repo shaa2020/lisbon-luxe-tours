@@ -210,6 +210,7 @@ export function BookingModal({
             </DialogHeader>
             <div className="mt-8 inline-flex flex-col gap-2 text-sm text-body text-left border border-border rounded-xl p-5 bg-cloud/40">
               <p><span className="text-ink/50">Tour ·</span> <span className="text-ink font-medium">{tour.title}</span></p>
+              <p><span className="text-ink/50">Duration ·</span> <span className="text-ink">{durationLabel}</span></p>
               {date && <p><span className="text-ink/50">Date ·</span> <span className="text-ink">{format(date, "EEEE, d MMMM yyyy")}</span></p>}
               {time && <p><span className="text-ink/50">Time ·</span> <span className="text-ink">{time}</span></p>}
               <p><span className="text-ink/50">Guests ·</span> <span className="text-ink">{guests}</span></p>
