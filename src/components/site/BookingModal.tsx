@@ -98,6 +98,7 @@ export function BookingModal({
       `Hello Tuk Tuk 24! I'd like to book a tour.`,
       ``,
       `Tour: ${tour.title}`,
+      `Duration: ${durationLabel}`,
       date ? `Date: ${format(date, "EEEE, d MMM yyyy")}` : null,
       time ? `Time: ${time}` : null,
       `Guests: ${guests}`,
@@ -141,6 +142,7 @@ export function BookingModal({
           guests,
           amount: total * 100,
           image_url: tour.image?.startsWith("http") ? tour.image : null,
+          tour_option_id: selectedOption?.id ?? null,
         },
       });
       if (res.mode === "pay" && res.url) {
@@ -174,6 +176,7 @@ export function BookingModal({
         guests,
         amount: total * 100,
         image_url: tour.image?.startsWith("http") ? tour.image : null,
+        tour_option_id: selectedOption?.id ?? null,
       },
     });
     if (res.mode !== "pay") {
@@ -233,7 +236,7 @@ export function BookingModal({
                   {tour.title}
                 </h3>
                 <div className="mt-auto space-y-2.5 text-sm text-white/85">
-                  <div className="flex items-center gap-2.5"><Clock className="w-4 h-4 text-gold" />{tour.duration}</div>
+                  <div className="flex items-center gap-2.5"><Clock className="w-4 h-4 text-gold" />{durationLabel}</div>
                   <div className="flex items-center gap-2.5"><MapPin className="w-4 h-4 text-gold" />{tour.tagline}</div>
                   <div className="flex items-center gap-2.5"><span className="text-gold text-base">★</span>4.9 · private tour</div>
                 </div>
@@ -248,6 +251,19 @@ export function BookingModal({
                   Reserve in under a minute — no payment yet.
                 </DialogDescription>
               </DialogHeader>
+
+              {/* Duration options (only for multi-duration tours) */}
+              {options.length > 0 && (
+                <div>
+                  <label className="text-[11px] font-semibold uppercase tracking-widest text-ink/60 block mb-2">Duration</label>
+                  <DurationOptions
+                    compact
+                    options={options}
+                    selectedId={selectedOption?.id ?? null}
+                    onSelect={setOptionId}
+                  />
+                </div>
+              )}
 
               {/* Date */}
               <div>
