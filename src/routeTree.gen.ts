@@ -17,12 +17,14 @@ import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CookiesRouteImport } from './routes/cookies'
 import { Route as FaqRouteImport } from './routes/faq'
 import { Route as LisbonPrivateToursRouteImport } from './routes/lisbon-private-tours'
+import { Route as McpRouteImport } from './routes/mcp'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ReviewsRouteImport } from './routes/reviews'
 import { Route as SintraPrivateToursRouteImport } from './routes/sintra-private-tours'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as UnsubscribeRouteImport } from './routes/unsubscribe'
+import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminApiRouteImport } from './routes/admin.api'
 import { Route as AdminBookingsRouteImport } from './routes/admin.bookings'
@@ -52,6 +54,7 @@ import { Route as ToursIndexRouteImport } from './routes/tours.index'
 import { Route as ToursSlugRouteImport } from './routes/tours.$slug'
 import { Route as ToursCustomRouteImport } from './routes/tours.custom'
 import { Route as ToursPricingGuideRouteImport } from './routes/tours.pricing-guide'
+import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as AdminBlogIndexRouteImport } from './routes/admin.blog.index'
 import { Route as AdminBlogIdRouteImport } from './routes/admin.blog.$id'
 import { Route as AdminGuideIndexRouteImport } from './routes/admin.guide.index'
@@ -139,6 +142,11 @@ const LisbonPrivateToursRoute = LisbonPrivateToursRouteImport.update({
   path: '/lisbon-private-tours',
   getParentRoute: () => rootRouteImport,
 } as any)
+const McpRoute = McpRouteImport.update({
+  id: '/mcp',
+  path: '/mcp',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
@@ -169,6 +177,12 @@ const UnsubscribeRoute = UnsubscribeRouteImport.update({
   path: '/unsubscribe',
   getParentRoute: () => rootRouteImport,
 } as any)
+const Char91DotwellKnownChar93OauthProtectedResourceRoute =
+  Char91DotwellKnownChar93OauthProtectedResourceRouteImport.update({
+    id: '/.well-known/oauth-protected-resource',
+    path: '/.well-known/oauth-protected-resource',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/admin/',
   path: '/admin/',
@@ -312,6 +326,11 @@ const ToursCustomRoute = ToursCustomRouteImport.update({
 const ToursPricingGuideRoute = ToursPricingGuideRouteImport.update({
   id: '/tours/pricing-guide',
   path: '/tours/pricing-guide',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DotlovableOauthConsentRoute = DotlovableOauthConsentRouteImport.update({
+  id: '/.lovable/oauth/consent',
+  path: '/.lovable/oauth/consent',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminBlogIndexRoute = AdminBlogIndexRouteImport.update({
@@ -560,12 +579,14 @@ export interface FileRoutesByFullPath {
   '/cookies': typeof CookiesRoute
   '/faq': typeof FaqRoute
   '/lisbon-private-tours': typeof LisbonPrivateToursRoute
+  '/mcp': typeof McpRoute
   '/privacy': typeof PrivacyRoute
   '/reviews': typeof ReviewsRoute
   '/sintra-private-tours': typeof SintraPrivateToursRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/unsubscribe': typeof UnsubscribeRoute
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin/api': typeof AdminApiRoute
   '/admin/bookings': typeof AdminBookingsRoute
   '/admin/custom-builder': typeof AdminCustomBuilderRoute
@@ -595,6 +616,7 @@ export interface FileRoutesByFullPath {
   '/journal/': typeof JournalIndexRoute
   '/lisbon-guide/': typeof LisbonGuideIndexRoute
   '/tours/': typeof ToursIndexRoute
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/admin/blog/$id': typeof AdminBlogIdRoute
   '/admin/guide/$id': typeof AdminGuideIdRoute
   '/admin/guide/taxonomy': typeof AdminGuideTaxonomyRoute
@@ -651,12 +673,14 @@ export interface FileRoutesByTo {
   '/cookies': typeof CookiesRoute
   '/faq': typeof FaqRoute
   '/lisbon-private-tours': typeof LisbonPrivateToursRoute
+  '/mcp': typeof McpRoute
   '/privacy': typeof PrivacyRoute
   '/reviews': typeof ReviewsRoute
   '/sintra-private-tours': typeof SintraPrivateToursRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/unsubscribe': typeof UnsubscribeRoute
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin/api': typeof AdminApiRoute
   '/admin/bookings': typeof AdminBookingsRoute
   '/admin/custom-builder': typeof AdminCustomBuilderRoute
@@ -686,6 +710,7 @@ export interface FileRoutesByTo {
   '/journal': typeof JournalIndexRoute
   '/lisbon-guide': typeof LisbonGuideIndexRoute
   '/tours': typeof ToursIndexRoute
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/admin/blog/$id': typeof AdminBlogIdRoute
   '/admin/guide/$id': typeof AdminGuideIdRoute
   '/admin/guide/taxonomy': typeof AdminGuideTaxonomyRoute
@@ -743,12 +768,14 @@ export interface FileRoutesById {
   '/cookies': typeof CookiesRoute
   '/faq': typeof FaqRoute
   '/lisbon-private-tours': typeof LisbonPrivateToursRoute
+  '/mcp': typeof McpRoute
   '/privacy': typeof PrivacyRoute
   '/reviews': typeof ReviewsRoute
   '/sintra-private-tours': typeof SintraPrivateToursRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/unsubscribe': typeof UnsubscribeRoute
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin/api': typeof AdminApiRoute
   '/admin/bookings': typeof AdminBookingsRoute
   '/admin/custom-builder': typeof AdminCustomBuilderRoute
@@ -778,6 +805,7 @@ export interface FileRoutesById {
   '/journal/': typeof JournalIndexRoute
   '/lisbon-guide/': typeof LisbonGuideIndexRoute
   '/tours/': typeof ToursIndexRoute
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/admin/blog/$id': typeof AdminBlogIdRoute
   '/admin/guide/$id': typeof AdminGuideIdRoute
   '/admin/guide/taxonomy': typeof AdminGuideTaxonomyRoute
@@ -836,12 +864,14 @@ export interface FileRouteTypes {
     | '/cookies'
     | '/faq'
     | '/lisbon-private-tours'
+    | '/mcp'
     | '/privacy'
     | '/reviews'
     | '/sintra-private-tours'
     | '/sitemap.xml'
     | '/terms'
     | '/unsubscribe'
+    | '/.well-known/oauth-protected-resource'
     | '/admin/api'
     | '/admin/bookings'
     | '/admin/custom-builder'
@@ -871,6 +901,7 @@ export interface FileRouteTypes {
     | '/journal/'
     | '/lisbon-guide/'
     | '/tours/'
+    | '/.lovable/oauth/consent'
     | '/admin/blog/$id'
     | '/admin/guide/$id'
     | '/admin/guide/taxonomy'
@@ -927,12 +958,14 @@ export interface FileRouteTypes {
     | '/cookies'
     | '/faq'
     | '/lisbon-private-tours'
+    | '/mcp'
     | '/privacy'
     | '/reviews'
     | '/sintra-private-tours'
     | '/sitemap.xml'
     | '/terms'
     | '/unsubscribe'
+    | '/.well-known/oauth-protected-resource'
     | '/admin/api'
     | '/admin/bookings'
     | '/admin/custom-builder'
@@ -962,6 +995,7 @@ export interface FileRouteTypes {
     | '/journal'
     | '/lisbon-guide'
     | '/tours'
+    | '/.lovable/oauth/consent'
     | '/admin/blog/$id'
     | '/admin/guide/$id'
     | '/admin/guide/taxonomy'
@@ -1018,12 +1052,14 @@ export interface FileRouteTypes {
     | '/cookies'
     | '/faq'
     | '/lisbon-private-tours'
+    | '/mcp'
     | '/privacy'
     | '/reviews'
     | '/sintra-private-tours'
     | '/sitemap.xml'
     | '/terms'
     | '/unsubscribe'
+    | '/.well-known/oauth-protected-resource'
     | '/admin/api'
     | '/admin/bookings'
     | '/admin/custom-builder'
@@ -1053,6 +1089,7 @@ export interface FileRouteTypes {
     | '/journal/'
     | '/lisbon-guide/'
     | '/tours/'
+    | '/.lovable/oauth/consent'
     | '/admin/blog/$id'
     | '/admin/guide/$id'
     | '/admin/guide/taxonomy'
@@ -1110,12 +1147,14 @@ export interface RootRouteChildren {
   CookiesRoute: typeof CookiesRoute
   FaqRoute: typeof FaqRoute
   LisbonPrivateToursRoute: typeof LisbonPrivateToursRoute
+  McpRoute: typeof McpRoute
   PrivacyRoute: typeof PrivacyRoute
   ReviewsRoute: typeof ReviewsRoute
   SintraPrivateToursRoute: typeof SintraPrivateToursRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
   UnsubscribeRoute: typeof UnsubscribeRoute
+  Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   AdminApiRoute: typeof AdminApiRoute
   AdminBookingsRoute: typeof AdminBookingsRoute
   AdminCustomBuilderRoute: typeof AdminCustomBuilderRoute
@@ -1145,6 +1184,7 @@ export interface RootRouteChildren {
   JournalIndexRoute: typeof JournalIndexRoute
   LisbonGuideIndexRoute: typeof LisbonGuideIndexRoute
   ToursIndexRoute: typeof ToursIndexRoute
+  DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   AdminBlogIdRoute: typeof AdminBlogIdRoute
   AdminGuideIdRoute: typeof AdminGuideIdRoute
   AdminGuideTaxonomyRoute: typeof AdminGuideTaxonomyRoute
@@ -1250,6 +1290,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LisbonPrivateToursRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/mcp': {
+      id: '/mcp'
+      path: '/mcp'
+      fullPath: '/mcp'
+      preLoaderRoute: typeof McpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/privacy': {
       id: '/privacy'
       path: '/privacy'
@@ -1290,6 +1337,13 @@ declare module '@tanstack/react-router' {
       path: '/unsubscribe'
       fullPath: '/unsubscribe'
       preLoaderRoute: typeof UnsubscribeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/.well-known/oauth-protected-resource': {
+      id: '/.well-known/oauth-protected-resource'
+      path: '/.well-known/oauth-protected-resource'
+      fullPath: '/.well-known/oauth-protected-resource'
+      preLoaderRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/': {
@@ -1493,6 +1547,13 @@ declare module '@tanstack/react-router' {
       path: '/tours/pricing-guide'
       fullPath: '/tours/pricing-guide'
       preLoaderRoute: typeof ToursPricingGuideRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/.lovable/oauth/consent': {
+      id: '/.lovable/oauth/consent'
+      path: '/.lovable/oauth/consent'
+      fullPath: '/.lovable/oauth/consent'
+      preLoaderRoute: typeof DotlovableOauthConsentRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/blog/': {
@@ -1840,12 +1901,15 @@ const rootRouteChildren: RootRouteChildren = {
   CookiesRoute: CookiesRoute,
   FaqRoute: FaqRoute,
   LisbonPrivateToursRoute: LisbonPrivateToursRoute,
+  McpRoute: McpRoute,
   PrivacyRoute: PrivacyRoute,
   ReviewsRoute: ReviewsRoute,
   SintraPrivateToursRoute: SintraPrivateToursRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
   UnsubscribeRoute: UnsubscribeRoute,
+  Char91DotwellKnownChar93OauthProtectedResourceRoute:
+    Char91DotwellKnownChar93OauthProtectedResourceRoute,
   AdminApiRoute: AdminApiRoute,
   AdminBookingsRoute: AdminBookingsRoute,
   AdminCustomBuilderRoute: AdminCustomBuilderRoute,
@@ -1875,6 +1939,7 @@ const rootRouteChildren: RootRouteChildren = {
   JournalIndexRoute: JournalIndexRoute,
   LisbonGuideIndexRoute: LisbonGuideIndexRoute,
   ToursIndexRoute: ToursIndexRoute,
+  DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   AdminBlogIdRoute: AdminBlogIdRoute,
   AdminGuideIdRoute: AdminGuideIdRoute,
   AdminGuideTaxonomyRoute: AdminGuideTaxonomyRoute,

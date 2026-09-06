@@ -1,0 +1,212 @@
+{
+  "version": 1,
+  "sdk_version": "2.0.2",
+  "path": "/mcp",
+  "auth": {
+    "type": "oauth",
+    "issuer": "https://jysalqkosbekevqnyviq.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ]
+  },
+  "mcp": {
+    "server": {
+      "name": "tuktuk24",
+      "version": "0.1.0",
+      "title": "TukTuk24"
+    },
+    "tools": [
+      {
+        "name": "list_tours",
+        "title": "List tours",
+        "description": "List the tours offered by the business, with price, duration and publish status.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "properties": {
+            "onlyPublished": {
+              "description": "Return only tours visible on the website.",
+              "type": "boolean"
+            },
+            "limit": {
+              "description": "Maximum number of tours to return (default 50).",
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 9007199254740991
+            }
+          }
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_bookings",
+        "title": "List bookings",
+        "description": "List bookings with guest name, tour, travel date, guests, status and payment status. Requires a staff account.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "properties": {
+            "fromDate": {
+              "description": "Only bookings travelling on or after this date (YYYY-MM-DD).",
+              "type": "string"
+            },
+            "toDate": {
+              "description": "Only bookings travelling on or before this date (YYYY-MM-DD).",
+              "type": "string"
+            },
+            "status": {
+              "description": "Filter by booking status, e.g. pending, confirmed, cancelled.",
+              "type": "string"
+            },
+            "limit": {
+              "description": "Maximum number of bookings to return (default 25).",
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 9007199254740991
+            }
+          }
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_booking",
+        "title": "Get booking",
+        "description": "Look up one booking by its full id or by the short reference (the first 8 characters of the id).",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "properties": {
+            "reference": {
+              "type": "string",
+              "description": "Booking id or short reference code."
+            }
+          },
+          "required": [
+            "reference"
+          ]
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_leads",
+        "title": "List enquiries",
+        "description": "List customer enquiries (leads) with contact details, preferred date and status.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "properties": {
+            "status": {
+              "description": "Filter by lead status, e.g. new, contacted, won, lost.",
+              "type": "string"
+            },
+            "limit": {
+              "description": "Maximum number of leads to return (default 25).",
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 9007199254740991
+            }
+          }
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "create_lead",
+        "title": "Create enquiry",
+        "description": "Record a new customer enquiry (for example one that arrived by WhatsApp, phone or email) so it appears in the admin panel.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "properties": {
+            "name": {
+              "description": "Customer name.",
+              "type": "string"
+            },
+            "phone": {
+              "description": "WhatsApp or phone number.",
+              "type": "string"
+            },
+            "email": {
+              "description": "Customer email address.",
+              "type": "string"
+            },
+            "numberOfPeople": {
+              "description": "How many guests.",
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 9007199254740991
+            },
+            "preferredDate": {
+              "description": "Preferred travel date (YYYY-MM-DD).",
+              "type": "string"
+            },
+            "preferredTime": {
+              "description": "Preferred start time, e.g. 10:00.",
+              "type": "string"
+            },
+            "tourSlug": {
+              "description": "Slug of the tour they asked about.",
+              "type": "string"
+            },
+            "message": {
+              "description": "What the customer asked for.",
+              "type": "string"
+            },
+            "source": {
+              "description": "Where the enquiry came from, e.g. whatsapp, phone, email.",
+              "type": "string"
+            }
+          }
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "business_summary",
+        "title": "Business summary",
+        "description": "Summarise upcoming bookings, guests and expected revenue over a window of days, plus open enquiries.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "properties": {
+            "days": {
+              "description": "How many days ahead to summarise (default 14).",
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 9007199254740991
+            }
+          }
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
