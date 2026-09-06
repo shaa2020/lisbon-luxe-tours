@@ -14,6 +14,44 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_generation_log: {
+        Row: {
+          created_at: string
+          id: string
+          post_id: string | null
+          primary_keyword: string | null
+          topic: string
+          user_id: string | null
+          word_count: number | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          post_id?: string | null
+          primary_keyword?: string | null
+          topic: string
+          user_id?: string | null
+          word_count?: number | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          post_id?: string | null
+          primary_keyword?: string | null
+          topic?: string
+          user_id?: string | null
+          word_count?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_generation_log_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "blog_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       api_keys: {
         Row: {
           active: boolean

@@ -26,6 +26,7 @@ import { Route as TermsRouteImport } from './routes/terms'
 import { Route as UnsubscribeRouteImport } from './routes/unsubscribe'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as AdminAiWriterRouteImport } from './routes/admin.ai-writer'
 import { Route as AdminApiRouteImport } from './routes/admin.api'
 import { Route as AdminBookingsRouteImport } from './routes/admin.bookings'
 import { Route as AdminCustomBuilderRouteImport } from './routes/admin.custom-builder'
@@ -189,6 +190,11 @@ const Char91DotwellKnownChar93OauthProtectedResourceRoute =
 const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/admin/',
   path: '/admin/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminAiWriterRoute = AdminAiWriterRouteImport.update({
+  id: '/admin/ai-writer',
+  path: '/admin/ai-writer',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminApiRoute = AdminApiRouteImport.update({
@@ -605,6 +611,7 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/admin/ai-writer': typeof AdminAiWriterRoute
   '/admin/api': typeof AdminApiRoute
   '/admin/bookings': typeof AdminBookingsRoute
   '/admin/custom-builder': typeof AdminCustomBuilderRoute
@@ -702,6 +709,7 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/admin/ai-writer': typeof AdminAiWriterRoute
   '/admin/api': typeof AdminApiRoute
   '/admin/bookings': typeof AdminBookingsRoute
   '/admin/custom-builder': typeof AdminCustomBuilderRoute
@@ -800,6 +808,7 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/admin/ai-writer': typeof AdminAiWriterRoute
   '/admin/api': typeof AdminApiRoute
   '/admin/bookings': typeof AdminBookingsRoute
   '/admin/custom-builder': typeof AdminCustomBuilderRoute
@@ -899,6 +908,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/unsubscribe'
     | '/.well-known/oauth-protected-resource'
+    | '/admin/ai-writer'
     | '/admin/api'
     | '/admin/bookings'
     | '/admin/custom-builder'
@@ -996,6 +1006,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/unsubscribe'
     | '/.well-known/oauth-protected-resource'
+    | '/admin/ai-writer'
     | '/admin/api'
     | '/admin/bookings'
     | '/admin/custom-builder'
@@ -1093,6 +1104,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/unsubscribe'
     | '/.well-known/oauth-protected-resource'
+    | '/admin/ai-writer'
     | '/admin/api'
     | '/admin/bookings'
     | '/admin/custom-builder'
@@ -1191,6 +1203,7 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   UnsubscribeRoute: typeof UnsubscribeRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  AdminAiWriterRoute: typeof AdminAiWriterRoute
   AdminApiRoute: typeof AdminApiRoute
   AdminBookingsRoute: typeof AdminBookingsRoute
   AdminCustomBuilderRoute: typeof AdminCustomBuilderRoute
@@ -1390,6 +1403,13 @@ declare module '@tanstack/react-router' {
       path: '/admin'
       fullPath: '/admin/'
       preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/ai-writer': {
+      id: '/admin/ai-writer'
+      path: '/admin/ai-writer'
+      fullPath: '/admin/ai-writer'
+      preLoaderRoute: typeof AdminAiWriterRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/api': {
@@ -1970,6 +1990,7 @@ const rootRouteChildren: RootRouteChildren = {
   UnsubscribeRoute: UnsubscribeRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
     Char91DotwellKnownChar93OauthProtectedResourceRoute,
+  AdminAiWriterRoute: AdminAiWriterRoute,
   AdminApiRoute: AdminApiRoute,
   AdminBookingsRoute: AdminBookingsRoute,
   AdminCustomBuilderRoute: AdminCustomBuilderRoute,
