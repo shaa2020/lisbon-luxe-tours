@@ -34,8 +34,15 @@ export const Route = createFileRoute("/tours/$slug")({
   head: ({ params, loaderData }) => {
     const tour = loaderData?.tour;
     const url = `https://tuktuk24lisbon.com/tours/${params.slug}`;
-    const title = tour ? `${tour.title} — Private Tour | Tuk Tuk 24` : `Private Tour — Tuk Tuk 24`;
-    const description = tour?.description?.slice(0, 158) ?? "Private tuk-tuk and luxury tours across Lisbon and Portugal.";
+    const canonical = tour?.canonicalUrl || url;
+    const title =
+      tour?.seoTitle ||
+      (tour ? `${tour.title} — Private Tour in Lisbon | Tuk Tuk 24` : `Private Tour — Tuk Tuk 24`);
+    const description =
+      tour?.metaDescription ||
+      tour?.description?.slice(0, 158) ||
+      "Private tuk-tuk and luxury tours across Lisbon and Portugal.";
+    const shareImage = tour?.ogImageUrl || tour?.image;
     return {
       meta: [
         { title },
@@ -44,9 +51,12 @@ export const Route = createFileRoute("/tours/$slug")({
         { property: "og:description", content: description },
         { property: "og:type", content: "product" },
         { property: "og:url", content: url },
-        ...(tour?.image ? [{ property: "og:image", content: tour.image }, { name: "twitter:image", content: tour.image }] : []),
+        ...(shareImage
+          ? [{ property: "og:image", content: shareImage }, { name: "twitter:image", content: shareImage }]
+          : []),
+        ...(tour?.noindex ? [{ name: "robots", content: "noindex, follow" }] : []),
       ],
-      links: [{ rel: "canonical", href: url }],
+      links: [{ rel: "canonical", href: canonical }],
       scripts: tour
         ? [
             {

@@ -1,4 +1,12 @@
 User-agent: *
 Allow: /
+Disallow: /admin
+Disallow: /admin/
+Disallow: /booking/
+Disallow: /invoice/
+Disallow: /unsubscribe
+Disallow: /email/
+Disallow: /api/
+Disallow: /lovable/
 
 Sitemap: https://tuktuk24lisbon.com/sitemap.xml

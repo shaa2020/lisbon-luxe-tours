@@ -5,6 +5,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { slugify, uploadMediaFile } from "@/lib/admin-helpers";
 import { toast } from "sonner";
+import {
+  SeoFieldsEditor,
+  emptySeo,
+  seoFromRow,
+  seoToPayload,
+  type SeoFormValue,
+} from "@/components/admin/SeoFieldsEditor";
 
 export const Route = createFileRoute("/admin/blog/$id")({
   component: BlogEditPage,
@@ -55,6 +62,7 @@ function BlogEditPage() {
   const [loading, setLoading] = useState(!isNew);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [seo, setSeo] = useState<SeoFormValue>(emptySeo);
 
   useEffect(() => {
     if (isNew) return;
@@ -76,6 +84,7 @@ function BlogEditPage() {
         published: data.published,
         published_at: new Date(data.published_at).toISOString().slice(0, 16),
       });
+      setSeo(seoFromRow(data as unknown as Record<string, unknown>));
       setLoading(false);
     })();
   }, [id, isNew]);
@@ -113,6 +122,7 @@ function BlogEditPage() {
       content: toParagraphs(form.content),
       published: form.published,
       published_at: new Date(form.published_at).toISOString(),
+      ...seoToPayload(seo),
     };
     const res = isNew
       ? await supabase.from("blog_posts").insert(payload).select("id").single()
@@ -218,6 +228,16 @@ function BlogEditPage() {
               {form.content.split(/\s+/).filter(Boolean).length} words
             </p>
           </Field>
+        </div>
+
+        <div className="lg:col-span-2 lg:order-last">
+          <SeoFieldsEditor
+            value={seo}
+            onChange={(patch) => setSeo((s) => ({ ...s, ...patch }))}
+            previewUrl={`https://tuktuk24lisbon.com/journal/${form.slug || "your-post"}`}
+            fallbackTitle={form.title ? `${form.title} | Tuk Tuk 24 Lisbon` : undefined}
+            fallbackDescription={form.excerpt || undefined}
+          />
         </div>
 
         <aside className="space-y-5">

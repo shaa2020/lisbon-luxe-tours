@@ -21,6 +21,14 @@ const TOUR_SELECT = `
   sort_order,
   per_person_pricing,
   updated_at,
+  seo_title,
+  meta_description,
+  primary_keyword,
+  secondary_keywords,
+  canonical_url,
+  og_image_url,
+  image_alt,
+  noindex,
   tour_options (
     id,
     duration_minutes,
@@ -53,7 +61,18 @@ const BLOG_SELECT = `
   shares,
   published_at,
   published,
-  updated_at
+  updated_at,
+  seo_title,
+  meta_description,
+  primary_keyword,
+  secondary_keywords,
+  canonical_url,
+  og_image_url,
+  image_alt,
+  noindex,
+  author_name,
+  tags,
+  last_verified_at
 `;
 
 export async function fetchPublishedTours() {

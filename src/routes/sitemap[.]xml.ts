@@ -19,11 +19,14 @@ export const Route = createFileRoute("/sitemap.xml")({
           "@/lib/travel-guide.server"
         );
 
-        const [tours, blogPosts, guides, guideCategories] = await Promise.all([
+        const { fetchPublishedDestinations } = await import("@/lib/destinations.server");
+
+        const [tours, blogPosts, guides, guideCategories, destinations] = await Promise.all([
           fetchPublishedTours(),
           fetchPublishedBlogPosts(),
           fetchPublishedGuideSlugs(),
           fetchGuideCategories(),
+          fetchPublishedDestinations(),
         ]);
 
 
@@ -42,25 +45,22 @@ export const Route = createFileRoute("/sitemap.xml")({
           { path: "/tours/pricing-guide", changefreq: "monthly", priority: "0.8" },
           { path: "/contact", changefreq: "monthly", priority: "0.7" },
           { path: "/reviews", changefreq: "weekly", priority: "0.8" },
-          { path: "/booking/manage", changefreq: "monthly", priority: "0.5" },
           { path: "/privacy", changefreq: "yearly", priority: "0.3" },
           { path: "/terms", changefreq: "yearly", priority: "0.3" },
           { path: "/cookies", changefreq: "yearly", priority: "0.3" },
-          { path: "/booking/success", changefreq: "yearly", priority: "0.3" },
-          { path: "/booking/cancelled", changefreq: "yearly", priority: "0.3" },
-          { path: "/admin", changefreq: "monthly", priority: "0.5" },
-          { path: "/admin/login", changefreq: "yearly", priority: "0.5" },
-          { path: "/admin/bookings", changefreq: "weekly", priority: "0.5" },
-          { path: "/admin/messages", changefreq: "weekly", priority: "0.5" },
-          { path: "/admin/orders", changefreq: "weekly", priority: "0.5" },
-          { path: "/admin/reviews", changefreq: "weekly", priority: "0.5" },
-          { path: "/admin/tours", changefreq: "weekly", priority: "0.5" },
-          { path: "/admin/blog", changefreq: "weekly", priority: "0.5" },
-          ...tours.map((t) => ({
-            path: `/tours/${t.slug}`,
+          ...destinations.map((d) => ({
+            path: `/destinations/${d.slug}`,
             changefreq: "monthly" as const,
             priority: "0.8",
+            lastmod: formatDate(d.updated_at),
           })),
+          ...tours
+            .filter((t) => !(t as { noindex?: boolean | null }).noindex)
+            .map((t) => ({
+              path: `/tours/${t.slug}`,
+              changefreq: "monthly" as const,
+              priority: "0.8",
+            })),
           ...guideCategories.map((c) => ({
             path: `/lisbon-guide/category/${c.slug}`,
             changefreq: "weekly" as const,
@@ -72,12 +72,14 @@ export const Route = createFileRoute("/sitemap.xml")({
             priority: "0.8",
             lastmod: formatDate(g.content_updated_at ?? g.updated_at),
           })),
-          ...blogPosts.map((p) => ({
+          ...blogPosts
+            .filter((p) => !(p as { noindex?: boolean | null }).noindex)
+            .map((p) => ({
             path: `/journal/${p.slug}`,
             changefreq: "monthly" as const,
             priority: "0.7",
             lastmod: formatDate(p.published_at),
-          })),
+            })),
         ];
 
         const urls = entries.map((e) =>
