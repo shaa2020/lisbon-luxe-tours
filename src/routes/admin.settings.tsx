@@ -767,11 +767,15 @@ function AdminSettings() {
             <input
               value={biz.google_review_url}
               onChange={(e) => setBiz((b) => ({ ...b, google_review_url: e.target.value }))}
+              onBlur={(e) => {
+                const url = e.target.value.match(/https:\/\/(?:g\.page\/r\/[^\s<>"']+|search\.google\.com\/local\/writereview\?[^\s<>"']+)/i)?.[0];
+                if (url) setBiz((b) => ({ ...b, google_review_url: url }));
+              }}
               className={input}
               placeholder="https://g.page/r/…/review"
             />
             <span className="block text-[11px] text-muted-foreground">
-              Used in follow-up messages asking happy guests for a review.
+              Paste any text containing a Google review URL — it will be cleaned automatically.
             </span>
           </label>
           <button type="button" onClick={saveBiz} disabled={savingBiz} className={btn}>
