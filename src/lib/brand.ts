@@ -210,8 +210,15 @@ export function mapSiteBrand(data: any): SiteBrand {
     groupTiers: parseGroupTiers((data as any)?.group_discount_tiers),
     groupDiscountEnabled: (data as any)?.group_discount_enabled !== false,
     whatsappReplyLine: (data as any)?.whatsapp_reply_line || DEFAULT_WHATSAPP_REPLY_LINE,
-    googleReviewUrl: (data as any)?.google_review_url || null,
+    googleReviewUrl: extractGoogleReviewUrl((data as any)?.google_review_url),
   };
+}
+
+/** Extracts the first https://g.page/... or https://search.google.com/local/writereview?... URL from pasted text. */
+function extractGoogleReviewUrl(raw: unknown): string | null {
+  if (!raw || typeof raw !== "string") return null;
+  const url = raw.match(/https:\/\/(?:g\.page\/r\/[^\s<>"']+|search\.google\.com\/local\/writereview\?[^\s<>"']+)/i)?.[0];
+  return url || null;
 }
 
 const SiteBrandContext = createContext<SiteBrand | null>(null);
