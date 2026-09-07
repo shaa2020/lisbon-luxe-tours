@@ -18,7 +18,7 @@ type Row = {
   is_active: boolean;
 };
 
-const BADGES = ["none", "popular", "best_value", "recommended", "new"];
+const BADGES = ["none", "most_popular", "best_value", "recommended"];
 
 const input =
   "w-full rounded-md border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40";
@@ -115,7 +115,7 @@ export function TourOptionsManager({ tourId }: { tourId: string }) {
       price: r.price,
       sale_price: r.sale_price && r.sale_price > 0 ? r.sale_price : null,
       short_description: r.short_description || null,
-      badge: r.badge === "none" ? null : r.badge,
+      badge: BADGES.includes(r.badge) ? r.badge : "none",
       is_recommended: r.is_recommended,
       is_best_value: r.is_best_value,
       sort_order: idx,
