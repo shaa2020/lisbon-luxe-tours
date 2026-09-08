@@ -214,10 +214,12 @@ export function mapSiteBrand(data: any): SiteBrand {
   };
 }
 
-/** Extracts the first https://g.page/... or https://search.google.com/local/writereview?... URL from pasted text. */
+/** Extracts the first Google review/maps URL from pasted text. */
 function extractGoogleReviewUrl(raw: unknown): string | null {
   if (!raw || typeof raw !== "string") return null;
-  const url = raw.match(/https:\/\/(?:g\.page\/r\/[^\s<>"']+|search\.google\.com\/local\/writereview\?[^\s<>"']+)/i)?.[0];
+  const url = raw.match(
+    /https:\/\/(?:g\.page\/[^\s<>"']+|search\.google\.com\/local\/writereview\?[^\s<>"']+|maps\.app\.goo\.gl\/[^\s<>"']+|(?:www\.)?google\.com\/maps[^\s<>"']*)/i,
+  )?.[0];
   return url || null;
 }
 
