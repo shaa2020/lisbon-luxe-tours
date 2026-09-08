@@ -768,7 +768,7 @@ function AdminSettings() {
               value={biz.google_review_url}
               onChange={(e) => setBiz((b) => ({ ...b, google_review_url: e.target.value }))}
               onBlur={(e) => {
-                const url = e.target.value.match(/https:\/\/(?:g\.page\/r\/[^\s<>"']+|search\.google\.com\/local\/writereview\?[^\s<>"']+)/i)?.[0];
+                const url = e.target.value.match(/https:\/\/(?:g\.page\/[^\s<>"']+|search\.google\.com\/local\/writereview\?[^\s<>"']+|maps\.app\.goo\.gl\/[^\s<>"']+|(?:www\.)?google\.com\/maps[^\s<>"']*)/i)?.[0];
                 if (url) setBiz((b) => ({ ...b, google_review_url: url }));
               }}
               className={input}
