@@ -83,7 +83,6 @@ function Index() {
       <Hero />
       <PromoSlot placement="home_hero" />
       <TrustStrip />
-      <TestimonialsSection />
       <PopularTours onBook={setBookingTour} />
       <PromoSlot placement="home_tours" />
       <WhyTravel />
@@ -91,6 +90,7 @@ function Index() {
       <AboutSection />
       <Gallery />
       <TravelTipsAndSignup />
+      <TestimonialsSection />
       <Footer />
       <WhatsappFab />
       <StickyBookBar />
