@@ -106,6 +106,7 @@ function OrdersPage() {
   const [sort, setSort] = useState<"date" | "amount">("date");
   const [page, setPage] = useState(0);
   const [busy, setBusy] = useState<string | null>(null);
+  const [requestPercent, setRequestPercent] = useState<Record<string, number>>({});
 
   const canRefund = can("orders.refund");
 
@@ -180,11 +181,7 @@ function OrdersPage() {
     run(`inv-${o.id}`, () => emailInvoice({ data: { orderId: o.id } }), "Invoice emailed to the customer");
 
   const handleRequestBalance = (o: AdminOrder) => {
-    const input = prompt("Ask the customer for what percentage of the tour total? (20–100)", "100");
-    if (!input) return;
-    const percent = Number(input);
-    if (!Number.isFinite(percent) || percent < 20 || percent > 100)
-      return toast.error("Enter a number between 20 and 100");
+    const percent = requestPercent[o.id] ?? 100;
     return run(
       `bal-${o.id}`,
       () => requestBalance({ data: { orderId: o.id, percent: Math.round(percent) } }),
@@ -575,14 +572,34 @@ function OrdersPage() {
                     PDF
                   </button>
                   {b && b.dueCents > 0 && (
-                    <button
-                      onClick={() => handleRequestBalance(o)}
-                      disabled={isBusy}
-                      className="inline-flex items-center gap-1.5 rounded-md border border-border bg-card px-3 py-2 text-sm font-medium hover:border-primary disabled:opacity-50"
-                    >
-                      <Send className="w-4 h-4" />
-                      Request {eur(b.dueCents)}
-                    </button>
+                    <div className="flex flex-wrap items-center gap-1.5 rounded-md border border-border bg-muted/30 p-1.5">
+                      {[20, 50, 70, 100].map((percent) => (
+                        <button
+                          key={percent}
+                          type="button"
+                          aria-pressed={(requestPercent[o.id] ?? 100) === percent}
+                          onClick={() =>
+                            setRequestPercent((current) => ({ ...current, [o.id]: percent }))
+                          }
+                          className={`rounded px-2 py-1.5 text-xs font-semibold ${
+                            (requestPercent[o.id] ?? 100) === percent
+                              ? "bg-primary text-primary-foreground"
+                              : "bg-background text-muted-foreground hover:text-foreground"
+                          }`}
+                        >
+                          {percent === 100 ? "Full" : `${percent}%`}
+                        </button>
+                      ))}
+                      <button
+                        type="button"
+                        onClick={() => handleRequestBalance(o)}
+                        disabled={isBusy}
+                        className="inline-flex items-center gap-1.5 rounded bg-foreground px-2.5 py-1.5 text-xs font-semibold text-background disabled:opacity-50"
+                      >
+                        <Send className="w-4 h-4" />
+                        Send request
+                      </button>
+                    </div>
                   )}
                   {o.booking_id && (
                     <Link

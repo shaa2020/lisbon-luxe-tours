@@ -258,7 +258,7 @@ export function BookingManagePanel({ booking }: { booking: Booking }) {
             Emails a branded payment link (also handy for WhatsApp).
           </p>
           <div className="mt-2 flex flex-wrap items-center gap-1.5">
-            {[20, 30, 50, 100].map((p) => (
+            {[20, 50, 70, 100].map((p) => (
               <button
                 key={p}
                 type="button"
@@ -269,7 +269,7 @@ export function BookingManagePanel({ booking }: { booking: Booking }) {
                     : "border-border hover:bg-accent"
                 }`}
               >
-                {p}%
+                {p === 100 ? "Full amount" : `${p}%`}
               </button>
             ))}
             <span className="text-xs">
