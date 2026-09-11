@@ -202,7 +202,7 @@ export function BookingCreateDialog() {
                 <div className="mt-3">
                   <p className="text-xs text-muted-foreground mb-2">Charge now — 20% to 100% of the total</p>
                   <div className="flex flex-wrap items-center gap-2">
-                    {[20, 30, 50, 100].map((p) => (
+                    {[20, 50, 70, 100].map((p) => (
                       <button
                         key={p}
                         type="button"
@@ -213,7 +213,7 @@ export function BookingCreateDialog() {
                             : "border-border hover:bg-accent"
                         }`}
                       >
-                        {p}%
+                        {p === 100 ? "Full amount" : `${p}%`}
                       </button>
                     ))}
                     <input

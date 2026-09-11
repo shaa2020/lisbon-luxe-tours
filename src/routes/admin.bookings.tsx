@@ -20,7 +20,7 @@ import {
   Star,
   Link2,
 } from "lucide-react";
-import { adminSendBookingEmail } from "@/lib/bookings-admin.functions";
+import { adminRequestPayment, adminSendBookingEmail } from "@/lib/bookings-admin.functions";
 import { useServerFn } from "@tanstack/react-start";
 import {
   adminCreateModificationCheckout,
@@ -97,6 +97,7 @@ function BookingsInbox() {
   const [generating, setGenerating] = useState(false);
   const [sendingKey, setSendingKey] = useState<string | null>(null);
   const [pickedTemplate, setPickedTemplate] = useState<Record<string, string>>({});
+  const [paymentPercent, setPaymentPercent] = useState<Record<string, number>>({});
 
   const { data: emailTemplates = [] } = useQuery({
     queryKey: ["admin-email-templates-list"],
@@ -116,6 +117,7 @@ function BookingsInbox() {
   const waiveMod = useServerFn(adminWaiveModification);
   const getPaymentUrl = useServerFn(getMolliePaymentUrl);
   const sendBookingEmail = useServerFn(adminSendBookingEmail);
+  const requestPayment = useServerFn(adminRequestPayment);
 
   const { data: bookings = [], isLoading } = useQuery({
     queryKey: ["admin-bookings"],
@@ -251,6 +253,24 @@ function BookingsInbox() {
       qc.invalidateQueries({ queryKey: ["admin-bookings"] });
     } catch (err) {
       toast.error((err as Error).message || "Could not send the email");
+    } finally {
+      setSendingKey(null);
+    }
+  };
+
+  const sendPaymentRequest = async (b: Booking) => {
+    const percent = paymentPercent[b.id] ?? 20;
+    setSendingKey(`${b.id}:payment_request`);
+    try {
+      const res = await requestPayment({ data: { id: b.id, percent } });
+      toast.success(
+        `${percent === 100 ? "Full payment" : `${percent}% payment`} request for €${(
+          res.requestCents / 100
+        ).toFixed(2)} emailed to ${b.email}`,
+      );
+      qc.invalidateQueries({ queryKey: ["admin-bookings"] });
+    } catch (err) {
+      toast.error((err as Error).message || "Could not send the payment request");
     } finally {
       setSendingKey(null);
     }
@@ -584,6 +604,55 @@ function BookingsInbox() {
               )}
 
               <div className="flex flex-wrap items-center gap-2">
+                {b.total_estimate != null &&
+                  b.total_estimate > 0 &&
+                  b.payment_status !== "paid" &&
+                  b.status !== "cancelled" && (
+                    <div className="basis-full rounded-md border border-border bg-muted/40 p-3 mb-1">
+                      <p className="text-xs font-semibold mb-2">Send payment request</p>
+                      <div className="flex flex-wrap items-center gap-2">
+                        {[20, 50, 70, 100].map((percent) => {
+                          const selected = (paymentPercent[b.id] ?? 20) === percent;
+                          return (
+                            <button
+                              key={percent}
+                              type="button"
+                              aria-pressed={selected}
+                              onClick={() =>
+                                setPaymentPercent((current) => ({ ...current, [b.id]: percent }))
+                              }
+                              className={`rounded-md border px-3 py-2 text-xs font-semibold transition ${
+                                selected
+                                  ? "border-primary bg-primary text-primary-foreground"
+                                  : "border-border bg-background hover:border-primary"
+                              }`}
+                            >
+                              {percent === 100 ? "Full amount" : `${percent}%`}
+                            </button>
+                          );
+                        })}
+                        <span className="text-xs text-muted-foreground">
+                          €{(
+                            (b.total_estimate * (paymentPercent[b.id] ?? 20)) /
+                            100
+                          ).toFixed(2)}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => sendPaymentRequest(b)}
+                          disabled={sendingKey === `${b.id}:payment_request`}
+                          className="inline-flex items-center gap-1.5 rounded-md bg-foreground px-3 py-2 text-xs font-semibold text-background disabled:opacity-50"
+                        >
+                          {sendingKey === `${b.id}:payment_request` ? (
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                          ) : (
+                            <Mail className="w-4 h-4" />
+                          )}
+                          Email request
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 {waLink(b) && (
                   <a
                     href={waLink(b)!}
