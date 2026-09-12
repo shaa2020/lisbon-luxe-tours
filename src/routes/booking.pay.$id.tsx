@@ -38,6 +38,7 @@ function PayBalancePage() {
   const startCheckout = useServerFn(createBalanceCheckout);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [selectedPercent, setSelectedPercent] = useState<20 | 50 | 70 | 100 | null>(null);
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["booking-balance", id],
@@ -49,7 +50,7 @@ function PayBalancePage() {
     setBusy(true);
     setError(null);
     try {
-      const res = await startCheckout({ data: { id } });
+      const res = await startCheckout({ data: { id, percent: selectedPercent ?? undefined } });
       if (res.url) {
         window.location.href = res.url;
         return;
@@ -66,7 +67,7 @@ function PayBalancePage() {
   const startWalletOrder = async (): Promise<string | null> => {
     setError(null);
     try {
-      const res = await startCheckout({ data: { id } });
+      const res = await startCheckout({ data: { id, percent: selectedPercent ?? undefined } });
       return res.sessionId ?? null;
     } catch (e) {
       setError(e instanceof Error ? e.message : "Something went wrong. Please try again.");
@@ -108,6 +109,12 @@ function PayBalancePage() {
         year: "numeric",
       })
     : null;
+  const optionAmount = (percent: 20 | 50 | 70 | 100) =>
+    percent === 100
+      ? data.dueCents
+      : Math.min(data.dueCents, Math.max(1, Math.round((data.totalCents * percent) / 100)));
+  const selectedCents = selectedPercent == null ? data.requestCents : optionAmount(selectedPercent);
+  const isDeposit = selectedCents < data.dueCents;
 
   return (
     <main className="min-h-[80vh] bg-muted/40 py-12 px-4">
@@ -177,15 +184,45 @@ function PayBalancePage() {
                     <span>−{money(data.paidCents)}</span>
                   </div>
                   <div className="flex justify-between pt-1.5 border-t border-border font-bold text-foreground text-base">
-                    <span>{data.isDeposit ? "Deposit due now" : "Due now"}</span>
-                    <span>{money(data.requestCents)}</span>
+                    <span>{isDeposit ? "Deposit due now" : "Due now"}</span>
+                    <span>{money(selectedCents)}</span>
                   </div>
-                  {data.isDeposit && (
+                  {isDeposit && (
                     <div className="flex justify-between text-muted-foreground text-xs">
                       <span>Remaining balance (pay later)</span>
-                      <span>{money(data.dueCents - data.requestCents)}</span>
+                      <span>{money(data.dueCents - selectedCents)}</span>
                     </div>
                   )}
+                </div>
+              </div>
+
+              <div className="mt-5">
+                <p className="text-sm font-semibold text-foreground">Choose how much to pay now</p>
+                <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
+                  {([20, 50, 70, 100] as const).map((percent) => {
+                    const active = selectedPercent === percent ||
+                      (selectedPercent == null && optionAmount(percent) === data.requestCents);
+                    return (
+                      <button
+                        key={percent}
+                        type="button"
+                        aria-pressed={active}
+                        onClick={() => setSelectedPercent(percent)}
+                        className={`min-h-14 rounded-md border px-2 py-2 text-center transition ${
+                          active
+                            ? "border-primary bg-primary text-primary-foreground"
+                            : "border-border bg-card text-foreground hover:border-primary"
+                        }`}
+                      >
+                        <span className="block text-sm font-bold">
+                          {percent === 100 ? "Full amount" : `${percent}%`}
+                        </span>
+                        <span className={`block text-xs ${active ? "text-primary-foreground/80" : "text-muted-foreground"}`}>
+                          {money(optionAmount(percent))}
+                        </span>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
@@ -193,7 +230,7 @@ function PayBalancePage() {
                 <>
                   <div className="mt-6">
                     <PaypalWallet
-                      amount={data.dueCents / 100}
+                      amount={selectedCents / 100}
                       label={data.tourTitle || "Tuk Tuk 24 tour"}
                       disabled={busy}
                       createOrder={startWalletOrder}
@@ -210,7 +247,7 @@ function PayBalancePage() {
                     ) : (
                       <Lock className="w-4 h-4" />
                     )}
-                    Other ways to pay {money(data.dueCents)}
+                    Other ways to pay {money(selectedCents)}
                   </button>
                   <p className="mt-3 text-center text-xs text-muted-foreground">
                     Secure checkout · PayPal, Google Pay, Apple Pay and cards
