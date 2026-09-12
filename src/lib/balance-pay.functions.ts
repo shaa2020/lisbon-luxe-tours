@@ -3,6 +3,9 @@ import { getRequestHost } from "@tanstack/react-start/server";
 import { z } from "zod";
 
 const idInput = z.object({ id: z.string().uuid() });
+const checkoutInput = idInput.extend({
+  percent: z.union([z.literal(20), z.literal(50), z.literal(70), z.literal(100)]).optional(),
+});
 
 /** Public, safe balance summary for the customer pay page (UUID acts as the key). */
 export const getBookingBalance = createServerFn({ method: "GET" })
@@ -28,7 +31,7 @@ export const getBookingBalance = createServerFn({ method: "GET" })
  * redirect URL. Amount is always computed server-side from the orders ledger.
  */
 export const createBalanceCheckout = createServerFn({ method: "POST" })
-  .inputValidator((data: unknown) => idInput.parse(data))
+  .inputValidator((data: unknown) => checkoutInput.parse(data))
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { computeBookingBalance } = await import("./balance-pay.server");
@@ -38,7 +41,13 @@ export const createBalanceCheckout = createServerFn({ method: "POST" })
     if (!balance) throw new Error("Booking not found");
     if (balance.cancelled) throw new Error("This booking has been cancelled.");
     if (balance.dueCents <= 0) throw new Error("This booking is already fully paid.");
-    if (balance.requestCents <= 0) throw new Error("There is no payment due right now.");
+    const chargeCents = data.percent
+      ? data.percent === 100
+        ? balance.dueCents
+        : Math.min(balance.dueCents, Math.max(1, Math.round((balance.totalCents * data.percent) / 100)))
+      : balance.requestCents;
+    if (chargeCents <= 0) throw new Error("There is no payment due right now.");
+    const isDeposit = chargeCents < balance.dueCents;
 
     const payments = await paymentsStatus(supabaseAdmin);
     if (!payments.available) throw new Error(payments.message);
@@ -55,12 +64,13 @@ export const createBalanceCheckout = createServerFn({ method: "POST" })
     const origin = `${proto}://${host}`;
 
     const payment = await createPayment(supabaseAdmin, {
-      amountCents: balance.requestCents,
-      description: `${booking.tour_title || "Tuk Tuk 24 tour"} — ${balance.isDeposit ? "deposit payment" : "balance payment"}`,
+      amountCents: chargeCents,
+      description: `${booking.tour_title || "Tuk Tuk 24 tour"} — ${isDeposit ? "deposit payment" : "balance payment"}`,
       origin,
       metadata: {
         booking_id: data.id,
-        kind: balance.isDeposit ? "deposit" : "balance",
+        kind: isDeposit ? "deposit" : "balance",
+        selected_percent: String(data.percent ?? "requested"),
       },
     });
 
@@ -68,7 +78,7 @@ export const createBalanceCheckout = createServerFn({ method: "POST" })
       booking_id: data.id,
       stripe_session_id: payment.id,
       provider: payment.provider,
-      amount_total: balance.requestCents,
+      amount_total: chargeCents,
       currency: "eur",
       payment_status: "pending",
       customer_name: booking.customer_name,
