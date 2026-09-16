@@ -11,7 +11,7 @@ const checkoutInput = z.object({
   email: z.string().email().max(200),
   phone: z.string().trim().min(6).max(50),
   travel_date: z.string().max(20).optional().nullable(),
-  time: z.string().max(20).optional().nullable(),
+  time: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, "Choose a valid start time").optional().nullable(),
   guests: z.number().int().min(1).max(20),
   notes: z.string().max(2000).optional().nullable(),
   amount: z.number().int().min(100).max(500000), // cents, €1–€5000
