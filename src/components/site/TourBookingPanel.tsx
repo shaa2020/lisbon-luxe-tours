@@ -389,6 +389,16 @@ export function TourBookingPanel({
               );
             })}
           </div>
+           <label className="mt-3 block text-[11px] text-body">
+             Or choose any time
+             <input
+               type="time"
+               step={900}
+               value={time}
+               onChange={(event) => setTime(event.target.value)}
+               className="mt-1.5 min-h-11 w-full rounded-[2px] border border-border bg-paper px-4 py-2.5 text-sm text-ink focus:border-gold focus:outline-none"
+             />
+           </label>
         </div>
 
         {dateKey && availability?.dayFull && (
