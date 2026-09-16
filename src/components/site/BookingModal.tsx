@@ -319,7 +319,7 @@ export function BookingModal({
                    Or choose any time
                    <input
                      type="time"
-                     step={900}
+                     step={60}
                      value={time}
                      onChange={(event) => setTime(event.target.value)}
                      className="mt-1.5 min-h-11 w-full rounded-lg border border-border bg-cloud/40 px-4 py-2.5 text-sm text-ink focus:border-gold focus:outline-none"
