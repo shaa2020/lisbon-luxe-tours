@@ -266,7 +266,7 @@ export function TourBookingPanel({
           )}
         </div>
         <p className="text-body text-xs tracking-tight">
-          {perPersonPricing ? "per person · minimum 2 guests · up to 7" : "per transfer · up to 7 guests"}
+          {perPersonPricing ? "per person · minimum 2 guests" : "per transfer · price per vehicle"}
         </p>
         {rating && rating.count > 0 && (
           <div className="mt-2 flex items-center gap-2">
