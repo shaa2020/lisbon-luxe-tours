@@ -221,6 +221,7 @@ export function BookingModal({
               {date && <p><span className="text-ink/50">Date ·</span> <span className="text-ink">{format(date, "EEEE, d MMMM yyyy")}</span></p>}
               {time && <p><span className="text-ink/50">Time ·</span> <span className="text-ink">{time}</span></p>}
               <p><span className="text-ink/50">Guests ·</span> <span className="text-ink">{guests}</span></p>
+              {pickup && <p><span className="text-ink/50">Hotel pickup ·</span> <span className="text-ink">Yes (+€{(hotelPickupFeeCents / 100).toFixed(0)})</span></p>}
               <p><span className="text-ink/50">Est. total ·</span> <span className="text-gold font-semibold">€{total}</span></p>
             </div>
             <button
