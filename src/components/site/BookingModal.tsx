@@ -260,6 +260,15 @@ export function BookingModal({
                 </DialogDescription>
               </DialogHeader>
 
+              {/* Cancellation notice */}
+              <p className="flex items-start gap-2.5 rounded-lg bg-emerald-50 border border-emerald-200 px-4 py-3 text-[12px] leading-snug text-emerald-800">
+                <Check className="w-4 h-4 mt-0.5 shrink-0 text-emerald-600" />
+                <span>
+                  <span className="font-semibold">Free cancellation</span> up to 24 hours before
+                  your tour. Later cancellations are non-refundable.
+                </span>
+              </p>
+
               {/* Duration options (only for multi-duration tours) */}
               {options.length > 0 && (
                 <div>
@@ -350,17 +359,36 @@ export function BookingModal({
                     >−</button>
                     <button
                       type="button"
-                      onClick={() => setGuests(Math.min(7, guests + 1))}
+                      onClick={() => setGuests(Math.min(20, guests + 1))}
                       className="w-8 h-8 rounded-full border border-border text-ink hover:border-gold hover:text-gold transition"
                     >+</button>
                   </div>
                 </div>
                 <p className="text-[11px] text-body mt-2">
                   {perPersonPricing
-                    ? `€${pricing.current} per person · minimum 2 guests · up to 7`
-                    : `€${pricing.current} per transfer · up to 7 guests`}
+                    ? `€${pricing.current} per person · minimum 2 guests`
+                    : `€${pricing.current} per transfer · price per vehicle`}
                 </p>
               </div>
+
+              {/* Hotel pickup */}
+              {hotelPickupFeeCents > 0 && (
+                <label className="flex items-center justify-between gap-3 px-4 py-3 rounded-lg border border-border bg-cloud/40 cursor-pointer hover:border-gold transition">
+                  <span className="flex items-center gap-2.5 text-sm text-ink">
+                    <MapPin className="w-4 h-4 text-gold" />
+                    Hotel pickup &amp; drop-off
+                  </span>
+                  <span className="flex items-center gap-2.5">
+                    <span className="text-xs text-body">+€{(hotelPickupFeeCents / 100).toFixed(0)}</span>
+                    <input
+                      type="checkbox"
+                      checked={pickup}
+                      onChange={(e) => setPickup(e.target.checked)}
+                      className="w-4 h-4 accent-[#c9a24b]"
+                    />
+                  </span>
+                </label>
+              )}
 
               {/* Contact */}
               <div className="grid grid-cols-2 gap-3">
@@ -402,6 +430,12 @@ export function BookingModal({
                   <div className="flex justify-between text-xs text-gold">
                     <span>Group discount ({q.guests} guests, −{q.tierPct}%)</span>
                     <span>−€{q.groupDiscount.toFixed(2)}</span>
+                  </div>
+                )}
+                {q.pickup > 0 && (
+                  <div className="flex justify-between text-xs text-body">
+                    <span>Hotel pickup &amp; drop-off</span>
+                    <span>€{q.pickup.toFixed(2)}</span>
                   </div>
                 )}
                 <div className="flex items-end justify-between">
