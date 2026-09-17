@@ -42,7 +42,7 @@ export function BookingModal({
   defaultDate?: string | undefined;
   defaultGuests?: number | undefined;
 }) {
-  const { business, groupTiers, groupDiscountEnabled } = useSiteBrand();
+  const { business, groupTiers, groupDiscountEnabled, hotelPickupFeeCents } = useSiteBrand();
   const checkoutFn = useServerFn(createCheckoutSession);
   const [date, setDate] = useState<Date | undefined>(
     defaultDate ? new Date(`${defaultDate}T00:00:00`) : undefined,
@@ -54,6 +54,7 @@ export function BookingModal({
   const [phone, setPhone] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [paying, setPaying] = useState(false);
+  const [pickup, setPickup] = useState(false);
 
   const [optionId, setOptionId] = useState<string | null>(null);
 
@@ -73,6 +74,8 @@ export function BookingModal({
     perPersonPricing,
     tiers: groupTiers,
     tiersEnabled: groupDiscountEnabled,
+    pickupFee: hotelPickupFeeCents / 100,
+    pickupRequested: pickup,
   });
   const total = q.total;
 
@@ -80,6 +83,7 @@ export function BookingModal({
     setDate(defaultDate ? new Date(`${defaultDate}T00:00:00`) : undefined);
     setTime(""); setGuests(defaultGuests && defaultGuests > 0 ? defaultGuests : 2);
     setOptionId(null);
+    setPickup(false);
     setName(""); setContact(""); setPhone(""); setSubmitted(false); setPaying(false);
   };
 
@@ -102,6 +106,7 @@ export function BookingModal({
       date ? `Date: ${format(date, "EEEE, d MMM yyyy")}` : null,
       time ? `Time: ${time}` : null,
       `Guests: ${guests}`,
+      pickup ? `Hotel pickup & drop-off: Yes (+€${(hotelPickupFeeCents / 100).toFixed(0)})` : null,
       `Estimated total: €${total}`,
       ``,
       `Name: ${name}`,
@@ -143,6 +148,7 @@ export function BookingModal({
           amount: total * 100,
           image_url: tour.image?.startsWith("http") ? tour.image : null,
           tour_option_id: selectedOption?.id ?? null,
+          pickup,
         },
       });
       if (res.mode === "pay" && res.url) {
@@ -177,6 +183,7 @@ export function BookingModal({
         amount: total * 100,
         image_url: tour.image?.startsWith("http") ? tour.image : null,
         tour_option_id: selectedOption?.id ?? null,
+        pickup,
       },
     });
     if (res.mode !== "pay") {

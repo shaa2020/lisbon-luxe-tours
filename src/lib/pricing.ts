@@ -8,7 +8,7 @@
  */
 
 export const MIN_GUESTS = 2;
-export const MAX_GUESTS = 7;
+export const MAX_GUESTS = 20;
 
 export type GroupTier = { min_guests: number; percent: number };
 
