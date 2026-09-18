@@ -441,9 +441,12 @@ const paypalAdapter: GatewayAdapter = {
           });
           const capJson = await cap.json();
           if (cap.ok) return normalizePaypal(capJson);
+          // Capture refused (declined card, instrument issue): this is NOT a payment.
+          return { id, status: "failed", checkoutUrl: null, metadata: {}, amountCents: 0 };
         }
 
         return normalizePaypal(json);
+
       } catch (e) {
         lastError = e;
       }
