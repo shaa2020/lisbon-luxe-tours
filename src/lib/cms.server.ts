@@ -1,4 +1,6 @@
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { applyTranslations, applyTranslationsSingle } from "./i18n/content.server";
+import type { Locale } from "./i18n/core";
 
 const TOUR_SELECT = `
   id,
@@ -75,7 +77,7 @@ const BLOG_SELECT = `
   last_verified_at
 `;
 
-export async function fetchPublishedTours() {
+export async function fetchPublishedTours(locale: Locale = "en") {
   const { data, error } = await supabaseAdmin
     .from("tours")
     .select(TOUR_SELECT)
@@ -83,10 +85,10 @@ export async function fetchPublishedTours() {
     .order("sort_order", { ascending: true });
 
   if (error) throw new Error(error.message);
-  return data ?? [];
+  return applyTranslations(data ?? [], "tours", locale);
 }
 
-export async function fetchPublishedTourBySlug(slug: string) {
+export async function fetchPublishedTourBySlug(slug: string, locale: Locale = "en") {
   const { data, error } = await supabaseAdmin
     .from("tours")
     .select(TOUR_SELECT)
@@ -95,10 +97,10 @@ export async function fetchPublishedTourBySlug(slug: string) {
     .maybeSingle();
 
   if (error) throw new Error(error.message);
-  return data;
+  return applyTranslationsSingle(data, "tours", locale);
 }
 
-export async function fetchPublishedBlogPosts() {
+export async function fetchPublishedBlogPosts(locale: Locale = "en") {
   const { data, error } = await supabaseAdmin
     .from("blog_posts")
     .select(BLOG_SELECT)
@@ -106,10 +108,10 @@ export async function fetchPublishedBlogPosts() {
     .order("published_at", { ascending: false });
 
   if (error) throw new Error(error.message);
-  return data ?? [];
+  return applyTranslations(data ?? [], "blog_posts", locale);
 }
 
-export async function fetchPublishedBlogPostBySlug(slug: string) {
+export async function fetchPublishedBlogPostBySlug(slug: string, locale: Locale = "en") {
   const { data, error } = await supabaseAdmin
     .from("blog_posts")
     .select(BLOG_SELECT)
@@ -118,7 +120,7 @@ export async function fetchPublishedBlogPostBySlug(slug: string) {
     .maybeSingle();
 
   if (error) throw new Error(error.message);
-  return data;
+  return applyTranslationsSingle(data, "blog_posts", locale);
 }
 
 export async function fetchSiteSettings() {

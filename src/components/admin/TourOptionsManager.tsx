@@ -43,7 +43,7 @@ function toRow(r: TourOptionRow): Row {
  * Optional multi-duration options for one tour. Tours with no options keep
  * working exactly as before using the tour's own duration and price.
  */
-export function TourOptionsManager({ tourId }: { tourId: string }) {
+export function TourOptionsManager({ tourId, defaultPrice = 0 }: { tourId: string; defaultPrice?: number }) {
   const [rows, setRows] = useState<Row[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -64,14 +64,14 @@ export function TourOptionsManager({ tourId }: { tourId: string }) {
   const patch = (id: string, p: Partial<Row>) =>
     setRows((rs) => rs.map((r) => (r.id === id ? { ...r, ...p } : r)));
 
-  const add = () =>
+  const addWith = (minutes: number, price: number) =>
     setRows((rs) => [
       ...rs,
       {
         id: `new-${crypto.randomUUID()}`,
-        duration_minutes: 120,
-        duration_label: "2 hours",
-        price: 0,
+        duration_minutes: minutes,
+        duration_label: minutesToLabel(minutes),
+        price,
         sale_price: null,
         short_description: "",
         badge: "none",
@@ -81,6 +81,10 @@ export function TourOptionsManager({ tourId }: { tourId: string }) {
         is_active: true,
       },
     ]);
+
+  const add = () => addWith(120, 0);
+
+  const QUICK_DURATIONS = [60, 90, 120, 240, 360, 480];
 
   const move = (i: number, dir: -1 | 1) =>
     setRows((rs) => {
@@ -140,7 +144,7 @@ export function TourOptionsManager({ tourId }: { tourId: string }) {
   if (loading) return <p className="text-sm text-muted-foreground">Loading durations…</p>;
 
   return (
-    <div className="rounded-xl border border-border bg-card p-4 space-y-4">
+    <div id="tour-options-manager" className="rounded-xl border border-border bg-card p-4 space-y-4">
       <div className="flex items-start justify-between gap-3 flex-wrap">
         <div>
           <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
@@ -158,6 +162,20 @@ export function TourOptionsManager({ tourId }: { tourId: string }) {
         >
           <Plus className="w-3.5 h-3.5" /> Add duration
         </button>
+      </div>
+
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="text-xs text-muted-foreground">Quick add:</span>
+        {QUICK_DURATIONS.map((m) => (
+          <button
+            key={m}
+            type="button"
+            onClick={() => addWith(m, defaultPrice)}
+            className="rounded-md border border-border bg-muted/40 hover:bg-muted px-2.5 py-1 text-xs font-medium"
+          >
+            + {minutesToLabel(m)}
+          </button>
+        ))}
       </div>
 
       {rows.length === 0 && (

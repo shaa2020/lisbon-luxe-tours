@@ -501,6 +501,36 @@ export type Database = {
         }
         Relationships: []
       }
+      content_translations: {
+        Row: {
+          field: string
+          id: string
+          locale: string
+          record_id: string
+          table_name: string
+          updated_at: string
+          value: string
+        }
+        Insert: {
+          field: string
+          id?: string
+          locale: string
+          record_id: string
+          table_name: string
+          updated_at?: string
+          value: string
+        }
+        Update: {
+          field?: string
+          id?: string
+          locale?: string
+          record_id?: string
+          table_name?: string
+          updated_at?: string
+          value?: string
+        }
+        Relationships: []
+      }
       conversation_messages: {
         Row: {
           body: string | null

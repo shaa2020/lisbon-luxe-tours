@@ -8,24 +8,39 @@ import {
   fetchSiteSettings,
 } from "./cms.server";
 
-export const getPublishedTours = createServerFn({ method: "GET" }).handler(async () => {
-  return fetchPublishedTours();
-});
+const localeSchema = z.enum(["en", "pt", "es"]).default("en");
+const localeInput = z.object({ locale: localeSchema }).parse;
 
-export const getPublishedTourBySlug = createServerFn({ method: "GET" })
-  .inputValidator((data) => z.object({ slug: z.string().min(1).max(120) }).parse(data))
+export const getPublishedTours = createServerFn({ method: "GET" })
+  .inputValidator((data) => localeInput(data ?? {}))
   .handler(async ({ data }) => {
-    return fetchPublishedTourBySlug(data.slug);
+    return fetchPublishedTours(data.locale);
   });
 
-export const getPublishedBlogPosts = createServerFn({ method: "GET" }).handler(async () => {
-  return fetchPublishedBlogPosts();
-});
+export const getPublishedTourBySlug = createServerFn({ method: "GET" })
+  .inputValidator((data) =>
+    z
+      .object({ slug: z.string().min(1).max(120), locale: localeSchema })
+      .parse((data ?? {}) as Record<string, unknown>),
+  )
+  .handler(async ({ data }) => {
+    return fetchPublishedTourBySlug(data.slug, data.locale);
+  });
+
+export const getPublishedBlogPosts = createServerFn({ method: "GET" })
+  .inputValidator((data) => localeInput(data ?? {}))
+  .handler(async ({ data }) => {
+    return fetchPublishedBlogPosts(data.locale);
+  });
 
 export const getPublishedBlogPostBySlug = createServerFn({ method: "GET" })
-  .inputValidator((data) => z.object({ slug: z.string().min(1).max(160) }).parse(data))
+  .inputValidator((data) =>
+    z
+      .object({ slug: z.string().min(1).max(160), locale: localeSchema })
+      .parse((data ?? {}) as Record<string, unknown>),
+  )
   .handler(async ({ data }) => {
-    return fetchPublishedBlogPostBySlug(data.slug);
+    return fetchPublishedBlogPostBySlug(data.slug, data.locale);
   });
 
 export const getPublicSiteSettings = createServerFn({ method: "GET" }).handler(async () => {
