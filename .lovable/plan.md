@@ -1,17 +1,78 @@
-# Quick Booking flexibility upgrade
+# Duration Options (Admin-Managed) + Portuguese & Spanish Site
 
-## What will change
-- Restyle the Quick Booking popup to match the cleaner booking panel shown in the second reference: cancellation notice, full-width date field, time grid, traveler stepper, optional hotel pickup, and clear price summary.
-- Add an “Other time” choice with an accessible time input so guests can request any valid start time, while retaining the common preset times.
-- Remove the seven-person booking ceiling across both booking experiences and their server validation, while keeping the existing two-person minimum for per-person tours.
-- Keep all current duration pricing, discounts, pickup pricing, WhatsApp reservation, PayPal checkout, availability checks, and booking snapshots working.
+Two approved workstreams. Nothing existing is broken or replaced — upgrade-only.
 
-## Safety and validation
-- Use a high technical safety limit to prevent abusive input, without presenting a customer-facing maximum.
-- Validate custom times in 24-hour `HH:MM` format and save/send the chosen time everywhere the current preset time is used.
-- Check mobile layout, totals for larger groups, preset/custom time switching, and checkout validation.
+## Part 1 — Duration options, managed from the admin panel
 
-## Technical details
-- Update both `BookingModal` and `TourBookingPanel` so quick and full booking stay consistent.
-- Update shared pricing and server validators so guest totals are not silently clamped back to seven.
-- Adapt availability checks for custom times without exposing customer booking data.
+The multi-duration system is already built (database, admin editor, customer
+picker). Today it is invisible because no tour has options yet. You will manage
+everything yourself from the admin panel — no prices are invented for you.
+
+What I will do:
+
+1. **Verify the full flow end-to-end**: add options to a tour in Admin → Tours →
+   Duration Options → save → confirm they appear on the public tour page with
+   the right prices → book one → confirm the chosen duration and price flow into
+   WhatsApp reservation, payment, confirmation email, and admin bookings.
+2. **Polish the admin editor**: show a "Durations" count/badge per tour in the
+   tours list, one-click quick-add for common durations (1h / 1.5h / 2h / 4h /
+   6h / 8h) that pre-fills from the tour's current price so you only adjust the
+   number, and clear publish/hide toggles.
+3. **Public page polish**: the duration picker on tour pages and Quick Booking
+   keeps the styling already approved; verify mobile layout and that
+   "price from" reflects the cheapest option.
+
+You add the real durations and prices for each tour yourself — I never invent
+prices.
+
+## Part 2 — Portuguese and Spanish versions of every public page
+
+### How it works
+
+- **URLs**: English stays at `/`. Portuguese lives under `/pt/...`, Spanish
+  under `/es/...` (e.g. `/pt/tours/cabo-da-roca`, `/es/destinations`). This is
+  the structure Google recommends; no existing URL changes.
+- **Language switcher** in the navigation and footer (EN / PT / ES), keeping the
+  visitor on the same page.
+- **Static UI copy** (buttons, headings, forms, footer, booking panel, FAQs
+  chrome) moves into a translation dictionary generated once with AI.
+- **Database content** (tours, destinations, journal posts, travel guides,
+  destination/location pages) gets translated into a new
+  `content_translations` store, generated once with Lovable AI from the live
+  English content. Reviews stay as guests wrote them.
+- **SEO**: correct `hreflang` alternate links on every public page, localized
+  page titles/descriptions/canonicals, and `/pt` + `/es` URLs added to the
+  sitemap and submitted alongside the English ones.
+- Admin panel, checkout/payment pages, and transactional emails stay in English
+  for now (phase 2 later if wanted).
+
+### Build steps
+
+1. **Foundation**: locale-aware routing for `/pt` and `/es` reusing the existing
+   page components (no duplicated route files), locale context, dictionary
+   helper, switcher, and hreflang/canonical metadata.
+2. **One-time AI translation pass**: batch-translate all static strings and all
+   published DB content into PT and ES via Lovable AI (server-side), stored so
+   pages render translated content during server rendering.
+3. **SEO wiring**: sitemap, hreflang, localized metadata; re-verify robots.
+4. **QA**: typecheck, smoke-test key `/pt` and `/es` pages (home, a tour, a
+   destination, booking modal), confirm English pages unchanged, sitemap
+   returns all three locales.
+
+## Technical notes
+
+- New table `content_translations` (table, record id, field, locale, value) with
+  public read / staff write RLS and grants; additive only.
+- Translation generation runs server-side through the Lovable AI gateway with
+  batching and per-batch logging; failures retry per batch, never block English
+  pages (missing translation falls back to English).
+- `/pt` and `/es` are implemented as catch-all routes that dispatch to the
+  existing English route components with a locale override, so a fix in one
+  place applies to all three languages.
+- Duration option changes touch only the existing `tour_options` flow; booking
+  snapshots and pricing already support them.
+
+## Out of scope
+
+- Admin panel UI languages, translated customer emails, auto-detection redirects.
+- Inventing duration prices — you enter those in the admin panel.
