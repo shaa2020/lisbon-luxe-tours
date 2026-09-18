@@ -355,14 +355,31 @@ function normalizePaypal(order: any): PaymentResult {
   } catch {
     /* no metadata */
   }
+
+  // Money only exists once a capture reports COMPLETED. An APPROVED order or a
+  // DECLINED/FAILED capture must never be treated as a successful payment.
+  const captures: any[] = unit?.payments?.captures ?? [];
+  const captured = captures.some((c) => String(c?.status).toUpperCase() === "COMPLETED");
+  const declined = captures.some((c) =>
+    ["DECLINED", "FAILED"].includes(String(c?.status).toUpperCase()),
+  );
+  const orderStatus = String(order?.status || "open").toUpperCase();
+
+  let status: string;
+  if (captured) status = "paid";
+  else if (declined) status = "failed";
+  else if (orderStatus === "COMPLETED") status = "paid";
+  else status = orderStatus.toLowerCase();
+
   return {
     id: order.id,
-    status: order.status === "COMPLETED" || order.status === "APPROVED" ? "paid" : String(order.status || "open").toLowerCase(),
+    status,
     checkoutUrl: approve?.href ?? null,
     metadata,
     amountCents: Math.round(Number(unit?.amount?.value || 0) * 100),
   };
 }
+
 
 const paypalAdapter: GatewayAdapter = {
   id: "paypal",
@@ -424,9 +441,12 @@ const paypalAdapter: GatewayAdapter = {
           });
           const capJson = await cap.json();
           if (cap.ok) return normalizePaypal(capJson);
+          // Capture refused (declined card, instrument issue): this is NOT a payment.
+          return { id, status: "failed", checkoutUrl: null, metadata: {}, amountCents: 0 };
         }
 
         return normalizePaypal(json);
+
       } catch (e) {
         lastError = e;
       }
