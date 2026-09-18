@@ -184,18 +184,31 @@ function SuccessPage() {
           </>
         ) : (
           <>
-            <h1 className="font-display text-2xl text-ink mb-2">Payment not confirmed</h1>
+            <h1 className="font-display text-2xl text-ink mb-2">
+              {state.status === "failed" ? "Payment declined" : "Payment not confirmed"}
+            </h1>
             <p className="text-body text-sm mb-6">
-              We couldn't confirm your payment yet. If you were charged, please contact us — we'll sort it out.
+              {state.status === "failed"
+                ? "Your payment was declined by the payment provider, so nothing was charged and your booking is not confirmed. Please try again with another card or payment method, or message us and we'll help."
+                : "We couldn't confirm your payment yet. Your booking is not confirmed. If you were charged, please contact us — we'll sort it out."}
             </p>
-            <Link
-              to="/"
-              className="inline-block px-7 py-3 rounded-full bg-ink text-white text-[11px] font-semibold uppercase tracking-widest"
-            >
-              Back to home
-            </Link>
+            <div className="flex flex-wrap gap-3 justify-center">
+              <Link
+                to="/tours"
+                className="inline-block px-7 py-3 rounded-full bg-ink text-white text-[11px] font-semibold uppercase tracking-widest hover:bg-gold transition"
+              >
+                Try again
+              </Link>
+              <Link
+                to="/"
+                className="inline-block px-7 py-3 rounded-full border border-ink/20 text-ink text-[11px] font-semibold uppercase tracking-widest hover:border-gold hover:text-gold transition"
+              >
+                Back to home
+              </Link>
+            </div>
           </>
         )}
+
       </div>
     </div>
   );
