@@ -64,8 +64,10 @@ function SuccessPage() {
         setState({
           loading: false,
           paid: r.paid,
+          status: r.status,
           tour: r.tour_title,
           amount: r.amount_total,
+
           name: r.customer_name,
           bookingId: r.booking_id,
           travelDate: r.travel_date,
