@@ -49,8 +49,26 @@ function SuccessPage() {
       setState({ loading: false, paid: false });
       return;
     }
-    confirmCheckout({ data: { session_id } })
-      .then((r) => {
+    let cancelled = false;
+    const PENDING = new Set(["pending", "created", "open", "authorized", "approved"]);
+
+    /**
+     * Only the payment provider decides whether money was received. We ask it,
+     * and if it is still processing we ask again a few times before showing
+     * anything — a confirmation is never shown on the customer's word alone.
+     */
+    const check = async (attempt: number): Promise<void> => {
+      const r = await confirmCheckout({ data: { session_id } });
+      if (cancelled) return;
+      if (!r.paid && PENDING.has(String(r.status ?? "pending")) && attempt < 4) {
+        await new Promise((res) => setTimeout(res, 2500));
+        if (cancelled) return;
+        return check(attempt + 1);
+      }
+      return handle(r);
+    };
+
+    const handle = (r: Awaited<ReturnType<typeof confirmCheckout>>) => {
         const key = `bc_${session_id}`;
         if (r.paid && typeof window !== "undefined" && !sessionStorage.getItem(key)) {
           sessionStorage.setItem(key, "1");
