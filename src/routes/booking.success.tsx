@@ -91,8 +91,15 @@ function SuccessPage() {
           travelDate: r.travel_date,
           guests: r.guests,
         });
-      })
-      .catch(() => setState({ loading: false, paid: false }));
+    };
+
+    check(0).catch(() => {
+      if (!cancelled) setState({ loading: false, paid: false });
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [session_id]);
 
   return (
