@@ -271,14 +271,15 @@ export const confirmCheckout = createServerFn({ method: "POST" })
         .maybeSingle();
       // Fully paid when every paid order together covers the booking total —
       // a balance payment after a deposit must flip the booking to "paid".
+      // The current order was just marked paid above, so it is already part of
+      // this sum; adding it again would make a deposit look like full payment.
       const { data: paidOrders } = await supabaseAdmin
         .from("orders")
         .select("amount_total")
         .eq("booking_id", order.booking_id)
         .eq("payment_status", "paid");
-      const cumulativePaid =
-        (paidOrders ?? []).reduce((s: number, o: any) => s + Number(o.amount_total || 0), 0) +
-        (order.amount_total ?? 0);
+      const summed = (paidOrders ?? []).reduce((s: number, o: any) => s + Number(o.amount_total || 0), 0);
+      const cumulativePaid = summed > 0 ? summed : (order.amount_total ?? 0);
       const isDeposit = !!bk?.amount_total && cumulativePaid < bk.amount_total;
       await supabaseAdmin
         .from("bookings")
