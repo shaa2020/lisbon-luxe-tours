@@ -33,6 +33,7 @@ function SuccessPage() {
   const [state, setState] = useState<{
     loading: boolean;
     paid: boolean;
+    status?: string | null;
     tour?: string | null;
     amount?: number;
     name?: string | null;
@@ -40,6 +41,7 @@ function SuccessPage() {
     travelDate?: string | null;
     guests?: number | null;
   }>({ loading: true, paid: false });
+
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
