@@ -36,6 +36,22 @@ function AdminToursPage() {
     },
   });
 
+  const { data: durationCounts = {} } = useQuery({
+    queryKey: ["admin-tours-duration-counts"],
+    queryFn: async (): Promise<Record<string, number>> => {
+      const { data, error } = await supabase
+        .from("tour_options")
+        .select("tour_id")
+        .eq("is_active", true);
+      if (error) throw error;
+      const counts: Record<string, number> = {};
+      for (const row of data as { tour_id: string }[]) {
+        counts[row.tour_id] = (counts[row.tour_id] ?? 0) + 1;
+      }
+      return counts;
+    },
+  });
+
   const togglePublish = async (id: string, value: boolean) => {
     const { error } = await supabase.from("tours").update({ published: value }).eq("id", id);
     if (error) return toast.error(error.message);
@@ -111,6 +127,17 @@ function AdminToursPage() {
                       <div>
                         <p className="font-medium text-foreground">{t.title}</p>
                         <p className="text-xs text-muted-foreground">/{t.slug}</p>
+                        {(durationCounts[t.id] ?? 0) > 0 && (
+                          <Link
+                            to="/admin/tours/$id"
+                            params={{ id: t.id }}
+                            search={{}}
+                            hash="tour-options-manager"
+                            className="inline-block mt-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-primary/10 text-primary hover:bg-primary/20"
+                          >
+                            Durations: {durationCounts[t.id]}
+                          </Link>
+                        )}
                       </div>
                     </div>
                   </td>

@@ -168,6 +168,11 @@ function TourEditPage() {
       });
       setSeo(seoFromRow(data as unknown as Record<string, unknown>));
       setLoading(false);
+      if (window.location.hash === "#tour-options-manager") {
+        setTimeout(() => {
+          document.getElementById("tour-options-manager")?.scrollIntoView({ behavior: "smooth", block: "start" });
+        }, 200);
+      }
     })();
   }, [id, isNew]);
 
@@ -445,7 +450,7 @@ function TourEditPage() {
             </Field>
           </div>
 
-          {!isNew && <TourOptionsManager tourId={id} />}
+          {!isNew && <TourOptionsManager tourId={id} defaultPrice={Number(form.price_from) || 0} />}
 
           <SeoFieldsEditor
             value={seo}
