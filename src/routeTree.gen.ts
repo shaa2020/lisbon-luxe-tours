@@ -43,6 +43,7 @@ import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AdminMessagesRouteImport } from './routes/admin.messages'
 import { Route as AdminOrdersRouteImport } from './routes/admin.orders'
 import { Route as AdminPromotionsRouteImport } from './routes/admin.promotions'
+import { Route as AdminReconciliationRouteImport } from './routes/admin.reconciliation'
 import { Route as AdminReviewsRouteImport } from './routes/admin.reviews'
 import { Route as AdminSetPasswordRouteImport } from './routes/admin.set-password'
 import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
@@ -279,6 +280,11 @@ const AdminOrdersRoute = AdminOrdersRouteImport.update({
 const AdminPromotionsRoute = AdminPromotionsRouteImport.update({
   id: '/admin/promotions',
   path: '/admin/promotions',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminReconciliationRoute = AdminReconciliationRouteImport.update({
+  id: '/admin/reconciliation',
+  path: '/admin/reconciliation',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminReviewsRoute = AdminReviewsRouteImport.update({
@@ -652,6 +658,7 @@ export interface FileRoutesByFullPath {
   '/admin/messages': typeof AdminMessagesRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/promotions': typeof AdminPromotionsRoute
+  '/admin/reconciliation': typeof AdminReconciliationRoute
   '/admin/reviews': typeof AdminReviewsRoute
   '/admin/set-password': typeof AdminSetPasswordRoute
   '/admin/settings': typeof AdminSettingsRoute
@@ -754,6 +761,7 @@ export interface FileRoutesByTo {
   '/admin/messages': typeof AdminMessagesRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/promotions': typeof AdminPromotionsRoute
+  '/admin/reconciliation': typeof AdminReconciliationRoute
   '/admin/reviews': typeof AdminReviewsRoute
   '/admin/set-password': typeof AdminSetPasswordRoute
   '/admin/settings': typeof AdminSettingsRoute
@@ -857,6 +865,7 @@ export interface FileRoutesById {
   '/admin/messages': typeof AdminMessagesRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/promotions': typeof AdminPromotionsRoute
+  '/admin/reconciliation': typeof AdminReconciliationRoute
   '/admin/reviews': typeof AdminReviewsRoute
   '/admin/set-password': typeof AdminSetPasswordRoute
   '/admin/settings': typeof AdminSettingsRoute
@@ -961,6 +970,7 @@ export interface FileRouteTypes {
     | '/admin/messages'
     | '/admin/orders'
     | '/admin/promotions'
+    | '/admin/reconciliation'
     | '/admin/reviews'
     | '/admin/set-password'
     | '/admin/settings'
@@ -1063,6 +1073,7 @@ export interface FileRouteTypes {
     | '/admin/messages'
     | '/admin/orders'
     | '/admin/promotions'
+    | '/admin/reconciliation'
     | '/admin/reviews'
     | '/admin/set-password'
     | '/admin/settings'
@@ -1165,6 +1176,7 @@ export interface FileRouteTypes {
     | '/admin/messages'
     | '/admin/orders'
     | '/admin/promotions'
+    | '/admin/reconciliation'
     | '/admin/reviews'
     | '/admin/set-password'
     | '/admin/settings'
@@ -1268,6 +1280,7 @@ export interface RootRouteChildren {
   AdminMessagesRoute: typeof AdminMessagesRoute
   AdminOrdersRoute: typeof AdminOrdersRoute
   AdminPromotionsRoute: typeof AdminPromotionsRoute
+  AdminReconciliationRoute: typeof AdminReconciliationRoute
   AdminReviewsRoute: typeof AdminReviewsRoute
   AdminSetPasswordRoute: typeof AdminSetPasswordRoute
   AdminSettingsRoute: typeof AdminSettingsRoute
@@ -1574,6 +1587,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/promotions'
       fullPath: '/admin/promotions'
       preLoaderRoute: typeof AdminPromotionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/reconciliation': {
+      id: '/admin/reconciliation'
+      path: '/admin/reconciliation'
+      fullPath: '/admin/reconciliation'
+      preLoaderRoute: typeof AdminReconciliationRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/reviews': {
@@ -2087,6 +2107,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminMessagesRoute: AdminMessagesRoute,
   AdminOrdersRoute: AdminOrdersRoute,
   AdminPromotionsRoute: AdminPromotionsRoute,
+  AdminReconciliationRoute: AdminReconciliationRoute,
   AdminReviewsRoute: AdminReviewsRoute,
   AdminSetPasswordRoute: AdminSetPasswordRoute,
   AdminSettingsRoute: AdminSettingsRoute,

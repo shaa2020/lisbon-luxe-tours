@@ -133,7 +133,7 @@ function ReconciliationBody() {
           <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
         </div>
       ) : report.isError ? (
-        <AdminCard>
+        <AdminCard className="p-4">
           <p className="text-sm text-destructive">
             {(report.error as Error)?.message || "Could not load the reconciliation report."}
           </p>
@@ -158,7 +158,7 @@ function ReconciliationBody() {
             />
           </div>
 
-          <AdminCard>
+          <AdminCard className="p-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div className="flex flex-wrap gap-2">
                 {(
@@ -197,7 +197,8 @@ function ReconciliationBody() {
           </AdminCard>
 
           {report.data?.byProvider.length ? (
-            <AdminCard title="Collected by payment method">
+            <AdminCard className="p-4">
+              <h2 className="mb-3 text-sm font-semibold text-foreground">Collected by payment method</h2>
               <div className="flex flex-wrap gap-3">
                 {report.data.byProvider.map((p) => (
                   <div key={p.provider} className="rounded-xl border border-border px-4 py-3">
@@ -212,7 +213,7 @@ function ReconciliationBody() {
 
           <div className="space-y-3">
             {rows.length === 0 ? (
-              <AdminCard>
+              <AdminCard className="p-4">
                 <p className="text-sm text-muted-foreground">No bookings match this view.</p>
               </AdminCard>
             ) : (
@@ -230,7 +231,8 @@ function ReconciliationBody() {
           </div>
 
           {report.data?.orphans.length ? (
-            <AdminCard title="Payments not linked to a booking">
+            <AdminCard className="p-4">
+              <h2 className="mb-3 text-sm font-semibold text-foreground">Payments not linked to a booking</h2>
               <div className="space-y-2">
                 {report.data.orphans.map((o) => (
                   <div
