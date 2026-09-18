@@ -263,6 +263,12 @@ export const confirmCheckout = createServerFn({ method: "POST" })
       .select("booking_id, tour_title, amount_total, customer_name, travel_date, guests")
       .maybeSingle();
 
+    // A declined or unconfirmed attempt must never leave a booking looking paid.
+    if (order?.booking_id && !paid) {
+      const { syncBookingPaymentStatus } = await import("./balance-pay.server");
+      await syncBookingPaymentStatus(supabaseAdmin, order.booking_id);
+    }
+
     if (order?.booking_id && paid) {
       // Single source of truth: recompute from the orders ledger so a deposit
       // stays "deposit_paid" and only a covering balance flips it to "paid".

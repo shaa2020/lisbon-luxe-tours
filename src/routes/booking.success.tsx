@@ -108,7 +108,10 @@ function SuccessPage() {
         {state.loading ? (
           <>
             <Loader2 className="w-10 h-10 mx-auto text-gold animate-spin mb-4" />
-            <p className="text-body">Confirming your payment…</p>
+            <p className="text-body">Waiting for the payment provider to confirm…</p>
+            <p className="text-xs text-body/70 mt-2">
+              We only confirm your booking once the payment is actually received.
+            </p>
           </>
         ) : state.paid ? (
           <>
