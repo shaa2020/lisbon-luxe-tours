@@ -9,8 +9,10 @@ import { getPublishedDestinationBySlug } from "@/lib/destinations.functions";
 import { mapDestination } from "@/lib/destinations";
 
 export const Route = createFileRoute("/destinations/$slug")({
-  loader: async ({ params }) => {
-    const row = await getPublishedDestinationBySlug({ data: { slug: params.slug } });
+  loader: async ({ params, context }) => {
+    const row = await getPublishedDestinationBySlug({
+      data: { slug: params.slug, locale: context.locale.current },
+    });
     if (!row) throw notFound();
     return { destination: mapDestination(row as Record<string, unknown>) };
   },

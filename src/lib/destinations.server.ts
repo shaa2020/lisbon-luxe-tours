@@ -1,4 +1,6 @@
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { applyTranslations, applyTranslationsSingle } from "./i18n/content.server";
+import { DEFAULT_LOCALE, type Locale } from "./i18n/core";
 
 export const DESTINATION_SELECT = `
   id, slug, name, heading, intro, body_sections, faqs, related_tour_slugs,
@@ -7,17 +9,17 @@ export const DESTINATION_SELECT = `
   published, last_verified_at, created_at, updated_at
 `;
 
-export async function fetchPublishedDestinations() {
+export async function fetchPublishedDestinations(locale: Locale = DEFAULT_LOCALE) {
   const { data, error } = await supabaseAdmin
     .from("destinations")
     .select(DESTINATION_SELECT)
     .eq("published", true)
     .order("sort_order", { ascending: true });
   if (error) throw new Error(error.message);
-  return data ?? [];
+  return applyTranslations(data ?? [], "destinations", locale);
 }
 
-export async function fetchPublishedDestinationBySlug(slug: string) {
+export async function fetchPublishedDestinationBySlug(slug: string, locale: Locale = DEFAULT_LOCALE) {
   const { data, error } = await supabaseAdmin
     .from("destinations")
     .select(DESTINATION_SELECT)
@@ -25,5 +27,5 @@ export async function fetchPublishedDestinationBySlug(slug: string) {
     .eq("published", true)
     .maybeSingle();
   if (error) throw new Error(error.message);
-  return data;
+  return applyTranslationsSingle(data, "destinations", locale);
 }

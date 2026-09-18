@@ -1,4 +1,6 @@
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { DEFAULT_LOCALE, type Locale } from "./i18n/core";
+import { applyTranslations, applyTranslationsSingle } from "./i18n/content.server";
 
 const GUIDE_SELECT = `
   id, slug, title, category_id, excerpt, quick_answer, content,
@@ -8,17 +10,17 @@ const GUIDE_SELECT = `
   robots, created_at, updated_at
 `;
 
-export async function fetchGuideCategories() {
+export async function fetchGuideCategories(locale: Locale = DEFAULT_LOCALE) {
   const { data, error } = await supabaseAdmin
     .from("travel_categories")
     .select("id, slug, name, description, image_url, seo_title, meta_description, sort_order, active")
     .eq("active", true)
     .order("sort_order", { ascending: true });
   if (error) throw new Error(error.message);
-  return data ?? [];
+  return applyTranslations(data ?? [], "travel_categories", locale);
 }
 
-export async function fetchPublishedGuides() {
+export async function fetchPublishedGuides(locale: Locale = DEFAULT_LOCALE) {
   const { data, error } = await supabaseAdmin
     .from("travel_guides")
     .select(GUIDE_SELECT)
@@ -26,7 +28,7 @@ export async function fetchPublishedGuides() {
     .order("featured_order", { ascending: true })
     .order("published_at", { ascending: false });
   if (error) throw new Error(error.message);
-  return data ?? [];
+  return applyTranslations(data ?? [], "travel_guides", locale);
 }
 
 export async function fetchPublishedGuideSlugs() {
@@ -38,7 +40,7 @@ export async function fetchPublishedGuideSlugs() {
   return data ?? [];
 }
 
-export async function fetchGuideBySlug(slug: string) {
+export async function fetchGuideBySlug(slug: string, locale: Locale = DEFAULT_LOCALE) {
   const { data: guide, error } = await supabaseAdmin
     .from("travel_guides")
     .select(GUIDE_SELECT)

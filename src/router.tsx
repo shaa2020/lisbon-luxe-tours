@@ -1,6 +1,7 @@
 import { QueryClient } from "@tanstack/react-query";
 import { createRouter } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
+import { createLocaleRewrite } from "./lib/i18n/rewrite";
 
 export const getRouter = () => {
   const queryClient = new QueryClient({
@@ -14,9 +15,12 @@ export const getRouter = () => {
     },
   });
 
+  const { state: locale, rewrite } = createLocaleRewrite();
+
   const router = createRouter({
     routeTree,
-    context: { queryClient },
+    rewrite,
+    context: { queryClient, locale },
     scrollRestoration: true,
     defaultPreload: "intent",
     defaultPreloadStaleTime: 30_000,

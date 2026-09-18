@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
+import { LOCALES, LOCALE_HTML_LANG, localePath } from "@/lib/i18n/core";
 
 const BASE_URL = "https://tuktuk24lisbon.com";
 
@@ -87,20 +88,36 @@ export const Route = createFileRoute("/sitemap.xml")({
             })),
         ];
 
-        const urls = entries.map((e) =>
+        // Each page exists in English, Portuguese and Spanish: list all three
+        // and cross-link them with hreflang alternates.
+        const alternates = (path: string) =>
           [
-            `  <url>`,
-            `    <loc>${BASE_URL}${e.path}</loc>`,
-            e.lastmod ? `    <lastmod>${e.lastmod}</lastmod>` : null,
-            e.changefreq ? `    <changefreq>${e.changefreq}</changefreq>` : null,
-            e.priority ? `    <priority>${e.priority}</priority>` : null,
-            `  </url>`,
-          ].filter(Boolean).join("\n"),
+            ...LOCALES.map(
+              (l) =>
+                `    <xhtml:link rel="alternate" hreflang="${LOCALE_HTML_LANG[l]}" href="${BASE_URL}${localePath(l, path)}"/>`,
+            ),
+            `    <xhtml:link rel="alternate" hreflang="x-default" href="${BASE_URL}${path}"/>`,
+          ].join("\n");
+
+        const urls = entries.flatMap((e) =>
+          LOCALES.map((locale) =>
+            [
+              `  <url>`,
+              `    <loc>${BASE_URL}${localePath(locale, e.path)}</loc>`,
+              alternates(e.path),
+              e.lastmod ? `    <lastmod>${e.lastmod}</lastmod>` : null,
+              e.changefreq ? `    <changefreq>${e.changefreq}</changefreq>` : null,
+              e.priority ? `    <priority>${e.priority}</priority>` : null,
+              `  </url>`,
+            ]
+              .filter(Boolean)
+              .join("\n"),
+          ),
         );
 
         const xml = [
           `<?xml version="1.0" encoding="UTF-8"?>`,
-          `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">`,
+          `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">`,
           ...urls,
           `</urlset>`,
         ].join("\n");

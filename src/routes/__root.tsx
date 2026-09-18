@@ -8,6 +8,10 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 import { AuthProvider } from "@/lib/auth";
+import { LocaleProvider } from "@/lib/i18n/context";
+import { LOCALE_HTML_LANG, DEFAULT_LOCALE, hreflangLinks, type Locale } from "@/lib/i18n/core";
+import type { LocaleState } from "@/lib/i18n/rewrite";
+import { AutoTranslate } from "@/components/site/AutoTranslate";
 import { Toaster } from "@/components/ui/sonner";
 import { ExitPopup } from "@/components/site/ExitPopup";
 import { PromoSlot } from "@/components/promo/PromoSlot";
@@ -80,7 +84,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   );
 }
 
-export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
+export const Route = createRootRouteWithContext<{ queryClient: QueryClient; locale: LocaleState }>()({
   head: () => ({
     meta: [
       { charSet: "utf-8" },
@@ -176,11 +180,32 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   errorComponent: ErrorComponent,
 });
 
-function RootShell({ children }: { children: React.ReactNode }) {
+function useActiveLocale(): Locale {
+  const router = useRouter();
+  const ctx = router.options.context as { locale?: LocaleState } | undefined;
+  return ctx?.locale?.current ?? DEFAULT_LOCALE;
+}
+
+function HreflangLinks() {
+  const router = useRouter();
+  const path = router.state.location.pathname.replace(/\/+$/, "") || "/";
+  if (path.startsWith("/admin") || path.startsWith("/api")) return null;
   return (
-    <html lang="en">
+    <>
+      {hreflangLinks(path).map((l) => (
+        <link key={l.hrefLang} rel="alternate" hrefLang={l.hrefLang} href={l.href} />
+      ))}
+    </>
+  );
+}
+
+function RootShell({ children }: { children: React.ReactNode }) {
+  const locale = useActiveLocale();
+  return (
+    <html lang={LOCALE_HTML_LANG[locale]}>
       <head>
         <HeadContent />
+        <HreflangLinks />
       </head>
       <body>
         <GtmNoScript />
@@ -193,9 +218,12 @@ function RootShell({ children }: { children: React.ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const locale = useActiveLocale();
 
   return (
     <QueryClientProvider client={queryClient}>
+      <LocaleProvider locale={locale}>
+      <AutoTranslate />
       <AuthProvider>
         <GtmPageViews />
         <Outlet />
@@ -203,6 +231,7 @@ function RootComponent() {
         <PromoSlot placement="overlay" />
         <Toaster />
       </AuthProvider>
+      </LocaleProvider>
     </QueryClientProvider>
   );
 }

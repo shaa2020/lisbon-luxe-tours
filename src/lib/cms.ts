@@ -1,4 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
+import { useLocale } from "./i18n/context";
+import type { Locale } from "./i18n/core";
 import { useServerFn } from "@tanstack/react-start";
 import { tourImage, blogImage } from "./fallback-images";
 import { versionedUrl } from "./media";
@@ -201,23 +203,24 @@ export function mapPost(row: BlogRow): BlogPost {
 export const TOURS_KEY = ["tours", "public"] as const;
 
 /** SSR-friendly options so route loaders can warm the same cache entry. */
-export const toursQueryOptions = {
-  queryKey: TOURS_KEY,
+export const toursQueryOptions = (locale: Locale = "en") => ({
+  queryKey: [...TOURS_KEY, locale] as const,
   staleTime: 5 * 60_000,
   queryFn: async (): Promise<Tour[]> => {
-    const data = await getPublishedTours();
+    const data = await getPublishedTours({ data: { locale } });
     return (data ?? []).map((r) => mapTour(r as TourRow));
   },
-};
+});
 
 export function useTours() {
   const fetchTours = useServerFn(getPublishedTours);
+  const locale = useLocale();
 
   return useQuery({
-    queryKey: TOURS_KEY,
+    queryKey: [...TOURS_KEY, locale],
     staleTime: 5 * 60_000,
     queryFn: async (): Promise<Tour[]> => {
-      const data = await fetchTours();
+      const data = await fetchTours({ data: { locale } });
       return (data ?? []).map((r) => mapTour(r as TourRow));
     },
   });
@@ -225,11 +228,12 @@ export function useTours() {
 
 export function useTour(slug: string) {
   const fetchTour = useServerFn(getPublishedTourBySlug);
+  const locale = useLocale();
 
   return useQuery({
-    queryKey: ["tour", slug],
+    queryKey: ["tour", slug, locale],
     queryFn: async (): Promise<Tour | null> => {
-      const data = await fetchTour({ data: { slug } });
+      const data = await fetchTour({ data: { slug, locale } });
       return data ? mapTour(data as TourRow) : null;
     },
   });
@@ -237,11 +241,12 @@ export function useTour(slug: string) {
 
 export function useBlogPosts() {
   const fetchBlogPosts = useServerFn(getPublishedBlogPosts);
+  const locale = useLocale();
 
   return useQuery({
-    queryKey: ["blog", "public"],
+    queryKey: ["blog", "public", locale],
     queryFn: async (): Promise<BlogPost[]> => {
-      const data = await fetchBlogPosts();
+      const data = await fetchBlogPosts({ data: { locale } });
       return (data ?? []).map((r) => mapPost(r as BlogRow));
     },
   });
@@ -249,11 +254,12 @@ export function useBlogPosts() {
 
 export function useBlogPost(slug: string) {
   const fetchBlogPost = useServerFn(getPublishedBlogPostBySlug);
+  const locale = useLocale();
 
   return useQuery({
-    queryKey: ["post", slug],
+    queryKey: ["post", slug, locale],
     queryFn: async (): Promise<BlogPost | null> => {
-      const data = await fetchBlogPost({ data: { slug } });
+      const data = await fetchBlogPost({ data: { slug, locale } });
       return data ? mapPost(data as BlogRow) : null;
     },
   });

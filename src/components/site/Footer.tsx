@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
+import { LanguageSwitcher } from "@/components/site/LanguageSwitcher";
 import { BrandLogo } from "@/components/site/BrandLogo";
 import { useSiteBrand } from "@/lib/brand";
 import { useServerFn } from "@tanstack/react-start";
@@ -157,7 +158,8 @@ export function Footer() {
           <p className="text-[12px] text-body">
             © {new Date().getFullYear()} {brandName} · All Rights Reserved{business.footerLegal ? ` · ${business.footerLegal}` : ""}
           </p>
-          <div className="flex gap-6 text-[12px] text-body">
+          <div className="flex items-center gap-6 text-[12px] text-body">
+            <LanguageSwitcher />
             <Link to="/privacy" className="hover:text-gold transition-colors">Privacy</Link>
             <Link to="/terms" className="hover:text-gold transition-colors">Terms</Link>
             <Link to="/cookies" className="hover:text-gold transition-colors">Cookies</Link>

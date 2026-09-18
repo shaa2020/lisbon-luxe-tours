@@ -29,9 +29,9 @@ export const Route = createFileRoute("/")({
         staleTime: 5 * 60_000,
         queryFn: async () => mapSiteBrand(await getPublicSiteSettings()),
       }),
-      context.queryClient.ensureQueryData(toursQueryOptions),
+      context.queryClient.ensureQueryData(toursQueryOptions(context.locale.current)),
       (async (): Promise<BlogPost[]> =>
-        ((await getPublishedBlogPosts()) ?? []).map((r) => mapPost(r as never)))(),
+        ((await getPublishedBlogPosts({ data: { locale: context.locale.current } })) ?? []).map((r) => mapPost(r as never)))(),
     ]);
     const prices = tours.map((t) => tourPricing(t).current).filter((n) => n > 0);
     const fromPrice = prices.length ? Math.min(...prices) : null;

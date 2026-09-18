@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
+import { useLocale } from "./i18n/context";
 import {
   getGuideBySlug,
   getGuideCategories,
@@ -172,24 +173,27 @@ export function formatGuideDate(value: string | null | undefined): string {
 
 export function useGuideCategories() {
   const fn = useServerFn(getGuideCategories);
+  const locale = useLocale();
   return useQuery({
-    queryKey: ["guide-categories", "public"],
-    queryFn: async () => (await fn()) as GuideCategory[],
+    queryKey: ["guide-categories", "public", locale],
+    queryFn: async () => (await fn({ data: { locale } })) as GuideCategory[],
   });
 }
 
 export function usePublishedGuides() {
   const fn = useServerFn(getPublishedGuides);
+  const locale = useLocale();
   return useQuery({
-    queryKey: ["guides", "public"],
-    queryFn: async () => (await fn()) as GuideRow[],
+    queryKey: ["guides", "public", locale],
+    queryFn: async () => (await fn({ data: { locale } })) as GuideRow[],
   });
 }
 
 export function useGuide(slug: string) {
   const fn = useServerFn(getGuideBySlug);
+  const locale = useLocale();
   return useQuery({
-    queryKey: ["guide", slug],
-    queryFn: async () => fn({ data: { slug } }),
+    queryKey: ["guide", slug, locale],
+    queryFn: async () => fn({ data: { slug, locale } }),
   });
 }

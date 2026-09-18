@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { BrandLogo } from "@/components/site/BrandLogo";
 import { useSiteBrand } from "@/lib/brand";
 import { PromoTopBar } from "@/components/promo/PromoSlot";
+import { LanguageSwitcher } from "@/components/site/LanguageSwitcher";
 
 export function Nav({ overlay = false }: { overlay?: boolean }) {
   // overlay kept for API compat but ignored — header is always visible & solid
@@ -51,7 +52,7 @@ export function Nav({ overlay = false }: { overlay?: boolean }) {
             <span className="opacity-30">|</span>
             <Link to="/booking/manage" className="hover:text-gold transition-colors">Manage / extend booking</Link>
             <span className="opacity-30">|</span>
-            <span className="text-white/70">EN · PT · ES</span>
+            <LanguageSwitcher className="text-white/80" />
           </div>
         </div>
       </div>
@@ -136,6 +137,10 @@ export function Nav({ overlay = false }: { overlay?: boolean }) {
             >
               <PhoneIcon /> +351 922 024 690
             </a>
+            <div className="mt-4 flex items-center justify-center gap-2 text-[13px] text-ink">
+              <span className="uppercase tracking-widest text-body text-[11px]">Language</span>
+              <LanguageSwitcher />
+            </div>
           </div>
         </div>
       )}

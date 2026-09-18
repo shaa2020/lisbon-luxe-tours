@@ -27,8 +27,10 @@ function TourViewTracker({ tour, value }: { tour: { id?: string | null; slug?: s
 }
 
 export const Route = createFileRoute("/tours/$slug")({
-  loader: async ({ params }) => {
-    const row = await getPublishedTourBySlug({ data: { slug: params.slug } });
+  loader: async ({ params, context }) => {
+    const row = await getPublishedTourBySlug({
+      data: { slug: params.slug, locale: context.locale.current },
+    });
     return { tour: row ? mapTour(row as Parameters<typeof mapTour>[0]) : null };
   },
   head: ({ params, loaderData }) => {

@@ -7,8 +7,10 @@ import { useBlogPost, useBlogPosts, mapPost } from "@/lib/cms";
 import { getPublishedBlogPostBySlug } from "@/lib/cms.functions";
 
 export const Route = createFileRoute("/journal/$slug")({
-  loader: async ({ params }) => {
-    const row = await getPublishedBlogPostBySlug({ data: { slug: params.slug } });
+  loader: async ({ params, context }) => {
+    const row = await getPublishedBlogPostBySlug({
+      data: { slug: params.slug, locale: context.locale.current },
+    });
     return { post: row ? mapPost(row as Parameters<typeof mapPost>[0]) : null };
   },
   head: ({ params, loaderData }) => {
