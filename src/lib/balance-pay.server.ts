@@ -96,6 +96,19 @@ export async function syncBookingPaymentStatus(
     balance.dueCents <= 0 ? "paid" : balance.paidCents > 0 ? "deposit_paid" : null;
 
   const patch: { payment_status?: string; status?: string; payment_request_cents?: null } = {};
+
+  // Nothing confirmed by the provider → never leave the booking looking paid.
+  if (
+    !paymentStatus &&
+    (balance.paymentStatus === "paid" || balance.paymentStatus === "deposit_paid")
+  ) {
+    await supabase
+      .from("bookings")
+      .update({ payment_status: "unpaid" })
+      .eq("id", bookingId);
+    return;
+  }
+
   if (paymentStatus) {
     patch.payment_status = paymentStatus;
     if (balance.paidCents > 0 && balance.status !== "cancelled") patch.status = "confirmed";
