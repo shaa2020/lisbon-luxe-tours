@@ -8,8 +8,8 @@ import { mapDestination } from "@/lib/destinations";
 const URL = "https://tuktuk24lisbon.com/destinations";
 
 export const Route = createFileRoute("/destinations/")({
-  loader: async () => {
-    const rows = await getPublishedDestinations();
+  loader: async ({ context }) => {
+    const rows = await getPublishedDestinations({ data: { locale: context.locale.current } });
     return { destinations: (rows ?? []).map((r) => mapDestination(r as Record<string, unknown>)) };
   },
   head: () => ({
