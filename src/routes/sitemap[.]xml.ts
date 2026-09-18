@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
+import { LOCALES, LOCALE_HTML_LANG, localePath } from "@/lib/i18n/core";
 
 const BASE_URL = "https://tuktuk24lisbon.com";
 
