@@ -26,6 +26,8 @@ import { createCheckoutSession } from "@/lib/checkout.functions";
 import { toast } from "sonner";
 import { trackBookingStart, trackWhatsappClick } from "@/lib/analytics";
 import { PaypalWallet } from "@/components/site/PaypalWallet";
+import { PickupSelector } from "@/components/site/PickupSelector";
+import { pickupSummary, type PickupSelection } from "@/lib/meetup-points";
 
 const TIME_SLOTS = ["09:00", "10:30", "13:00", "15:00", "17:00", "18:30"];
 
