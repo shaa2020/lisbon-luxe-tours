@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { redirectToCheckout } from "@/lib/redirect-to-checkout";
+import { idempotencyKey, newIdempotencySeed } from "@/lib/idempotency";
 import { format } from "date-fns";
 import { CalendarIcon, Users, Clock, MapPin, Check, CreditCard, Loader2 } from "lucide-react";
 import { type Tour, tourPricing } from "@/lib/cms";
