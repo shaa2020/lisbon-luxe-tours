@@ -8,7 +8,7 @@ import {
 } from "./email/dispatch.server";
 
 export const BOOKING_SELECT =
-  "id,tour_slug,tour_title,customer_name,email,phone,travel_date,travel_time,guests,option_duration_label,option_price_cents,notes,internal_notes,total_estimate,amount_total,refund_cents,cancel_reason,status,payment_status,source,custom_selections,auto_emails_opt_out,reminder_sent_at,review_request_sent_at,created_at";
+  "id,booking_reference,tour_slug,tour_title,customer_name,email,phone,travel_date,travel_time,guests,option_duration_label,option_price_cents,notes,internal_notes,total_estimate,amount_total,refund_cents,cancel_reason,status,tour_status,payment_status,source,custom_selections,auto_emails_opt_out,reminder_sent_at,review_request_sent_at,created_at,pickup_type,meetup_point_id,meetup_point_name,meetup_point_address,meetup_point_instructions,pickup_place_name,pickup_address,pickup_latitude,pickup_longitude,pickup_place_id,pickup_fee_cents,guide_id,vehicle_id";
 
 export async function assertAdmin(context: { supabase: any; userId: string }) {
   await assertRole(context, "staff");
