@@ -285,8 +285,8 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
             guests: guestCount,
             totalCents: payableCents,
             baseCents: serverQuote?.perPersonCents ?? baseCents,
-            pickupFeeCents: settings?.hotel_pickup_fee_cents ?? 0,
-            pickupRequested: data.pickup === true || /hotel pickup/i.test(data.notes || ""),
+            pickupFeeCents: appliedPickupFeeCents || (settings?.hotel_pickup_fee_cents ?? 0),
+            pickupRequested: wantsHotelPickup,
           });
 
     const payment = await createPayment(supabaseAdmin, {
