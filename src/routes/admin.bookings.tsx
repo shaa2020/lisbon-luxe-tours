@@ -584,12 +584,27 @@ function BookingsInbox() {
           {filtered.map((b) => (
             <article
               key={b.id}
-              className="rounded-xl border border-border bg-card p-5 hover:shadow-[0_10px_30px_rgba(30,58,95,0.06)] transition-shadow"
+              id={`booking-${b.id}`}
+              className="scroll-mt-24 rounded-xl border border-border bg-card p-4 sm:p-5 hover:shadow-[0_10px_30px_rgba(30,58,95,0.06)] transition-shadow"
             >
               <div className="flex flex-wrap items-start justify-between gap-3 mb-3">
-                <div>
+                <div className="min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
                     <h3 className="font-display text-xl">{b.customer_name}</h3>
+                    {ledgers[b.id] && (
+                      <>
+                        <span
+                          className={`text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full border ${tourStageClass(ledgers[b.id].tourStage)}`}
+                        >
+                          {TOUR_STAGE_LABEL[ledgers[b.id].tourStage]}
+                        </span>
+                        <span
+                          className={`text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full border ${paymentStateClass(ledgers[b.id].paymentState)}`}
+                        >
+                          {PAYMENT_STATE_LABEL[ledgers[b.id].paymentState]}
+                        </span>
+                      </>
+                    )}
                     <span
                       className={`text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full border ${statusBadge(b.status)}`}
                     >
@@ -597,28 +612,39 @@ function BookingsInbox() {
                     </span>
                   </div>
                   <p className="text-xs text-muted-foreground mt-0.5">
-                    {b.tour_title || "Custom inquiry"} ·{" "}
-                    {new Date(b.created_at).toLocaleString(undefined, {
-                      dateStyle: "medium",
-                      timeStyle: "short",
-                    })}
+                    {b.tour_title || "Custom inquiry"}
+                    {b.travel_date
+                      ? ` · ${new Date(b.travel_date).toLocaleDateString(undefined, { day: "numeric", month: "short" })}`
+                      : ""}
+                    {b.travel_time ? ` · ${String(b.travel_time).slice(0, 5)}` : ""}
                   </p>
                   <button
                     type="button"
-                    title="Click to copy full booking ID"
+                    title="Click to copy the booking reference"
                     onClick={() => {
-                      navigator.clipboard?.writeText(b.id);
-                      toast.success("Booking ID copied");
+                      navigator.clipboard?.writeText(b.booking_reference || b.id);
+                      toast.success("Booking reference copied");
                     }}
                     className="mt-1 font-mono text-[11px] text-muted-foreground hover:text-foreground transition-colors"
                   >
-                    Ref #{b.id.slice(0, 8).toUpperCase()}
+                    {b.booking_reference || `Ref #${b.id.slice(0, 8).toUpperCase()}`}
                   </button>
                 </div>
-                {b.total_estimate != null && (
-                  <p className="font-display text-2xl text-primary tabular-nums">
-                    €{b.total_estimate}
-                  </p>
+                {ledgers[b.id] && ledgers[b.id].totalCents > 0 && (
+                  <div className="text-right">
+                    <p className="font-display text-2xl text-primary tabular-nums">
+                      {euro(ledgers[b.id].totalCents)}
+                    </p>
+                    <p className="text-[11px] tabular-nums text-muted-foreground">
+                      {euro(ledgers[b.id].paidCents)} paid
+                      {ledgers[b.id].dueCents > 0 && (
+                        <span className="font-semibold text-rose-600">
+                          {" "}
+                          · {euro(ledgers[b.id].dueCents)} due
+                        </span>
+                      )}
+                    </p>
+                  </div>
                 )}
               </div>
 
