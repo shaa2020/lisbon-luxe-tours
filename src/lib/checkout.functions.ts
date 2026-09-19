@@ -44,16 +44,74 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
     const { assertSlotAvailable, buildTourLineItems, tourBaseCents, quoteTourCents } = await import("./catalog.server");
     const payments = await paymentsStatus(supabaseAdmin);
 
+    // Duplicate-submission guard: a repeated click / refresh / retry with the
+    // same key returns the original booking instead of creating a second one.
+    if (data.idempotency_key) {
+      const { data: existing } = await supabaseAdmin
+        .from("bookings")
+        .select("id")
+        .eq("idempotency_key", data.idempotency_key)
+        .maybeSingle();
+      if (existing) {
+        const { data: prior } = await supabaseAdmin
+          .from("orders")
+          .select("stripe_session_id")
+          .eq("booking_id", existing.id)
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+        if (prior?.stripe_session_id) {
+          const { getPaymentByReference: getRef } = await import("./payments.server");
+          const again = await getRef(prior.stripe_session_id).catch(() => null);
+          return {
+            mode: "pay" as const,
+            message: null,
+            url: (again?.checkoutUrl as string | null) ?? null,
+            booking_id: existing.id as string,
+            sessionId: prior.stripe_session_id as string,
+          };
+        }
+      }
+    }
+
     // Hold the slot: refuse if it filled up while the customer was deciding.
     await assertSlotAvailable(supabaseAdmin, data.travel_date, data.time);
+
+    // Exactly two pickup choices: an included meetup point, or hotel pickup at
+    // the fee stored in Admin. The fee is snapshotted onto the booking below.
+    const wantsHotelPickup = data.pickup_type === "hotel" || (!data.pickup_type && data.pickup === true);
+
+    let meetup: {
+      id: string;
+      name: string;
+      address: string;
+      instructions: string | null;
+    } | null = null;
+    if (data.pickup_type === "meetup" && data.meetup_point_id) {
+      const { data: mp } = await supabaseAdmin
+        .from("meetup_points")
+        .select("id,name,address,instructions,active")
+        .eq("id", data.meetup_point_id)
+        .maybeSingle();
+      if (!mp || mp.active === false) {
+        throw new Error("That meeting point is no longer available. Please choose another.");
+      }
+      meetup = {
+        id: mp.id as string,
+        name: mp.name as string,
+        address: mp.address as string,
+        instructions: (mp.instructions as string | null) ?? null,
+      };
+    }
 
     // Re-price from the catalog: never trust the amount sent by the browser.
     const serverQuote = await quoteTourCents(supabaseAdmin, {
       slug: data.tour_slug,
       guests: data.guests,
-      pickupRequested: data.pickup === true,
+      pickupRequested: wantsHotelPickup,
       optionId: data.tour_option_id ?? null,
     });
+    const appliedPickupFeeCents = wantsHotelPickup ? (serverQuote?.pickupFeeCents ?? 0) : 0;
     const chosenOption = serverQuote?.option ?? null;
     const amountCents = serverQuote?.totalCents ?? data.amount;
     const guestCount = serverQuote?.guests ?? data.guests;
