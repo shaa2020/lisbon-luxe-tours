@@ -57,7 +57,7 @@ export const searchPlaces = createServerFn({ method: "POST" })
           textQuery: data.query,
           languageCode: "en",
           locationBias: {
-            circle: { center: { latitude: 38.7223, longitude: -9.1393 }, radius: 40000 },
+            circle: { center: { latitude: 38.7223, longitude: -9.1393 }, radius: 6000 },
           },
         }),
       });
@@ -72,6 +72,7 @@ export const searchPlaces = createServerFn({ method: "POST" })
         };
         return (json.places ?? [])
           .filter((p) => p.location?.latitude != null && p.location?.longitude != null)
+          .filter((p) => isCentral(Number(p.location?.latitude), Number(p.location?.longitude)))
           .slice(0, 8)
           .map((p) => ({
             placeId: p.id || "",
@@ -89,6 +90,11 @@ export const searchPlaces = createServerFn({ method: "POST" })
     url.searchParams.set("addressdetails", "1");
     url.searchParams.set("limit", "8");
     url.searchParams.set("countrycodes", "pt");
+    url.searchParams.set("bounded", "1");
+    url.searchParams.set(
+      "viewbox",
+      `${CENTRAL_LISBON.minLng},${CENTRAL_LISBON.maxLat},${CENTRAL_LISBON.maxLng},${CENTRAL_LISBON.minLat}`,
+    );
     url.searchParams.set("accept-language", "en");
 
     const res = await fetch(url.toString(), {
@@ -107,6 +113,7 @@ export const searchPlaces = createServerFn({ method: "POST" })
 
     return rows
       .filter((r) => r.lat && r.lon)
+      .filter((r) => isCentral(Number(r.lat), Number(r.lon)))
       .map((r) => {
         const full = r.display_name || "";
         const name = (r.name && r.name.trim()) || full.split(",")[0] || data.query;
