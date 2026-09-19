@@ -175,8 +175,14 @@ function MeetupPointsAdmin() {
     links.filter((l) => l.meetup_point_id === pointId).map((l) => l.tour_id);
 
   return (
-    <AdminShell title="Meetup points" subtitle="Where guests meet the tuk tuk when they don't book hotel pickup">
-      <div className="mb-5 flex justify-end">
+    <AdminShell requires="ops.manage">
+      <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <h1 className="font-display text-2xl font-bold text-slate-900">Meetup points</h1>
+          <p className="text-sm text-slate-500">
+            Where guests meet the tuk tuk when they don&apos;t book hotel pickup.
+          </p>
+        </div>
         <button
           onClick={() => setCreating((v) => !v)}
           className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700"
