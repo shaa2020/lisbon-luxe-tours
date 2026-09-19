@@ -58,9 +58,9 @@ export function BookingModal({
   const [paying, setPaying] = useState(false);
   const [pickupChoice, setPickupChoice] = useState<PickupSelection | null>(null);
   const pickup = pickupChoice?.type === "hotel";
-  const [idempotencyKey] = useState(
-    () => `bk_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 10)}`,
-  );
+  const [idempotencySeed] = useState(() => newIdempotencySeed("bk"));
+
+  const [optionId, setOptionId] = useState<string | null>(null);
 
   const pickupPayload = {
     pickup,
@@ -71,10 +71,22 @@ export function BookingModal({
     pickup_latitude: pickupChoice?.type === "hotel" ? pickupChoice.latitude : null,
     pickup_longitude: pickupChoice?.type === "hotel" ? pickupChoice.longitude : null,
     pickup_place_id: pickupChoice?.type === "hotel" ? pickupChoice.placeId : null,
-    idempotency_key: idempotencyKey,
+    // Changes with the booking details, so a second, different booking made in
+    // the same visit is never merged into the first one.
+    idempotency_key: idempotencyKey(idempotencySeed, [
+      tour?.slug,
+      optionId,
+      date ? date.toISOString().slice(0, 10) : null,
+      time,
+      guests,
+      name.trim(),
+      contact.trim(),
+      phone.trim(),
+      pickupChoice?.type ?? null,
+      pickupChoice?.type === "meetup" ? pickupChoice.meetupPointId : null,
+      pickupChoice?.type === "hotel" ? pickupChoice.placeId || pickupChoice.address : null,
+    ]),
   };
-
-  const [optionId, setOptionId] = useState<string | null>(null);
 
   if (!tour) return null;
 
