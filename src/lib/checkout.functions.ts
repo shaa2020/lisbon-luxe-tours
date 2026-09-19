@@ -170,9 +170,27 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
         option_base_price_cents: chosenOption?.basePriceCents ?? null,
         option_sale_price_cents: chosenOption?.salePriceCents ?? null,
         option_price_cents: chosenOption?.pricePerPersonCents ?? null,
+        // Pickup snapshot: the fee charged is frozen here, so a later change to
+        // the Hotel Pickup Fee never rewrites an existing booking.
+        pickup_type: wantsHotelPickup ? "hotel" : meetup ? "meetup" : null,
+        meetup_point_id: meetup?.id ?? null,
+        meetup_point_name: meetup?.name ?? null,
+        meetup_point_address: meetup?.address ?? null,
+        meetup_point_instructions: meetup?.instructions ?? null,
+        pickup_place_name: wantsHotelPickup ? data.pickup_place_name || null : null,
+        pickup_address: wantsHotelPickup ? data.pickup_address || null : null,
+        pickup_latitude: wantsHotelPickup ? data.pickup_latitude ?? null : null,
+        pickup_longitude: wantsHotelPickup ? data.pickup_longitude ?? null : null,
+        pickup_place_id: wantsHotelPickup ? data.pickup_place_id || null : null,
+        pickup_fee_cents: appliedPickupFeeCents,
+        idempotency_key: data.idempotency_key || null,
         notes: [
           data.time ? `Preferred time: ${data.time}` : null,
           chosenOption?.durationLabel ? `Duration: ${chosenOption.durationLabel}` : null,
+          meetup ? `Meetup point: ${meetup.name} — ${meetup.address}` : null,
+          wantsHotelPickup
+            ? `Hotel pickup: ${data.pickup_place_name || "address to confirm"}${data.pickup_address ? ` — ${data.pickup_address}` : ""} (+€${(appliedPickupFeeCents / 100).toFixed(2)})`
+            : null,
           discountCode ? `Promo code ${discountCode} applied (−€${(discountCents / 100).toFixed(2)})` : null,
           depositNote,
           data.notes,
@@ -184,6 +202,7 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
         discount_code: discountCode,
         discount_cents: discountCents,
         status: "new",
+        tour_status: "upcoming",
         payment_status: payments.available ? "pending" : "request",
       })
 
