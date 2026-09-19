@@ -110,7 +110,7 @@ function statusBadge(s: string) {
 function BookingsInbox() {
   const qc = useQueryClient();
   useSiteBrand();
-  const [filter, setFilter] = useState<string>("all");
+  const [section, setSection] = useState<string>("today");
   const [sourceFilter, setSourceFilter] = useState<"all" | "custom" | "standard">("all");
   const [search, setSearch] = useState("");
   const [dateFrom, setDateFrom] = useState("");
@@ -156,6 +156,44 @@ function BookingsInbox() {
     },
   });
 
+  const { data: paidOrders = [] } = useQuery({
+    queryKey: ["admin-bookings-orders"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("orders")
+        .select("booking_id,amount_total,payment_status");
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
+  const { data: manualPayments = [] } = useQuery({
+    queryKey: ["admin-bookings-manual-payments"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("booking_payments")
+        .select("booking_id,amount_cents,direction,order_id");
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
+  const ledgers = useMemo(() => {
+    const ordersBy: Record<string, any[]> = {};
+    for (const o of paidOrders as any[]) {
+      if (o.booking_id) (ordersBy[o.booking_id] ??= []).push(o);
+    }
+    const manualBy: Record<string, any[]> = {};
+    for (const m of manualPayments as any[]) {
+      if (m.booking_id) (manualBy[m.booking_id] ??= []).push(m);
+    }
+    const out: Record<string, BookingLedger> = {};
+    for (const b of bookings) {
+      out[b.id] = buildLedger(b as any, ordersBy[b.id] ?? [], manualBy[b.id] ?? []);
+    }
+    return out;
+  }, [bookings, paidOrders, manualPayments]);
+
   const bySource =
     sourceFilter === "custom"
       ? bookings.filter((b) => b.tour_slug === "custom")
@@ -163,13 +201,24 @@ function BookingsInbox() {
         ? bookings.filter((b) => b.tour_slug !== "custom")
         : bookings;
   const q = search.trim().toLowerCase();
+
+  const inSection = (b: Booking, id: string) => {
+    const l = ledgers[b.id];
+    if (!l) return id === "all";
+    if (id === "all") return true;
+    if (id === "payment_due")
+      return l.dueCents > 0 && l.tourStage !== "cancelled" && l.section !== "history";
+    return l.section === id;
+  };
+
   const filtered = bySource
-    .filter((b) => filter === "all" || b.status === filter)
+    .filter((b) => inSection(b, section))
     .filter((b) => {
       if (!q) return true;
       return (
         b.customer_name?.toLowerCase().includes(q) ||
         b.id.toLowerCase().includes(q) ||
+        (b.booking_reference ?? "").toLowerCase().includes(q) ||
         b.email?.toLowerCase().includes(q) ||
         (b.phone ?? "").toLowerCase().includes(q) ||
         (b.tour_title ?? "").toLowerCase().includes(q)
@@ -181,10 +230,18 @@ function BookingsInbox() {
       if (dateFrom && b.travel_date < dateFrom) return false;
       if (dateTo && b.travel_date > dateTo) return false;
       return true;
+    })
+    .sort((a, b) => {
+      const ad = a.travel_date ?? "";
+      const bd = b.travel_date ?? "";
+      const past = section === "history" || section === "cancelled" || section === "completed_due";
+      if (ad !== bd) return past ? bd.localeCompare(ad) : ad.localeCompare(bd);
+      return (a.travel_time ?? "").localeCompare(b.travel_time ?? "");
     });
-  const counts = STATUSES.reduce(
-    (acc, s) => ({ ...acc, [s]: bySource.filter((b) => b.status === s).length }),
-    { all: bySource.length } as Record<string, number>,
+
+  const counts = SECTIONS.reduce(
+    (acc, s) => ({ ...acc, [s.id]: bySource.filter((b) => inSection(b, s.id)).length }),
+    {} as Record<string, number>,
   );
   const customCount = bookings.filter((b) => b.tour_slug === "custom").length;
 
