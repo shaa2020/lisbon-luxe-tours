@@ -71,6 +71,16 @@ const CAT_ORDER = ["vehicle", "duration", "destination", "addon"];
 
 const STATUSES = ["new", "quoted", "confirmed", "done", "archived"] as const;
 
+const SECTIONS = [
+  { id: "today", label: "Today" },
+  { id: "upcoming", label: "Upcoming" },
+  { id: "payment_due", label: "Payment due" },
+  { id: "completed_due", label: "Done · payment due" },
+  { id: "history", label: "History" },
+  { id: "cancelled", label: "Cancelled" },
+  { id: "all", label: "All bookings" },
+] as const;
+
 function statusBadge(s: string) {
   const map: Record<string, string> = {
     new: "bg-primary/10 text-primary border-primary/20",
