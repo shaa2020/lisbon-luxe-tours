@@ -228,7 +228,7 @@ export function PickupSelector({
                 setTerm(e.target.value);
                 if (value?.type === "hotel") onChange(null);
               }}
-              placeholder="Search your hotel, apartment or address"
+              placeholder="Search your hotel or address in central Lisbon"
               className="w-full rounded-lg border border-border bg-cloud/40 pl-9 pr-4 py-3 text-sm text-ink placeholder:text-ink/40 focus:border-gold focus:outline-none"
             />
             {searching && (
@@ -265,7 +265,15 @@ export function PickupSelector({
 
           {value?.type !== "hotel" && (
             <p className="mt-2 text-[11px] text-body">
-              Pick your exact address from the list so your driver arrives at the right door.
+              Hotel pickup is available in central Lisbon only. Pick your exact address from the
+              list so your driver arrives at the right door — if it does not appear, choose a
+              meeting point instead.
+            </p>
+          )}
+          {!searching && term.trim().length >= 3 && results.length === 0 && (
+            <p className="mt-2 text-[11px] text-body">
+              Nothing found in central Lisbon for “{term.trim()}”. Try the hotel name, or pick a
+              meeting point.
             </p>
           )}
         </div>

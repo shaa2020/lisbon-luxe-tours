@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { AdminShell } from "@/components/admin/AdminShell";
@@ -31,6 +31,16 @@ import {
 } from "@/lib/booking-changes.functions";
 import { BookingCreateDialog } from "@/components/admin/BookingCreateDialog";
 import { BookingManagePanel } from "@/components/admin/BookingManagePanel";
+import { BookingsCalendar } from "@/components/admin/BookingsCalendar";
+import {
+  buildLedger,
+  euro,
+  tourStageClass,
+  paymentStateClass,
+  TOUR_STAGE_LABEL,
+  PAYMENT_STATE_LABEL,
+  type BookingLedger,
+} from "@/lib/booking-ledger";
 
 export const Route = createFileRoute("/admin/bookings")({
   component: BookingsInbox,
@@ -45,6 +55,11 @@ type CustomSelection = {
 
 type Booking = {
   id: string;
+  booking_reference?: string | null;
+  tour_status?: string | null;
+  travel_time?: string | null;
+  amount_total?: number | null;
+  refund_cents?: number | null;
   tour_slug: string | null;
   tour_title: string | null;
   customer_name: string;
@@ -71,6 +86,16 @@ const CAT_ORDER = ["vehicle", "duration", "destination", "addon"];
 
 const STATUSES = ["new", "quoted", "confirmed", "done", "archived"] as const;
 
+const SECTIONS = [
+  { id: "today", label: "Today" },
+  { id: "upcoming", label: "Upcoming" },
+  { id: "payment_due", label: "Payment due" },
+  { id: "completed_due", label: "Done · payment due" },
+  { id: "history", label: "History" },
+  { id: "cancelled", label: "Cancelled" },
+  { id: "all", label: "All bookings" },
+] as const;
+
 function statusBadge(s: string) {
   const map: Record<string, string> = {
     new: "bg-primary/10 text-primary border-primary/20",
@@ -85,7 +110,8 @@ function statusBadge(s: string) {
 function BookingsInbox() {
   const qc = useQueryClient();
   useSiteBrand();
-  const [filter, setFilter] = useState<string>("all");
+  const [section, setSection] = useState<string>("today");
+  const [autoSectionDone, setAutoSectionDone] = useState(false);
   const [sourceFilter, setSourceFilter] = useState<"all" | "custom" | "standard">("all");
   const [search, setSearch] = useState("");
   const [dateFrom, setDateFrom] = useState("");
@@ -131,6 +157,44 @@ function BookingsInbox() {
     },
   });
 
+  const { data: paidOrders = [] } = useQuery({
+    queryKey: ["admin-bookings-orders"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("orders")
+        .select("booking_id,amount_total,payment_status");
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
+  const { data: manualPayments = [] } = useQuery({
+    queryKey: ["admin-bookings-manual-payments"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("booking_payments")
+        .select("booking_id,amount_cents,direction,order_id");
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
+  const ledgers = useMemo(() => {
+    const ordersBy: Record<string, any[]> = {};
+    for (const o of paidOrders as any[]) {
+      if (o.booking_id) (ordersBy[o.booking_id] ??= []).push(o);
+    }
+    const manualBy: Record<string, any[]> = {};
+    for (const m of manualPayments as any[]) {
+      if (m.booking_id) (manualBy[m.booking_id] ??= []).push(m);
+    }
+    const out: Record<string, BookingLedger> = {};
+    for (const b of bookings) {
+      out[b.id] = buildLedger(b as any, ordersBy[b.id] ?? [], manualBy[b.id] ?? []);
+    }
+    return out;
+  }, [bookings, paidOrders, manualPayments]);
+
   const bySource =
     sourceFilter === "custom"
       ? bookings.filter((b) => b.tour_slug === "custom")
@@ -138,13 +202,24 @@ function BookingsInbox() {
         ? bookings.filter((b) => b.tour_slug !== "custom")
         : bookings;
   const q = search.trim().toLowerCase();
+
+  const inSection = (b: Booking, id: string) => {
+    const l = ledgers[b.id];
+    if (!l) return id === "all";
+    if (id === "all") return true;
+    if (id === "payment_due")
+      return l.dueCents > 0 && l.tourStage !== "cancelled" && l.section !== "history";
+    return l.section === id;
+  };
+
   const filtered = bySource
-    .filter((b) => filter === "all" || b.status === filter)
+    .filter((b) => inSection(b, section))
     .filter((b) => {
       if (!q) return true;
       return (
         b.customer_name?.toLowerCase().includes(q) ||
         b.id.toLowerCase().includes(q) ||
+        (b.booking_reference ?? "").toLowerCase().includes(q) ||
         b.email?.toLowerCase().includes(q) ||
         (b.phone ?? "").toLowerCase().includes(q) ||
         (b.tour_title ?? "").toLowerCase().includes(q)
@@ -156,12 +231,27 @@ function BookingsInbox() {
       if (dateFrom && b.travel_date < dateFrom) return false;
       if (dateTo && b.travel_date > dateTo) return false;
       return true;
+    })
+    .sort((a, b) => {
+      const ad = a.travel_date ?? "";
+      const bd = b.travel_date ?? "";
+      const past = section === "history" || section === "cancelled" || section === "completed_due";
+      if (ad !== bd) return past ? bd.localeCompare(ad) : ad.localeCompare(bd);
+      return (a.travel_time ?? "").localeCompare(b.travel_time ?? "");
     });
-  const counts = STATUSES.reduce(
-    (acc, s) => ({ ...acc, [s]: bySource.filter((b) => b.status === s).length }),
-    { all: bySource.length } as Record<string, number>,
+
+  const counts = SECTIONS.reduce(
+    (acc, s) => ({ ...acc, [s.id]: bySource.filter((b) => inSection(b, s.id)).length }),
+    {} as Record<string, number>,
   );
   const customCount = bookings.filter((b) => b.tour_slug === "custom").length;
+
+  // Open on Today when there is something today, otherwise on Upcoming.
+  useEffect(() => {
+    if (autoSectionDone || bookings.length === 0) return;
+    setAutoSectionDone(true);
+    if ((counts.today ?? 0) === 0) setSection("upcoming");
+  }, [autoSectionDone, bookings.length, counts.today]);
 
   const exportCsv = () => {
     const headers = [
@@ -386,7 +476,23 @@ function BookingsInbox() {
         <BookingCreateDialog />
       </div>
 
-      <BookingsCalendar bookings={bookings} />
+      <BookingsCalendar
+        bookings={bookings as any}
+        ledgers={ledgers}
+        onOpen={(id) => {
+          setSection("all");
+          setSearch("");
+          setDateFrom("");
+          setDateTo("");
+          setSourceFilter("all");
+          setExpandedId(id);
+          setTimeout(() => {
+            document
+              .getElementById(`booking-${id}`)
+              ?.scrollIntoView({ behavior: "smooth", block: "start" });
+          }, 60);
+        }}
+      />
 
       <div className="flex flex-wrap gap-2 mb-3">
         {(
@@ -410,18 +516,18 @@ function BookingsInbox() {
         ))}
       </div>
 
-      <div className="flex flex-wrap gap-2 mb-6">
-        {(["all", ...STATUSES] as const).map((s) => (
+      <div className="-mx-1 mb-6 flex gap-2 overflow-x-auto px-1 pb-1">
+        {SECTIONS.map((s) => (
           <button
-            key={s}
-            onClick={() => setFilter(s)}
-            className={`px-3 py-1.5 rounded-full text-xs font-medium border transition ${
-              filter === s
+            key={s.id}
+            onClick={() => setSection(s.id)}
+            className={`whitespace-nowrap rounded-full border px-3 py-1.5 text-xs font-semibold transition ${
+              section === s.id
                 ? "bg-primary text-primary-foreground border-primary"
                 : "bg-card text-foreground border-border hover:border-primary"
             }`}
           >
-            {s[0].toUpperCase() + s.slice(1)} <span className="opacity-70">({counts[s] ?? 0})</span>
+            {s.label} <span className="opacity-70">({counts[s.id] ?? 0})</span>
           </button>
         ))}
       </div>
@@ -479,19 +585,40 @@ function BookingsInbox() {
         <p className="text-sm text-muted-foreground">Loading…</p>
       ) : filtered.length === 0 ? (
         <div className="rounded-xl border border-dashed border-border bg-card p-12 text-center">
-          <p className="text-sm text-muted-foreground">No bookings here yet.</p>
+          <p className="text-sm text-muted-foreground">
+            {section === "today"
+              ? "No tours today."
+              : section === "history"
+                ? "Nothing here yet — completed and fully paid bookings land here."
+                : "No bookings in this section."}
+          </p>
         </div>
       ) : (
         <div className="grid gap-4">
           {filtered.map((b) => (
             <article
               key={b.id}
-              className="rounded-xl border border-border bg-card p-5 hover:shadow-[0_10px_30px_rgba(30,58,95,0.06)] transition-shadow"
+              id={`booking-${b.id}`}
+              className="scroll-mt-24 rounded-xl border border-border bg-card p-4 sm:p-5 hover:shadow-[0_10px_30px_rgba(30,58,95,0.06)] transition-shadow"
             >
               <div className="flex flex-wrap items-start justify-between gap-3 mb-3">
-                <div>
+                <div className="min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
                     <h3 className="font-display text-xl">{b.customer_name}</h3>
+                    {ledgers[b.id] && (
+                      <>
+                        <span
+                          className={`text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full border ${tourStageClass(ledgers[b.id].tourStage)}`}
+                        >
+                          {TOUR_STAGE_LABEL[ledgers[b.id].tourStage]}
+                        </span>
+                        <span
+                          className={`text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full border ${paymentStateClass(ledgers[b.id].paymentState)}`}
+                        >
+                          {PAYMENT_STATE_LABEL[ledgers[b.id].paymentState]}
+                        </span>
+                      </>
+                    )}
                     <span
                       className={`text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full border ${statusBadge(b.status)}`}
                     >
@@ -499,28 +626,39 @@ function BookingsInbox() {
                     </span>
                   </div>
                   <p className="text-xs text-muted-foreground mt-0.5">
-                    {b.tour_title || "Custom inquiry"} ·{" "}
-                    {new Date(b.created_at).toLocaleString(undefined, {
-                      dateStyle: "medium",
-                      timeStyle: "short",
-                    })}
+                    {b.tour_title || "Custom inquiry"}
+                    {b.travel_date
+                      ? ` · ${new Date(b.travel_date).toLocaleDateString(undefined, { day: "numeric", month: "short" })}`
+                      : ""}
+                    {b.travel_time ? ` · ${String(b.travel_time).slice(0, 5)}` : ""}
                   </p>
                   <button
                     type="button"
-                    title="Click to copy full booking ID"
+                    title="Click to copy the booking reference"
                     onClick={() => {
-                      navigator.clipboard?.writeText(b.id);
-                      toast.success("Booking ID copied");
+                      navigator.clipboard?.writeText(b.booking_reference || b.id);
+                      toast.success("Booking reference copied");
                     }}
                     className="mt-1 font-mono text-[11px] text-muted-foreground hover:text-foreground transition-colors"
                   >
-                    Ref #{b.id.slice(0, 8).toUpperCase()}
+                    {b.booking_reference || `Ref #${b.id.slice(0, 8).toUpperCase()}`}
                   </button>
                 </div>
-                {b.total_estimate != null && (
-                  <p className="font-display text-2xl text-primary tabular-nums">
-                    €{b.total_estimate}
-                  </p>
+                {ledgers[b.id] && ledgers[b.id].totalCents > 0 && (
+                  <div className="text-right">
+                    <p className="font-display text-2xl text-primary tabular-nums">
+                      {euro(ledgers[b.id].totalCents)}
+                    </p>
+                    <p className="text-[11px] tabular-nums text-muted-foreground">
+                      {euro(ledgers[b.id].paidCents)} paid
+                      {ledgers[b.id].dueCents > 0 && (
+                        <span className="font-semibold text-rose-600">
+                          {" "}
+                          · {euro(ledgers[b.id].dueCents)} due
+                        </span>
+                      )}
+                    </p>
+                  </div>
                 )}
               </div>
 
@@ -967,109 +1105,5 @@ function BookingsInbox() {
         </div>
       )}
     </AdminShell>
-  );
-}
-
-function BookingsCalendar({ bookings }: { bookings: Booking[] }) {
-  const [cursor, setCursor] = useState(() => {
-    const d = new Date();
-    return new Date(d.getFullYear(), d.getMonth(), 1);
-  });
-
-  const byDate = useMemo(() => {
-    const map: Record<string, Booking[]> = {};
-    for (const b of bookings) {
-      if (!b.travel_date) continue;
-      (map[b.travel_date] ??= []).push(b);
-    }
-    return map;
-  }, [bookings]);
-
-  const year = cursor.getFullYear();
-  const month = cursor.getMonth();
-  const first = new Date(year, month, 1);
-  const startOffset = (first.getDay() + 6) % 7; // Monday-first
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-  const cells: (number | null)[] = [
-    ...Array.from({ length: startOffset }, () => null),
-    ...Array.from({ length: daysInMonth }, (_, i) => i + 1),
-  ];
-  const todayKey = new Date().toISOString().slice(0, 10);
-  const key = (day: number) =>
-    `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-
-  const monthTotal = Object.entries(byDate)
-    .filter(([d]) => d.startsWith(`${year}-${String(month + 1).padStart(2, "0")}`))
-    .reduce((n, [, list]) => n + list.length, 0);
-
-  return (
-    <div className="mb-6 rounded-2xl border border-border bg-card p-4">
-      <div className="flex items-center justify-between mb-3">
-        <div>
-          <h2 className="text-sm font-semibold">Tour calendar</h2>
-          <p className="text-xs text-muted-foreground">
-            {first.toLocaleDateString(undefined, { month: "long", year: "numeric" })} · {monthTotal}{" "}
-            booking{monthTotal === 1 ? "" : "s"}
-          </p>
-        </div>
-        <div className="flex gap-1">
-          <button
-            onClick={() => setCursor(new Date(year, month - 1, 1))}
-            className="h-8 w-8 rounded-full border border-border text-sm hover:border-foreground"
-            aria-label="Previous month"
-          >
-            ‹
-          </button>
-          <button
-            onClick={() => setCursor(new Date(year, month + 1, 1))}
-            className="h-8 w-8 rounded-full border border-border text-sm hover:border-foreground"
-            aria-label="Next month"
-          >
-            ›
-          </button>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-7 gap-1 text-[10px] uppercase tracking-wider text-muted-foreground mb-1">
-        {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((d) => (
-          <div key={d} className="text-center py-1">
-            {d}
-          </div>
-        ))}
-      </div>
-
-      <div className="grid grid-cols-7 gap-1">
-        {cells.map((day, i) => {
-          if (day === null) return <div key={`e${i}`} className="min-h-[62px]" />;
-          const k = key(day);
-          const list = byDate[k] ?? [];
-          const isToday = k === todayKey;
-          return (
-            <div
-              key={k}
-              className={`min-h-[62px] rounded-lg border p-1 text-left ${
-                isToday ? "border-primary" : "border-border"
-              } ${list.length ? "bg-muted/50" : ""}`}
-            >
-              <div className="text-[11px] font-semibold text-muted-foreground">{day}</div>
-              <div className="space-y-0.5 mt-0.5">
-                {list.slice(0, 2).map((b) => (
-                  <div
-                    key={b.id}
-                    title={`${b.customer_name} · ${b.tour_title ?? "Tour"} · ${b.guests} guest(s)`}
-                    className="truncate rounded bg-foreground/90 text-background px-1 py-0.5 text-[10px]"
-                  >
-                    {b.customer_name}
-                  </div>
-                ))}
-                {list.length > 2 && (
-                  <div className="text-[10px] text-muted-foreground">+{list.length - 2} more</div>
-                )}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </div>
   );
 }
