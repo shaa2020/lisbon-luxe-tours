@@ -139,10 +139,14 @@ export const adminAssignBooking = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { logEvent } = await import("./bookings-admin.server");
 
-    const patch: Record<string, unknown> = {};
-    if (data.guide_id !== undefined) patch["guide_id"] = data.guide_id;
-    if (data.vehicle_id !== undefined) patch["vehicle_id"] = data.vehicle_id;
-    if (data.tour_status) patch["tour_status"] = data.tour_status;
+    const patch: {
+      guide_id?: string | null;
+      vehicle_id?: string | null;
+      tour_status?: string;
+    } = {};
+    if (data.guide_id !== undefined) patch.guide_id = data.guide_id ?? null;
+    if (data.vehicle_id !== undefined) patch.vehicle_id = data.vehicle_id ?? null;
+    if (data.tour_status) patch.tour_status = data.tour_status;
     if (Object.keys(patch).length === 0) return { ok: true, conflicts: [] as string[] };
 
     const { data: booking } = await supabaseAdmin
@@ -183,7 +187,7 @@ export const adminAssignBooking = createServerFn({ method: "POST" })
       Object.keys(patch)
         .map((k) => k.replace("_", " "))
         .join(", ") + " updated",
-      patch,
+      patch as Record<string, unknown>,
       context.userId,
     );
 
