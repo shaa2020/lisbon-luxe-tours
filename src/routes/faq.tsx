@@ -8,7 +8,7 @@ import { WhatsappFab } from "@/components/site/Whatsapp";
 import { useLocale } from "@/lib/i18n/context";
 import { supabase } from "@/integrations/supabase/client";
 import type { Locale } from "@/lib/i18n/core";
-import { applyClientTranslations } from "@/lib/i18n/overlay.client";
+import { applyClientTranslations } from "@/lib/i18n/overlay-browser";
 
 type Faq = { id: string; question: string; answer: string };
 

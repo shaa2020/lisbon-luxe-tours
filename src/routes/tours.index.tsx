@@ -14,7 +14,7 @@ import { CANCELLATION_POLICY_BULLETS } from "@/lib/cancellation";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useLocale } from "@/lib/i18n/context";
-import { applyClientTranslations } from "@/lib/i18n/overlay.client";
+import { applyClientTranslations } from "@/lib/i18n/overlay-browser";
 
 export const Route = createFileRoute("/tours/")({
   head: () => ({
