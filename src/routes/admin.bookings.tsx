@@ -31,6 +31,16 @@ import {
 } from "@/lib/booking-changes.functions";
 import { BookingCreateDialog } from "@/components/admin/BookingCreateDialog";
 import { BookingManagePanel } from "@/components/admin/BookingManagePanel";
+import { BookingsCalendar } from "@/components/admin/BookingsCalendar";
+import {
+  buildLedger,
+  euro,
+  tourStageClass,
+  paymentStateClass,
+  TOUR_STAGE_LABEL,
+  PAYMENT_STATE_LABEL,
+  type BookingLedger,
+} from "@/lib/booking-ledger";
 
 export const Route = createFileRoute("/admin/bookings")({
   component: BookingsInbox,
@@ -45,6 +55,11 @@ type CustomSelection = {
 
 type Booking = {
   id: string;
+  booking_reference?: string | null;
+  tour_status?: string | null;
+  travel_time?: string | null;
+  amount_total?: number | null;
+  refund_cents?: number | null;
   tour_slug: string | null;
   tour_title: string | null;
   customer_name: string;
