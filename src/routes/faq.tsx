@@ -5,7 +5,10 @@ import { ChevronDown } from "lucide-react";
 import { Nav } from "@/components/site/Nav";
 import { Footer } from "@/components/site/Footer";
 import { WhatsappFab } from "@/components/site/Whatsapp";
+import { useLocale } from "@/lib/i18n/context";
 import { supabase } from "@/integrations/supabase/client";
+import type { Locale } from "@/lib/i18n/core";
+import { applyClientTranslations } from "@/lib/i18n/overlay.client";
 
 type Faq = { id: string; question: string; answer: string };
 
@@ -24,21 +27,22 @@ const FALLBACK: Faq[] = [
   },
 ];
 
-const faqsQuery = queryOptions({
-  queryKey: ["public-faqs"],
-  queryFn: async () => {
-    const { data, error } = await supabase
-      .from("faqs" as never)
-      .select("id, question, answer, sort_order, active")
-      .eq("active", true)
-      .order("sort_order", { ascending: true });
-    if (error) throw error;
-    return (data ?? []) as unknown as Faq[];
-  },
-});
+const faqsQuery = (locale: Locale = "en") =>
+  queryOptions({
+    queryKey: ["public-faqs", locale],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("faqs" as never)
+        .select("id, question, answer, sort_order, active")
+        .eq("active", true)
+        .order("sort_order", { ascending: true });
+      if (error) throw error;
+      return applyClientTranslations((data ?? []) as unknown as Faq[], "faqs", locale);
+    },
+  });
 
 export const Route = createFileRoute("/faq")({
-  loader: ({ context }) => context.queryClient.ensureQueryData(faqsQuery),
+  loader: ({ context }) => context.queryClient.ensureQueryData(faqsQuery(context.locale.current)),
   head: () => ({
     meta: [
       { title: "FAQ — Tuk Tuk 24 Lisbon Tours" },
@@ -60,7 +64,8 @@ export const Route = createFileRoute("/faq")({
 });
 
 function FAQPage() {
-  const { data } = useQuery(faqsQuery);
+  const locale = useLocale();
+  const { data } = useQuery(faqsQuery(locale));
   const faqs = data && data.length > 0 ? data : FALLBACK;
 
   return (

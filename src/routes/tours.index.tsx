@@ -13,6 +13,8 @@ import { useSiteBrand } from "@/lib/brand";
 import { CANCELLATION_POLICY_BULLETS } from "@/lib/cancellation";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useLocale } from "@/lib/i18n/context";
+import { applyClientTranslations } from "@/lib/i18n/overlay.client";
 
 export const Route = createFileRoute("/tours/")({
   head: () => ({
@@ -69,8 +71,9 @@ type SortKey = "featured" | "price-asc" | "price-desc" | "duration";
 type Faq = { id: string; question: string; answer: string };
 
 function useFaqs(limit = 6) {
+  const locale = useLocale();
   return useQuery({
-    queryKey: ["public-faqs", "tours", limit],
+    queryKey: ["public-faqs", "tours", limit, locale],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("faqs" as never)
@@ -79,7 +82,7 @@ function useFaqs(limit = 6) {
         .order("sort_order", { ascending: true })
         .limit(limit);
       if (error) throw error;
-      return (data ?? []) as unknown as Faq[];
+      return applyClientTranslations((data ?? []) as unknown as Faq[], "faqs", locale);
     },
   });
 }
