@@ -224,7 +224,7 @@ export function AdminShell({ children, requires }: { children: ReactNode; requir
                     to={n.to}
                     className={`group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors ${
                       active
-                        ? "bg-primary/12 text-primary font-semibold"
+                        ? "bg-emerald-600 text-white font-semibold shadow-[0_6px_16px_rgba(5,150,105,0.35)]"
                         : "text-muted-foreground hover:bg-accent hover:text-foreground"
                     }`}
                   >
@@ -457,7 +457,7 @@ export function AdminShell({ children, requires }: { children: ReactNode; requir
                 key={n.to}
                 to={n.to}
                 className={`relative flex flex-col items-center justify-center gap-0.5 active:scale-95 transition ${
-                  active ? "text-primary" : "text-muted-foreground"
+                  active ? "text-emerald-600" : "text-muted-foreground"
                 }`}
               >
                 <div className="relative">
@@ -530,11 +530,11 @@ export function AdminShell({ children, requires }: { children: ReactNode; requir
                           key={n.to}
                           to={n.to}
                           className={`rounded-xl border p-3 active:scale-[0.98] transition ${
-                            active ? "border-primary bg-primary/5" : "border-border bg-background"
+                            active ? "border-emerald-600 bg-emerald-600 text-white" : "border-border bg-background"
                           }`}
                         >
                           <div className="flex items-center justify-between mb-1.5">
-                            <Icon className={`w-5 h-5 ${active ? "text-primary" : "text-muted-foreground"}`} />
+                            <Icon className={`w-5 h-5 ${active ? "text-white" : "text-muted-foreground"}`} />
                             <Badge n={b} small />
                           </div>
                           <p className="text-sm font-semibold leading-tight">{n.label}</p>
