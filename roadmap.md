@@ -10,3 +10,16 @@
 - [ ] i18n: one-time AI translation pass (static strings + DB content into content_translations)
 - [ ] i18n: SEO wiring (hreflang, localized canonicals, sitemap /pt /es)
 - [ ] QA: typecheck, Playwright smoke of /pt /es, duration booking flow, English unchanged
+
+## Booking & admin upgrade (2026-09)
+- [x] Audit existing system (bookings, payments, ops tables, pickup fee)
+- [x] Migration 0001: meetup_points, tour_meetup_points, booking_payments, admin_audit_log, booking pickup/reference/tour_status columns
+- [x] Admin Meetup Points page + nav entry
+- [x] Customer two-option pickup (meetup included / hotel + fee) in BookingModal & TourBookingPanel
+- [x] Pickup fee snapshot + idempotency key on checkout bookings
+- [ ] Booking list & details: show reference, pickup, guide/vehicle, statuses
+- [ ] Separate tour status vs payment status + Completed/Payment Due vs History rule
+- [ ] Payment ledger (booking_payments) + record payment + Payment Due centre
+- [ ] Operations pages re-pointed at real bookings (Today's Operations, calendar)
+- [ ] Guides/vehicles assignment + conflict warnings
+- [ ] Reports, audit log surfacing, responsive pass, test scenarios
