@@ -66,18 +66,30 @@ export function AutoTranslate() {
     };
 
     // Point canonical / og:url at the localized URL so the language versions index separately.
+    const localizeUrl = (raw: string) => {
+      const u = new URL(raw);
+      if (!u.pathname.startsWith(`/${locale}`)) {
+        u.pathname = u.pathname === "/" ? `/${locale}` : `/${locale}${u.pathname}`;
+      }
+      return u.toString();
+    };
     const canonical = document.querySelector<HTMLLinkElement>('link[rel="canonical"]');
     if (canonical?.href) {
       try {
-        const u = new URL(canonical.href);
-        if (!u.pathname.startsWith(`/${locale}`)) {
-          u.pathname = u.pathname === "/" ? `/${locale}` : `/${locale}${u.pathname}`;
-          canonical.href = u.toString();
-        }
+        canonical.href = localizeUrl(canonical.href);
       } catch {
         /* ignore malformed canonical */
       }
     }
+    const ogUrl = document.querySelector<HTMLMetaElement>('meta[property="og:url"]');
+    if (ogUrl?.content) {
+      try {
+        ogUrl.content = localizeUrl(ogUrl.content);
+      } catch {
+        /* ignore malformed og:url */
+      }
+    }
+
 
     walk(document.body);
 

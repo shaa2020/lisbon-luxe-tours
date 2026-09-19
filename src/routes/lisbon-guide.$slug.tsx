@@ -38,8 +38,10 @@ type LoaderResult = {
 };
 
 export const Route = createFileRoute("/lisbon-guide/$slug")({
-  loader: async ({ params }) => {
-    const result = await getGuideBySlug({ data: { slug: params.slug } });
+  loader: async ({ params, context }) => {
+    const result = await getGuideBySlug({
+      data: { slug: params.slug, locale: context.locale.current },
+    });
     if (!result.guide) {
       if (result.redirect?.to_path) throw redirect({ href: result.redirect.to_path, statusCode: 301 });
       throw notFound();
