@@ -101,7 +101,7 @@ export function BookingModal({
     setDate(defaultDate ? new Date(`${defaultDate}T00:00:00`) : undefined);
     setTime(""); setGuests(defaultGuests && defaultGuests > 0 ? defaultGuests : 2);
     setOptionId(null);
-    setPickup(false);
+    setPickupChoice(null);
     setName(""); setContact(""); setPhone(""); setSubmitted(false); setPaying(false);
   };
 
@@ -124,7 +124,9 @@ export function BookingModal({
       date ? `Date: ${format(date, "EEEE, d MMM yyyy")}` : null,
       time ? `Time: ${time}` : null,
       `Guests: ${guests}`,
-      pickup ? `Hotel pickup & drop-off: Yes (+€${(hotelPickupFeeCents / 100).toFixed(0)})` : null,
+      pickupChoice ? `Pickup: ${pickupSummary(pickupChoice)}` : null,
+      pickupChoice?.type === "hotel" ? `Address: ${pickupChoice.address}` : null,
+      pickup ? `Hotel pickup fee: +€${(hotelPickupFeeCents / 100).toFixed(0)}` : null,
       `Estimated total: €${total}`,
       ``,
       `Name: ${name}`,
@@ -390,24 +392,13 @@ export function BookingModal({
                 </p>
               </div>
 
-              {/* Hotel pickup */}
-              {hotelPickupFeeCents > 0 && (
-                <label className="flex items-center justify-between gap-3 px-4 py-3 rounded-lg border border-border bg-cloud/40 cursor-pointer hover:border-gold transition">
-                  <span className="flex items-center gap-2.5 text-sm text-ink">
-                    <MapPin className="w-4 h-4 text-gold" />
-                    Hotel pickup &amp; drop-off
-                  </span>
-                  <span className="flex items-center gap-2.5">
-                    <span className="text-xs text-body">+€{(hotelPickupFeeCents / 100).toFixed(0)}</span>
-                    <input
-                      type="checkbox"
-                      checked={pickup}
-                      onChange={(e) => setPickup(e.target.checked)}
-                      className="w-4 h-4 accent-[#c9a24b]"
-                    />
-                  </span>
-                </label>
-              )}
+              {/* Pickup — meetup point (included) or hotel pickup (chargeable) */}
+              <PickupSelector
+                tourSlug={tour.slug}
+                pickupFeeCents={hotelPickupFeeCents}
+                value={pickupChoice}
+                onChange={setPickupChoice}
+              />
 
               {/* Contact */}
               <div className="grid grid-cols-2 gap-3">
