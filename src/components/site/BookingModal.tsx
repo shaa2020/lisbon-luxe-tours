@@ -168,7 +168,7 @@ export function BookingModal({
           amount: total * 100,
           image_url: tour.image?.startsWith("http") ? tour.image : null,
           tour_option_id: selectedOption?.id ?? null,
-          pickup,
+          ...pickupPayload,
         },
       });
       if (res.mode === "pay" && res.url) {
@@ -203,7 +203,7 @@ export function BookingModal({
         amount: total * 100,
         image_url: tour.image?.startsWith("http") ? tour.image : null,
         tour_option_id: selectedOption?.id ?? null,
-        pickup,
+        ...pickupPayload,
       },
     });
     if (res.mode !== "pay") {
