@@ -365,9 +365,12 @@ export type Database = {
         Row: {
           amount_cents: number
           booking_id: string
+          commission_cents: number | null
+          commission_rate_percent: number | null
           created_at: string
           created_by: string | null
           direction: string
+          guide_id: string | null
           id: string
           method: string
           notes: string | null
@@ -378,9 +381,12 @@ export type Database = {
         Insert: {
           amount_cents: number
           booking_id: string
+          commission_cents?: number | null
+          commission_rate_percent?: number | null
           created_at?: string
           created_by?: string | null
           direction?: string
+          guide_id?: string | null
           id?: string
           method?: string
           notes?: string | null
@@ -391,9 +397,12 @@ export type Database = {
         Update: {
           amount_cents?: number
           booking_id?: string
+          commission_cents?: number | null
+          commission_rate_percent?: number | null
           created_at?: string
           created_by?: string | null
           direction?: string
+          guide_id?: string | null
           id?: string
           method?: string
           notes?: string | null
@@ -407,6 +416,13 @@ export type Database = {
             columns: ["booking_id"]
             isOneToOne: false
             referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "booking_payments_guide_id_fkey"
+            columns: ["guide_id"]
+            isOneToOne: false
+            referencedRelation: "ops_staff"
             referencedColumns: ["id"]
           },
           {
@@ -1173,6 +1189,47 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      guide_settlements: {
+        Row: {
+          actor: string | null
+          amount_cents: number
+          created_at: string
+          direction: string
+          guide_id: string
+          id: string
+          note: string | null
+          settled_at: string
+        }
+        Insert: {
+          actor?: string | null
+          amount_cents: number
+          created_at?: string
+          direction?: string
+          guide_id: string
+          id?: string
+          note?: string | null
+          settled_at?: string
+        }
+        Update: {
+          actor?: string | null
+          amount_cents?: number
+          created_at?: string
+          direction?: string
+          guide_id?: string
+          id?: string
+          note?: string | null
+          settled_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "guide_settlements_guide_id_fkey"
+            columns: ["guide_id"]
+            isOneToOne: false
+            referencedRelation: "ops_staff"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       leads: {
         Row: {
@@ -2198,6 +2255,7 @@ export type Database = {
           auto_review_request_enabled: boolean
           brand_name: string
           city: string | null
+          commission_rate_percent: number
           contact_email: string | null
           contact_phone: string | null
           country: string | null
@@ -2252,6 +2310,7 @@ export type Database = {
           auto_review_request_enabled?: boolean
           brand_name?: string
           city?: string | null
+          commission_rate_percent?: number
           contact_email?: string | null
           contact_phone?: string | null
           country?: string | null
@@ -2306,6 +2365,7 @@ export type Database = {
           auto_review_request_enabled?: boolean
           brand_name?: string
           city?: string | null
+          commission_rate_percent?: number
           contact_email?: string | null
           contact_phone?: string | null
           country?: string | null

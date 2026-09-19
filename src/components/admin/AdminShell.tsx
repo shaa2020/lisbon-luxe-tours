@@ -33,6 +33,7 @@ import {
   ShieldAlert,
   KeyRound,
   Scale,
+  Percent,
 } from "lucide-react";
 import { ROLE_LABELS, type Permission } from "@/lib/permissions";
 import { InstallAppButton } from "@/components/admin/InstallAppButton";
@@ -68,6 +69,7 @@ const GROUPS: NavGroup[] = [
       { to: "/admin/bookings", label: "Bookings", icon: CalendarCheck, desc: "Requests and schedule", perm: "bookings.view" },
       { to: "/admin/orders", label: "Orders", icon: CreditCard, desc: "Payments and refunds", perm: "orders.view" },
       { to: "/admin/reconciliation", label: "Reconciliation", icon: Scale, desc: "Money checked against PayPal", perm: "orders.view" },
+      { to: "/admin/commission", label: "Commission", icon: Percent, desc: "My cut and guide balances", perm: "payments.manage" },
       { to: "/admin/ops", label: "Operations", icon: Gauge, desc: "Jobs, drivers, vehicles", perm: "ops.view" },
       { to: "/admin/meetup-points", label: "Meetup points", icon: MapPin, desc: "Where guests meet the tuk tuk", perm: "ops.view" },
       { to: "/admin/messages", label: "Messages", icon: MessageSquare, desc: "Contact inbox", perm: "messages.view" },

@@ -15,6 +15,13 @@
       "when": 1789810193196,
       "tag": "0001_meetup_points_pickup_ledger_audit",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1789819949907,
+      "tag": "0002_commission_centre",
+      "breakpoints": true
     }
   ]
 }

@@ -33,6 +33,7 @@ import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminAiWriterRouteImport } from './routes/admin.ai-writer'
 import { Route as AdminApiRouteImport } from './routes/admin.api'
 import { Route as AdminBookingsRouteImport } from './routes/admin.bookings'
+import { Route as AdminCommissionRouteImport } from './routes/admin.commission'
 import { Route as AdminCustomBuilderRouteImport } from './routes/admin.custom-builder'
 import { Route as AdminDestinationsRouteImport } from './routes/admin.destinations'
 import { Route as AdminDiscountsRouteImport } from './routes/admin.discounts'
@@ -231,6 +232,11 @@ const AdminApiRoute = AdminApiRouteImport.update({
 const AdminBookingsRoute = AdminBookingsRouteImport.update({
   id: '/admin/bookings',
   path: '/admin/bookings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminCommissionRoute = AdminCommissionRouteImport.update({
+  id: '/admin/commission',
+  path: '/admin/commission',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminCustomBuilderRoute = AdminCustomBuilderRouteImport.update({
@@ -654,6 +660,7 @@ export interface FileRoutesByFullPath {
   '/admin/ai-writer': typeof AdminAiWriterRoute
   '/admin/api': typeof AdminApiRoute
   '/admin/bookings': typeof AdminBookingsRoute
+  '/admin/commission': typeof AdminCommissionRoute
   '/admin/custom-builder': typeof AdminCustomBuilderRoute
   '/admin/destinations': typeof AdminDestinationsRoute
   '/admin/discounts': typeof AdminDiscountsRoute
@@ -758,6 +765,7 @@ export interface FileRoutesByTo {
   '/admin/ai-writer': typeof AdminAiWriterRoute
   '/admin/api': typeof AdminApiRoute
   '/admin/bookings': typeof AdminBookingsRoute
+  '/admin/commission': typeof AdminCommissionRoute
   '/admin/custom-builder': typeof AdminCustomBuilderRoute
   '/admin/destinations': typeof AdminDestinationsRoute
   '/admin/discounts': typeof AdminDiscountsRoute
@@ -863,6 +871,7 @@ export interface FileRoutesById {
   '/admin/ai-writer': typeof AdminAiWriterRoute
   '/admin/api': typeof AdminApiRoute
   '/admin/bookings': typeof AdminBookingsRoute
+  '/admin/commission': typeof AdminCommissionRoute
   '/admin/custom-builder': typeof AdminCustomBuilderRoute
   '/admin/destinations': typeof AdminDestinationsRoute
   '/admin/discounts': typeof AdminDiscountsRoute
@@ -969,6 +978,7 @@ export interface FileRouteTypes {
     | '/admin/ai-writer'
     | '/admin/api'
     | '/admin/bookings'
+    | '/admin/commission'
     | '/admin/custom-builder'
     | '/admin/destinations'
     | '/admin/discounts'
@@ -1073,6 +1083,7 @@ export interface FileRouteTypes {
     | '/admin/ai-writer'
     | '/admin/api'
     | '/admin/bookings'
+    | '/admin/commission'
     | '/admin/custom-builder'
     | '/admin/destinations'
     | '/admin/discounts'
@@ -1177,6 +1188,7 @@ export interface FileRouteTypes {
     | '/admin/ai-writer'
     | '/admin/api'
     | '/admin/bookings'
+    | '/admin/commission'
     | '/admin/custom-builder'
     | '/admin/destinations'
     | '/admin/discounts'
@@ -1282,6 +1294,7 @@ export interface RootRouteChildren {
   AdminAiWriterRoute: typeof AdminAiWriterRoute
   AdminApiRoute: typeof AdminApiRoute
   AdminBookingsRoute: typeof AdminBookingsRoute
+  AdminCommissionRoute: typeof AdminCommissionRoute
   AdminCustomBuilderRoute: typeof AdminCustomBuilderRoute
   AdminDestinationsRoute: typeof AdminDestinationsRoute
   AdminDiscountsRoute: typeof AdminDiscountsRoute
@@ -1530,6 +1543,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/bookings'
       fullPath: '/admin/bookings'
       preLoaderRoute: typeof AdminBookingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/commission': {
+      id: '/admin/commission'
+      path: '/admin/commission'
+      fullPath: '/admin/commission'
+      preLoaderRoute: typeof AdminCommissionRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/custom-builder': {
@@ -2117,6 +2137,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminAiWriterRoute: AdminAiWriterRoute,
   AdminApiRoute: AdminApiRoute,
   AdminBookingsRoute: AdminBookingsRoute,
+  AdminCommissionRoute: AdminCommissionRoute,
   AdminCustomBuilderRoute: AdminCustomBuilderRoute,
   AdminDestinationsRoute: AdminDestinationsRoute,
   AdminDiscountsRoute: AdminDiscountsRoute,
