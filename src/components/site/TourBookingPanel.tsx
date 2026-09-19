@@ -71,9 +71,11 @@ export function TourBookingPanel({
   const [paying, setPaying] = useState(false);
   const [pickupChoice, setPickupChoice] = useState<PickupSelection | null>(null);
   const pickup = pickupChoice?.type === "hotel";
-  const [idempotencyKey] = useState(
-    () => `tp_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 10)}`,
-  );
+  const [idempotencySeed] = useState(() => newIdempotencySeed("tp"));
+  const [depositPct, setDepositPct] = useState(100);
+  const [promoInput, setPromoInput] = useState("");
+  const [promo, setPromo] = useState<{ code: string; cents: number } | null>(null);
+  const [checkingPromo, setCheckingPromo] = useState(false);
   const pickupPayload = {
     pickup,
     pickup_type: pickupChoice?.type ?? null,
@@ -83,12 +85,24 @@ export function TourBookingPanel({
     pickup_latitude: pickupChoice?.type === "hotel" ? pickupChoice.latitude : null,
     pickup_longitude: pickupChoice?.type === "hotel" ? pickupChoice.longitude : null,
     pickup_place_id: pickupChoice?.type === "hotel" ? pickupChoice.placeId : null,
-    idempotency_key: idempotencyKey,
+    // Changes with the booking details, so a second, different booking made in
+    // the same visit is never merged into the first one.
+    idempotency_key: idempotencyKey(idempotencySeed, [
+      tour.slug,
+      chosen?.id ?? null,
+      date ? format(date, "yyyy-MM-dd") : null,
+      time,
+      guests,
+      name.trim(),
+      email.trim(),
+      phone.trim(),
+      depositPct,
+      promo?.code ?? null,
+      pickupChoice?.type ?? null,
+      pickupChoice?.type === "meetup" ? pickupChoice.meetupPointId : null,
+      pickupChoice?.type === "hotel" ? pickupChoice.placeId || pickupChoice.address : null,
+    ]),
   };
-  const [depositPct, setDepositPct] = useState(100);
-  const [promoInput, setPromoInput] = useState("");
-  const [promo, setPromo] = useState<{ code: string; cents: number } | null>(null);
-  const [checkingPromo, setCheckingPromo] = useState(false);
   const checkPromoFn = useServerFn(checkDiscountCode);
   const { data: reviewStats } = useReviewStatsBySlug();
   const rating = reviewStats?.[tour.slug];
