@@ -20,10 +20,20 @@ const checkoutInput = z.object({
   deposit_pct: z.number().int().min(20).max(100).optional().nullable(),
   /** Hotel pickup & drop-off requested — priced from the fee stored in Admin. */
   pickup: z.boolean().optional().nullable(),
+  /** Meetup point (included) or hotel pickup (chargeable). */
+  pickup_type: z.enum(["meetup", "hotel"]).optional().nullable(),
+  meetup_point_id: z.string().uuid().optional().nullable(),
+  pickup_place_name: z.string().trim().max(200).optional().nullable(),
+  pickup_address: z.string().trim().max(400).optional().nullable(),
+  pickup_latitude: z.number().optional().nullable(),
+  pickup_longitude: z.number().optional().nullable(),
+  pickup_place_id: z.string().trim().max(200).optional().nullable(),
   /** Optional promo code — always re-validated and re-priced on the server. */
   discount_code: z.string().trim().max(40).optional().nullable(),
   /** Selected duration option (multi-duration tours only). */
   tour_option_id: z.string().uuid().optional().nullable(),
+  /** Guards against double-clicks, refreshes and network retries. */
+  idempotency_key: z.string().trim().min(8).max(100).optional().nullable(),
 });
 
 
