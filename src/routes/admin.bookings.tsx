@@ -31,6 +31,7 @@ import {
 } from "@/lib/booking-changes.functions";
 import { BookingCreateDialog } from "@/components/admin/BookingCreateDialog";
 import { BookingManagePanel } from "@/components/admin/BookingManagePanel";
+import { BookingOpsPanel } from "@/components/admin/BookingOpsPanel";
 import { BookingsCalendar } from "@/components/admin/BookingsCalendar";
 import {
   buildLedger,
@@ -931,6 +932,10 @@ function BookingsInbox() {
                   Delete
                 </button>
               </div>
+
+              {expandedId === b.id && (
+                <BookingOpsPanel booking={b as any} ledger={ledgers[b.id]} />
+              )}
 
               {expandedId === b.id && <BookingManagePanel booking={b} />}
 
