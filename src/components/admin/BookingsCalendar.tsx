@@ -214,7 +214,8 @@ export function BookingsCalendar({
           <div className="mb-1 grid grid-cols-7 gap-1 text-[10px] uppercase tracking-wider text-muted-foreground">
             {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((d) => (
               <div key={d} className="py-1 text-center">
-                {d.slice(0, window.innerWidth < 480 ? 1 : 3)}
+                <span className="sm:hidden">{d.slice(0, 1)}</span>
+                <span className="hidden sm:inline">{d}</span>
               </div>
             ))}
           </div>
