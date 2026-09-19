@@ -54,7 +54,23 @@ export function BookingModal({
   const [phone, setPhone] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [paying, setPaying] = useState(false);
-  const [pickup, setPickup] = useState(false);
+  const [pickupChoice, setPickupChoice] = useState<PickupSelection | null>(null);
+  const pickup = pickupChoice?.type === "hotel";
+  const [idempotencyKey] = useState(
+    () => `bk_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 10)}`,
+  );
+
+  const pickupPayload = {
+    pickup,
+    pickup_type: pickupChoice?.type ?? null,
+    meetup_point_id: pickupChoice?.type === "meetup" ? pickupChoice.meetupPointId : null,
+    pickup_place_name: pickupChoice?.type === "hotel" ? pickupChoice.placeName : null,
+    pickup_address: pickupChoice?.type === "hotel" ? pickupChoice.address : null,
+    pickup_latitude: pickupChoice?.type === "hotel" ? pickupChoice.latitude : null,
+    pickup_longitude: pickupChoice?.type === "hotel" ? pickupChoice.longitude : null,
+    pickup_place_id: pickupChoice?.type === "hotel" ? pickupChoice.placeId : null,
+    idempotency_key: idempotencyKey,
+  };
 
   const [optionId, setOptionId] = useState<string | null>(null);
 
