@@ -118,10 +118,10 @@ function AdminDashboard() {
       {can("revenue.view") && (
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
         {[
-          { label: "Today", value: revenue.data?.today, Icon: Euro, tile: "bg-emerald-50 border-emerald-200", icon: "bg-emerald-100 text-emerald-700", value: "text-emerald-900" },
-          { label: "This week", value: revenue.data?.week, Icon: TrendingUp, tile: "bg-sky-50 border-sky-200", icon: "bg-sky-100 text-sky-700", value: "text-sky-900" },
-          { label: "This month", value: revenue.data?.month, Icon: TrendingUp, tile: "bg-violet-50 border-violet-200", icon: "bg-violet-100 text-violet-700", value: "text-violet-900" },
-          { label: "All time", value: revenue.data?.all, Icon: Euro, tile: "bg-amber-50 border-amber-200", icon: "bg-amber-100 text-amber-700", value: "text-amber-900" },
+          { label: "Today", amount: revenue.data?.today, Icon: Euro, tile: "bg-emerald-50 border-emerald-200", icon: "bg-emerald-100 text-emerald-700", valueClass: "text-emerald-900" },
+          { label: "This week", amount: revenue.data?.week, Icon: TrendingUp, tile: "bg-sky-50 border-sky-200", icon: "bg-sky-100 text-sky-700", valueClass: "text-sky-900" },
+          { label: "This month", amount: revenue.data?.month, Icon: TrendingUp, tile: "bg-violet-50 border-violet-200", icon: "bg-violet-100 text-violet-700", valueClass: "text-violet-900" },
+          { label: "All time", amount: revenue.data?.all, Icon: Euro, tile: "bg-amber-50 border-amber-200", icon: "bg-amber-100 text-amber-700", valueClass: "text-amber-900" },
         ].map((k) => (
           <AdminCard key={k.label} className={`p-4 flex items-center gap-3 min-w-0 ${k.tile}`}>
             <span className={`w-11 h-11 shrink-0 rounded-xl grid place-items-center ${k.icon}`}>
@@ -129,8 +129,8 @@ function AdminDashboard() {
             </span>
             <div className="min-w-0">
               <p className="text-[11px] font-medium text-muted-foreground truncate">{k.label}</p>
-              <p className={`font-display text-xl sm:text-2xl font-bold tabular-nums truncate ${k.value}`}>
-                {revenue.isLoading ? "…" : fmtEur(k.value)}
+              <p className={`font-display text-xl sm:text-2xl font-bold tabular-nums truncate ${k.valueClass}`}>
+                {revenue.isLoading ? "…" : fmtEur(k.amount)}
               </p>
             </div>
           </AdminCard>
