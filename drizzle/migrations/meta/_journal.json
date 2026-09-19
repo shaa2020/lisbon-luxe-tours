@@ -8,6 +8,13 @@
       "when": 1789723509153,
       "tag": "0000_create_content_translations",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1789810193196,
+      "tag": "0001_meetup_points_pickup_ledger_audit",
+      "breakpoints": true
     }
   ]
 }

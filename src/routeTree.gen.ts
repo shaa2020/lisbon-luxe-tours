@@ -40,6 +40,7 @@ import { Route as AdminEmailsRouteImport } from './routes/admin.emails'
 import { Route as AdminFaqsRouteImport } from './routes/admin.faqs'
 import { Route as AdminLeadsRouteImport } from './routes/admin.leads'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
+import { Route as AdminMeetupPointsRouteImport } from './routes/admin.meetup-points'
 import { Route as AdminMessagesRouteImport } from './routes/admin.messages'
 import { Route as AdminOrdersRouteImport } from './routes/admin.orders'
 import { Route as AdminPromotionsRouteImport } from './routes/admin.promotions'
@@ -265,6 +266,11 @@ const AdminLeadsRoute = AdminLeadsRouteImport.update({
 const AdminLoginRoute = AdminLoginRouteImport.update({
   id: '/admin/login',
   path: '/admin/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminMeetupPointsRoute = AdminMeetupPointsRouteImport.update({
+  id: '/admin/meetup-points',
+  path: '/admin/meetup-points',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminMessagesRoute = AdminMessagesRouteImport.update({
@@ -655,6 +661,7 @@ export interface FileRoutesByFullPath {
   '/admin/faqs': typeof AdminFaqsRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/login': typeof AdminLoginRoute
+  '/admin/meetup-points': typeof AdminMeetupPointsRoute
   '/admin/messages': typeof AdminMessagesRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/promotions': typeof AdminPromotionsRoute
@@ -758,6 +765,7 @@ export interface FileRoutesByTo {
   '/admin/faqs': typeof AdminFaqsRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/login': typeof AdminLoginRoute
+  '/admin/meetup-points': typeof AdminMeetupPointsRoute
   '/admin/messages': typeof AdminMessagesRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/promotions': typeof AdminPromotionsRoute
@@ -862,6 +870,7 @@ export interface FileRoutesById {
   '/admin/faqs': typeof AdminFaqsRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/login': typeof AdminLoginRoute
+  '/admin/meetup-points': typeof AdminMeetupPointsRoute
   '/admin/messages': typeof AdminMessagesRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/promotions': typeof AdminPromotionsRoute
@@ -967,6 +976,7 @@ export interface FileRouteTypes {
     | '/admin/faqs'
     | '/admin/leads'
     | '/admin/login'
+    | '/admin/meetup-points'
     | '/admin/messages'
     | '/admin/orders'
     | '/admin/promotions'
@@ -1070,6 +1080,7 @@ export interface FileRouteTypes {
     | '/admin/faqs'
     | '/admin/leads'
     | '/admin/login'
+    | '/admin/meetup-points'
     | '/admin/messages'
     | '/admin/orders'
     | '/admin/promotions'
@@ -1173,6 +1184,7 @@ export interface FileRouteTypes {
     | '/admin/faqs'
     | '/admin/leads'
     | '/admin/login'
+    | '/admin/meetup-points'
     | '/admin/messages'
     | '/admin/orders'
     | '/admin/promotions'
@@ -1277,6 +1289,7 @@ export interface RootRouteChildren {
   AdminFaqsRoute: typeof AdminFaqsRoute
   AdminLeadsRoute: typeof AdminLeadsRoute
   AdminLoginRoute: typeof AdminLoginRoute
+  AdminMeetupPointsRoute: typeof AdminMeetupPointsRoute
   AdminMessagesRoute: typeof AdminMessagesRoute
   AdminOrdersRoute: typeof AdminOrdersRoute
   AdminPromotionsRoute: typeof AdminPromotionsRoute
@@ -1566,6 +1579,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/login'
       fullPath: '/admin/login'
       preLoaderRoute: typeof AdminLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/meetup-points': {
+      id: '/admin/meetup-points'
+      path: '/admin/meetup-points'
+      fullPath: '/admin/meetup-points'
+      preLoaderRoute: typeof AdminMeetupPointsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/messages': {
@@ -2104,6 +2124,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminFaqsRoute: AdminFaqsRoute,
   AdminLeadsRoute: AdminLeadsRoute,
   AdminLoginRoute: AdminLoginRoute,
+  AdminMeetupPointsRoute: AdminMeetupPointsRoute,
   AdminMessagesRoute: AdminMessagesRoute,
   AdminOrdersRoute: AdminOrdersRoute,
   AdminPromotionsRoute: AdminPromotionsRoute,

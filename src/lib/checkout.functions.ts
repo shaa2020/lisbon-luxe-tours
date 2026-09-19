@@ -20,10 +20,20 @@ const checkoutInput = z.object({
   deposit_pct: z.number().int().min(20).max(100).optional().nullable(),
   /** Hotel pickup & drop-off requested — priced from the fee stored in Admin. */
   pickup: z.boolean().optional().nullable(),
+  /** Meetup point (included) or hotel pickup (chargeable). */
+  pickup_type: z.enum(["meetup", "hotel"]).optional().nullable(),
+  meetup_point_id: z.string().uuid().optional().nullable(),
+  pickup_place_name: z.string().trim().max(200).optional().nullable(),
+  pickup_address: z.string().trim().max(400).optional().nullable(),
+  pickup_latitude: z.number().optional().nullable(),
+  pickup_longitude: z.number().optional().nullable(),
+  pickup_place_id: z.string().trim().max(200).optional().nullable(),
   /** Optional promo code — always re-validated and re-priced on the server. */
   discount_code: z.string().trim().max(40).optional().nullable(),
   /** Selected duration option (multi-duration tours only). */
   tour_option_id: z.string().uuid().optional().nullable(),
+  /** Guards against double-clicks, refreshes and network retries. */
+  idempotency_key: z.string().trim().min(8).max(100).optional().nullable(),
 });
 
 
@@ -34,16 +44,74 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
     const { assertSlotAvailable, buildTourLineItems, tourBaseCents, quoteTourCents } = await import("./catalog.server");
     const payments = await paymentsStatus(supabaseAdmin);
 
+    // Duplicate-submission guard: a repeated click / refresh / retry with the
+    // same key returns the original booking instead of creating a second one.
+    if (data.idempotency_key) {
+      const { data: existing } = await supabaseAdmin
+        .from("bookings")
+        .select("id")
+        .eq("idempotency_key", data.idempotency_key)
+        .maybeSingle();
+      if (existing) {
+        const { data: prior } = await supabaseAdmin
+          .from("orders")
+          .select("stripe_session_id")
+          .eq("booking_id", existing.id)
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+        if (prior?.stripe_session_id) {
+          const { getPaymentByReference: getRef } = await import("./payments.server");
+          const again = await getRef(prior.stripe_session_id).catch(() => null);
+          return {
+            mode: "pay" as const,
+            message: null,
+            url: (again?.checkoutUrl as string | null) ?? null,
+            booking_id: existing.id as string,
+            sessionId: prior.stripe_session_id as string,
+          };
+        }
+      }
+    }
+
     // Hold the slot: refuse if it filled up while the customer was deciding.
     await assertSlotAvailable(supabaseAdmin, data.travel_date, data.time);
+
+    // Exactly two pickup choices: an included meetup point, or hotel pickup at
+    // the fee stored in Admin. The fee is snapshotted onto the booking below.
+    const wantsHotelPickup = data.pickup_type === "hotel" || (!data.pickup_type && data.pickup === true);
+
+    let meetup: {
+      id: string;
+      name: string;
+      address: string;
+      instructions: string | null;
+    } | null = null;
+    if (data.pickup_type === "meetup" && data.meetup_point_id) {
+      const { data: mp } = await supabaseAdmin
+        .from("meetup_points")
+        .select("id,name,address,instructions,active")
+        .eq("id", data.meetup_point_id)
+        .maybeSingle();
+      if (!mp || mp.active === false) {
+        throw new Error("That meeting point is no longer available. Please choose another.");
+      }
+      meetup = {
+        id: mp.id as string,
+        name: mp.name as string,
+        address: mp.address as string,
+        instructions: (mp.instructions as string | null) ?? null,
+      };
+    }
 
     // Re-price from the catalog: never trust the amount sent by the browser.
     const serverQuote = await quoteTourCents(supabaseAdmin, {
       slug: data.tour_slug,
       guests: data.guests,
-      pickupRequested: data.pickup === true,
+      pickupRequested: wantsHotelPickup,
       optionId: data.tour_option_id ?? null,
     });
+    const appliedPickupFeeCents = wantsHotelPickup ? (serverQuote?.pickupFeeCents ?? 0) : 0;
     const chosenOption = serverQuote?.option ?? null;
     const amountCents = serverQuote?.totalCents ?? data.amount;
     const guestCount = serverQuote?.guests ?? data.guests;
@@ -102,9 +170,27 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
         option_base_price_cents: chosenOption?.basePriceCents ?? null,
         option_sale_price_cents: chosenOption?.salePriceCents ?? null,
         option_price_cents: chosenOption?.pricePerPersonCents ?? null,
+        // Pickup snapshot: the fee charged is frozen here, so a later change to
+        // the Hotel Pickup Fee never rewrites an existing booking.
+        pickup_type: wantsHotelPickup ? "hotel" : meetup ? "meetup" : null,
+        meetup_point_id: meetup?.id ?? null,
+        meetup_point_name: meetup?.name ?? null,
+        meetup_point_address: meetup?.address ?? null,
+        meetup_point_instructions: meetup?.instructions ?? null,
+        pickup_place_name: wantsHotelPickup ? data.pickup_place_name || null : null,
+        pickup_address: wantsHotelPickup ? data.pickup_address || null : null,
+        pickup_latitude: wantsHotelPickup ? data.pickup_latitude ?? null : null,
+        pickup_longitude: wantsHotelPickup ? data.pickup_longitude ?? null : null,
+        pickup_place_id: wantsHotelPickup ? data.pickup_place_id || null : null,
+        pickup_fee_cents: appliedPickupFeeCents,
+        idempotency_key: data.idempotency_key || null,
         notes: [
           data.time ? `Preferred time: ${data.time}` : null,
           chosenOption?.durationLabel ? `Duration: ${chosenOption.durationLabel}` : null,
+          meetup ? `Meetup point: ${meetup.name} — ${meetup.address}` : null,
+          wantsHotelPickup
+            ? `Hotel pickup: ${data.pickup_place_name || "address to confirm"}${data.pickup_address ? ` — ${data.pickup_address}` : ""} (+€${(appliedPickupFeeCents / 100).toFixed(2)})`
+            : null,
           discountCode ? `Promo code ${discountCode} applied (−€${(discountCents / 100).toFixed(2)})` : null,
           depositNote,
           data.notes,
@@ -116,6 +202,7 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
         discount_code: discountCode,
         discount_cents: discountCents,
         status: "new",
+        tour_status: "upcoming",
         payment_status: payments.available ? "pending" : "request",
       })
 
@@ -198,8 +285,8 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
             guests: guestCount,
             totalCents: payableCents,
             baseCents: serverQuote?.perPersonCents ?? baseCents,
-            pickupFeeCents: settings?.hotel_pickup_fee_cents ?? 0,
-            pickupRequested: data.pickup === true || /hotel pickup/i.test(data.notes || ""),
+            pickupFeeCents: appliedPickupFeeCents || (settings?.hotel_pickup_fee_cents ?? 0),
+            pickupRequested: wantsHotelPickup,
           });
 
     const payment = await createPayment(supabaseAdmin, {

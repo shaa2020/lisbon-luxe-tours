@@ -14,6 +14,8 @@ import { toast } from "sonner";
 import { CANCELLATION_POLICY_FULL } from "@/lib/cancellation";
 import { useSiteBrand } from "@/lib/brand";
 import { PaypalWallet } from "@/components/site/PaypalWallet";
+import { PickupSelector } from "@/components/site/PickupSelector";
+import { pickupSummary, type PickupSelection } from "@/lib/meetup-points";
 import { trackBookingStart, trackBookingCtaClick, trackDiscountApplied, trackDiscountRejected } from "@/lib/analytics";
 import { checkDiscountCode } from "@/lib/discounts.functions";
 import { WhatsappInline } from "@/components/site/Whatsapp";
@@ -66,7 +68,22 @@ export function TourBookingPanel({
   const [phone, setPhone] = useState("");
   const [showContact, setShowContact] = useState(false);
   const [paying, setPaying] = useState(false);
-  const [pickup, setPickup] = useState(false);
+  const [pickupChoice, setPickupChoice] = useState<PickupSelection | null>(null);
+  const pickup = pickupChoice?.type === "hotel";
+  const [idempotencyKey] = useState(
+    () => `tp_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 10)}`,
+  );
+  const pickupPayload = {
+    pickup,
+    pickup_type: pickupChoice?.type ?? null,
+    meetup_point_id: pickupChoice?.type === "meetup" ? pickupChoice.meetupPointId : null,
+    pickup_place_name: pickupChoice?.type === "hotel" ? pickupChoice.placeName : null,
+    pickup_address: pickupChoice?.type === "hotel" ? pickupChoice.address : null,
+    pickup_latitude: pickupChoice?.type === "hotel" ? pickupChoice.latitude : null,
+    pickup_longitude: pickupChoice?.type === "hotel" ? pickupChoice.longitude : null,
+    pickup_place_id: pickupChoice?.type === "hotel" ? pickupChoice.placeId : null,
+    idempotency_key: idempotencyKey,
+  };
   const [depositPct, setDepositPct] = useState(100);
   const [promoInput, setPromoInput] = useState("");
   const [promo, setPromo] = useState<{ code: string; cents: number } | null>(null);
@@ -128,7 +145,7 @@ export function TourBookingPanel({
           time,
           guests,
           pickup,
-          notes: pickup ? `Hotel pickup & drop-off requested (+EUR ${pickupFee})` : null,
+          notes: pickupChoice ? pickupSummary(pickupChoice) : null,
           amount: total * 100,
           tour_option_id: chosen?.id ?? null,
         },
@@ -160,8 +177,8 @@ export function TourBookingPanel({
           travel_date: date ? format(date, "yyyy-MM-dd") : null,
           time,
           guests,
-          pickup,
-          notes: pickup ? `Hotel pickup & drop-off requested (+€${pickupFee})` : null,
+          ...pickupPayload,
+          notes: pickupChoice ? pickupSummary(pickupChoice) : null,
           amount: Math.round(subtotal * 100),
           deposit_pct: depositPct,
           discount_code: promo?.code ?? null,
@@ -226,8 +243,8 @@ export function TourBookingPanel({
         travel_date: date ? format(date, "yyyy-MM-dd") : null,
         time,
         guests,
-        pickup,
-        notes: pickup ? `Hotel pickup & drop-off requested (+€${pickupFee})` : null,
+        ...pickupPayload,
+        notes: pickupChoice ? pickupSummary(pickupChoice) : null,
         amount: Math.round(subtotal * 100),
         deposit_pct: depositPct,
         discount_code: promo?.code ?? null,
@@ -442,33 +459,13 @@ export function TourBookingPanel({
           )}
         </div>
 
-        {/* Hotel pickup */}
-        {pickupFee > 0 && (
-          <button
-            type="button"
-            onClick={() => setPickup((v) => !v)}
-            className={cn(
-              "w-full flex items-center justify-between px-4 py-3 border rounded-[2px] text-left transition-colors",
-              pickup ? "border-gold bg-gold/5" : "border-border bg-paper hover:border-gold",
-            )}
-          >
-            <span className="flex items-center gap-3">
-              <span
-                className={cn(
-                  "w-4 h-4 border rounded-[2px] flex items-center justify-center",
-                  pickup ? "bg-gold border-gold" : "border-body",
-                )}
-              >
-                {pickup && <Check className="w-3 h-3 text-white" />}
-              </span>
-              <span>
-                <span className="block text-sm text-ink font-medium">Add hotel pickup &amp; drop-off</span>
-                <span className="block text-[11px] text-body">We meet you at your hotel and drop you back after the tour.</span>
-              </span>
-            </span>
-            <span className="text-sm font-medium text-ink">+€{pickupFee}</span>
-          </button>
-        )}
+        {/* Pickup — meetup point (included) or hotel pickup (chargeable) */}
+        <PickupSelector
+          tourSlug={tour.slug}
+          pickupFeeCents={hotelPickupFeeCents}
+          value={pickupChoice}
+          onChange={setPickupChoice}
+        />
 
 
         {/* Contact (revealed) */}

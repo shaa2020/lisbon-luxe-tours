@@ -14,6 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_audit_log: {
+        Row: {
+          action: string
+          actor: string | null
+          actor_email: string | null
+          after_value: Json | null
+          before_value: Json | null
+          created_at: string
+          entity: string
+          entity_id: string | null
+          id: string
+          summary: string | null
+        }
+        Insert: {
+          action: string
+          actor?: string | null
+          actor_email?: string | null
+          after_value?: Json | null
+          before_value?: Json | null
+          created_at?: string
+          entity: string
+          entity_id?: string | null
+          id?: string
+          summary?: string | null
+        }
+        Update: {
+          action?: string
+          actor?: string | null
+          actor_email?: string | null
+          after_value?: Json | null
+          before_value?: Json | null
+          created_at?: string
+          entity?: string
+          entity_id?: string | null
+          id?: string
+          summary?: string | null
+        }
+        Relationships: []
+      }
       ai_generation_log: {
         Row: {
           created_at: string
@@ -322,10 +361,68 @@ export type Database = {
           },
         ]
       }
+      booking_payments: {
+        Row: {
+          amount_cents: number
+          booking_id: string
+          created_at: string
+          created_by: string | null
+          direction: string
+          id: string
+          method: string
+          notes: string | null
+          order_id: string | null
+          paid_at: string
+          reference: string | null
+        }
+        Insert: {
+          amount_cents: number
+          booking_id: string
+          created_at?: string
+          created_by?: string | null
+          direction?: string
+          id?: string
+          method?: string
+          notes?: string | null
+          order_id?: string | null
+          paid_at?: string
+          reference?: string | null
+        }
+        Update: {
+          amount_cents?: number
+          booking_id?: string
+          created_at?: string
+          created_by?: string | null
+          direction?: string
+          id?: string
+          method?: string
+          notes?: string | null
+          order_id?: string | null
+          paid_at?: string
+          reference?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "booking_payments_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "booking_payments_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       bookings: {
         Row: {
           amount_total: number | null
           auto_emails_opt_out: boolean
+          booking_reference: string | null
           cancel_reason: string | null
           created_at: string
           custom_selections: Json | null
@@ -334,8 +431,14 @@ export type Database = {
           discount_code: string | null
           email: string
           guests: number
+          guide_id: string | null
           id: string
+          idempotency_key: string | null
           internal_notes: string | null
+          meetup_point_address: string | null
+          meetup_point_id: string | null
+          meetup_point_instructions: string | null
+          meetup_point_name: string | null
           notes: string | null
           option_base_price_cents: number | null
           option_duration_label: string | null
@@ -346,6 +449,14 @@ export type Database = {
           payment_request_cents: number | null
           payment_status: string
           phone: string | null
+          pickup_address: string | null
+          pickup_fee_cents: number
+          pickup_instructions: string | null
+          pickup_latitude: number | null
+          pickup_longitude: number | null
+          pickup_place_id: string | null
+          pickup_place_name: string | null
+          pickup_type: string | null
           refund_cents: number
           reminder_sent_at: string | null
           review_request_sent_at: string | null
@@ -354,13 +465,16 @@ export type Database = {
           total_estimate: number | null
           tour_option_id: string | null
           tour_slug: string | null
+          tour_status: string
           tour_title: string | null
           travel_date: string | null
           travel_time: string | null
+          vehicle_id: string | null
         }
         Insert: {
           amount_total?: number | null
           auto_emails_opt_out?: boolean
+          booking_reference?: string | null
           cancel_reason?: string | null
           created_at?: string
           custom_selections?: Json | null
@@ -369,8 +483,14 @@ export type Database = {
           discount_code?: string | null
           email: string
           guests?: number
+          guide_id?: string | null
           id?: string
+          idempotency_key?: string | null
           internal_notes?: string | null
+          meetup_point_address?: string | null
+          meetup_point_id?: string | null
+          meetup_point_instructions?: string | null
+          meetup_point_name?: string | null
           notes?: string | null
           option_base_price_cents?: number | null
           option_duration_label?: string | null
@@ -381,6 +501,14 @@ export type Database = {
           payment_request_cents?: number | null
           payment_status?: string
           phone?: string | null
+          pickup_address?: string | null
+          pickup_fee_cents?: number
+          pickup_instructions?: string | null
+          pickup_latitude?: number | null
+          pickup_longitude?: number | null
+          pickup_place_id?: string | null
+          pickup_place_name?: string | null
+          pickup_type?: string | null
           refund_cents?: number
           reminder_sent_at?: string | null
           review_request_sent_at?: string | null
@@ -389,13 +517,16 @@ export type Database = {
           total_estimate?: number | null
           tour_option_id?: string | null
           tour_slug?: string | null
+          tour_status?: string
           tour_title?: string | null
           travel_date?: string | null
           travel_time?: string | null
+          vehicle_id?: string | null
         }
         Update: {
           amount_total?: number | null
           auto_emails_opt_out?: boolean
+          booking_reference?: string | null
           cancel_reason?: string | null
           created_at?: string
           custom_selections?: Json | null
@@ -404,8 +535,14 @@ export type Database = {
           discount_code?: string | null
           email?: string
           guests?: number
+          guide_id?: string | null
           id?: string
+          idempotency_key?: string | null
           internal_notes?: string | null
+          meetup_point_address?: string | null
+          meetup_point_id?: string | null
+          meetup_point_instructions?: string | null
+          meetup_point_name?: string | null
           notes?: string | null
           option_base_price_cents?: number | null
           option_duration_label?: string | null
@@ -416,6 +553,14 @@ export type Database = {
           payment_request_cents?: number | null
           payment_status?: string
           phone?: string | null
+          pickup_address?: string | null
+          pickup_fee_cents?: number
+          pickup_instructions?: string | null
+          pickup_latitude?: number | null
+          pickup_longitude?: number | null
+          pickup_place_id?: string | null
+          pickup_place_name?: string | null
+          pickup_type?: string | null
           refund_cents?: number
           reminder_sent_at?: string | null
           review_request_sent_at?: string | null
@@ -424,16 +569,39 @@ export type Database = {
           total_estimate?: number | null
           tour_option_id?: string | null
           tour_slug?: string | null
+          tour_status?: string
           tour_title?: string | null
           travel_date?: string | null
           travel_time?: string | null
+          vehicle_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "bookings_guide_id_fkey"
+            columns: ["guide_id"]
+            isOneToOne: false
+            referencedRelation: "ops_staff"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bookings_meetup_point_id_fkey"
+            columns: ["meetup_point_id"]
+            isOneToOne: false
+            referencedRelation: "meetup_points"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "bookings_tour_option_id_fkey"
             columns: ["tour_option_id"]
             isOneToOne: false
             referencedRelation: "tour_options"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bookings_vehicle_id_fkey"
+            columns: ["vehicle_id"]
+            isOneToOne: false
+            referencedRelation: "ops_vehicles"
             referencedColumns: ["id"]
           },
         ]
@@ -1080,6 +1248,48 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      meetup_points: {
+        Row: {
+          active: boolean
+          address: string
+          created_at: string
+          id: string
+          instructions: string | null
+          latitude: number | null
+          longitude: number | null
+          map_url: string | null
+          name: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          address: string
+          created_at?: string
+          id?: string
+          instructions?: string | null
+          latitude?: number | null
+          longitude?: number | null
+          map_url?: string | null
+          name: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          address?: string
+          created_at?: string
+          id?: string
+          instructions?: string | null
+          latitude?: number | null
+          longitude?: number | null
+          map_url?: string | null
+          name?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
       }
       ops_booking_activities: {
         Row: {
@@ -2185,6 +2395,39 @@ export type Database = {
           reason?: string
         }
         Relationships: []
+      }
+      tour_meetup_points: {
+        Row: {
+          meetup_point_id: string
+          sort_order: number
+          tour_id: string
+        }
+        Insert: {
+          meetup_point_id: string
+          sort_order?: number
+          tour_id: string
+        }
+        Update: {
+          meetup_point_id?: string
+          sort_order?: number
+          tour_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tour_meetup_points_meetup_point_id_fkey"
+            columns: ["meetup_point_id"]
+            isOneToOne: false
+            referencedRelation: "meetup_points"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tour_meetup_points_tour_id_fkey"
+            columns: ["tour_id"]
+            isOneToOne: false
+            referencedRelation: "tours"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       tour_options: {
         Row: {
