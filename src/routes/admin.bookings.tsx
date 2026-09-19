@@ -468,7 +468,23 @@ function BookingsInbox() {
         <BookingCreateDialog />
       </div>
 
-      <BookingsCalendar bookings={bookings} />
+      <BookingsCalendar
+        bookings={bookings as any}
+        ledgers={ledgers}
+        onOpen={(id) => {
+          setSection("all");
+          setSearch("");
+          setDateFrom("");
+          setDateTo("");
+          setSourceFilter("all");
+          setExpandedId(id);
+          setTimeout(() => {
+            document
+              .getElementById(`booking-${id}`)
+              ?.scrollIntoView({ behavior: "smooth", block: "start" });
+          }, 60);
+        }}
+      />
 
       <div className="flex flex-wrap gap-2 mb-3">
         {(
@@ -492,18 +508,18 @@ function BookingsInbox() {
         ))}
       </div>
 
-      <div className="flex flex-wrap gap-2 mb-6">
-        {(["all", ...STATUSES] as const).map((s) => (
+      <div className="-mx-1 mb-6 flex gap-2 overflow-x-auto px-1 pb-1">
+        {SECTIONS.map((s) => (
           <button
-            key={s}
-            onClick={() => setFilter(s)}
-            className={`px-3 py-1.5 rounded-full text-xs font-medium border transition ${
-              filter === s
+            key={s.id}
+            onClick={() => setSection(s.id)}
+            className={`whitespace-nowrap rounded-full border px-3 py-1.5 text-xs font-semibold transition ${
+              section === s.id
                 ? "bg-primary text-primary-foreground border-primary"
                 : "bg-card text-foreground border-border hover:border-primary"
             }`}
           >
-            {s[0].toUpperCase() + s.slice(1)} <span className="opacity-70">({counts[s] ?? 0})</span>
+            {s.label} <span className="opacity-70">({counts[s.id] ?? 0})</span>
           </button>
         ))}
       </div>
