@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { AdminShell } from "@/components/admin/AdminShell";
@@ -245,6 +245,13 @@ function BookingsInbox() {
     {} as Record<string, number>,
   );
   const customCount = bookings.filter((b) => b.tour_slug === "custom").length;
+
+  // Open on Today when there is something today, otherwise on Upcoming.
+  useEffect(() => {
+    if (autoSectionDone || bookings.length === 0) return;
+    setAutoSectionDone(true);
+    if ((counts.today ?? 0) === 0) setSection("upcoming");
+  }, [autoSectionDone, bookings.length, counts.today]);
 
   const exportCsv = () => {
     const headers = [
