@@ -439,11 +439,36 @@ const paypalAdapter: GatewayAdapter = {
             method: "POST",
             headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
           });
-          const capJson = await cap.json();
+          const capJson = await cap.json().catch(() => ({}));
           if (cap.ok) return normalizePaypal(capJson);
-          // Capture refused (declined card, instrument issue): this is NOT a payment.
+
+          const issues = String(
+            JSON.stringify((capJson as any)?.details ?? (capJson as any)?.name ?? ""),
+          ).toUpperCase();
+
+          // Someone else (webhook, success-page poll, admin check) already captured
+          // this order. The money exists — re-read the order and report the truth.
+          if (issues.includes("ORDER_ALREADY_CAPTURED") || cap.status === 404) {
+            const again = await fetch(
+              `${paypalBase(mode)}/v2/checkout/orders/${encodeURIComponent(id)}`,
+              { headers: { Authorization: `Bearer ${token}` } },
+            );
+            const againJson = await again.json().catch(() => null);
+            if (again.ok && againJson) return normalizePaypal(againJson);
+            // Could not re-read: leave it unresolved rather than call it declined.
+            return normalizePaypal(json);
+          }
+
+          // Rate limiting or a PayPal-side error says nothing about the payment.
+          // Keep the attempt pending so it is re-checked, never marked declined.
+          if (cap.status === 429 || cap.status >= 500) {
+            return normalizePaypal(json);
+          }
+
+          // A real refusal (declined card, unusable instrument): this is NOT a payment.
           return { id, status: "failed", checkoutUrl: null, metadata: {}, amountCents: 0 };
         }
+
 
         return normalizePaypal(json);
 
