@@ -111,6 +111,7 @@ function BookingsInbox() {
   const qc = useQueryClient();
   useSiteBrand();
   const [section, setSection] = useState<string>("today");
+  const [autoSectionDone, setAutoSectionDone] = useState(false);
   const [sourceFilter, setSourceFilter] = useState<"all" | "custom" | "standard">("all");
   const [search, setSearch] = useState("");
   const [dateFrom, setDateFrom] = useState("");
@@ -577,7 +578,13 @@ function BookingsInbox() {
         <p className="text-sm text-muted-foreground">Loading…</p>
       ) : filtered.length === 0 ? (
         <div className="rounded-xl border border-dashed border-border bg-card p-12 text-center">
-          <p className="text-sm text-muted-foreground">No bookings here yet.</p>
+          <p className="text-sm text-muted-foreground">
+            {section === "today"
+              ? "No tours today."
+              : section === "history"
+                ? "Nothing here yet — completed and fully paid bookings land here."
+                : "No bookings in this section."}
+          </p>
         </div>
       ) : (
         <div className="grid gap-4">
