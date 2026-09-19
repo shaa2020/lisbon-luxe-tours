@@ -7,8 +7,10 @@ import { getGuideCategories } from "@/lib/travel-guide.functions";
 import { useGuideCategories, usePublishedGuides, type GuideCategory } from "@/lib/travel-guide";
 
 export const Route = createFileRoute("/lisbon-guide/category/$slug")({
-  loader: async ({ params }) => {
-    const categories = (await getGuideCategories()) as GuideCategory[];
+  loader: async ({ params, context }) => {
+    const categories = (await getGuideCategories({
+      data: { locale: context.locale.current },
+    })) as GuideCategory[];
     const category = categories.find((c) => c.slug === params.slug);
     if (!category) throw notFound();
     return { category };
