@@ -16,6 +16,27 @@ export type PlaceResult = {
  * OpenStreetMap search. Both return the same shape so the booking record is
  * identical either way and the provider can be swapped without a data change.
  */
+/**
+ * Hotel pickup is only offered inside central Lisbon. Anything outside this
+ * box is dropped from the results so a guest cannot pick an address the
+ * drivers do not serve.
+ */
+export const CENTRAL_LISBON = {
+  minLat: 38.69,
+  maxLat: 38.78,
+  minLng: -9.23,
+  maxLng: -9.09,
+};
+
+function isCentral(lat: number, lng: number) {
+  return (
+    lat >= CENTRAL_LISBON.minLat &&
+    lat <= CENTRAL_LISBON.maxLat &&
+    lng >= CENTRAL_LISBON.minLng &&
+    lng <= CENTRAL_LISBON.maxLng
+  );
+}
+
 export const searchPlaces = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) =>
     z.object({ query: z.string().trim().min(3).max(200) }).parse(d),
