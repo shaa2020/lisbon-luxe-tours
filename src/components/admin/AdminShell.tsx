@@ -136,6 +136,7 @@ export function AdminShell({ children, requires }: { children: ReactNode; requir
   const [moreOpen, setMoreOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [userMenu, setUserMenu] = useState(false);
+  const [notifOpen, setNotifOpen] = useState(false);
   const [query, setQuery] = useState("");
 
   const groups = useMemo(
