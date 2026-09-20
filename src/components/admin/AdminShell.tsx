@@ -445,7 +445,10 @@ export function AdminShell({ children, requires }: { children: ReactNode; requir
 
               <div className="relative">
                 <button
-                  onClick={() => setUserMenu((v) => !v)}
+                  onClick={() => {
+                    setNotifOpen(false);
+                    setUserMenu((v) => !v);
+                  }}
                   className="flex items-center gap-2 rounded-xl px-1.5 sm:px-2 py-1.5 hover:bg-accent"
                 >
                   <span className="w-9 h-9 shrink-0 grid place-items-center rounded-full bg-primary/12 text-primary text-xs font-bold">
