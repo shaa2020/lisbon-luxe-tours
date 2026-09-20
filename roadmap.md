@@ -17,9 +17,10 @@
 - [x] Admin Meetup Points page + nav entry
 - [x] Customer two-option pickup (meetup included / hotel + fee) in BookingModal & TourBookingPanel
 - [x] Pickup fee snapshot + idempotency key on checkout bookings
-- [ ] Booking list & details: show reference, pickup, guide/vehicle, statuses
-- [ ] Separate tour status vs payment status + Completed/Payment Due vs History rule
-- [ ] Payment ledger (booking_payments) + record payment + Payment Due centre
-- [ ] Operations pages re-pointed at real bookings (Today's Operations, calendar)
-- [ ] Guides/vehicles assignment + conflict warnings
+- [x] Booking list & details: show reference, pickup, guide/vehicle, statuses
+- [x] Separate tour status vs payment status + Completed/Payment Due vs History rule
+- [x] Payment ledger (booking_payments) + record payment (cash / paid to guide / bank) + Payment Due centre
+- [x] Commission centre (owner only): editable rate, both-direction guide balances, settle-ups, CSV
+- [x] Operations pages re-pointed at real bookings (day sheet, calendar)
+- [x] Guides/vehicles assignment + conflict warnings
 - [ ] Reports, audit log surfacing, responsive pass, test scenarios
