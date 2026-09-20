@@ -362,18 +362,84 @@ export function AdminShell({ children, requires }: { children: ReactNode; requir
                   <MessageSquare className="w-5 h-5" />
                 </a>
               )}
-              <Link
-                to="/admin/messages"
-                className="relative grid w-10 h-10 place-items-center rounded-xl text-muted-foreground hover:bg-accent"
-                aria-label="Notifications"
-              >
-                <Bell className="w-5 h-5" />
-                {totalAlerts > 0 && (
-                  <span className="absolute -top-0.5 -right-0.5">
-                    <Badge n={totalAlerts} small />
-                  </span>
+              <div className="relative">
+                <button
+                  onClick={() => {
+                    setUserMenu(false);
+                    setNotifOpen((v) => !v);
+                  }}
+                  className="relative grid w-10 h-10 place-items-center rounded-xl text-muted-foreground hover:bg-accent"
+                  aria-label="Notifications"
+                >
+                  <Bell className="w-5 h-5" />
+                  {totalAlerts > 0 && (
+                    <span className="absolute -top-0.5 -right-0.5">
+                      <Badge n={totalAlerts} small />
+                    </span>
+                  )}
+                </button>
+                {notifOpen && (
+                  <div className="absolute right-0 top-12 w-72 rounded-xl border border-border bg-card shadow-lg p-1.5 z-40">
+                    <p className="px-2.5 py-2 text-[11px] uppercase tracking-widest text-muted-foreground">
+                      Notifications
+                    </p>
+                    {totalAlerts === 0 ? (
+                      <p className="px-2.5 pb-3 pt-1 text-sm text-muted-foreground">
+                        You're all caught up.
+                      </p>
+                    ) : (
+                      <>
+                        {(badges?.bookings ?? 0) > 0 && (
+                          <Link
+                            to="/admin/bookings"
+                            onClick={() => setNotifOpen(false)}
+                            className="flex items-center gap-2 rounded-lg px-2.5 py-2.5 text-sm hover:bg-accent"
+                          >
+                            <CalendarCheck className="w-4 h-4 text-primary shrink-0" />
+                            <span className="truncate">
+                              {badges?.bookings} new booking{(badges?.bookings ?? 0) > 1 ? "s" : ""}
+                            </span>
+                            <span className="ml-auto">
+                              <Badge n={badges?.bookings ?? 0} small />
+                            </span>
+                          </Link>
+                        )}
+                        {(badges?.messages ?? 0) > 0 && (
+                          <Link
+                            to="/admin/messages"
+                            onClick={() => setNotifOpen(false)}
+                            className="flex items-center gap-2 rounded-lg px-2.5 py-2.5 text-sm hover:bg-accent"
+                          >
+                            <MessageSquare className="w-4 h-4 text-primary shrink-0" />
+                            <span className="truncate">
+                              {badges?.messages} new message{(badges?.messages ?? 0) > 1 ? "s" : ""}
+                            </span>
+                            <span className="ml-auto">
+                              <Badge n={badges?.messages ?? 0} small />
+                            </span>
+                          </Link>
+                        )}
+                        {(badges?.reviews ?? 0) > 0 && (
+                          <Link
+                            to="/admin/reviews"
+                            onClick={() => setNotifOpen(false)}
+                            className="flex items-center gap-2 rounded-lg px-2.5 py-2.5 text-sm hover:bg-accent"
+                          >
+                            <Star className="w-4 h-4 text-primary shrink-0" />
+                            <span className="truncate">
+                              {badges?.reviews} review{(badges?.reviews ?? 0) > 1 ? "s" : ""} to approve
+                            </span>
+                            <span className="ml-auto">
+                              <Badge n={badges?.reviews ?? 0} small />
+                            </span>
+                          </Link>
+                        )}
+                      </>
+                    )}
+                  </div>
                 )}
-              </Link>
+              </div>
+
 
               <div className="relative">
                 <button
