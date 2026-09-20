@@ -166,6 +166,7 @@ export function AdminShell({ children, requires }: { children: ReactNode; requir
     setMoreOpen(false);
     setDrawerOpen(false);
     setUserMenu(false);
+    setNotifOpen(false);
     setQuery("");
   }, [location.pathname]);
 
