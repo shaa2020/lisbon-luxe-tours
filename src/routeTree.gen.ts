@@ -32,6 +32,7 @@ import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } fr
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminAiWriterRouteImport } from './routes/admin.ai-writer'
 import { Route as AdminApiRouteImport } from './routes/admin.api'
+import { Route as AdminAuditLogRouteImport } from './routes/admin.audit-log'
 import { Route as AdminBookingsRouteImport } from './routes/admin.bookings'
 import { Route as AdminCommissionRouteImport } from './routes/admin.commission'
 import { Route as AdminCustomBuilderRouteImport } from './routes/admin.custom-builder'
@@ -227,6 +228,11 @@ const AdminAiWriterRoute = AdminAiWriterRouteImport.update({
 const AdminApiRoute = AdminApiRouteImport.update({
   id: '/admin/api',
   path: '/admin/api',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminAuditLogRoute = AdminAuditLogRouteImport.update({
+  id: '/admin/audit-log',
+  path: '/admin/audit-log',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminBookingsRoute = AdminBookingsRouteImport.update({
@@ -659,6 +665,7 @@ export interface FileRoutesByFullPath {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin/ai-writer': typeof AdminAiWriterRoute
   '/admin/api': typeof AdminApiRoute
+  '/admin/audit-log': typeof AdminAuditLogRoute
   '/admin/bookings': typeof AdminBookingsRoute
   '/admin/commission': typeof AdminCommissionRoute
   '/admin/custom-builder': typeof AdminCustomBuilderRoute
@@ -764,6 +771,7 @@ export interface FileRoutesByTo {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin/ai-writer': typeof AdminAiWriterRoute
   '/admin/api': typeof AdminApiRoute
+  '/admin/audit-log': typeof AdminAuditLogRoute
   '/admin/bookings': typeof AdminBookingsRoute
   '/admin/commission': typeof AdminCommissionRoute
   '/admin/custom-builder': typeof AdminCustomBuilderRoute
@@ -870,6 +878,7 @@ export interface FileRoutesById {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin/ai-writer': typeof AdminAiWriterRoute
   '/admin/api': typeof AdminApiRoute
+  '/admin/audit-log': typeof AdminAuditLogRoute
   '/admin/bookings': typeof AdminBookingsRoute
   '/admin/commission': typeof AdminCommissionRoute
   '/admin/custom-builder': typeof AdminCustomBuilderRoute
@@ -977,6 +986,7 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/admin/ai-writer'
     | '/admin/api'
+    | '/admin/audit-log'
     | '/admin/bookings'
     | '/admin/commission'
     | '/admin/custom-builder'
@@ -1082,6 +1092,7 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/admin/ai-writer'
     | '/admin/api'
+    | '/admin/audit-log'
     | '/admin/bookings'
     | '/admin/commission'
     | '/admin/custom-builder'
@@ -1187,6 +1198,7 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/admin/ai-writer'
     | '/admin/api'
+    | '/admin/audit-log'
     | '/admin/bookings'
     | '/admin/commission'
     | '/admin/custom-builder'
@@ -1293,6 +1305,7 @@ export interface RootRouteChildren {
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   AdminAiWriterRoute: typeof AdminAiWriterRoute
   AdminApiRoute: typeof AdminApiRoute
+  AdminAuditLogRoute: typeof AdminAuditLogRoute
   AdminBookingsRoute: typeof AdminBookingsRoute
   AdminCommissionRoute: typeof AdminCommissionRoute
   AdminCustomBuilderRoute: typeof AdminCustomBuilderRoute
@@ -1536,6 +1549,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/api'
       fullPath: '/admin/api'
       preLoaderRoute: typeof AdminApiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/audit-log': {
+      id: '/admin/audit-log'
+      path: '/admin/audit-log'
+      fullPath: '/admin/audit-log'
+      preLoaderRoute: typeof AdminAuditLogRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/bookings': {
@@ -2136,6 +2156,7 @@ const rootRouteChildren: RootRouteChildren = {
     Char91DotwellKnownChar93OauthProtectedResourceRoute,
   AdminAiWriterRoute: AdminAiWriterRoute,
   AdminApiRoute: AdminApiRoute,
+  AdminAuditLogRoute: AdminAuditLogRoute,
   AdminBookingsRoute: AdminBookingsRoute,
   AdminCommissionRoute: AdminCommissionRoute,
   AdminCustomBuilderRoute: AdminCustomBuilderRoute,

@@ -63,7 +63,7 @@ function AuditLogAdmin() {
   }, [rows, q, entity]);
 
   return (
-    <AdminShell title="Activity log" description="Who changed what in the admin panel">
+    <AdminShell requires="settings.manage">
       <div className="space-y-4">
         <div className="flex flex-wrap items-center gap-2">
           <div className="relative flex-1 min-w-[200px]">
