@@ -239,13 +239,13 @@ export const getCommissionOverview = createServerFn({ method: "POST" })
     const buckets = new Map<string, GuideBucket>();
     const keyOf = (id: string | null) => id ?? "unassigned";
 
-    for (const r of filtered) {
-      const k = keyOf(r.guideId);
+    const ensureBucket = (guideId: string | null, name: string) => {
+      const k = keyOf(guideId);
       let bucket = buckets.get(k);
       if (!bucket) {
         bucket = {
-          guideId: r.guideId,
-          guideName: r.guideName,
+          guideId,
+          guideName: name,
           receivedByCompanyCents: 0,
           receivedByGuideCents: 0,
           commissionCents: 0,
@@ -257,6 +257,11 @@ export const getCommissionOverview = createServerFn({ method: "POST" })
         };
         buckets.set(k, bucket);
       }
+      return bucket;
+    };
+
+    for (const r of filtered) {
+      const bucket = ensureBucket(r.guideId, r.guideName);
       bucket.payments.push(r);
       bucket.commissionCents += r.commissionCents;
       bucket.guideShareCents += r.guideShareCents;
