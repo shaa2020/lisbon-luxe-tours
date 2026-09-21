@@ -327,6 +327,13 @@ export const setCommissionRate = createServerFn({ method: "POST" })
       .eq("id", true);
     if (error) throw new Error(error.message);
 
+    // Money already received keeps the rate that applied at the time.
+    await supabaseAdmin.from("commission_rate_history").insert({
+      percent: data.percent,
+      effective_from: new Date().toISOString(),
+      actor: context.userId,
+    });
+
     await supabaseAdmin.from("admin_audit_log").insert({
       actor: context.userId,
       entity: "site_settings",
