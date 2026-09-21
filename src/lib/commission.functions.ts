@@ -275,10 +275,8 @@ export const getCommissionOverview = createServerFn({ method: "POST" })
     }
 
     for (const s of settlementRows) {
-      const k = keyOf(s.guideId);
-      const bucket = buckets.get(k);
-      if (!bucket) continue;
-      if (data.guideId && s.guideId !== data.guideId) continue;
+      // A guide can have a settlement in the period without any payments in it.
+      const bucket = ensureBucket(s.guideId, s.guideName);
       if (s.direction === "payout") bucket.companyOwesGuideCents -= s.amountCents;
       else bucket.guideOwesCompanyCents -= s.amountCents;
     }
