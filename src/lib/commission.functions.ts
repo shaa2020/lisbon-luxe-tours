@@ -62,6 +62,28 @@ export const getCommissionOverview = createServerFn({ method: "POST" })
     ]);
 
     const currentRate = Number(settings?.commission_rate_percent ?? 20);
+
+    // Rate history: a payment keeps the rate that was in force when it arrived.
+    const { data: rateHistory } = await supabaseAdmin
+      .from("commission_rate_history")
+      .select("percent,effective_from")
+      .order("effective_from", { ascending: true });
+
+    const history = (rateHistory ?? []).map((r: any) => ({
+      percent: Number(r.percent),
+      from: String(r.effective_from),
+    }));
+
+    const rateAt = (when: string | null | undefined) => {
+      if (!history.length) return currentRate;
+      const at = when || new Date().toISOString();
+      let rate = history[0].percent;
+      for (const h of history) {
+        if (h.from <= at) rate = h.percent;
+        else break;
+      }
+      return rate;
+    };
     const guideName = new Map<string, string>(
       (staff ?? []).map((s: any) => [s.id as string, s.name as string]),
     );
@@ -128,7 +150,7 @@ export const getCommissionOverview = createServerFn({ method: "POST" })
         paidAt: o.created_at,
         method: o.provider || "online",
         amountCents: Number(o.amount_total || 0),
-        ratePercent: currentRate,
+        ratePercent: rateAt(o.created_at),
         collectedByGuide: false,
         guideId: b?.guide_id ?? null,
       });
@@ -145,7 +167,7 @@ export const getCommissionOverview = createServerFn({ method: "POST" })
         method: m.method || "manual",
         amountCents: Number(m.amount_cents || 0),
         ratePercent:
-          m.commission_rate_percent != null ? Number(m.commission_rate_percent) : currentRate,
+          m.commission_rate_percent != null ? Number(m.commission_rate_percent) : rateAt(m.paid_at),
         collectedByGuide: GUIDE_METHODS.has(String(m.method || "")),
         guideId: (m.guide_id as string | null) ?? b?.guide_id ?? null,
       });
@@ -162,7 +184,7 @@ export const getCommissionOverview = createServerFn({ method: "POST" })
         method: `refund (${m.method || "manual"})`,
         amountCents: -Number(m.amount_cents || 0),
         ratePercent:
-          m.commission_rate_percent != null ? Number(m.commission_rate_percent) : currentRate,
+          m.commission_rate_percent != null ? Number(m.commission_rate_percent) : rateAt(m.paid_at),
         collectedByGuide: GUIDE_METHODS.has(String(m.method || "")),
         guideId: (m.guide_id as string | null) ?? b?.guide_id ?? null,
       });
@@ -178,10 +200,16 @@ export const getCommissionOverview = createServerFn({ method: "POST" })
       return true;
     });
 
-    const { data: settlements } = await supabaseAdmin
+    // Settlements follow the same date / guide filter as the payments, so the
+    // balances shown always belong to the period being looked at.
+    let settlementQuery = supabaseAdmin
       .from("guide_settlements")
       .select("id,guide_id,direction,amount_cents,note,settled_at")
       .order("settled_at", { ascending: false });
+    if (from) settlementQuery = settlementQuery.gte("settled_at", `${from}T00:00:00`);
+    if (to) settlementQuery = settlementQuery.lte("settled_at", `${to}T23:59:59.999`);
+    if (data.guideId) settlementQuery = settlementQuery.eq("guide_id", data.guideId);
+    const { data: settlements } = await settlementQuery;
 
     const settlementRows = (settlements ?? []).map((s: any) => ({
       id: s.id as string,
@@ -211,13 +239,13 @@ export const getCommissionOverview = createServerFn({ method: "POST" })
     const buckets = new Map<string, GuideBucket>();
     const keyOf = (id: string | null) => id ?? "unassigned";
 
-    for (const r of filtered) {
-      const k = keyOf(r.guideId);
+    const ensureBucket = (guideId: string | null, name: string) => {
+      const k = keyOf(guideId);
       let bucket = buckets.get(k);
       if (!bucket) {
         bucket = {
-          guideId: r.guideId,
-          guideName: r.guideName,
+          guideId,
+          guideName: name,
           receivedByCompanyCents: 0,
           receivedByGuideCents: 0,
           commissionCents: 0,
@@ -229,6 +257,11 @@ export const getCommissionOverview = createServerFn({ method: "POST" })
         };
         buckets.set(k, bucket);
       }
+      return bucket;
+    };
+
+    for (const r of filtered) {
+      const bucket = ensureBucket(r.guideId, r.guideName);
       bucket.payments.push(r);
       bucket.commissionCents += r.commissionCents;
       bucket.guideShareCents += r.guideShareCents;
@@ -242,10 +275,8 @@ export const getCommissionOverview = createServerFn({ method: "POST" })
     }
 
     for (const s of settlementRows) {
-      const k = keyOf(s.guideId);
-      const bucket = buckets.get(k);
-      if (!bucket) continue;
-      if (data.guideId && s.guideId !== data.guideId) continue;
+      // A guide can have a settlement in the period without any payments in it.
+      const bucket = ensureBucket(s.guideId, s.guideName);
       if (s.direction === "payout") bucket.companyOwesGuideCents -= s.amountCents;
       else bucket.guideOwesCompanyCents -= s.amountCents;
     }
@@ -295,6 +326,13 @@ export const setCommissionRate = createServerFn({ method: "POST" })
       .update({ commission_rate_percent: data.percent })
       .eq("id", true);
     if (error) throw new Error(error.message);
+
+    // Money already received keeps the rate that applied at the time.
+    await supabaseAdmin.from("commission_rate_history").insert({
+      percent: data.percent,
+      effective_from: new Date().toISOString(),
+      actor: context.userId,
+    });
 
     await supabaseAdmin.from("admin_audit_log").insert({
       actor: context.userId,

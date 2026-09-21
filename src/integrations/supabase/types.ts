@@ -655,6 +655,30 @@ export type Database = {
         }
         Relationships: []
       }
+      commission_rate_history: {
+        Row: {
+          actor: string | null
+          created_at: string
+          effective_from: string
+          id: string
+          percent: number
+        }
+        Insert: {
+          actor?: string | null
+          created_at?: string
+          effective_from?: string
+          id?: string
+          percent: number
+        }
+        Update: {
+          actor?: string | null
+          created_at?: string
+          effective_from?: string
+          id?: string
+          percent?: number
+        }
+        Relationships: []
+      }
       contact_messages: {
         Row: {
           created_at: string
