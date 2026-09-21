@@ -62,6 +62,28 @@ export const getCommissionOverview = createServerFn({ method: "POST" })
     ]);
 
     const currentRate = Number(settings?.commission_rate_percent ?? 20);
+
+    // Rate history: a payment keeps the rate that was in force when it arrived.
+    const { data: rateHistory } = await supabaseAdmin
+      .from("commission_rate_history")
+      .select("percent,effective_from")
+      .order("effective_from", { ascending: true });
+
+    const history = (rateHistory ?? []).map((r: any) => ({
+      percent: Number(r.percent),
+      from: String(r.effective_from),
+    }));
+
+    const rateAt = (when: string | null | undefined) => {
+      if (!history.length) return currentRate;
+      const at = when || new Date().toISOString();
+      let rate = history[0].percent;
+      for (const h of history) {
+        if (h.from <= at) rate = h.percent;
+        else break;
+      }
+      return rate;
+    };
     const guideName = new Map<string, string>(
       (staff ?? []).map((s: any) => [s.id as string, s.name as string]),
     );
