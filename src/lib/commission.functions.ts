@@ -167,7 +167,7 @@ export const getCommissionOverview = createServerFn({ method: "POST" })
         method: m.method || "manual",
         amountCents: Number(m.amount_cents || 0),
         ratePercent:
-          m.commission_rate_percent != null ? Number(m.commission_rate_percent) : currentRate,
+          m.commission_rate_percent != null ? Number(m.commission_rate_percent) : rateAt(m.paid_at),
         collectedByGuide: GUIDE_METHODS.has(String(m.method || "")),
         guideId: (m.guide_id as string | null) ?? b?.guide_id ?? null,
       });
