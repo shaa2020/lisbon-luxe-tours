@@ -150,7 +150,7 @@ export const getCommissionOverview = createServerFn({ method: "POST" })
         paidAt: o.created_at,
         method: o.provider || "online",
         amountCents: Number(o.amount_total || 0),
-        ratePercent: currentRate,
+        ratePercent: rateAt(o.created_at),
         collectedByGuide: false,
         guideId: b?.guide_id ?? null,
       });
