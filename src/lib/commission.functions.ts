@@ -200,10 +200,16 @@ export const getCommissionOverview = createServerFn({ method: "POST" })
       return true;
     });
 
-    const { data: settlements } = await supabaseAdmin
+    // Settlements follow the same date / guide filter as the payments, so the
+    // balances shown always belong to the period being looked at.
+    let settlementQuery = supabaseAdmin
       .from("guide_settlements")
       .select("id,guide_id,direction,amount_cents,note,settled_at")
       .order("settled_at", { ascending: false });
+    if (from) settlementQuery = settlementQuery.gte("settled_at", `${from}T00:00:00`);
+    if (to) settlementQuery = settlementQuery.lte("settled_at", `${to}T23:59:59.999`);
+    if (data.guideId) settlementQuery = settlementQuery.eq("guide_id", data.guideId);
+    const { data: settlements } = await settlementQuery;
 
     const settlementRows = (settlements ?? []).map((s: any) => ({
       id: s.id as string,
