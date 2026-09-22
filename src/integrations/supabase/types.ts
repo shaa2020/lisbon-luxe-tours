@@ -1214,6 +1214,41 @@ export type Database = {
         }
         Relationships: []
       }
+      firecrawl_usage_log: {
+        Row: {
+          created_at: string
+          credits: number
+          detail: string | null
+          id: string
+          job_id: string | null
+          kind: string
+        }
+        Insert: {
+          created_at?: string
+          credits?: number
+          detail?: string | null
+          id?: string
+          job_id?: string | null
+          kind: string
+        }
+        Update: {
+          created_at?: string
+          credits?: number
+          detail?: string | null
+          id?: string
+          job_id?: string | null
+          kind?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "firecrawl_usage_log_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "research_jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       guide_settlements: {
         Row: {
           actor: string | null
@@ -1257,11 +1292,17 @@ export type Database = {
       }
       leads: {
         Row: {
+          business_type: string | null
+          city: string | null
+          company: string | null
+          country: string | null
           created_at: string
           customer_id: string | null
+          domain: string | null
           email: string | null
           id: string
           language: string
+          lead_kind: string
           message: string | null
           name: string | null
           notes: string | null
@@ -1269,18 +1310,27 @@ export type Database = {
           phone: string | null
           preferred_date: string | null
           preferred_time: string | null
+          relevance_reason: string | null
           source: string
+          source_url: string | null
           status: string
           tour_id: string | null
           tour_slug: string | null
           updated_at: string
+          website: string | null
         }
         Insert: {
+          business_type?: string | null
+          city?: string | null
+          company?: string | null
+          country?: string | null
           created_at?: string
           customer_id?: string | null
+          domain?: string | null
           email?: string | null
           id?: string
           language?: string
+          lead_kind?: string
           message?: string | null
           name?: string | null
           notes?: string | null
@@ -1288,18 +1338,27 @@ export type Database = {
           phone?: string | null
           preferred_date?: string | null
           preferred_time?: string | null
+          relevance_reason?: string | null
           source?: string
+          source_url?: string | null
           status?: string
           tour_id?: string | null
           tour_slug?: string | null
           updated_at?: string
+          website?: string | null
         }
         Update: {
+          business_type?: string | null
+          city?: string | null
+          company?: string | null
+          country?: string | null
           created_at?: string
           customer_id?: string | null
+          domain?: string | null
           email?: string | null
           id?: string
           language?: string
+          lead_kind?: string
           message?: string | null
           name?: string | null
           notes?: string | null
@@ -1307,11 +1366,14 @@ export type Database = {
           phone?: string | null
           preferred_date?: string | null
           preferred_time?: string | null
+          relevance_reason?: string | null
           source?: string
+          source_url?: string | null
           status?: string
           tour_id?: string | null
           tour_slug?: string | null
           updated_at?: string
+          website?: string | null
         }
         Relationships: [
           {
@@ -2169,6 +2231,147 @@ export type Database = {
         }
         Relationships: []
       }
+      research_jobs: {
+        Row: {
+          actor: string | null
+          actor_email: string | null
+          created_at: string
+          credits_used: number
+          error: string | null
+          id: string
+          job_type: string
+          leads_found: number
+          mode: string | null
+          pages: number
+          params: Json
+          query: string
+          result: Json | null
+          searches: number
+          sources: Json
+          status: string
+        }
+        Insert: {
+          actor?: string | null
+          actor_email?: string | null
+          created_at?: string
+          credits_used?: number
+          error?: string | null
+          id?: string
+          job_type: string
+          leads_found?: number
+          mode?: string | null
+          pages?: number
+          params?: Json
+          query: string
+          result?: Json | null
+          searches?: number
+          sources?: Json
+          status?: string
+        }
+        Update: {
+          actor?: string | null
+          actor_email?: string | null
+          created_at?: string
+          credits_used?: number
+          error?: string | null
+          id?: string
+          job_type?: string
+          leads_found?: number
+          mode?: string | null
+          pages?: number
+          params?: Json
+          query?: string
+          result?: Json | null
+          searches?: number
+          sources?: Json
+          status?: string
+        }
+        Relationships: []
+      }
+      research_leads: {
+        Row: {
+          business_type: string | null
+          city: string | null
+          company: string
+          contact_page: string | null
+          country: string | null
+          created_at: string
+          crm_lead_id: string | null
+          domain: string | null
+          email: string | null
+          id: string
+          job_id: string | null
+          lisbon_relevance: string | null
+          phone: string | null
+          portugal_relevance: string | null
+          reason: string | null
+          relevance_score: number | null
+          source_url: string | null
+          status: string
+          tourism_focus: string | null
+          website: string | null
+        }
+        Insert: {
+          business_type?: string | null
+          city?: string | null
+          company: string
+          contact_page?: string | null
+          country?: string | null
+          created_at?: string
+          crm_lead_id?: string | null
+          domain?: string | null
+          email?: string | null
+          id?: string
+          job_id?: string | null
+          lisbon_relevance?: string | null
+          phone?: string | null
+          portugal_relevance?: string | null
+          reason?: string | null
+          relevance_score?: number | null
+          source_url?: string | null
+          status?: string
+          tourism_focus?: string | null
+          website?: string | null
+        }
+        Update: {
+          business_type?: string | null
+          city?: string | null
+          company?: string
+          contact_page?: string | null
+          country?: string | null
+          created_at?: string
+          crm_lead_id?: string | null
+          domain?: string | null
+          email?: string | null
+          id?: string
+          job_id?: string | null
+          lisbon_relevance?: string | null
+          phone?: string | null
+          portugal_relevance?: string | null
+          reason?: string | null
+          relevance_score?: number | null
+          source_url?: string | null
+          status?: string
+          tourism_focus?: string | null
+          website?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "research_leads_crm_lead_id_fkey"
+            columns: ["crm_lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "research_leads_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "research_jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       reviews: {
         Row: {
           author_email: string | null
@@ -3023,6 +3226,30 @@ export type Database = {
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
+        }
+        Relationships: []
+      }
+      web_intel_settings: {
+        Row: {
+          id: boolean
+          low_threshold_percent: number
+          monthly_credit_limit: number
+          paid_usage_enabled: boolean
+          updated_at: string
+        }
+        Insert: {
+          id?: boolean
+          low_threshold_percent?: number
+          monthly_credit_limit?: number
+          paid_usage_enabled?: boolean
+          updated_at?: string
+        }
+        Update: {
+          id?: boolean
+          low_threshold_percent?: number
+          monthly_credit_limit?: number
+          paid_usage_enabled?: boolean
+          updated_at?: string
         }
         Relationships: []
       }

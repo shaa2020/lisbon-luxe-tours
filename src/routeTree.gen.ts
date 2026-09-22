@@ -85,6 +85,14 @@ import { Route as AdminOpsToursRouteImport } from './routes/admin.ops.tours'
 import { Route as AdminOpsVehiclesRouteImport } from './routes/admin.ops.vehicles'
 import { Route as AdminToursIndexRouteImport } from './routes/admin.tours.index'
 import { Route as AdminToursIdRouteImport } from './routes/admin.tours.$id'
+import { Route as AdminWebIntelIndexRouteImport } from './routes/admin.web-intel.index'
+import { Route as AdminWebIntelCompanyRouteImport } from './routes/admin.web-intel.company'
+import { Route as AdminWebIntelCompetitorRouteImport } from './routes/admin.web-intel.competitor'
+import { Route as AdminWebIntelContentRouteImport } from './routes/admin.web-intel.content'
+import { Route as AdminWebIntelHistoryRouteImport } from './routes/admin.web-intel.history'
+import { Route as AdminWebIntelLeadsRouteImport } from './routes/admin.web-intel.leads'
+import { Route as AdminWebIntelSeoRouteImport } from './routes/admin.web-intel.seo'
+import { Route as AdminWebIntelSettingsRouteImport } from './routes/admin.web-intel.settings'
 import { Route as ApiPublicBookingsRouteImport } from './routes/api/public/bookings'
 import { Route as ApiV1AvailabilityRouteImport } from './routes/api/v1/availability'
 import { Route as ApiV1BookingRequestsRouteImport } from './routes/api/v1/booking-requests'
@@ -495,6 +503,46 @@ const AdminToursIdRoute = AdminToursIdRouteImport.update({
   path: '/admin/tours/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminWebIntelIndexRoute = AdminWebIntelIndexRouteImport.update({
+  id: '/admin/web-intel/',
+  path: '/admin/web-intel/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminWebIntelCompanyRoute = AdminWebIntelCompanyRouteImport.update({
+  id: '/admin/web-intel/company',
+  path: '/admin/web-intel/company',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminWebIntelCompetitorRoute = AdminWebIntelCompetitorRouteImport.update({
+  id: '/admin/web-intel/competitor',
+  path: '/admin/web-intel/competitor',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminWebIntelContentRoute = AdminWebIntelContentRouteImport.update({
+  id: '/admin/web-intel/content',
+  path: '/admin/web-intel/content',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminWebIntelHistoryRoute = AdminWebIntelHistoryRouteImport.update({
+  id: '/admin/web-intel/history',
+  path: '/admin/web-intel/history',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminWebIntelLeadsRoute = AdminWebIntelLeadsRouteImport.update({
+  id: '/admin/web-intel/leads',
+  path: '/admin/web-intel/leads',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminWebIntelSeoRoute = AdminWebIntelSeoRouteImport.update({
+  id: '/admin/web-intel/seo',
+  path: '/admin/web-intel/seo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminWebIntelSettingsRoute = AdminWebIntelSettingsRouteImport.update({
+  id: '/admin/web-intel/settings',
+  path: '/admin/web-intel/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicBookingsRoute = ApiPublicBookingsRouteImport.update({
   id: '/api/public/bookings',
   path: '/api/public/bookings',
@@ -715,6 +763,13 @@ export interface FileRoutesByFullPath {
   '/admin/ops/tours': typeof AdminOpsToursRoute
   '/admin/ops/vehicles': typeof AdminOpsVehiclesRoute
   '/admin/tours/$id': typeof AdminToursIdRoute
+  '/admin/web-intel/company': typeof AdminWebIntelCompanyRoute
+  '/admin/web-intel/competitor': typeof AdminWebIntelCompetitorRoute
+  '/admin/web-intel/content': typeof AdminWebIntelContentRoute
+  '/admin/web-intel/history': typeof AdminWebIntelHistoryRoute
+  '/admin/web-intel/leads': typeof AdminWebIntelLeadsRoute
+  '/admin/web-intel/seo': typeof AdminWebIntelSeoRoute
+  '/admin/web-intel/settings': typeof AdminWebIntelSettingsRoute
   '/api/public/bookings': typeof ApiPublicBookingsRoute
   '/api/v1/availability': typeof ApiV1AvailabilityRoute
   '/api/v1/booking-requests': typeof ApiV1BookingRequestsRoute
@@ -726,6 +781,7 @@ export interface FileRoutesByFullPath {
   '/admin/guide/': typeof AdminGuideIndexRoute
   '/admin/ops/': typeof AdminOpsIndexRoute
   '/admin/tours/': typeof AdminToursIndexRoute
+  '/admin/web-intel/': typeof AdminWebIntelIndexRoute
   '/admin/ops/jobs/$id': typeof AdminOpsJobsIdRoute
   '/api/public/cron/booking-emails': typeof ApiPublicCronBookingEmailsRoute
   '/api/public/payments/mollie': typeof ApiPublicPaymentsMollieRoute
@@ -821,6 +877,13 @@ export interface FileRoutesByTo {
   '/admin/ops/tours': typeof AdminOpsToursRoute
   '/admin/ops/vehicles': typeof AdminOpsVehiclesRoute
   '/admin/tours/$id': typeof AdminToursIdRoute
+  '/admin/web-intel/company': typeof AdminWebIntelCompanyRoute
+  '/admin/web-intel/competitor': typeof AdminWebIntelCompetitorRoute
+  '/admin/web-intel/content': typeof AdminWebIntelContentRoute
+  '/admin/web-intel/history': typeof AdminWebIntelHistoryRoute
+  '/admin/web-intel/leads': typeof AdminWebIntelLeadsRoute
+  '/admin/web-intel/seo': typeof AdminWebIntelSeoRoute
+  '/admin/web-intel/settings': typeof AdminWebIntelSettingsRoute
   '/api/public/bookings': typeof ApiPublicBookingsRoute
   '/api/v1/availability': typeof ApiV1AvailabilityRoute
   '/api/v1/booking-requests': typeof ApiV1BookingRequestsRoute
@@ -832,6 +895,7 @@ export interface FileRoutesByTo {
   '/admin/guide': typeof AdminGuideIndexRoute
   '/admin/ops': typeof AdminOpsIndexRoute
   '/admin/tours': typeof AdminToursIndexRoute
+  '/admin/web-intel': typeof AdminWebIntelIndexRoute
   '/admin/ops/jobs/$id': typeof AdminOpsJobsIdRoute
   '/api/public/cron/booking-emails': typeof ApiPublicCronBookingEmailsRoute
   '/api/public/payments/mollie': typeof ApiPublicPaymentsMollieRoute
@@ -928,6 +992,13 @@ export interface FileRoutesById {
   '/admin/ops/tours': typeof AdminOpsToursRoute
   '/admin/ops/vehicles': typeof AdminOpsVehiclesRoute
   '/admin/tours/$id': typeof AdminToursIdRoute
+  '/admin/web-intel/company': typeof AdminWebIntelCompanyRoute
+  '/admin/web-intel/competitor': typeof AdminWebIntelCompetitorRoute
+  '/admin/web-intel/content': typeof AdminWebIntelContentRoute
+  '/admin/web-intel/history': typeof AdminWebIntelHistoryRoute
+  '/admin/web-intel/leads': typeof AdminWebIntelLeadsRoute
+  '/admin/web-intel/seo': typeof AdminWebIntelSeoRoute
+  '/admin/web-intel/settings': typeof AdminWebIntelSettingsRoute
   '/api/public/bookings': typeof ApiPublicBookingsRoute
   '/api/v1/availability': typeof ApiV1AvailabilityRoute
   '/api/v1/booking-requests': typeof ApiV1BookingRequestsRoute
@@ -939,6 +1010,7 @@ export interface FileRoutesById {
   '/admin/guide/': typeof AdminGuideIndexRoute
   '/admin/ops/': typeof AdminOpsIndexRoute
   '/admin/tours/': typeof AdminToursIndexRoute
+  '/admin/web-intel/': typeof AdminWebIntelIndexRoute
   '/admin/ops/jobs/$id': typeof AdminOpsJobsIdRoute
   '/api/public/cron/booking-emails': typeof ApiPublicCronBookingEmailsRoute
   '/api/public/payments/mollie': typeof ApiPublicPaymentsMollieRoute
@@ -1036,6 +1108,13 @@ export interface FileRouteTypes {
     | '/admin/ops/tours'
     | '/admin/ops/vehicles'
     | '/admin/tours/$id'
+    | '/admin/web-intel/company'
+    | '/admin/web-intel/competitor'
+    | '/admin/web-intel/content'
+    | '/admin/web-intel/history'
+    | '/admin/web-intel/leads'
+    | '/admin/web-intel/seo'
+    | '/admin/web-intel/settings'
     | '/api/public/bookings'
     | '/api/v1/availability'
     | '/api/v1/booking-requests'
@@ -1047,6 +1126,7 @@ export interface FileRouteTypes {
     | '/admin/guide/'
     | '/admin/ops/'
     | '/admin/tours/'
+    | '/admin/web-intel/'
     | '/admin/ops/jobs/$id'
     | '/api/public/cron/booking-emails'
     | '/api/public/payments/mollie'
@@ -1142,6 +1222,13 @@ export interface FileRouteTypes {
     | '/admin/ops/tours'
     | '/admin/ops/vehicles'
     | '/admin/tours/$id'
+    | '/admin/web-intel/company'
+    | '/admin/web-intel/competitor'
+    | '/admin/web-intel/content'
+    | '/admin/web-intel/history'
+    | '/admin/web-intel/leads'
+    | '/admin/web-intel/seo'
+    | '/admin/web-intel/settings'
     | '/api/public/bookings'
     | '/api/v1/availability'
     | '/api/v1/booking-requests'
@@ -1153,6 +1240,7 @@ export interface FileRouteTypes {
     | '/admin/guide'
     | '/admin/ops'
     | '/admin/tours'
+    | '/admin/web-intel'
     | '/admin/ops/jobs/$id'
     | '/api/public/cron/booking-emails'
     | '/api/public/payments/mollie'
@@ -1248,6 +1336,13 @@ export interface FileRouteTypes {
     | '/admin/ops/tours'
     | '/admin/ops/vehicles'
     | '/admin/tours/$id'
+    | '/admin/web-intel/company'
+    | '/admin/web-intel/competitor'
+    | '/admin/web-intel/content'
+    | '/admin/web-intel/history'
+    | '/admin/web-intel/leads'
+    | '/admin/web-intel/seo'
+    | '/admin/web-intel/settings'
     | '/api/public/bookings'
     | '/api/v1/availability'
     | '/api/v1/booking-requests'
@@ -1259,6 +1354,7 @@ export interface FileRouteTypes {
     | '/admin/guide/'
     | '/admin/ops/'
     | '/admin/tours/'
+    | '/admin/web-intel/'
     | '/admin/ops/jobs/$id'
     | '/api/public/cron/booking-emails'
     | '/api/public/payments/mollie'
@@ -1355,6 +1451,13 @@ export interface RootRouteChildren {
   AdminOpsToursRoute: typeof AdminOpsToursRoute
   AdminOpsVehiclesRoute: typeof AdminOpsVehiclesRoute
   AdminToursIdRoute: typeof AdminToursIdRoute
+  AdminWebIntelCompanyRoute: typeof AdminWebIntelCompanyRoute
+  AdminWebIntelCompetitorRoute: typeof AdminWebIntelCompetitorRoute
+  AdminWebIntelContentRoute: typeof AdminWebIntelContentRoute
+  AdminWebIntelHistoryRoute: typeof AdminWebIntelHistoryRoute
+  AdminWebIntelLeadsRoute: typeof AdminWebIntelLeadsRoute
+  AdminWebIntelSeoRoute: typeof AdminWebIntelSeoRoute
+  AdminWebIntelSettingsRoute: typeof AdminWebIntelSettingsRoute
   ApiPublicBookingsRoute: typeof ApiPublicBookingsRoute
   ApiV1AvailabilityRoute: typeof ApiV1AvailabilityRoute
   ApiV1BookingRequestsRoute: typeof ApiV1BookingRequestsRoute
@@ -1366,6 +1469,7 @@ export interface RootRouteChildren {
   AdminGuideIndexRoute: typeof AdminGuideIndexRoute
   AdminOpsIndexRoute: typeof AdminOpsIndexRoute
   AdminToursIndexRoute: typeof AdminToursIndexRoute
+  AdminWebIntelIndexRoute: typeof AdminWebIntelIndexRoute
   AdminOpsJobsIdRoute: typeof AdminOpsJobsIdRoute
   ApiPublicCronBookingEmailsRoute: typeof ApiPublicCronBookingEmailsRoute
   ApiPublicPaymentsMollieRoute: typeof ApiPublicPaymentsMollieRoute
@@ -1922,6 +2026,62 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminToursIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/web-intel/': {
+      id: '/admin/web-intel/'
+      path: '/admin/web-intel'
+      fullPath: '/admin/web-intel/'
+      preLoaderRoute: typeof AdminWebIntelIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/web-intel/company': {
+      id: '/admin/web-intel/company'
+      path: '/admin/web-intel/company'
+      fullPath: '/admin/web-intel/company'
+      preLoaderRoute: typeof AdminWebIntelCompanyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/web-intel/competitor': {
+      id: '/admin/web-intel/competitor'
+      path: '/admin/web-intel/competitor'
+      fullPath: '/admin/web-intel/competitor'
+      preLoaderRoute: typeof AdminWebIntelCompetitorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/web-intel/content': {
+      id: '/admin/web-intel/content'
+      path: '/admin/web-intel/content'
+      fullPath: '/admin/web-intel/content'
+      preLoaderRoute: typeof AdminWebIntelContentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/web-intel/history': {
+      id: '/admin/web-intel/history'
+      path: '/admin/web-intel/history'
+      fullPath: '/admin/web-intel/history'
+      preLoaderRoute: typeof AdminWebIntelHistoryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/web-intel/leads': {
+      id: '/admin/web-intel/leads'
+      path: '/admin/web-intel/leads'
+      fullPath: '/admin/web-intel/leads'
+      preLoaderRoute: typeof AdminWebIntelLeadsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/web-intel/seo': {
+      id: '/admin/web-intel/seo'
+      path: '/admin/web-intel/seo'
+      fullPath: '/admin/web-intel/seo'
+      preLoaderRoute: typeof AdminWebIntelSeoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/web-intel/settings': {
+      id: '/admin/web-intel/settings'
+      path: '/admin/web-intel/settings'
+      fullPath: '/admin/web-intel/settings'
+      preLoaderRoute: typeof AdminWebIntelSettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/bookings': {
       id: '/api/public/bookings'
       path: '/api/public/bookings'
@@ -2206,6 +2366,13 @@ const rootRouteChildren: RootRouteChildren = {
   AdminOpsToursRoute: AdminOpsToursRoute,
   AdminOpsVehiclesRoute: AdminOpsVehiclesRoute,
   AdminToursIdRoute: AdminToursIdRoute,
+  AdminWebIntelCompanyRoute: AdminWebIntelCompanyRoute,
+  AdminWebIntelCompetitorRoute: AdminWebIntelCompetitorRoute,
+  AdminWebIntelContentRoute: AdminWebIntelContentRoute,
+  AdminWebIntelHistoryRoute: AdminWebIntelHistoryRoute,
+  AdminWebIntelLeadsRoute: AdminWebIntelLeadsRoute,
+  AdminWebIntelSeoRoute: AdminWebIntelSeoRoute,
+  AdminWebIntelSettingsRoute: AdminWebIntelSettingsRoute,
   ApiPublicBookingsRoute: ApiPublicBookingsRoute,
   ApiV1AvailabilityRoute: ApiV1AvailabilityRoute,
   ApiV1BookingRequestsRoute: ApiV1BookingRequestsRoute,
@@ -2217,6 +2384,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminGuideIndexRoute: AdminGuideIndexRoute,
   AdminOpsIndexRoute: AdminOpsIndexRoute,
   AdminToursIndexRoute: AdminToursIndexRoute,
+  AdminWebIntelIndexRoute: AdminWebIntelIndexRoute,
   AdminOpsJobsIdRoute: AdminOpsJobsIdRoute,
   ApiPublicCronBookingEmailsRoute: ApiPublicCronBookingEmailsRoute,
   ApiPublicPaymentsMollieRoute: ApiPublicPaymentsMollieRoute,
