@@ -105,6 +105,7 @@ function ReconciliationBody() {
   const [filter, setFilter] = useState<Filter>("all");
   const [term, setTerm] = useState("");
   const [open, setOpen] = useState<string | null>(null);
+  const [settling, setSettling] = useState<ReconBooking | null>(null);
 
   const report = useQuery({
     queryKey: ["admin-reconciliation", days],
@@ -132,6 +133,11 @@ function ReconciliationBody() {
       if (filter === "outstanding" && (b.outstandingCents <= 0 || b.status === "cancelled")) return false;
       if (filter === "deposits" && !b.isDeposit) return false;
       if (filter === "refunded" && b.refundCents <= 0) return false;
+      if (
+        (filter === "pending_balance" || filter === "partially_paid" || filter === "fully_settled") &&
+        b.settlement !== filter
+      )
+        return false;
       if (!q) return true;
       return [b.customerName, b.email, b.tourTitle, b.bookingId, ...b.payments.map((p) => p.reference)]
         .filter(Boolean)
