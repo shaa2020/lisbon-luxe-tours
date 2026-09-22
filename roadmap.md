@@ -3,12 +3,12 @@
 - [x] Let customers select any valid start time in both booking forms.
 
 ## Duration options + PT/ES site (approved plan 2026-09-18)
-- [ ] Duration options: verify end-to-end (admin save → public picker → booking snapshot)
-- [ ] Duration options: admin editor polish (tours-list badge, quick-add presets, toggles)
-- [ ] i18n foundation: locale routing (/pt, /es splat), LocaleContext, dictionary helper, switcher
-- [ ] i18n: migrate public pages to locale-aware page modules
-- [ ] i18n: one-time AI translation pass (static strings + DB content into content_translations)
-- [ ] i18n: SEO wiring (hreflang, localized canonicals, sitemap /pt /es)
+- [x] Duration options: verify end-to-end (admin save → public picker → booking snapshot)
+- [x] Duration options: admin editor polish (tours-list badge, quick-add presets, toggles)
+- [x] i18n foundation: locale routing (/pt, /es splat), LocaleContext, dictionary helper, switcher
+- [x] i18n: migrate public pages to locale-aware page modules
+- [x] i18n: one-time AI translation pass (static strings + DB content into content_translations)
+- [x] i18n: SEO wiring (hreflang, localized canonicals, sitemap /pt /es)
 - [ ] QA: typecheck, Playwright smoke of /pt /es, duration booking flow, English unchanged
 
 ## Booking & admin upgrade (2026-09)
@@ -23,4 +23,5 @@
 - [x] Commission centre (owner only): editable rate, both-direction guide balances, settle-ups, CSV
 - [x] Operations pages re-pointed at real bookings (day sheet, calendar)
 - [x] Guides/vehicles assignment + conflict warnings
-- [ ] Reports, audit log surfacing, responsive pass, test scenarios
+- [x] Audit/activity log page (/admin/audit-log)
+- [ ] Reports, responsive pass, test scenarios
