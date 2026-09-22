@@ -35,6 +35,7 @@ import {
   Scale,
   Percent,
   History,
+  Globe,
 } from "lucide-react";
 import { ROLE_LABELS, type Permission } from "@/lib/permissions";
 import { InstallAppButton } from "@/components/admin/InstallAppButton";
@@ -87,6 +88,12 @@ const GROUPS: NavGroup[] = [
       { to: "/admin/destinations", label: "Destinations", icon: MapPin, desc: "Area pages for Google", perm: "content.manage" },
       { to: "/admin/reviews", label: "Reviews", icon: Star, desc: "Approve guest reviews", perm: "reviews.manage" },
       { to: "/admin/faqs", label: "FAQs", icon: HelpCircle, desc: "Questions and answers", perm: "faqs.manage" },
+    ],
+  },
+  {
+    title: "Grow",
+    items: [
+      { to: "/admin/web-intel", label: "Web Intelligence", icon: Globe, desc: "Find partners and research (free tier)", perm: "marketing.manage" },
     ],
   },
   {
