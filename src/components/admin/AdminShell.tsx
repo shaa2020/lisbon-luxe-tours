@@ -34,6 +34,7 @@ import {
   KeyRound,
   Scale,
   Percent,
+  History,
 } from "lucide-react";
 import { ROLE_LABELS, type Permission } from "@/lib/permissions";
 import { InstallAppButton } from "@/components/admin/InstallAppButton";
