@@ -327,13 +327,14 @@ function Kpi({
   label: string;
   value: string;
   note?: string;
-  tone: "sky" | "emerald" | "amber" | "rose" | "slate";
+  tone: "sky" | "emerald" | "amber" | "rose" | "slate" | "violet";
 }) {
   const tones: Record<string, string> = {
     sky: "bg-sky-50 border-sky-200 dark:bg-sky-950/30 dark:border-sky-900",
     emerald: "bg-emerald-50 border-emerald-200 dark:bg-emerald-950/30 dark:border-emerald-900",
     amber: "bg-amber-50 border-amber-200 dark:bg-amber-950/30 dark:border-amber-900",
     rose: "bg-rose-50 border-rose-200 dark:bg-rose-950/30 dark:border-rose-900",
+    violet: "bg-violet-50 border-violet-200 dark:bg-violet-950/30 dark:border-violet-900",
     slate: "bg-muted/50 border-border",
   };
   return (
