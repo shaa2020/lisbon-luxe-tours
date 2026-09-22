@@ -46,6 +46,46 @@ export const LEAD_TYPES = [
 
 export type LeadType = (typeof LEAD_TYPES)[number];
 
+/** Who we are looking for: travel businesses (B2B) or real travellers asking for a tour (B2C). */
+export const LEAD_AUDIENCES = [
+  {
+    value: "partner",
+    label: "🤝 Travel partners",
+    description: "Agencies, tour operators, hotels and concierges who can send guests",
+  },
+  {
+    value: "traveller",
+    label: "🧳 Travellers asking for a tour",
+    description: "Real people publicly asking for a Lisbon tour, guide or tuk tuk",
+  },
+] as const;
+
+export type LeadAudience = (typeof LEAD_AUDIENCES)[number]["value"];
+
+/** Public places where travellers ask for tour recommendations. */
+export const TRAVELLER_SOURCES = [
+  { value: "forums", label: "Travel forums", hint: "site:tripadvisor.com OR site:forum.tripadvisor.com" },
+  { value: "reddit", label: "Reddit", hint: "site:reddit.com" },
+  { value: "qa", label: "Question sites", hint: "site:quora.com OR site:lonelyplanet.com/thorntree" },
+  { value: "blogs", label: "Travel blogs & comments", hint: "" },
+] as const;
+
+export type TravellerSource = (typeof TRAVELLER_SOURCES)[number]["value"];
+
+/** What the traveller is asking for. */
+export const TRAVELLER_INTENTS = [
+  "Tuk tuk tour in Lisbon",
+  "Private tour guide in Lisbon",
+  "Lisbon city tour",
+  "Sintra day trip",
+  "Family tour with kids",
+  "Group or party tour",
+  "Cruise stopover tour",
+  "Accessible / limited-mobility tour",
+  "Food and wine tour",
+  "Airport or hotel pickup tour",
+] as const;
+
 /** B2B partner pipeline, stored in the existing leads.status column. */
 export const PARTNER_PIPELINE = [
   "new",
