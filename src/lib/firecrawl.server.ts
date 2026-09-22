@@ -147,9 +147,11 @@ export async function fcSearch(
   query: string,
   limit: number,
   jobId: string | null,
+  /** Optional freshness filter, e.g. "qdr:m" for the last month. */
+  tbs?: string,
 ): Promise<SearchHit[]> {
   await assertBudget(limit);
-  const json = await gateway("/search", { query, limit });
+  const json = await gateway("/search", tbs ? { query, limit, tbs } : { query, limit });
   await recordUsage("search", limit, jobId, query);
 
   const rows: any[] = json?.data?.web ?? json?.web ?? json?.data ?? [];
