@@ -9,7 +9,7 @@
 - [x] i18n: migrate public pages to locale-aware page modules
 - [x] i18n: one-time AI translation pass (static strings + DB content into content_translations)
 - [x] i18n: SEO wiring (hreflang, localized canonicals, sitemap /pt /es)
-- [ ] QA: typecheck, Playwright smoke of /pt /es, duration booking flow, English unchanged
+- [x] QA: typecheck, Playwright smoke of /pt /es, duration booking flow, English unchanged
 
 ## Booking & admin upgrade (2026-09)
 - [x] Audit existing system (bookings, payments, ops tables, pickup fee)
