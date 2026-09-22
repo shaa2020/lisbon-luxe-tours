@@ -365,6 +365,7 @@ export type Database = {
         Row: {
           amount_cents: number
           booking_id: string
+          collected_by: string | null
           commission_cents: number | null
           commission_rate_percent: number | null
           created_at: string
@@ -377,10 +378,12 @@ export type Database = {
           order_id: string | null
           paid_at: string
           reference: string | null
+          settlement_kind: string
         }
         Insert: {
           amount_cents: number
           booking_id: string
+          collected_by?: string | null
           commission_cents?: number | null
           commission_rate_percent?: number | null
           created_at?: string
@@ -393,10 +396,12 @@ export type Database = {
           order_id?: string | null
           paid_at?: string
           reference?: string | null
+          settlement_kind?: string
         }
         Update: {
           amount_cents?: number
           booking_id?: string
+          collected_by?: string | null
           commission_cents?: number | null
           commission_rate_percent?: number | null
           created_at?: string
@@ -409,6 +414,7 @@ export type Database = {
           order_id?: string | null
           paid_at?: string
           reference?: string | null
+          settlement_kind?: string
         }
         Relationships: [
           {
