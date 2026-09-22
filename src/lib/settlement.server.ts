@@ -107,7 +107,11 @@ export async function syncBookingSettlement(
   const totals = computeSettlement(b as any, (orders ?? []) as any, (manual ?? []) as any);
   if (b.status === "cancelled") return totals;
 
-  const patch: Record<string, unknown> = {};
+  const patch: {
+    payment_status?: string;
+    status?: string;
+    payment_request_cents?: number | null;
+  } = {};
 
   if (totals.totalCents > 0 && totals.remainingCents <= 0) {
     patch.payment_status = totals.refundCents > 0 ? "partially_refunded" : "paid";
