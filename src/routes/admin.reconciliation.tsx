@@ -196,16 +196,17 @@ function ReconciliationBody() {
         <div className="space-y-6">
           <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
             <Kpi label="Booked value" value={money(t?.bookedValueCents ?? 0)} tone="sky" note={`${t?.bookings ?? 0} bookings`} />
-            <Kpi label="Collected" value={money(t?.collectedCents ?? 0)} tone="emerald" note="Confirmed by the provider" />
-            <Kpi label="Refunded" value={money(t?.refundedCents ?? 0)} tone="amber" note={`Net ${money(t?.netCents ?? 0)}`} />
+            <Kpi label="Collected online" value={money(t?.onlineCents ?? 0)} tone="emerald" note="Confirmed by the provider" />
+            <Kpi label="Collected in person" value={money(t?.manualCents ?? 0)} tone="violet" note="Cash or card to a guide, bank, other" />
             <Kpi label="Outstanding" value={money(t?.outstandingCents ?? 0)} tone="rose" note={`${money(t?.depositsOpenCents ?? 0)} of it deposit balances`} />
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-3">
+          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+            <Kpi label="Total paid" value={money(t?.collectedCents ?? 0)} tone="slate" note={`Refunded ${money(t?.refundedCents ?? 0)} · net ${money(t?.netCents ?? 0)}`} />
             <Kpi label="Awaiting confirmation" value={money(t?.pendingCents ?? 0)} tone="slate" note="Started but never confirmed" />
-            <Kpi label="Declined attempts" value={money(t?.failedCents ?? 0)} tone="slate" note="No money received" />
+            <Kpi label="Fully settled" value={String(t?.fullySettled ?? 0)} tone="emerald" note={`${t?.partiallyPaid ?? 0} partly paid · ${t?.pendingBalance ?? 0} pending`} />
             <Kpi
-              label="Mismatches"
+              label="Discrepancies"
               value={String(issueCount)}
               tone={issueCount ? "rose" : "emerald"}
               note={issueCount ? "Bookings needing a look" : "Everything balances"}
