@@ -367,20 +367,23 @@ function BookingRow({
   onToggle,
   onVerify,
   verifying,
+  onSettle,
 }: {
   b: ReconBooking;
   expanded: boolean;
   onToggle: () => void;
   onVerify: (orderId: string) => void;
   verifying: boolean;
+  onSettle: () => void;
 }) {
   const balanced = b.issues.length === 0;
+  const badge = SETTLEMENT_BADGE[b.settlement];
   return (
     <div className={`rounded-2xl border bg-card ${balanced ? "border-border" : "border-rose-300 dark:border-rose-900"}`}>
       <button type="button" onClick={onToggle} className="w-full px-4 py-3 text-left">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="min-w-0">
-            <p className="flex items-center gap-2 font-semibold text-foreground">
+            <p className="flex flex-wrap items-center gap-2 font-semibold text-foreground">
               {balanced ? (
                 <CheckCircle2 className="h-4 w-4 text-emerald-500" />
               ) : (
@@ -388,17 +391,23 @@ function BookingRow({
               )}
               {b.customerName || "Unnamed"}
               <span className="text-xs font-normal text-muted-foreground">{b.tourTitle || "—"}</span>
+              <span className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${badge.cls}`}>
+                {badge.label}
+              </span>
             </p>
             <p className="mt-0.5 text-xs text-muted-foreground">
-              Travel {day(b.travelDate)} · Booked {day(b.createdAt)} · {b.status || "—"} / {b.paymentStatus || "unpaid"}
+              {b.bookingReference ? `${b.bookingReference} · ` : ""}Travel {day(b.travelDate)} · Booked{" "}
+              {day(b.createdAt)} · {b.status || "—"} / {b.paymentStatus || "unpaid"}
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-4 text-sm">
-            <Cell label="Total" value={money(b.totalCents)} />
-            <Cell label="Collected" value={money(b.collectedCents)} tone="text-emerald-600" />
+            <Cell label="Booking total" value={money(b.totalCents)} />
+            <Cell label="Deposit / online" value={money(b.onlineCents)} tone="text-emerald-600" />
+            <Cell label="In person" value={money(b.manualCents)} tone="text-violet-600" />
+            <Cell label="Amount paid" value={money(b.collectedCents)} tone="text-emerald-600" />
             {b.refundCents > 0 ? <Cell label="Refunded" value={money(b.refundCents)} tone="text-amber-600" /> : null}
             <Cell
-              label="Outstanding"
+              label="Remaining"
               value={money(b.outstandingCents)}
               tone={b.outstandingCents > 0 ? "text-rose-600" : "text-muted-foreground"}
             />
