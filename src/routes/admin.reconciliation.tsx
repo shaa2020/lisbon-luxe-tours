@@ -3,14 +3,30 @@ import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { AlertTriangle, CheckCircle2, Loader2, RefreshCcw, Scale, Search } from "lucide-react";
+import {
+  AlertTriangle,
+  CheckCircle2,
+  Loader2,
+  RefreshCcw,
+  Scale,
+  Search,
+  Undo2,
+  Wallet,
+  X,
+} from "lucide-react";
 import { AdminShell, AdminPageHeader, AdminCard } from "@/components/admin/AdminShell";
 import {
   adminReconciliation,
   adminVerifyPaymentWithProvider,
+  adminSettleBalance,
+  adminEditSettlement,
+  adminUndoSettlement,
+  SETTLEMENT_METHODS,
   type ReconBooking,
   type ReconIssue,
+  type ReconSettlement,
 } from "@/lib/reconciliation.functions";
+import type { SettlementStatus } from "@/lib/settlement.server";
 
 export const Route = createFileRoute("/admin/reconciliation")({
   head: () => ({ meta: [{ title: "Payment reconciliation — Admin" }] }),
@@ -29,7 +45,31 @@ const ISSUE_LABELS: Record<ReconIssue, string> = {
   payment_stuck_pending: "Payment left unconfirmed over 24h",
   orphan_payment: "Payment not linked to a booking",
   failed_attempt_only: "Only failed attempts — nothing collected",
+  overpaid: "More money received than the booking total",
 };
+
+const SETTLEMENT_BADGE: Record<SettlementStatus, { label: string; cls: string }> = {
+  fully_settled: {
+    label: "Fully settled",
+    cls: "bg-emerald-100 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300",
+  },
+  partially_paid: {
+    label: "Partially paid",
+    cls: "bg-amber-100 text-amber-700 dark:bg-amber-950/50 dark:text-amber-300",
+  },
+  pending_balance: {
+    label: "Pending balance",
+    cls: "bg-muted text-muted-foreground",
+  },
+  discrepancy: {
+    label: "Discrepancy",
+    cls: "bg-rose-100 text-rose-700 dark:bg-rose-950/50 dark:text-rose-300",
+  },
+};
+
+function methodLabel(v: string) {
+  return SETTLEMENT_METHODS.find((m) => m.value === v)?.label ?? v;
+}
 
 const RANGES = [
   { label: "30 days", days: 30 },
@@ -46,7 +86,15 @@ function day(v: string | null) {
   return v ? new Date(v).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }) : "—";
 }
 
-type Filter = "all" | "issues" | "outstanding" | "deposits" | "refunded";
+type Filter =
+  | "all"
+  | "issues"
+  | "outstanding"
+  | "deposits"
+  | "refunded"
+  | "pending_balance"
+  | "partially_paid"
+  | "fully_settled";
 
 function ReconciliationBody() {
   const qc = useQueryClient();
