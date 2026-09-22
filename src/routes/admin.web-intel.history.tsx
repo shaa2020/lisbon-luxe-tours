@@ -14,7 +14,8 @@ export const Route = createFileRoute("/admin/web-intel/history")({
 
 const TYPES = [
   { value: "all", label: "All" },
-  { value: "lead_finder", label: "Lead finder" },
+  { value: "lead_finder", label: "Partner leads" },
+  { value: "traveller_finder", label: "Traveller leads" },
   { value: "company", label: "Company" },
   { value: "competitor", label: "Competitor" },
   { value: "seo", label: "SEO" },
