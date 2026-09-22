@@ -643,10 +643,17 @@ export const importResearchLead = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     if (!lead) throw new Error("Lead not found");
 
+    const isTraveller = lead.audience === "traveller";
+
     // Duplicate protection against the existing CRM.
     const or: string[] = [];
-    if (lead.domain) or.push(`domain.eq.${lead.domain}`);
-    if (lead.company) or.push(`company.eq.${lead.company.replace(/,/g, " ")}`);
+    if (isTraveller) {
+      // One public request = one lead; the thread URL identifies it.
+      if (lead.source_url) or.push(`source_url.eq.${lead.source_url}`);
+    } else {
+      if (lead.domain) or.push(`domain.eq.${lead.domain}`);
+      if (lead.company) or.push(`company.eq.${lead.company.replace(/,/g, " ")}`);
+    }
     if (lead.email) or.push(`email.eq.${lead.email}`);
     if (lead.phone) or.push(`phone.eq.${lead.phone}`);
 
