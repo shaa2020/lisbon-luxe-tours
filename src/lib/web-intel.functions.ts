@@ -679,11 +679,23 @@ export const importResearchLead = createServerFn({ method: "POST" })
         source_url: lead.source_url,
         email: lead.email,
         phone: lead.phone,
-        lead_kind: "partner",
-        source: "web_intelligence",
+        lead_kind: isTraveller ? "traveller" : "partner",
+        source: isTraveller ? "web_intelligence_traveller" : "web_intelligence",
         status: "new",
         language: "en",
-        notes: [lead.tourism_focus, lead.portugal_relevance, lead.lisbon_relevance, lead.contact_page]
+        message: isTraveller ? lead.request_summary : null,
+        preferred_date: null,
+        notes: (isTraveller
+          ? [
+              lead.request_summary,
+              lead.travel_dates ? `Dates: ${lead.travel_dates}` : null,
+              lead.group_size ? `Group: ${lead.group_size}` : null,
+              lead.platform ? `Found on: ${lead.platform}` : null,
+              lead.posted_at ? `Posted: ${lead.posted_at}` : null,
+              lead.source_url,
+            ]
+          : [lead.tourism_focus, lead.portugal_relevance, lead.lisbon_relevance, lead.contact_page]
+        )
           .filter(Boolean)
           .join("\n"),
       } as never)
