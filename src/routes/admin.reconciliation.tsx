@@ -318,6 +318,17 @@ function ReconciliationBody() {
           ) : null}
         </div>
       )}
+
+      {settling ? (
+        <SettleDialog
+          booking={settling}
+          onClose={() => setSettling(null)}
+          onDone={() => {
+            setSettling(null);
+            qc.invalidateQueries({ queryKey: ["admin-reconciliation"] });
+          }}
+        />
+      ) : null}
     </>
   );
 }
