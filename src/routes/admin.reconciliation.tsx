@@ -219,7 +219,10 @@ function ReconciliationBody() {
                 {(
                   [
                     ["all", "All bookings"],
-                    ["issues", `Mismatches (${issueCount})`],
+                    ["issues", `Discrepancies (${issueCount})`],
+                    ["pending_balance", "Pending balance"],
+                    ["partially_paid", "Partially paid"],
+                    ["fully_settled", "Fully settled"],
                     ["outstanding", "Money owed"],
                     ["deposits", "Deposits paid"],
                     ["refunded", "Refunded"],
@@ -280,6 +283,7 @@ function ReconciliationBody() {
                   onToggle={() => setOpen(open === b.bookingId ? null : b.bookingId)}
                   onVerify={(orderId) => verifyM.mutate(orderId)}
                   verifying={verifyM.isPending}
+                  onSettle={() => setSettling(b)}
                 />
               ))
             )}
