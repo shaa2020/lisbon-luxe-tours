@@ -94,6 +94,7 @@ const GROUPS: NavGroup[] = [
       { to: "/admin/settings", label: "Settings", icon: Settings, desc: "Brand, booking, payments", perm: "settings.manage" },
       { to: "/admin/team", label: "Team", icon: Users, desc: "Members and roles", perm: "team.manage" },
       { to: "/admin/api", label: "API keys", icon: KeyRound, desc: "WhatsApp, n8n, AI agents", perm: "api.manage" },
+      { to: "/admin/audit-log", label: "Activity log", icon: History, desc: "Who changed what", perm: "settings.manage" },
     ],
   },
 ];
