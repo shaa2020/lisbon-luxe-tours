@@ -106,7 +106,7 @@ export function WebIntelLayout({
 }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   return (
-    <AdminShell requires="content.manage">
+    <AdminShell requires="marketing.manage">
       <div className="space-y-4">
         <div>
           <h1 className="text-xl font-semibold">🌐 {title}</h1>
