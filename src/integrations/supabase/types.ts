@@ -2290,6 +2290,7 @@ export type Database = {
       }
       research_leads: {
         Row: {
+          audience: string
           business_type: string | null
           city: string | null
           company: string
@@ -2299,19 +2300,25 @@ export type Database = {
           crm_lead_id: string | null
           domain: string | null
           email: string | null
+          group_size: string | null
           id: string
           job_id: string | null
           lisbon_relevance: string | null
           phone: string | null
+          platform: string | null
           portugal_relevance: string | null
+          posted_at: string | null
           reason: string | null
           relevance_score: number | null
+          request_summary: string | null
           source_url: string | null
           status: string
           tourism_focus: string | null
+          travel_dates: string | null
           website: string | null
         }
         Insert: {
+          audience?: string
           business_type?: string | null
           city?: string | null
           company: string
@@ -2321,19 +2328,25 @@ export type Database = {
           crm_lead_id?: string | null
           domain?: string | null
           email?: string | null
+          group_size?: string | null
           id?: string
           job_id?: string | null
           lisbon_relevance?: string | null
           phone?: string | null
+          platform?: string | null
           portugal_relevance?: string | null
+          posted_at?: string | null
           reason?: string | null
           relevance_score?: number | null
+          request_summary?: string | null
           source_url?: string | null
           status?: string
           tourism_focus?: string | null
+          travel_dates?: string | null
           website?: string | null
         }
         Update: {
+          audience?: string
           business_type?: string | null
           city?: string | null
           company?: string
@@ -2343,16 +2356,21 @@ export type Database = {
           crm_lead_id?: string | null
           domain?: string | null
           email?: string | null
+          group_size?: string | null
           id?: string
           job_id?: string | null
           lisbon_relevance?: string | null
           phone?: string | null
+          platform?: string | null
           portugal_relevance?: string | null
+          posted_at?: string | null
           reason?: string | null
           relevance_score?: number | null
+          request_summary?: string | null
           source_url?: string | null
           status?: string
           tourism_focus?: string | null
+          travel_dates?: string | null
           website?: string | null
         }
         Relationships: [
