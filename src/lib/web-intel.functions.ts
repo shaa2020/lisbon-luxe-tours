@@ -371,18 +371,247 @@ export const runLeadSearch = createServerFn({ method: "POST" })
   });
 
 /* ------------------------------------------------------------------ */
+/* Traveller finder (real people asking for a Lisbon tour)             */
+/* ------------------------------------------------------------------ */
+
+const SOURCE_HINT: Record<string, string> = {
+  forums: "site:tripadvisor.com OR site:tripadvisor.co.uk",
+  reddit: "site:reddit.com",
+  qa: "site:quora.com OR site:lonelyplanet.com",
+  blogs: "travel forum thread",
+};
+
+/** Pages that are offers, not requests — a traveller lead can never come from these. */
+const TRAVELLER_SKIP = [
+  "tuktuk24lisbon.com",
+  "getyourguide.",
+  "viator.",
+  "booking.com",
+  "expedia.",
+  "civitatis.",
+  "klook.",
+  "airbnb.",
+];
+
+const travellerSchema = {
+  name: "traveller_leads",
+  schema: {
+    type: "object",
+    properties: {
+      leads: {
+        type: "array",
+        items: {
+          type: "object",
+          properties: {
+            display_name: { type: "string" },
+            platform: { type: "string" },
+            country: { type: "string" },
+            request_summary: { type: "string" },
+            travel_dates: { type: "string" },
+            group_size: { type: "string" },
+            posted_at: { type: "string" },
+            source_url: { type: "string" },
+            reason: { type: "string" },
+            relevance_score: { type: "number" },
+            qualified: { type: "boolean" },
+          },
+          required: ["display_name", "request_summary", "source_url", "qualified"],
+        },
+      },
+    },
+    required: ["leads"],
+  },
+};
+
+export const runTravellerSearch = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z
+      .object({
+        intents: z.array(z.string()).min(1),
+        sources: z.array(z.string()).min(1),
+        extra: z.string().max(200).optional(),
+        recency: z.enum(["qdr:w", "qdr:m", "qdr:y"]).default("qdr:m"),
+        leadCount: z.number().int().min(1).max(MAX_LEADS_PER_JOB),
+        mode: z.enum(["quick", "standard", "deep"]),
+      })
+      .parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    await assertRole(context as never, "manager");
+    const { assertBudget, fcSearch, fcScrape, callAI, admin } = await fc();
+
+    const estimate = estimateLeadJobCredits(data.leadCount, data.mode);
+    await assertBudget(estimate);
+
+    const jobId = await openJob(
+      "traveller_finder",
+      `${data.intents.join(", ")}${data.extra ? ` — ${data.extra}` : ""}`,
+      data as never,
+      data.mode,
+      context as never,
+    );
+
+    try {
+      const asks = [
+        '"looking for" recommendation',
+        '"any recommendations"',
+        '"can anyone recommend"',
+        '"planning a trip"',
+      ];
+
+      const queries: string[] = [];
+      for (const source of data.sources) {
+        for (const intent of data.intents.slice(0, 3)) {
+          queries.push(
+            `${intent} Lisbon ${asks[queries.length % asks.length]} ${data.extra ?? ""} ${SOURCE_HINT[source] ?? ""}`.trim(),
+          );
+        }
+      }
+
+      const maxQueries = data.mode === "quick" ? 2 : data.mode === "standard" ? 4 : 6;
+      const perQuery = Math.max(5, Math.ceil((data.leadCount * 2) / maxQueries));
+
+      const hits: { url: string; title: string; description: string }[] = [];
+      for (const q of queries.slice(0, maxQueries)) {
+        const found = await fcSearch(q, Math.min(perQuery, 20), jobId, data.recency);
+        hits.push(...found);
+        if (hits.length >= data.leadCount * 2) break;
+      }
+
+      // De-duplicate by exact thread URL (several people can post on one site).
+      const seen = new Set<string>();
+      const candidates = hits.filter((h) => {
+        const d = domainOf(h.url);
+        if (!d || TRAVELLER_SKIP.some((s) => d.includes(s))) return false;
+        if (seen.has(h.url)) return false;
+        seen.add(h.url);
+        return true;
+      });
+
+      const scrapeBudget =
+        data.mode === "quick"
+          ? Math.ceil(data.leadCount / 2)
+          : data.mode === "standard"
+            ? data.leadCount
+            : Math.ceil(data.leadCount * 1.5);
+
+      const pool: any[] = [];
+      for (const c of candidates.slice(0, Math.min(scrapeBudget, candidates.length))) {
+        let markdown = "";
+        try {
+          markdown = await fcScrape(c.url, jobId);
+        } catch (e) {
+          if (e instanceof Error && e.name === "FreeTierStopError") break;
+          continue;
+        }
+        pool.push({
+          url: c.url,
+          title: c.title,
+          description: c.description,
+          platform: domainOf(c.url),
+          text: markdown.slice(0, 5000),
+        });
+      }
+
+      const workingPool = pool.length
+        ? pool
+        : candidates.slice(0, data.leadCount).map((c) => ({
+            url: c.url,
+            title: c.title,
+            description: c.description,
+            platform: domainOf(c.url),
+            text: "",
+          }));
+
+      const ai = await callAI(
+        [
+          {
+            role: "system",
+            content:
+              "You find real travellers who are publicly asking for a tour, guide or tuk tuk experience in Lisbon, for TukTuk24 (private tuk tuk tours in Lisbon). " +
+              "A lead is ONE public post or thread where a person asks for a tour, a guide or recommendations — never a company selling tours, never a review, never an article or listicle. Set qualified=false for those. " +
+              "Use ONLY the supplied public page content. Never invent a name, date, group size or fact. " +
+              "Use only the public display name or username shown on the post. NEVER collect or guess a personal email address, phone number, home address or any other private personal detail — leave those out entirely. " +
+              `If a field is unknown put exactly "${NOT_FOUND}". source_url must be the exact page the request was found on.`,
+          },
+          {
+            role: "user",
+            content: `Wanted: ${data.intents.join(", ")}${data.extra ? `\nExtra: ${data.extra}` : ""}\n\nPages:\n${JSON.stringify(workingPool).slice(0, 90000)}`,
+          },
+        ],
+        travellerSchema,
+      );
+
+      const clean = (v: unknown) => {
+        const s = typeof v === "string" ? v.trim() : "";
+        return s && s !== NOT_FOUND ? s : null;
+      };
+
+      const db = await admin();
+      const rows = (ai?.leads ?? [])
+        .filter((l: any) => l?.qualified !== false && l?.display_name && l?.source_url)
+        .slice(0, data.leadCount)
+        .map((l: any) => ({
+          job_id: jobId,
+          audience: "traveller",
+          company: String(l.display_name).slice(0, 200),
+          country: clean(l.country),
+          city: "Lisbon",
+          website: null,
+          domain: domainOf(l.source_url),
+          business_type: "Traveller request",
+          platform: clean(l.platform) ?? domainOf(l.source_url),
+          request_summary: clean(l.request_summary),
+          travel_dates: clean(l.travel_dates),
+          group_size: clean(l.group_size),
+          posted_at: clean(l.posted_at),
+          source_url: String(l.source_url),
+          contact_page: String(l.source_url),
+          reason: clean(l.reason),
+          relevance_score: Number.isFinite(l.relevance_score) ? Math.round(l.relevance_score) : null,
+          status: "new",
+        }));
+
+      if (rows.length) {
+        const { error } = await db.from("research_leads").insert(rows as never);
+        if (error) throw new Error(error.message);
+      }
+
+      const { credits, searches, pages } = await jobCredits(jobId);
+      await closeJob(jobId, {
+        status: "completed",
+        credits_used: credits,
+        searches,
+        pages,
+        leads_found: rows.length,
+        sources: workingPool.map((p) => p.url) as never,
+      });
+
+      return { ok: true, jobId, leads: rows.length, creditsUsed: credits };
+    } catch (err) {
+      return await fail(jobId, err);
+    }
+  });
+
+/* ------------------------------------------------------------------ */
 /* Lead review + CRM import                                            */
 /* ------------------------------------------------------------------ */
 
 export const listResearchLeads = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) => z.object({ status: z.string().default("new") }).parse(d ?? {}))
+  .inputValidator((d: unknown) =>
+    z
+      .object({ status: z.string().default("new"), audience: z.string().default("partner") })
+      .parse(d ?? {}),
+  )
   .handler(async ({ data, context }) => {
     await assertRole(context as never, "staff");
     const { admin } = await fc();
     const db = await admin();
     let q = db.from("research_leads").select("*").order("created_at", { ascending: false }).limit(300);
     if (data.status !== "all") q = q.eq("status", data.status);
+    if (data.audience !== "all") q = q.eq("audience", data.audience);
     const { data: rows, error } = await q;
     if (error) throw new Error(error.message);
     return rows ?? [];
@@ -414,10 +643,17 @@ export const importResearchLead = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     if (!lead) throw new Error("Lead not found");
 
+    const isTraveller = lead.audience === "traveller";
+
     // Duplicate protection against the existing CRM.
     const or: string[] = [];
-    if (lead.domain) or.push(`domain.eq.${lead.domain}`);
-    if (lead.company) or.push(`company.eq.${lead.company.replace(/,/g, " ")}`);
+    if (isTraveller) {
+      // One public request = one lead; the thread URL identifies it.
+      if (lead.source_url) or.push(`source_url.eq.${lead.source_url}`);
+    } else {
+      if (lead.domain) or.push(`domain.eq.${lead.domain}`);
+      if (lead.company) or.push(`company.eq.${lead.company.replace(/,/g, " ")}`);
+    }
     if (lead.email) or.push(`email.eq.${lead.email}`);
     if (lead.phone) or.push(`phone.eq.${lead.phone}`);
 
@@ -443,11 +679,23 @@ export const importResearchLead = createServerFn({ method: "POST" })
         source_url: lead.source_url,
         email: lead.email,
         phone: lead.phone,
-        lead_kind: "partner",
-        source: "web_intelligence",
+        lead_kind: isTraveller ? "traveller" : "partner",
+        source: isTraveller ? "web_intelligence_traveller" : "web_intelligence",
         status: "new",
         language: "en",
-        notes: [lead.tourism_focus, lead.portugal_relevance, lead.lisbon_relevance, lead.contact_page]
+        message: isTraveller ? lead.request_summary : null,
+        preferred_date: null,
+        notes: (isTraveller
+          ? [
+              lead.request_summary,
+              lead.travel_dates ? `Dates: ${lead.travel_dates}` : null,
+              lead.group_size ? `Group: ${lead.group_size}` : null,
+              lead.platform ? `Found on: ${lead.platform}` : null,
+              lead.posted_at ? `Posted: ${lead.posted_at}` : null,
+              lead.source_url,
+            ]
+          : [lead.tourism_focus, lead.portugal_relevance, lead.lisbon_relevance, lead.contact_page]
+        )
           .filter(Boolean)
           .join("\n"),
       } as never)

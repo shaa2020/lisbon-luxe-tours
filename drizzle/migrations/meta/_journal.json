@@ -36,6 +36,13 @@
       "when": 1790109466204,
       "tag": "0004_web_intelligence_firecrawl",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1790110406862,
+      "tag": "0005_traveller_leads_and_review_email_privacy",
+      "breakpoints": true
     }
   ]
 }
