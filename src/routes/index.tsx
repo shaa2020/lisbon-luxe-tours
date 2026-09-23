@@ -246,16 +246,16 @@ function SearchBar() {
       className="bg-white shadow-[0_24px_60px_rgba(10,20,35,0.28)] grid grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_1fr_auto] overflow-hidden"
     >
       <SearchField label="Destination" placeholder="Alfama, Sintra, Belém…" value={dest} onChange={setDest}>
-        <PinIco />
+        <PinIco field />
       </SearchField>
       <SearchField label="Date" placeholder="dd / mm / yy" type="date" value={date} onChange={setDate}>
-        <CalIco />
+        <CalIco field />
       </SearchField>
       <SearchField label="Guests" placeholder="2" type="number" value={guests} onChange={setGuests}>
-        <UserIco />
+        <UserIco field />
       </SearchField>
       <SearchField label="Tour length" placeholder="2 hours" value={length} onChange={setLength}>
-        <CalIco />
+        <CalIco field />
       </SearchField>
       <button
         type="button"
@@ -270,12 +270,8 @@ function SearchBar() {
 }
 
 function SearchIco() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <circle cx="11" cy="11" r="7" />
-      <path d="M20 20l-3.5-3.5" />
-    </svg>
-  );
+  // White icon on a gold button — slightly stronger stroke for contrast.
+  return <Search className={FIELD_ICON} strokeWidth={2} />;
 }
 
 function SearchField({
@@ -415,7 +411,7 @@ function WhyTravel() {
       <div className="grid md:grid-cols-3 gap-6 md:gap-8">
         {features.map((f) => (
           <div key={f.title} className="flex gap-4 items-start">
-            <div className="w-12 h-12 shrink-0 rounded-full bg-white border border-gold/25 flex items-center justify-center text-gold [&_svg]:w-6 [&_svg]:h-6">
+            <div className="w-12 h-12 shrink-0 rounded-full bg-white border border-gold/25 flex items-center justify-center text-gold">
               {f.icon}
             </div>
             <div>
@@ -630,7 +626,7 @@ function Gallery() {
               <div className="absolute inset-0 bg-gold/0 group-hover:bg-gold/20 transition-colors flex items-center justify-center">
                 <svg
                   className="opacity-0 group-hover:opacity-100 transition w-8 h-8 text-white"
-                  fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"
+                  fill="none" stroke="currentColor" strokeWidth="1.75" viewBox="0 0 24 24"
                 >
                   <circle cx="11" cy="11" r="7" />
                   <path d="m20 20-3-3" strokeLinecap="round" />
