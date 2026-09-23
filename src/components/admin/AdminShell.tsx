@@ -2,7 +2,8 @@ import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { useAuth } from "@/lib/auth";
 import { useSiteBrand } from "@/lib/brand";
-import { useAdminBadges } from "@/lib/admin-stats";
+import { useAdminBadges, markNotificationsSeen } from "@/lib/admin-stats";
+import { useQueryClient } from "@tanstack/react-query";
 import { useAdminPromotions, isPromotionLive } from "@/lib/promotions";
 import {
   LayoutDashboard,
