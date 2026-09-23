@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useMemo, useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -495,6 +495,7 @@ function BookingsInbox() {
         }}
       />
 
+      <div className="sticky top-0 z-20 -mx-4 mb-6 border-b border-border bg-background/95 px-4 pb-3 pt-3 backdrop-blur sm:-mx-6 sm:px-6">
       <div className="flex flex-wrap gap-2 mb-3">
         {(
           [
@@ -533,7 +534,7 @@ function BookingsInbox() {
         ))}
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-2 mb-6">
+      <div className="flex flex-col sm:flex-row gap-2">
         <input
           type="search"
           value={search}
@@ -580,6 +581,7 @@ function BookingsInbox() {
             Export CSV ({filtered.length})
           </button>
         </div>
+      </div>
       </div>
 
       {isLoading ? (
@@ -695,6 +697,35 @@ function BookingsInbox() {
                   {b.guests} guest{b.guests === 1 ? "" : "s"}
                   {b.option_duration_label ? ` · ${b.option_duration_label}` : ""}
                 </p>
+              </div>
+
+              <div className="mb-4 flex flex-wrap gap-2">
+                {waLink(b) && (
+                  <a
+                    href={waLink(b)!}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1.5 text-xs font-semibold text-emerald-700 hover:bg-emerald-500/20 dark:text-emerald-400"
+                  >
+                    <MessageCircle className="h-3.5 w-3.5" /> WhatsApp
+                  </a>
+                )}
+                <button
+                  type="button"
+                  onClick={() => toggleExpanded(b.id, b.guests)}
+                  className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-semibold text-foreground hover:border-primary"
+                >
+                  <Users className="h-3.5 w-3.5" />
+                  {expandedId === b.id ? "Close details" : "Assign guide & details"}
+                </button>
+                {ledgers[b.id]?.dueCents > 0 && (
+                  <Link
+                    to="/admin/reconciliation"
+                    className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-1.5 text-xs font-semibold text-amber-700 hover:bg-amber-500/20 dark:text-amber-400"
+                  >
+                    Settle {euro(ledgers[b.id].dueCents)}
+                  </Link>
+                )}
               </div>
 
               {b.tour_slug === "custom" &&
