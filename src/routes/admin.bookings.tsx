@@ -582,6 +582,7 @@ function BookingsInbox() {
           </button>
         </div>
       </div>
+      </div>
 
       {isLoading ? (
         <p className="text-sm text-muted-foreground">Loading…</p>
