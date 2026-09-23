@@ -10,7 +10,7 @@ import {
   tourStageClass,
   TOUR_STAGE_LABEL,
 } from "@/lib/booking-ledger";
-import { AlertTriangle, Banknote, Clock, MessageSquare, UserRound } from "lucide-react";
+import { Banknote, Clock, MessageSquare, UserRound } from "lucide-react";
 
 /**
  * Operations cockpit for the dashboard: what needs attention right now and a
@@ -201,11 +201,6 @@ export function DashboardToday() {
         )}
       </AdminCard>
 
-      {!isLoading && rows.length === 0 && noGuide === 0 && (
-        <p className="sr-only">
-          <AlertTriangle className="w-0 h-0" />
-        </p>
-      )}
     </div>
   );
 }
