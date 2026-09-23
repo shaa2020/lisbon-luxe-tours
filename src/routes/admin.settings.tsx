@@ -178,7 +178,7 @@ function AdminSettings() {
       group_discount_enabled: d.group_discount_enabled !== false,
       group_discount_tiers: parseGroupTiers(d.group_discount_tiers),
     });
-  }, [brand.data]);
+  }, [brand.data, privateSettings.data]);
 
   const refreshBrand = () => {
     qc.invalidateQueries({ queryKey: ["site-brand"] });
@@ -198,8 +198,9 @@ function AdminSettings() {
 
   const saveBiz = async () => {
     setSavingBiz(true);
+    const { owner_notification_email, ...publicBiz } = biz;
     const payload = {
-      ...biz,
+      ...publicBiz,
       group_discount_tiers: [...biz.group_discount_tiers]
         .filter((t) => Number.isFinite(t.min_guests) && Number.isFinite(t.percent))
         .sort((a, b) => a.min_guests - b.min_guests),
@@ -207,9 +208,14 @@ function AdminSettings() {
       promo_banner_ends_at: fromLocalInput(biz.promo_banner_ends_at),
     };
     const { error } = await supabase.from("site_settings").upsert({ id: true, ...payload } as any);
+    // The alerts inbox is stored privately, away from the public site settings.
+    const { error: privateError } = await supabase
+      .from("private_settings")
+      .upsert({ id: true, owner_notification_email: owner_notification_email.trim() || null });
     setSavingBiz(false);
-    if (error) return toast.error(error.message);
+    if (error || privateError) return toast.error((error || privateError)!.message);
     toast.success("Settings saved");
+    qc.invalidateQueries({ queryKey: ["private-settings-admin"] });
     refreshBrand();
   };
 
