@@ -495,6 +495,7 @@ function BookingsInbox() {
         }}
       />
 
+      <div className="sticky top-0 z-20 -mx-4 mb-6 border-b border-border bg-background/95 px-4 pb-3 pt-3 backdrop-blur sm:-mx-6 sm:px-6">
       <div className="flex flex-wrap gap-2 mb-3">
         {(
           [
