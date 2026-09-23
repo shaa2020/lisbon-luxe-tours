@@ -3,6 +3,8 @@ import { useQuery } from "@tanstack/react-query";
 import { Map, BookOpen, CalendarCheck, Mail, CreditCard, Star, Euro, Users, TrendingUp, Megaphone } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { AdminShell, AdminCard } from "@/components/admin/AdminShell";
+import { DashboardToday } from "@/components/admin/DashboardToday";
+
 import { useAdminPromotions, isPromotionLive } from "@/lib/promotions";
 import { useAuth } from "@/lib/auth";
 import { useRevenueStats, useUpcomingThisWeek, useAdminBadges } from "@/lib/admin-stats";
@@ -140,7 +142,10 @@ function AdminDashboard() {
 
       <div className="grid lg:grid-cols-[1.35fr_0.65fr] gap-6 items-start">
         <div className="space-y-6">
+          {can("bookings.view") && <DashboardToday />}
+
           {/* ===== Upcoming this week ===== */}
+
           <AdminCard className="p-5">
             <div className="flex items-center justify-between mb-3">
               <div>
