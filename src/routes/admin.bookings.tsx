@@ -699,6 +699,35 @@ function BookingsInbox() {
                 </p>
               </div>
 
+              <div className="mb-4 flex flex-wrap gap-2">
+                {waLink(b) && (
+                  <a
+                    href={waLink(b)!}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1.5 text-xs font-semibold text-emerald-700 hover:bg-emerald-500/20 dark:text-emerald-400"
+                  >
+                    <MessageCircle className="h-3.5 w-3.5" /> WhatsApp
+                  </a>
+                )}
+                <button
+                  type="button"
+                  onClick={() => toggleExpanded(b.id, b.guests)}
+                  className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-semibold text-foreground hover:border-primary"
+                >
+                  <Users className="h-3.5 w-3.5" />
+                  {expandedId === b.id ? "Close details" : "Assign guide & details"}
+                </button>
+                {ledgers[b.id]?.dueCents > 0 && (
+                  <Link
+                    to="/admin/reconciliation"
+                    className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-1.5 text-xs font-semibold text-amber-700 hover:bg-amber-500/20 dark:text-amber-400"
+                  >
+                    Settle {euro(ledgers[b.id].dueCents)}
+                  </Link>
+                )}
+              </div>
+
               {b.tour_slug === "custom" &&
                 Array.isArray(b.custom_selections) &&
                 b.custom_selections.length > 0 && (
