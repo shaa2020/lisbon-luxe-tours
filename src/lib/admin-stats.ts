@@ -84,24 +84,48 @@ export function useUpcomingThisWeek() {
   });
 }
 
-/** Counts for sidebar/nav unread badges. */
+const NOTIF_SEEN_KEY = "tt24_admin_notifs_seen_at";
+
+/** When the admin last opened the notifications panel. */
+export function getNotificationsSeenAt(): string {
+  try {
+    return localStorage.getItem(NOTIF_SEEN_KEY) || "1970-01-01T00:00:00.000Z";
+  } catch {
+    return "1970-01-01T00:00:00.000Z";
+  }
+}
+
+/** Marks everything currently visible as seen, so the bell clears. */
+export function markNotificationsSeen() {
+  try {
+    localStorage.setItem(NOTIF_SEEN_KEY, new Date().toISOString());
+  } catch {
+    /* private mode */
+  }
+}
+
+/** Counts for sidebar/nav unread badges (only items newer than the last visit). */
 export function useAdminBadges() {
   return useQuery({
     queryKey: ["admin-badges"],
     queryFn: async () => {
+      const since = getNotificationsSeenAt();
       const [newBookings, newMessages, pendingReviews] = await Promise.all([
         supabase
           .from("bookings")
           .select("*", { count: "exact", head: true })
-          .eq("status", "new"),
+          .eq("status", "new")
+          .gt("created_at", since),
         supabase
           .from("contact_messages")
           .select("*", { count: "exact", head: true })
-          .eq("status", "new"),
+          .eq("status", "new")
+          .gt("created_at", since),
         supabase
           .from("reviews")
           .select("id", { count: "exact", head: true })
-          .eq("status", "pending"),
+          .eq("status", "pending")
+          .gt("created_at", since),
       ]);
       return {
         bookings: newBookings.count ?? 0,

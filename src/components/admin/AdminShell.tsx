@@ -2,7 +2,8 @@ import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { useAuth } from "@/lib/auth";
 import { useSiteBrand } from "@/lib/brand";
-import { useAdminBadges } from "@/lib/admin-stats";
+import { useAdminBadges, markNotificationsSeen } from "@/lib/admin-stats";
+import { useQueryClient } from "@tanstack/react-query";
 import { useAdminPromotions, isPromotionLive } from "@/lib/promotions";
 import {
   LayoutDashboard,
@@ -142,6 +143,7 @@ export function AdminShell({ children, requires }: { children: ReactNode; requir
   const navigate = useNavigate();
   const { location } = useRouterState();
   const { data: badges } = useAdminBadges();
+  const queryClient = useQueryClient();
   const [moreOpen, setMoreOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [userMenu, setUserMenu] = useState(false);
@@ -377,7 +379,16 @@ export function AdminShell({ children, requires }: { children: ReactNode; requir
                 <button
                   onClick={() => {
                     setUserMenu(false);
-                    setNotifOpen((v) => !v);
+                    setNotifOpen((v) => {
+                      const next = !v;
+                      if (next) {
+                        markNotificationsSeen();
+                        setTimeout(() => {
+                          queryClient.invalidateQueries({ queryKey: ["admin-badges"] });
+                        }, 400);
+                      }
+                      return next;
+                    });
                   }}
                   className="relative grid w-10 h-10 place-items-center rounded-xl text-muted-foreground hover:bg-accent"
                   aria-label="Notifications"
@@ -655,7 +666,7 @@ export function AdminPageHeader({
   actions?: ReactNode;
 }) {
   return (
-    <div className="mb-6 grid grid-cols-[minmax(0,1fr)_auto] items-end gap-3 sm:flex sm:flex-wrap sm:justify-between">
+    <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end sm:justify-between">
       <div className="min-w-0">
         {eyebrow && (
           <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-primary mb-1.5">{eyebrow}</p>
