@@ -2,7 +2,7 @@ import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { useAuth } from "@/lib/auth";
 import { useSiteBrand } from "@/lib/brand";
-import { useAdminBadges, markNotificationsSeen } from "@/lib/admin-stats";
+import { useAdminBadges } from "@/lib/admin-stats";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAdminPromotions, isPromotionLive } from "@/lib/promotions";
 import {
@@ -413,16 +413,7 @@ export function AdminShell({ children, requires }: { children: ReactNode; requir
                 <button
                   onClick={() => {
                     setUserMenu(false);
-                    setNotifOpen((v) => {
-                      const next = !v;
-                      if (next) {
-                        markNotificationsSeen();
-                        setTimeout(() => {
-                          queryClient.invalidateQueries({ queryKey: ["admin-badges"] });
-                        }, 400);
-                      }
-                      return next;
-                    });
+                    setNotifOpen((v) => !v);
                   }}
                   className="relative grid w-10 h-10 place-items-center rounded-xl text-muted-foreground hover:bg-accent"
                   aria-label="Notifications"
