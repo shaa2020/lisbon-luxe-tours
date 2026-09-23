@@ -103,6 +103,16 @@
     "typescript-eslint": "^8.56.1",
     "vite": "^7.3.1"
   },
+  "overrides": {
+    "ws": "^8.21.3",
+    "undici": "^7.29.0",
+    "sharp": "^0.35.4",
+    "js-yaml": "^4.3.2",
+    "browserslist": "^4.29.0",
+    "baseline-browser-mapping": "^2.11.25",
+    "dompurify": "^3.4.15",
+    "esbuild": "^0.25.13"
+  },
   "pnpm": {
     "overrides": {
       "entities": "4.5.0"
