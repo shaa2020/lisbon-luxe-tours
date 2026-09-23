@@ -162,6 +162,14 @@ export const Route = createFileRoute("/api/public/bookings")({
               ctaLabel: "Open bookings",
               ctaUrl: "https://tuktuk24lisbon.com/admin/bookings",
             });
+
+            const { sendAdminPush } = await import("@/lib/push.server");
+            await sendAdminPush(supabaseAdmin as never, {
+              title: `New booking · €${Number(total).toFixed(2)}`,
+              body: `${data.customer.name} — ${data.tour_name}, ${guests} guest${guests > 1 ? "s" : ""} on ${data.tour_date}`,
+              url: "/admin/bookings",
+              tag: `booking-${booking.id}`,
+            });
           }
 
           const reference = generateReference(data.tour_date);

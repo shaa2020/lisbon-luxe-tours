@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { useAuth } from "@/lib/auth";
 import { useSiteBrand } from "@/lib/brand";
 import { useAdminBadges } from "@/lib/admin-stats";
+import { PushNotifications } from "@/components/admin/PushNotifications";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAdminPromotions, isPromotionLive } from "@/lib/promotions";
 import {
@@ -483,6 +484,9 @@ export function AdminShell({ children, requires }: { children: ReactNode; requir
                         )}
                       </>
                     )}
+                    <div className="mt-1 border-t border-border px-2.5 pt-3 pb-1">
+                      <PushNotifications compact />
+                    </div>
                   </div>
                 )}
               </div>
