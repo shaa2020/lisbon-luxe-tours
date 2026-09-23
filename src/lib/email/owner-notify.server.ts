@@ -9,8 +9,9 @@ type SupabaseLike = Parameters<typeof sendBrandedEmail>[0] & {
 
 async function ownerInbox(supabase: SupabaseLike): Promise<string[]> {
   try {
+    // Kept out of site_settings: that table is readable by website visitors.
     const { data } = await supabase
-      .from("site_settings")
+      .from("private_settings")
       .select("owner_notification_email")
       .maybeSingle();
     const str = String((data as { owner_notification_email?: string } | null)?.owner_notification_email ?? "");
