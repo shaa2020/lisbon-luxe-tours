@@ -64,6 +64,13 @@
       "when": 1790167065732,
       "tag": "0008_push_subscriptions",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1790167395508,
+      "tag": "0009_private_settings_owner_email",
+      "breakpoints": true
     }
   ]
 }
