@@ -377,7 +377,16 @@ export function AdminShell({ children, requires }: { children: ReactNode; requir
                 <button
                   onClick={() => {
                     setUserMenu(false);
-                    setNotifOpen((v) => !v);
+                    setNotifOpen((v) => {
+                      const next = !v;
+                      if (next) {
+                        markNotificationsSeen();
+                        setTimeout(() => {
+                          queryClient.invalidateQueries({ queryKey: ["admin-badges"] });
+                        }, 400);
+                      }
+                      return next;
+                    });
                   }}
                   className="relative grid w-10 h-10 place-items-center rounded-xl text-muted-foreground hover:bg-accent"
                   aria-label="Notifications"
