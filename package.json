@@ -111,7 +111,7 @@
     "browserslist": "^4.29.0",
     "baseline-browser-mapping": "^2.11.25",
     "dompurify": "^3.4.15",
-    "esbuild": "^0.25.13"
+    "esbuild": "^0.28.2"
   },
   "pnpm": {
     "overrides": {
