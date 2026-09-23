@@ -111,9 +111,9 @@ export function DashboardToday() {
   }[];
 
   return (
-    <div className="space-y-4">
+    <div className="min-w-0 space-y-4">
       {alerts.length > 0 && (
-        <div className="grid sm:grid-cols-2 gap-3">
+        <div className="grid grid-cols-[minmax(0,1fr)] sm:grid-cols-2 gap-3">
           {alerts.map((a) => (
             <Link
               key={a.key}

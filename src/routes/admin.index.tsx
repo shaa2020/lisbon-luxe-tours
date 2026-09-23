@@ -140,8 +140,8 @@ function AdminDashboard() {
       </div>
       )}
 
-      <div className="grid lg:grid-cols-[1.35fr_0.65fr] gap-6 items-start">
-        <div className="space-y-6">
+      <div className="grid grid-cols-[minmax(0,1fr)] lg:grid-cols-[minmax(0,1.35fr)_minmax(0,0.65fr)] gap-6 items-start">
+        <div className="min-w-0 space-y-6">
           {can("bookings.view") && <DashboardToday />}
 
           {/* ===== Upcoming this week ===== */}
@@ -192,7 +192,7 @@ function AdminDashboard() {
           </AdminCard>
 
           {/* ===== Section cards ===== */}
-          <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-4">
+          <div className="grid grid-cols-[minmax(0,1fr)] sm:grid-cols-2 xl:grid-cols-3 gap-4">
             {allCards.map((c) => (
               <Link
                 key={c.label}
@@ -220,7 +220,7 @@ function AdminDashboard() {
         </div>
 
         {/* ===== Right rail ===== */}
-        <div className="space-y-6">
+        <div className="min-w-0 space-y-6">
           {can("marketing.manage") && (
           <AdminCard className="p-5 space-y-3">
             <div className="flex items-center gap-2">
