@@ -140,7 +140,10 @@ function AdminDashboard() {
 
       <div className="grid lg:grid-cols-[1.35fr_0.65fr] gap-6 items-start">
         <div className="space-y-6">
+          {can("bookings.view") && <DashboardToday />}
+
           {/* ===== Upcoming this week ===== */}
+
           <AdminCard className="p-5">
             <div className="flex items-center justify-between mb-3">
               <div>
