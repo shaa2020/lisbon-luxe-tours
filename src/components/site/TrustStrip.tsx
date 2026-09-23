@@ -1,27 +1,47 @@
-import { useFeaturedReviews } from "@/lib/reviews";
+import { ShieldCheck, RotateCcw, Wallet, Leaf } from "lucide-react";
 
 const ITEMS = [
-  { k: "Licensed", v: "Local Lisbon operator" },
-  { k: "100% electric", v: "Quiet, fume-free fleet" },
-  { k: "Free cancellation", v: "Up to 24h before" },
-  { k: "Instant confirmation", v: "Secure online payment" },
+  {
+    Icon: ShieldCheck,
+    k: "Licensed Lisbon operator",
+    v: "Registered local company, insured tuk-tuks",
+  },
+  {
+    Icon: RotateCcw,
+    k: "Free cancellation",
+    v: "Full refund up to 24h before your tour",
+  },
+  {
+    Icon: Wallet,
+    k: "Book with 20% deposit",
+    v: "Pay the balance on the day of the tour",
+  },
+  {
+    Icon: Leaf,
+    k: "100% electric & private",
+    v: "Quiet, fume-free, your group only",
+  },
 ];
 
 /**
- * Honest trust band shown while there are no published reviews yet.
- * Once reviews exist the reviews section takes over and this hides itself.
+ * Permanent trust band. Always visible — it answers the questions travellers
+ * ask before they are willing to book with a company abroad.
  */
 export function TrustStrip() {
-  const { data: reviews = [] } = useFeaturedReviews(1);
-  if (reviews.length > 0) return null;
-
   return (
     <section className="border-y border-ink/10 bg-white">
-      <div className="container-x py-8 grid grid-cols-2 md:grid-cols-4 gap-6">
-        {ITEMS.map((i) => (
-          <div key={i.k} className="text-center md:text-left">
-            <p className="font-display text-[15px] font-bold text-ink leading-tight">{i.k}</p>
-            <p className="text-[12px] text-body mt-1 leading-snug">{i.v}</p>
+      <div className="container-x py-7 md:py-9 grid grid-cols-2 md:grid-cols-4 gap-x-5 gap-y-7">
+        {ITEMS.map(({ Icon, k, v }) => (
+          <div key={k} className="flex items-start gap-3">
+            <span className="mt-0.5 shrink-0 inline-flex h-9 w-9 items-center justify-center rounded-full bg-gold/10">
+              <Icon className="h-[18px] w-[18px] text-gold" strokeWidth={1.75} />
+            </span>
+            <div className="min-w-0">
+              <p className="font-display text-[13.5px] md:text-[15px] font-bold text-ink leading-tight">
+                {k}
+              </p>
+              <p className="text-[11.5px] md:text-[12px] text-body mt-1 leading-snug">{v}</p>
+            </div>
           </div>
         ))}
       </div>
