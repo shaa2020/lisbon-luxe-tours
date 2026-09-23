@@ -58,26 +58,36 @@ const GROUPS: NavGroup[] = [
     items: [{ to: "/admin", label: "Dashboard", icon: LayoutDashboard, desc: "Revenue and activity", perm: "dashboard.view" }],
   },
   {
-    title: "Sell",
+    title: "Operations",
+    items: [
+      { to: "/admin/bookings", label: "Bookings", icon: CalendarCheck, desc: "Requests and schedule", perm: "bookings.view" },
+      { to: "/admin/ops", label: "Day sheet & fleet", icon: Gauge, desc: "Today, guides, vehicles", perm: "ops.view" },
+      { to: "/admin/meetup-points", label: "Meeting points", icon: MapPin, desc: "Where guests meet the tuk tuk", perm: "ops.view" },
+    ],
+  },
+  {
+    title: "Finance",
+    items: [
+      { to: "/admin/orders", label: "Orders", icon: CreditCard, desc: "Payments and refunds", perm: "orders.view" },
+      { to: "/admin/reconciliation", label: "Reconciliation", icon: Scale, desc: "Money checked against PayPal", perm: "orders.view" },
+      { to: "/admin/commission", label: "Commission", icon: Percent, desc: "My cut and guide balances", perm: "payments.manage" },
+    ],
+  },
+  {
+    title: "Inbox",
+    items: [
+      { to: "/admin/messages", label: "Messages", icon: MessageSquare, desc: "Contact inbox", perm: "messages.view" },
+      { to: "/admin/leads", label: "Leads & chats", icon: MessageSquare, desc: "WhatsApp and AI enquiries", perm: "bookings.view" },
+      { to: "/admin/emails", label: "Emails", icon: Mail, desc: "Templates and send log", perm: "emails.manage" },
+    ],
+  },
+  {
+    title: "Catalogue",
     items: [
       { to: "/admin/tours", label: "Tours", icon: Map, desc: "Catalogue and pricing", perm: "tours.manage" },
       { to: "/admin/custom-builder", label: "Custom builder", icon: Sparkles, desc: "Build-your-own options", perm: "tours.manage" },
       { to: "/admin/discounts", label: "Discounts", icon: Tag, desc: "Promo codes", perm: "discounts.manage" },
       { to: "/admin/promotions", label: "Promotions", icon: Megaphone, desc: "Banners and campaigns", perm: "settings.manage" },
-    ],
-  },
-  {
-    title: "Operate",
-    items: [
-      { to: "/admin/bookings", label: "Bookings", icon: CalendarCheck, desc: "Requests and schedule", perm: "bookings.view" },
-      { to: "/admin/orders", label: "Orders", icon: CreditCard, desc: "Payments and refunds", perm: "orders.view" },
-      { to: "/admin/reconciliation", label: "Reconciliation", icon: Scale, desc: "Money checked against PayPal", perm: "orders.view" },
-      { to: "/admin/commission", label: "Commission", icon: Percent, desc: "My cut and guide balances", perm: "payments.manage" },
-      { to: "/admin/ops", label: "Operations", icon: Gauge, desc: "Jobs, drivers, vehicles", perm: "ops.view" },
-      { to: "/admin/meetup-points", label: "Meetup points", icon: MapPin, desc: "Where guests meet the tuk tuk", perm: "ops.view" },
-      { to: "/admin/messages", label: "Messages", icon: MessageSquare, desc: "Contact inbox", perm: "messages.view" },
-      { to: "/admin/leads", label: "Leads & chats", icon: MessageSquare, desc: "WhatsApp and AI enquiries", perm: "bookings.view" },
-      { to: "/admin/emails", label: "Emails", icon: Mail, desc: "Templates and send log", perm: "emails.manage" },
     ],
   },
   {
@@ -92,13 +102,13 @@ const GROUPS: NavGroup[] = [
     ],
   },
   {
-    title: "Grow",
+    title: "Growth",
     items: [
       { to: "/admin/web-intel", label: "Web Intelligence", icon: Globe, desc: "Find partners and research (free tier)", perm: "marketing.manage" },
     ],
   },
   {
-    title: "Configure",
+    title: "System",
     items: [
       { to: "/admin/settings", label: "Settings", icon: Settings, desc: "Brand, booking, payments", perm: "settings.manage" },
       { to: "/admin/team", label: "Team", icon: Users, desc: "Members and roles", perm: "team.manage" },
@@ -107,6 +117,7 @@ const GROUPS: NavGroup[] = [
     ],
   },
 ];
+
 
 /** Bottom tab bar targets on mobile. */
 const PRIMARY: NavItem[] = [
@@ -149,6 +160,8 @@ export function AdminShell({ children, requires }: { children: ReactNode; requir
   const [userMenu, setUserMenu] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
   const [query, setQuery] = useState("");
+  const [groupOverride, setGroupOverride] = useState<Record<string, boolean>>({});
+
 
   const groups = useMemo(
     () =>
@@ -223,38 +236,59 @@ export function AdminShell({ children, requires }: { children: ReactNode; requir
         </div>
       </div>
 
-      <nav className="flex-1 overflow-y-auto px-3 pb-4 space-y-5">
-        {groups.map((group) => (
-          <div key={group.title}>
-            <p className="px-3 mb-1.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground/70">
-              {group.title}
-            </p>
-            <div className="space-y-1">
-              {group.items.map((n) => {
-                const active = isActiveRoute(n.to, location.pathname);
-                const Icon = n.icon;
-                return (
-                  <Link
-                    key={n.to}
-                    to={n.to}
-                    className={`group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors ${
-                      active
-                        ? "bg-emerald-600 text-white font-semibold shadow-[0_6px_16px_rgba(5,150,105,0.35)]"
-                        : "text-muted-foreground hover:bg-accent hover:text-foreground"
-                    }`}
-                  >
-                    <Icon className="w-[18px] h-[18px] shrink-0" />
-                    <span className="truncate">{n.label}</span>
-                    <span className="ml-auto shrink-0">
-                      <Badge n={badgeFor(n.to)} small />
-                    </span>
-                  </Link>
-                );
-              })}
+      <nav className="flex-1 overflow-y-auto px-3 pb-4 space-y-2">
+        {groups.map((group) => {
+          const hasActive = group.items.some((n) => isActiveRoute(n.to, location.pathname));
+          const open = groupOverride[group.title] ?? (hasActive || group.title === "Overview");
+          const groupBadge = group.items.reduce((s, n) => s + badgeFor(n.to), 0);
+          const single = group.items.length === 1;
+          return (
+            <div key={group.title}>
+              {!single && (
+                <button
+                  onClick={() =>
+                    setGroupOverride((prev) => ({ ...prev, [group.title]: !open }))
+                  }
+                  className="w-full flex items-center gap-2 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground/70 hover:text-foreground"
+                >
+                  <span>{group.title}</span>
+                  {!open && groupBadge > 0 && <Badge n={groupBadge} small />}
+                  <ChevronDown
+                    className={`ml-auto w-3.5 h-3.5 transition-transform ${open ? "" : "-rotate-90"}`}
+                  />
+                </button>
+              )}
+              {(open || single) && (
+                <div className="space-y-1">
+                  {group.items.map((n) => {
+                    const active = isActiveRoute(n.to, location.pathname);
+                    const Icon = n.icon;
+                    return (
+                      <Link
+                        key={n.to}
+                        to={n.to}
+                        className={`group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors ${
+                          active
+                            ? "bg-emerald-600 text-white font-semibold shadow-[0_6px_16px_rgba(5,150,105,0.35)]"
+                            : "text-muted-foreground hover:bg-accent hover:text-foreground"
+                        }`}
+                      >
+                        <Icon className="w-[18px] h-[18px] shrink-0" />
+                        <span className="truncate">{n.label}</span>
+                        <span className="ml-auto shrink-0">
+                          <Badge n={badgeFor(n.to)} small />
+                        </span>
+                      </Link>
+                    );
+                  })}
+                </div>
+              )}
             </div>
-          </div>
-        ))}
+          );
+        })}
       </nav>
+
+
 
       <div className="p-3 space-y-3">
         {livePromotions.length > 0 && (
