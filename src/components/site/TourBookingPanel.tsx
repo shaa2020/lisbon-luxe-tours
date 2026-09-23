@@ -334,7 +334,7 @@ export function TourBookingPanel({
 
       <div className="px-6 pb-2">
         <div className="flex gap-2.5 p-3 bg-gold/5 border border-gold/20 rounded-[2px]">
-          <ShieldCheck className="w-3.5 h-3.5 text-gold shrink-0 mt-0.5" />
+          <ShieldCheck className="w-3.5 h-3.5 text-gold shrink-0 mt-0.5" strokeWidth={1.75} />
           <p className="text-[11px] leading-relaxed text-body">
             <span className="text-ink font-medium">Free cancellation</span> up to 24 hours before the tour. Cancellations within 24 hours are non-refundable. If you reschedule and later cancel, refund is calculated from the <span className="text-ink font-medium">original booked date</span>.
           </p>
@@ -371,10 +371,10 @@ export function TourBookingPanel({
                 )}
               >
                 <span className="inline-flex items-center gap-2.5">
-                  <CalendarIcon className="w-4 h-4 text-gold" />
+                  <CalendarIcon className="w-4 h-4 text-gold" strokeWidth={1.75} />
                   {date ? format(date, "EEEE, MMM d, yyyy") : "Pick a date"}
                 </span>
-                <ChevronDown className="w-4 h-4 text-body" />
+                <ChevronDown className="w-4 h-4 text-body" strokeWidth={1.75} />
               </button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0 bg-paper border-border z-50" align="start">
