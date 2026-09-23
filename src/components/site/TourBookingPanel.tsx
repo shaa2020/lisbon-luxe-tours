@@ -659,6 +659,43 @@ export function TourBookingPanel({
               message={`Hi! I'd like to ask about the ${tour.title} tuk-tuk tour.`}
             />
 
+            <div className="rounded-[2px] border border-gold/30 bg-gold/[0.04] p-4">
+              <p className="text-[10px] uppercase tracking-[0.18em] text-ink font-bold mb-3">
+                Why book direct with us
+              </p>
+              <ul className="space-y-2.5">
+                {[
+                  {
+                    Icon: RotateCcw,
+                    title: "Zero-risk booking",
+                    body: "Cancel up to 24h before for a full refund.",
+                  },
+                  {
+                    Icon: Wallet,
+                    title: "Flexible payment",
+                    body: "Pay from 20% today, the rest on the day of the tour.",
+                  },
+                  {
+                    Icon: Umbrella,
+                    title: "Weather guarantee",
+                    body: "Free reschedule or refund if the weather turns bad.",
+                  },
+                  {
+                    Icon: Lock,
+                    title: "Secure checkout",
+                    body: "Encrypted payment through PayPal — cards accepted.",
+                  },
+                ].map(({ Icon, title, body }) => (
+                  <li key={title} className="flex items-start gap-2.5">
+                    <Icon className="mt-[2px] h-4 w-4 text-gold shrink-0" strokeWidth={1.75} />
+                    <span className="text-[11.5px] leading-snug text-body">
+                      <span className="font-semibold text-ink">{title}</span> — {body}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
             <p className="text-[10px] text-center text-body italic">
               {showContact
                 ? "Secure payment · free cancellation up to 24h before the tour"
