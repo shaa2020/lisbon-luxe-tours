@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { useAuth } from "@/lib/auth";
 import { useSiteBrand } from "@/lib/brand";
 import { useAdminBadges } from "@/lib/admin-stats";
+import { PushNotifications } from "@/components/admin/PushNotifications";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAdminPromotions, isPromotionLive } from "@/lib/promotions";
 import {
