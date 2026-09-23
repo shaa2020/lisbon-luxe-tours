@@ -344,7 +344,9 @@ export const adminReconciliation = createServerFn({ method: "POST" })
         discrepancies: 0,
       },
     );
-    totals.netCents = totals.collectedCents - totals.refundedCents;
+    // collectedCents is already net of refunds (computeSettlement subtracts them),
+    // so the net total equals it — subtracting refundedCents again would double-count.
+    totals.netCents = totals.collectedCents;
 
     return {
       generatedAt: new Date().toISOString(),
