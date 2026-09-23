@@ -314,10 +314,10 @@ export function TourBookingPanel({
 
       {/* Trust details */}
       <div className="p-6 grid grid-cols-2 gap-y-4 gap-x-2">
-        <Detail icon={<Clock className="w-4 h-4" />} label={durationLabel} />
-        <Detail icon={<Globe2 className="w-4 h-4" />} label="EN / PT Guide" />
+        <Detail icon={<Clock className="w-4 h-4" strokeWidth={1.75} />} label={durationLabel} />
+        <Detail icon={<Globe2 className="w-4 h-4" strokeWidth={1.75} />} label="EN / PT Guide" />
         <Detail
-          icon={<ShieldCheck className="w-4 h-4" />}
+          icon={<ShieldCheck className="w-4 h-4" strokeWidth={1.75} />}
           label="Free cancel · 24h"
           title={CANCELLATION_POLICY_FULL}
         />

@@ -494,9 +494,9 @@ function PopularCard({ tour, onBook }: { tour: Tour; onBook: () => void }) {
         </h3>
         <p className="text-[11px] text-body/70 mb-4">Private group · English & Portuguese</p>
         <div className="flex items-center gap-4 text-[11px] text-body mb-5 pb-5 border-b border-border">
-          <span className="flex items-center gap-1.5"><PinIco /> {tour.category || "Lisboa"}</span>
-          <span className="flex items-center gap-1.5"><ClockIco /> {tour.duration}</span>
-          <span className="flex items-center gap-1.5"><UserIco /> Private · max 6</span>
+          <span className="flex items-center gap-1.5 [<span className="flex items-center gap-1.5"><PinIco />_svg]:text-gold"><PinIco /> {tour.category || "Lisboa"}</span>
+          <span className="flex items-center gap-1.5 [<span className="flex items-center gap-1.5"><ClockIco />_svg]:text-gold"><ClockIco /> {tour.duration}</span>
+          <span className="flex items-center gap-1.5 [<span className="flex items-center gap-1.5"><UserIco />_svg]:text-gold"><UserIco /> Private · max 6</span>
 
         </div>
         <div className="flex items-center justify-between">
@@ -667,9 +667,9 @@ function TravelTipsAndSignup() {
             </Link>
             <div className="p-6">
               <div className="flex gap-4 text-[11px] text-body mb-3">
-                <span className="flex items-center gap-1.5"><CalIco /> {t.date}</span>
-                <span className="flex items-center gap-1.5"><ChatIco /> {t.comments} Comments</span>
-                <span className="flex items-center gap-1.5"><ShareIco /> {t.shares} Shares</span>
+                <span className="flex items-center gap-1.5 [<span className="flex items-center gap-1.5"><CalIco />_svg]:text-gold"><CalIco /> {t.date}</span>
+                <span className="flex items-center gap-1.5 [<span className="flex items-center gap-1.5"><ChatIco />_svg]:text-gold"><ChatIco /> {t.comments} Comments</span>
+                <span className="flex items-center gap-1.5 [<span className="flex items-center gap-1.5"><ShareIco />_svg]:text-gold"><ShareIco /> {t.shares} Shares</span>
               </div>
               <h3 className="font-display font-semibold text-ink text-lg leading-snug mb-3 hover:text-gold transition-colors">
                 <Link to="/journal/$slug" params={{ slug: t.slug }}>
