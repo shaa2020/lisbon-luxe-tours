@@ -3,6 +3,8 @@ import { useQuery } from "@tanstack/react-query";
 import { Map, BookOpen, CalendarCheck, Mail, CreditCard, Star, Euro, Users, TrendingUp, Megaphone } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { AdminShell, AdminCard } from "@/components/admin/AdminShell";
+import { DashboardToday } from "@/components/admin/DashboardToday";
+
 import { useAdminPromotions, isPromotionLive } from "@/lib/promotions";
 import { useAuth } from "@/lib/auth";
 import { useRevenueStats, useUpcomingThisWeek, useAdminBadges } from "@/lib/admin-stats";
