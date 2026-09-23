@@ -4,7 +4,7 @@ import { idempotencyKey, newIdempotencySeed } from "@/lib/idempotency";
 import { useQuery } from "@tanstack/react-query";
 import { getDayAvailability, requestBooking } from "@/lib/availability.functions";
 import { format } from "date-fns";
-import { CalendarIcon, Clock, Globe2, ShieldCheck, MapPin, Loader2, Minus, Plus, ChevronDown, Check } from "lucide-react";
+import { CalendarIcon, Clock, Globe2, ShieldCheck, MapPin, Loader2, Minus, Plus, ChevronDown, Check, RotateCcw, Wallet, Umbrella, Lock } from "lucide-react";
 import { type Tour, tourPricing } from "@/lib/cms";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
