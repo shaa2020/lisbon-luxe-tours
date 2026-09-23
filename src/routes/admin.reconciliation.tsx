@@ -470,9 +470,324 @@ function BookingRow({
               ))}
             </div>
           )}
-          <p className="mt-3 font-mono text-[11px] text-muted-foreground">{b.bookingId}</p>
+
+          <SettlementList bookingId={b.bookingId} settlements={b.settlements} />
+
+          <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
+            <p className="font-mono text-[11px] text-muted-foreground">{b.bookingId}</p>
+            <button
+              type="button"
+              onClick={onSettle}
+              className="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-1.5 text-xs font-semibold text-primary-foreground hover:opacity-90"
+            >
+              <Wallet className="h-3.5 w-3.5" />
+              {b.outstandingCents > 0 ? `Settle balance (${money(b.outstandingCents)})` : "Record a payment"}
+            </button>
+          </div>
         </div>
       )}
+    </div>
+  );
+}
+
+/** Manually recorded money for a booking, with edit and undo. */
+function SettlementList({
+  bookingId,
+  settlements,
+}: {
+  bookingId: string;
+  settlements: ReconSettlement[];
+}) {
+  const qc = useQueryClient();
+  const edit = useServerFn(adminEditSettlement);
+  const undo = useServerFn(adminUndoSettlement);
+  const [editing, setEditing] = useState<string | null>(null);
+  const [amount, setAmount] = useState("");
+  const [notes, setNotes] = useState("");
+
+  const refresh = () => qc.invalidateQueries({ queryKey: ["admin-reconciliation"] });
+
+  const editM = useMutation({
+    mutationFn: (v: { id: string; amount_cents: number; notes: string | null }) => edit({ data: v }),
+    onSuccess: () => {
+      setEditing(null);
+      refresh();
+      toast.success("Settlement updated.");
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const undoM = useMutation({
+    mutationFn: (id: string) => undo({ data: { id } }),
+    onSuccess: () => {
+      refresh();
+      toast.success("Settlement undone — the booking balance was recalculated.");
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const manual = settlements.filter((s) => !s.linkedToOrder);
+  if (manual.length === 0) return null;
+
+  return (
+    <div className="mt-3 rounded-xl border border-border p-3">
+      <h3 className="mb-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+        Payments collected in person
+      </h3>
+      <div className="space-y-2">
+        {manual.map((s) => (
+          <div key={s.id} className="rounded-lg border border-border px-3 py-2 text-sm">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="min-w-0">
+                <p className="font-medium text-foreground">
+                  {money(s.amountCents)} · {methodLabel(s.method)}
+                  {s.collectedBy ? ` · collected by ${s.collectedBy}` : ""}
+                </p>
+                <p className="text-[11px] text-muted-foreground">
+                  {day(s.paidAt)}
+                  {s.notes ? ` · ${s.notes}` : ""}
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEditing(editing === s.id ? null : s.id);
+                    setAmount((s.amountCents / 100).toFixed(2));
+                    setNotes(s.notes || "");
+                  }}
+                  className="rounded-full border border-border px-3 py-1 text-xs font-semibold hover:border-primary"
+                >
+                  Edit
+                </button>
+                <button
+                  type="button"
+                  disabled={undoM.isPending}
+                  onClick={() => {
+                    if (confirm("Undo this payment? The booking balance will be recalculated.")) {
+                      undoM.mutate(s.id);
+                    }
+                  }}
+                  className="inline-flex items-center gap-1 rounded-full border border-border px-3 py-1 text-xs font-semibold text-rose-600 hover:border-rose-400 disabled:opacity-60"
+                >
+                  <Undo2 className="h-3.5 w-3.5" />
+                  Undo
+                </button>
+              </div>
+            </div>
+
+            {editing === s.id ? (
+              <div className="mt-2 flex flex-wrap items-end gap-2">
+                <label className="text-xs">
+                  <span className="mb-1 block text-muted-foreground">Amount (€)</span>
+                  <input
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)}
+                    inputMode="decimal"
+                    className="h-9 w-28 rounded-lg border border-border bg-background px-2 text-sm outline-none focus:border-primary"
+                  />
+                </label>
+                <label className="min-w-[12rem] flex-1 text-xs">
+                  <span className="mb-1 block text-muted-foreground">Note</span>
+                  <input
+                    value={notes}
+                    onChange={(e) => setNotes(e.target.value)}
+                    className="h-9 w-full rounded-lg border border-border bg-background px-2 text-sm outline-none focus:border-primary"
+                  />
+                </label>
+                <button
+                  type="button"
+                  disabled={editM.isPending}
+                  onClick={() => {
+                    const cents = Math.round(Number(amount.replace(",", ".")) * 100);
+                    if (!Number.isFinite(cents) || cents <= 0) {
+                      toast.error("Enter a valid amount.");
+                      return;
+                    }
+                    editM.mutate({ id: s.id, amount_cents: cents, notes: notes || null });
+                  }}
+                  className="h-9 rounded-lg bg-primary px-4 text-xs font-semibold text-primary-foreground disabled:opacity-60"
+                >
+                  Save
+                </button>
+              </div>
+            ) : null}
+          </div>
+        ))}
+      </div>
+      <p className="mt-2 text-[11px] text-muted-foreground">
+        Every change is kept in the activity log — booking {bookingId.slice(0, 8)}.
+      </p>
+    </div>
+  );
+}
+
+/** Records the remaining balance against a booking. */
+function SettleDialog({
+  booking,
+  onClose,
+  onDone,
+}: {
+  booking: ReconBooking;
+  onClose: () => void;
+  onDone: () => void;
+}) {
+  const settle = useServerFn(adminSettleBalance);
+  const remaining = booking.outstandingCents;
+  const [amount, setAmount] = useState((Math.max(remaining, 0) / 100).toFixed(2));
+  const [method, setMethod] = useState<string>("guide_cash");
+  const [collectedBy, setCollectedBy] = useState("");
+  const [notes, setNotes] = useState("");
+  const [paidAt, setPaidAt] = useState(() => new Date().toISOString().slice(0, 16));
+
+  const save = useMutation({
+    mutationFn: (v: {
+      booking_id: string;
+      amount_cents: number;
+      method: string;
+      collected_by: string | null;
+      notes: string | null;
+      paid_at: string;
+    }) => settle({ data: v as never }),
+    onSuccess: () => {
+      toast.success("Payment recorded — the booking balance is up to date.");
+      onDone();
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const cents = Math.round(Number(amount.replace(",", ".")) * 100);
+
+  return (
+    <div className="fixed inset-0 z-50 grid place-items-center bg-black/50 p-4">
+      <div className="w-full max-w-md rounded-2xl border border-border bg-card p-5 shadow-xl">
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <h2 className="text-lg font-bold text-foreground">Settle balance</h2>
+            <p className="text-xs text-muted-foreground">
+              {booking.customerName || "Booking"} · {booking.tourTitle || "—"}
+            </p>
+          </div>
+          <button type="button" onClick={onClose} className="rounded-full p-1 hover:bg-muted">
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+
+        <div className="mt-4 grid grid-cols-3 gap-2 text-center">
+          <Mini label="Total" value={money(booking.totalCents)} />
+          <Mini label="Paid" value={money(booking.collectedCents)} />
+          <Mini label="Remaining" value={money(remaining)} />
+        </div>
+
+        <div className="mt-4 space-y-3">
+          <div className="flex items-end gap-2">
+            <label className="flex-1 text-xs">
+              <span className="mb-1 block text-muted-foreground">Amount (€)</span>
+              <input
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+                inputMode="decimal"
+                className="h-10 w-full rounded-lg border border-border bg-background px-3 text-sm outline-none focus:border-primary"
+              />
+            </label>
+            {remaining > 0 ? (
+              <button
+                type="button"
+                onClick={() => setAmount((remaining / 100).toFixed(2))}
+                className="h-10 rounded-lg border border-border px-3 text-xs font-semibold hover:border-primary"
+              >
+                Full balance
+              </button>
+            ) : null}
+          </div>
+
+          <label className="block text-xs">
+            <span className="mb-1 block text-muted-foreground">How was it paid?</span>
+            <select
+              value={method}
+              onChange={(e) => setMethod(e.target.value)}
+              className="h-10 w-full rounded-lg border border-border bg-background px-3 text-sm outline-none focus:border-primary"
+            >
+              {SETTLEMENT_METHODS.map((m) => (
+                <option key={m.value} value={m.value}>
+                  {m.label} — {m.hint}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <label className="block text-xs">
+            <span className="mb-1 block text-muted-foreground">Who collected it?</span>
+            <input
+              value={collectedBy}
+              onChange={(e) => setCollectedBy(e.target.value)}
+              placeholder="Guide or staff name"
+              className="h-10 w-full rounded-lg border border-border bg-background px-3 text-sm outline-none focus:border-primary"
+            />
+          </label>
+
+          <label className="block text-xs">
+            <span className="mb-1 block text-muted-foreground">When</span>
+            <input
+              type="datetime-local"
+              value={paidAt}
+              onChange={(e) => setPaidAt(e.target.value)}
+              className="h-10 w-full rounded-lg border border-border bg-background px-3 text-sm outline-none focus:border-primary"
+            />
+          </label>
+
+          <label className="block text-xs">
+            <span className="mb-1 block text-muted-foreground">Notes (optional)</span>
+            <textarea
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              rows={2}
+              className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus:border-primary"
+            />
+          </label>
+        </div>
+
+        <div className="mt-5 flex justify-end gap-2">
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-full border border-border px-4 py-2 text-sm font-semibold hover:border-primary"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            disabled={save.isPending}
+            onClick={() => {
+              if (!Number.isFinite(cents) || cents <= 0) {
+                toast.error("Enter a valid amount.");
+                return;
+              }
+              save.mutate({
+                booking_id: booking.bookingId,
+                amount_cents: cents,
+                method,
+                collected_by: collectedBy.trim() || null,
+                notes: notes.trim() || null,
+                paid_at: new Date(paidAt).toISOString(),
+              });
+            }}
+            className="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2 text-sm font-semibold text-primary-foreground disabled:opacity-60"
+          >
+            {save.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Wallet className="h-4 w-4" />}
+            Record payment
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Mini({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-xl border border-border bg-muted/40 p-2">
+      <p className="text-[10px] uppercase tracking-widest text-muted-foreground">{label}</p>
+      <p className="text-sm font-bold text-foreground">{value}</p>
     </div>
   );
 }
