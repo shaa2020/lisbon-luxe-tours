@@ -121,10 +121,10 @@ const GROUPS: NavGroup[] = [
 
 /** Bottom tab bar targets on mobile. */
 const PRIMARY: NavItem[] = [
-  { to: "/admin", label: "Home", icon: LayoutDashboard, perm: "dashboard.view" },
+  { to: "/admin/ops/today", label: "Today", icon: Gauge, perm: "ops.view" },
   { to: "/admin/bookings", label: "Bookings", icon: CalendarCheck, perm: "bookings.view" },
-  { to: "/admin/tours", label: "Tours", icon: Map, perm: "tours.manage" },
-  { to: "/admin/orders", label: "Orders", icon: CreditCard, perm: "orders.view" },
+  { to: "/admin/reconciliation", label: "Settle cash", icon: Scale, perm: "orders.view" },
+  { to: "/admin/messages", label: "Inbox", icon: MessageSquare, perm: "messages.view" },
 ];
 
 function isActiveRoute(to: string, pathname: string) {
