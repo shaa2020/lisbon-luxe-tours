@@ -2112,6 +2112,24 @@ export type Database = {
         }
         Relationships: []
       }
+      private_settings: {
+        Row: {
+          id: boolean
+          owner_notification_email: string | null
+          updated_at: string
+        }
+        Insert: {
+          id?: boolean
+          owner_notification_email?: string | null
+          updated_at?: string
+        }
+        Update: {
+          id?: boolean
+          owner_notification_email?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
