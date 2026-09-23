@@ -1,8 +1,15 @@
 import { Link } from "@tanstack/react-router";
+import { Users, Umbrella, MapPin } from "lucide-react";
 import type { Tour } from "@/lib/cms";
 import { tourPricing } from "@/lib/cms";
 import { MediaImage } from "@/components/site/MediaImage";
 import { PromoSlot } from "@/components/promo/PromoSlot";
+
+const CARD_ASSURANCES = [
+  { Icon: Users, label: "100% private" },
+  { Icon: Umbrella, label: "All-weather" },
+  { Icon: MapPin, label: "Central pickup" },
+];
 
 
 export function TourCard({ tour }: { tour: Tour; offset?: boolean }) {
