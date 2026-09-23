@@ -43,6 +43,13 @@
       "when": 1790110406862,
       "tag": "0005_traveller_leads_and_review_email_privacy",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1790121328423,
+      "tag": "0006_settlement_tracking",
+      "breakpoints": true
     }
   ]
 }
