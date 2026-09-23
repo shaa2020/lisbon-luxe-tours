@@ -236,38 +236,59 @@ export function AdminShell({ children, requires }: { children: ReactNode; requir
         </div>
       </div>
 
-      <nav className="flex-1 overflow-y-auto px-3 pb-4 space-y-5">
-        {groups.map((group) => (
-          <div key={group.title}>
-            <p className="px-3 mb-1.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground/70">
-              {group.title}
-            </p>
-            <div className="space-y-1">
-              {group.items.map((n) => {
-                const active = isActiveRoute(n.to, location.pathname);
-                const Icon = n.icon;
-                return (
-                  <Link
-                    key={n.to}
-                    to={n.to}
-                    className={`group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors ${
-                      active
-                        ? "bg-emerald-600 text-white font-semibold shadow-[0_6px_16px_rgba(5,150,105,0.35)]"
-                        : "text-muted-foreground hover:bg-accent hover:text-foreground"
-                    }`}
-                  >
-                    <Icon className="w-[18px] h-[18px] shrink-0" />
-                    <span className="truncate">{n.label}</span>
-                    <span className="ml-auto shrink-0">
-                      <Badge n={badgeFor(n.to)} small />
-                    </span>
-                  </Link>
-                );
-              })}
+      <nav className="flex-1 overflow-y-auto px-3 pb-4 space-y-2">
+        {groups.map((group) => {
+          const hasActive = group.items.some((n) => isActiveRoute(n.to, location.pathname));
+          const open = groupOverride[group.title] ?? (hasActive || group.title === "Overview");
+          const groupBadge = group.items.reduce((s, n) => s + badgeFor(n.to), 0);
+          const single = group.items.length === 1;
+          return (
+            <div key={group.title}>
+              {!single && (
+                <button
+                  onClick={() =>
+                    setGroupOverride((prev) => ({ ...prev, [group.title]: !open }))
+                  }
+                  className="w-full flex items-center gap-2 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground/70 hover:text-foreground"
+                >
+                  <span>{group.title}</span>
+                  {!open && groupBadge > 0 && <Badge n={groupBadge} small />}
+                  <ChevronDown
+                    className={`ml-auto w-3.5 h-3.5 transition-transform ${open ? "" : "-rotate-90"}`}
+                  />
+                </button>
+              )}
+              {(open || single) && (
+                <div className="space-y-1">
+                  {group.items.map((n) => {
+                    const active = isActiveRoute(n.to, location.pathname);
+                    const Icon = n.icon;
+                    return (
+                      <Link
+                        key={n.to}
+                        to={n.to}
+                        className={`group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors ${
+                          active
+                            ? "bg-emerald-600 text-white font-semibold shadow-[0_6px_16px_rgba(5,150,105,0.35)]"
+                            : "text-muted-foreground hover:bg-accent hover:text-foreground"
+                        }`}
+                      >
+                        <Icon className="w-[18px] h-[18px] shrink-0" />
+                        <span className="truncate">{n.label}</span>
+                        <span className="ml-auto shrink-0">
+                          <Badge n={badgeFor(n.to)} small />
+                        </span>
+                      </Link>
+                    );
+                  })}
+                </div>
+              )}
             </div>
-          </div>
-        ))}
+          );
+        })}
       </nav>
+
+
 
       <div className="p-3 space-y-3">
         {livePromotions.length > 0 && (
