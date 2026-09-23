@@ -48,6 +48,14 @@ export function TourCard({ tour }: { tour: Tour; offset?: boolean }) {
         <h3 className="font-display font-semibold text-ink text-[16px] leading-snug mb-3 group-hover:text-gold transition-colors">
           {tour.title}
         </h3>
+        <ul className="flex flex-wrap gap-x-3 gap-y-1.5 mb-3">
+          {CARD_ASSURANCES.map(({ Icon, label }) => (
+            <li key={label} className="inline-flex items-center gap-1.5 text-[10.5px] text-body">
+              <Icon className="h-3.5 w-3.5 text-gold shrink-0" strokeWidth={1.75} />
+              {label}
+            </li>
+          ))}
+        </ul>
         <div className="flex items-end justify-between pt-3 border-t border-border">
           <div>
             <span className="text-[10px] uppercase tracking-widest text-body">From </span>
