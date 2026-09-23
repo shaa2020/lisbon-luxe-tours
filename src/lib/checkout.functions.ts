@@ -234,6 +234,17 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
         ctaLabel: "Open bookings",
         ctaUrl: "https://tuktuk24lisbon.com/admin/bookings",
       });
+
+      // Buzz every paired admin device.
+      const { sendAdminPush } = await import("./push.server");
+      await sendAdminPush(supabaseAdmin as never, {
+        title: `New booking · €${(payableCents / 100).toFixed(2)}`,
+        body: `${data.customer_name} — ${data.tour_title}, ${guestCount} guest${guestCount > 1 ? "s" : ""}${
+          data.travel_date ? ` on ${data.travel_date}` : ""
+        }${data.time ? ` at ${data.time}` : ""}`,
+        url: "/admin/bookings",
+        tag: `booking-${booking.id}`,
+      });
     }
 
     if (discountCodeId && discountCode) {
