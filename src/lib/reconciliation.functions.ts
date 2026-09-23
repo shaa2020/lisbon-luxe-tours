@@ -506,7 +506,7 @@ export const adminSettleBalance = createServerFn({ method: "POST" })
       title: `Payment recorded · €${(data.amount_cents / 100).toFixed(2)}`,
       body: `${booking.booking_reference ? `${booking.booking_reference} — ` : ""}${methodLabel(data.method)}${
         data.collected_by ? ` by ${data.collected_by}` : ""
-      }. Still owed: €${(totals.remainingCents / 100).toFixed(2)}`,
+      }. Still owed: €${((totals?.remainingCents ?? 0) / 100).toFixed(2)}`,
       url: "/admin/reconciliation",
       tag: `settle-${row.id}`,
     });
