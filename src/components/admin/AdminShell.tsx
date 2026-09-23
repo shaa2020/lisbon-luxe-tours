@@ -160,6 +160,8 @@ export function AdminShell({ children, requires }: { children: ReactNode; requir
   const [userMenu, setUserMenu] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
   const [query, setQuery] = useState("");
+  const [groupOverride, setGroupOverride] = useState<Record<string, boolean>>({});
+
 
   const groups = useMemo(
     () =>
