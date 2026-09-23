@@ -58,26 +58,36 @@ const GROUPS: NavGroup[] = [
     items: [{ to: "/admin", label: "Dashboard", icon: LayoutDashboard, desc: "Revenue and activity", perm: "dashboard.view" }],
   },
   {
-    title: "Sell",
+    title: "Operations",
+    items: [
+      { to: "/admin/bookings", label: "Bookings", icon: CalendarCheck, desc: "Requests and schedule", perm: "bookings.view" },
+      { to: "/admin/ops", label: "Day sheet & fleet", icon: Gauge, desc: "Today, guides, vehicles", perm: "ops.view" },
+      { to: "/admin/meetup-points", label: "Meeting points", icon: MapPin, desc: "Where guests meet the tuk tuk", perm: "ops.view" },
+    ],
+  },
+  {
+    title: "Finance",
+    items: [
+      { to: "/admin/orders", label: "Orders", icon: CreditCard, desc: "Payments and refunds", perm: "orders.view" },
+      { to: "/admin/reconciliation", label: "Reconciliation", icon: Scale, desc: "Money checked against PayPal", perm: "orders.view" },
+      { to: "/admin/commission", label: "Commission", icon: Percent, desc: "My cut and guide balances", perm: "payments.manage" },
+    ],
+  },
+  {
+    title: "Inbox",
+    items: [
+      { to: "/admin/messages", label: "Messages", icon: MessageSquare, desc: "Contact inbox", perm: "messages.view" },
+      { to: "/admin/leads", label: "Leads & chats", icon: MessageSquare, desc: "WhatsApp and AI enquiries", perm: "bookings.view" },
+      { to: "/admin/emails", label: "Emails", icon: Mail, desc: "Templates and send log", perm: "emails.manage" },
+    ],
+  },
+  {
+    title: "Catalogue",
     items: [
       { to: "/admin/tours", label: "Tours", icon: Map, desc: "Catalogue and pricing", perm: "tours.manage" },
       { to: "/admin/custom-builder", label: "Custom builder", icon: Sparkles, desc: "Build-your-own options", perm: "tours.manage" },
       { to: "/admin/discounts", label: "Discounts", icon: Tag, desc: "Promo codes", perm: "discounts.manage" },
       { to: "/admin/promotions", label: "Promotions", icon: Megaphone, desc: "Banners and campaigns", perm: "settings.manage" },
-    ],
-  },
-  {
-    title: "Operate",
-    items: [
-      { to: "/admin/bookings", label: "Bookings", icon: CalendarCheck, desc: "Requests and schedule", perm: "bookings.view" },
-      { to: "/admin/orders", label: "Orders", icon: CreditCard, desc: "Payments and refunds", perm: "orders.view" },
-      { to: "/admin/reconciliation", label: "Reconciliation", icon: Scale, desc: "Money checked against PayPal", perm: "orders.view" },
-      { to: "/admin/commission", label: "Commission", icon: Percent, desc: "My cut and guide balances", perm: "payments.manage" },
-      { to: "/admin/ops", label: "Operations", icon: Gauge, desc: "Jobs, drivers, vehicles", perm: "ops.view" },
-      { to: "/admin/meetup-points", label: "Meetup points", icon: MapPin, desc: "Where guests meet the tuk tuk", perm: "ops.view" },
-      { to: "/admin/messages", label: "Messages", icon: MessageSquare, desc: "Contact inbox", perm: "messages.view" },
-      { to: "/admin/leads", label: "Leads & chats", icon: MessageSquare, desc: "WhatsApp and AI enquiries", perm: "bookings.view" },
-      { to: "/admin/emails", label: "Emails", icon: Mail, desc: "Templates and send log", perm: "emails.manage" },
     ],
   },
   {
@@ -92,13 +102,13 @@ const GROUPS: NavGroup[] = [
     ],
   },
   {
-    title: "Grow",
+    title: "Growth",
     items: [
       { to: "/admin/web-intel", label: "Web Intelligence", icon: Globe, desc: "Find partners and research (free tier)", perm: "marketing.manage" },
     ],
   },
   {
-    title: "Configure",
+    title: "System",
     items: [
       { to: "/admin/settings", label: "Settings", icon: Settings, desc: "Brand, booking, payments", perm: "settings.manage" },
       { to: "/admin/team", label: "Team", icon: Users, desc: "Members and roles", perm: "team.manage" },
@@ -107,6 +117,7 @@ const GROUPS: NavGroup[] = [
     ],
   },
 ];
+
 
 /** Bottom tab bar targets on mobile. */
 const PRIMARY: NavItem[] = [
