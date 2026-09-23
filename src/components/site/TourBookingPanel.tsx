@@ -322,7 +322,7 @@ export function TourBookingPanel({
           title={CANCELLATION_POLICY_FULL}
         />
         <Detail
-          icon={<MapPin className="w-4 h-4" />}
+          icon={<MapPin className="w-4 h-4" strokeWidth={1.75} />}
           label={pickupFee > 0 ? `Hotel Pickup · +€${pickupFee}` : "Hotel Pickup"}
           title={pickupFee > 0 ? `Optional hotel pickup & drop-off available for €${pickupFee}.` : undefined}
         />
