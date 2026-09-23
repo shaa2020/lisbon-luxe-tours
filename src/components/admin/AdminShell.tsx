@@ -143,6 +143,7 @@ export function AdminShell({ children, requires }: { children: ReactNode; requir
   const navigate = useNavigate();
   const { location } = useRouterState();
   const { data: badges } = useAdminBadges();
+  const queryClient = useQueryClient();
   const [moreOpen, setMoreOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [userMenu, setUserMenu] = useState(false);
