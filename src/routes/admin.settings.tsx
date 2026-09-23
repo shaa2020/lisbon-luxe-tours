@@ -68,6 +68,20 @@ function AdminSettings() {
     },
   });
 
+  // The internal alerts inbox lives in a private, owner-only table because
+  // site_settings is readable by website visitors.
+  const privateSettings = useQuery({
+    queryKey: ["private-settings-admin"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("private_settings")
+        .select("owner_notification_email")
+        .eq("id", true)
+        .maybeSingle();
+      return data ?? { owner_notification_email: "" };
+    },
+  });
+
   const [brandName, setBrandName] = useState("Tuk Tuk 24");
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
   const [savingBrand, setSavingBrand] = useState(false);
