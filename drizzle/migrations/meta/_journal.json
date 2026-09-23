@@ -50,6 +50,13 @@
       "when": 1790121328423,
       "tag": "0006_settlement_tracking",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1790121910204,
+      "tag": "0007_secure_definer_exec_and_translation_reads",
+      "breakpoints": true
     }
   ]
 }
