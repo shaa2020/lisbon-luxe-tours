@@ -19,6 +19,10 @@ import { subscribeToNewsletter } from "@/lib/subscribers.functions";
 import { useSiteBrand, mapSiteBrand, SITE_BRAND_KEY, SiteBrandProvider } from "@/lib/brand";
 import { useReviewSummary } from "@/lib/reviews";
 import { StarRating } from "@/components/site/StarRating";
+import {
+  MapPin, Calendar, Users, Clock, ShieldCheck, BadgeCheck, Coins,
+  MessageCircle, Share2, Search,
+} from "lucide-react";
 import { getPublicSiteSettings, getPublishedBlogPosts } from "@/lib/cms.functions";
 
 export const Route = createFileRoute("/")({
@@ -747,79 +751,44 @@ function SignupCard() {
   );
 }
 
-/* ============================== ICONS ============================== */
+/* ============================== ICONS ==============================
+ * One icon system for the whole site:
+ *  - META  (14px, stroke 1.75): inline with small text — tour meta, journal meta
+ *  - FIELD (16px, stroke 1.75): inside inputs / search fields
+ *  - CHIP  (22px, stroke 1.75): inside circular gold feature chips
+ *  - stroke 2 is reserved for white icons sitting on gold buttons
+ */
 
-function PinIco() {
-  return (
-    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-      <circle cx="12" cy="10" r="3" />
-    </svg>
-  );
+const META_ICON = "h-3.5 w-3.5 shrink-0";
+const FIELD_ICON = "h-4 w-4 shrink-0";
+const CHIP_ICON = "h-[22px] w-[22px] shrink-0";
+
+type IcoProps = { field?: boolean };
+
+function PinIco({ field }: IcoProps) {
+  return <MapPin className={field ? FIELD_ICON : META_ICON} strokeWidth={1.75} />;
 }
-function CalIco() {
-  return (
-    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <rect x="3" y="4" width="18" height="18" rx="2" />
-      <path d="M16 2v4M8 2v4M3 10h18" />
-    </svg>
-  );
+function CalIco({ field }: IcoProps) {
+  return <Calendar className={field ? FIELD_ICON : META_ICON} strokeWidth={1.75} />;
 }
-function UserIco() {
-  return (
-    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-      <circle cx="12" cy="7" r="4" />
-    </svg>
-  );
+function UserIco({ field }: IcoProps) {
+  return <Users className={field ? FIELD_ICON : META_ICON} strokeWidth={1.75} />;
 }
 function ClockIco() {
-  return (
-    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <circle cx="12" cy="12" r="9" />
-      <path d="M12 7v5l3 2" />
-    </svg>
-  );
-}
-function ShieldIco() {
-  return (
-    <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-      <path d="m9 12 2 2 4-4" />
-    </svg>
-  );
-}
-function BadgeIco() {
-  return (
-    <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-      <circle cx="12" cy="9" r="6" />
-      <path d="M8.5 14 6 22l6-3 6 3-2.5-8" />
-    </svg>
-  );
-}
-function CoinIco() {
-  return (
-    <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-      <ellipse cx="12" cy="6" rx="9" ry="3" />
-      <path d="M3 6v6c0 1.66 4 3 9 3s9-1.34 9-3V6" />
-      <path d="M3 12v6c0 1.66 4 3 9 3s9-1.34 9-3v-6" />
-    </svg>
-  );
+  return <Clock className={META_ICON} strokeWidth={1.75} />;
 }
 function ChatIco() {
-  return (
-    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-    </svg>
-  );
+  return <MessageCircle className={META_ICON} strokeWidth={1.75} />;
 }
 function ShareIco() {
-  return (
-    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <circle cx="18" cy="5" r="3" />
-      <circle cx="6" cy="12" r="3" />
-      <circle cx="18" cy="19" r="3" />
-      <path d="m8.59 13.51 6.83 3.98M15.41 6.51l-6.82 3.98" />
-    </svg>
-  );
+  return <Share2 className={META_ICON} strokeWidth={1.75} />;
+}
+function ShieldIco() {
+  return <ShieldCheck className={CHIP_ICON} strokeWidth={1.75} />;
+}
+function BadgeIco() {
+  return <BadgeCheck className={CHIP_ICON} strokeWidth={1.75} />;
+}
+function CoinIco() {
+  return <Coins className={CHIP_ICON} strokeWidth={1.75} />;
 }
