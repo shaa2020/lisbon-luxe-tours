@@ -33,7 +33,9 @@ import { BookingCreateDialog } from "@/components/admin/BookingCreateDialog";
 import { BookingManagePanel } from "@/components/admin/BookingManagePanel";
 import { BookingOpsPanel } from "@/components/admin/BookingOpsPanel";
 import { BookingsCalendar } from "@/components/admin/BookingsCalendar";
-import { GuestMessageMenu, GuestMessageHistory } from "@/components/admin/GuestMessages";
+import { GuestMessageHistory } from "@/components/admin/GuestMessages";
+import { BookingActions } from "@/components/admin/BookingActions";
+import { ChevronDown } from "lucide-react";
 import {
   buildLedger,
   euro,
@@ -119,6 +121,7 @@ function BookingsInbox() {
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [showPay, setShowPay] = useState<Record<string, boolean>>({});
   const [editGuests, setEditGuests] = useState<number | "">("");
   const [editAmount, setEditAmount] = useState<number | "">("");
   const [editNote, setEditNote] = useState("");
