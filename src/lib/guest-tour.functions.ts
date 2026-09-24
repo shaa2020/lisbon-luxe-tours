@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { assertPermission } from "./roles";
+import { buildLedger } from "./booking-ledger";
 
 /** Public: a guest opens their private tour page with the secret link. */
 export const getGuestTour = createServerFn({ method: "GET" })
@@ -17,7 +18,7 @@ export const getGuestTour = createServerFn({ method: "GET" })
       .maybeSingle();
     if (!b) return null;
 
-    const [guideRes, tourRes, payRes] = await Promise.all([
+    const [guideRes, tourRes, payRes, ordRes] = await Promise.all([
       b.guide_id
         ? supabaseAdmin
             .from("ops_staff")
@@ -28,16 +29,11 @@ export const getGuestTour = createServerFn({ method: "GET" })
       b.tour_slug
         ? supabaseAdmin.from("tours").select("image_url, duration").eq("slug", b.tour_slug).maybeSingle()
         : Promise.resolve({ data: null }),
-      supabaseAdmin.from("booking_payments").select("amount_cents, status, kind").eq("booking_id", b.id),
+      supabaseAdmin.from("booking_payments").select("booking_id, amount_cents, direction, order_id").eq("booking_id", b.id),
+      supabaseAdmin.from("orders").select("booking_id, amount_total, payment_status").eq("booking_id", b.id),
     ]);
 
-    const payments = (payRes.data ?? []) as any[];
-    const paidCents = payments
-      .filter((p) => ["completed", "paid", "succeeded"].includes(String(p.status)) && p.kind !== "refund")
-      .reduce((s, p) => s + (Number(p.amount_cents) || 0), 0);
-    const totalCents = Math.round(Number(b.amount_total ?? b.total_estimate ?? 0) * (b.amount_total ? 1 : 100));
-    const paid = b.payment_status === "paid" ? totalCents : Math.min(paidCents, totalCents);
-
+    const led = buildLedger(b as any, (ordRes.data ?? []) as any, (payRes.data ?? []) as any);
     const g = guideRes.data as any;
     const t = tourRes.data as any;
     const { guide_id: _g, ...safe } = b as any;
@@ -45,9 +41,10 @@ export const getGuestTour = createServerFn({ method: "GET" })
       ...safe,
       tour_image: t?.image_url ?? null,
       tour_duration: b.option_duration_label || t?.duration || null,
-      total_cents: totalCents,
-      paid_cents: paid,
-      due_cents: Math.max(0, totalCents - paid),
+      total_cents: led.totalCents,
+      paid_cents: led.paidCents,
+      due_cents: led.dueCents,
+      stage: led.tourStage,
       guide: g
         ? {
             name: String(g.name || "").split(" ")[0],
@@ -71,10 +68,11 @@ export const resetGuestToken = createServerFn({ method: "POST" })
     const { error } = await context.supabase.from("bookings").update({ guest_token: token }).eq("id", data.bookingId);
     if (error) throw new Error(error.message);
     await context.supabase.from("admin_audit_log").insert({
-      actor_id: context.userId,
+      actor: context.userId,
       action: "guest_link_reset",
       entity: "booking",
       entity_id: data.bookingId,
+      summary: "Guest tour link reset",
     } as any);
     return { token };
   });
