@@ -711,13 +711,17 @@ export function AdminPageHeader({
   actions?: ReactNode;
 }) {
   return (
-    <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end sm:justify-between">
+    <div className="mb-5 grid grid-cols-[minmax(0,1fr)_auto] items-end gap-3 sm:flex sm:flex-wrap sm:justify-between">
       <div className="min-w-0">
         {eyebrow && (
-          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-primary mb-1.5">{eyebrow}</p>
+          <p className="mb-1 text-[12px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+            {eyebrow}
+          </p>
         )}
-        <h2 className="font-display text-2xl md:text-3xl font-bold leading-tight">{title}</h2>
-        {description && <p className="text-sm text-muted-foreground mt-1">{description}</p>}
+        <h2 className="font-display text-[26px] md:text-[32px] font-bold leading-tight tracking-[-0.022em]">
+          {title}
+        </h2>
+        {description && <p className="mt-1 text-[14px] leading-snug text-muted-foreground">{description}</p>}
       </div>
       {actions && <div className="flex items-center gap-2 shrink-0">{actions}</div>}
     </div>
@@ -726,7 +730,7 @@ export function AdminPageHeader({
 
 export function AdminCard({ className = "", children }: { className?: string; children: ReactNode }) {
   return (
-    <div className={`rounded-2xl border border-border bg-card shadow-[0_1px_2px_rgba(30,58,95,0.04)] ${className}`}>
+    <div className={`ios-card ${className}`}>
       {children}
     </div>
   );
