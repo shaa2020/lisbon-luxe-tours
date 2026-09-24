@@ -166,3 +166,54 @@ body {
   from { opacity: 0; transform: translateX(24px); }
   to { opacity: 1; transform: translateX(0); }
 }
+
+/* ============ iOS-style admin surfaces ============ */
+:root {
+  --ios-grouped: #f2f3f7;
+  --ios-hairline: rgba(30, 58, 95, 0.08);
+  --ios-shadow: 0 1px 2px rgba(30, 58, 95, 0.05), 0 8px 24px -14px rgba(30, 58, 95, 0.22);
+}
+
+@utility ios-grouped {
+  background-color: var(--ios-grouped);
+}
+
+@utility ios-card {
+  background-color: var(--card);
+  border: 1px solid var(--ios-hairline);
+  border-radius: 22px;
+  box-shadow: var(--ios-shadow);
+}
+
+@utility ios-blur {
+  background-color: color-mix(in srgb, var(--card) 78%, transparent);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+}
+
+@utility ios-hairline-b {
+  border-bottom: 1px solid var(--ios-hairline);
+}
+
+@utility ios-press {
+  transition: transform 0.16s cubic-bezier(0.32, 0.72, 0, 1), opacity 0.16s ease;
+  &:active {
+    transform: scale(0.96);
+  }
+}
+
+@utility ios-grab {
+  width: 2.25rem;
+  height: 5px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--body) 32%, transparent);
+}
+
+@keyframes ios-sheet-up {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+@utility ios-sheet {
+  animation: ios-sheet-up 0.34s cubic-bezier(0.32, 0.72, 0, 1);
+}
