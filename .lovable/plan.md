@@ -1,46 +1,43 @@
-# Admin panel: what to add next
+# Guest messages before and during the tour
 
-Your panel already covers bookings, day sheet, payments, reconciliation, commission, inbox, tours, content, reviews, lead finder, push alerts and team roles. These are the gaps that would help most, starting with the biggest win.
+Goal: every guest knows exactly where to go, who is picking them up and when, without you typing the same message again and again.
 
-## 1. Reports page (high value)
-- Revenue by month, by tour, and by booking source (website, WhatsApp, partner, walk-in)
-- Top tours, average group size, busiest days and times
-- Guide performance: tours run, cash collected, commission owed
-- Export to CSV or PDF for your accountant
+## What gets added
 
-## 2. Automatic review requests (high value)
-- 2 hours after a tour ends, the guest gets an email or WhatsApp link asking for a review
-- The review arrives in Reviews for you to approve, with a one-tap link to also post on Google or TripAdvisor
+### 1. Automatic reminder the day before
+- Sent at 6pm Lisbon time the evening before the tour, by email (automatic) and as a ready-to-send WhatsApp message
+- Includes: tour name, date and time, meeting point with a Google Maps link, guide name and phone, balance still due, and what to bring
+- Only goes to confirmed bookings. If a booking is cancelled, the reminder isn't sent
 
-## 3. Guest messages before the tour (high value)
-- Automatic reminder the day before, with the meeting point, map pin, guide name and phone
-- One-tap "Driver is here" and "Running late" messages from the booking
-- Weather alert with a free rebooking option
+### 2. One-tap messages from each booking
+Inside every booking (and on today's departure board) you get buttons that open WhatsApp with the message already written:
+- "Your guide is on the way"
+- "Your driver is here" (with the meeting point pin)
+- "Running about 10 minutes late"
+- "Thank you, here's your review link" (after the tour)
+The guest's name, tour, time, guide and place are filled in for you.
 
-## 4. Availability and blocked dates
-- Block days, times or vehicles for holidays, repairs or private events
-- Cap how many tuk tuks can go out per time slot so you never overbook
+### 3. Rain / weather message
+- A "Weather alert" button on the booking sends a friendly message offering a free date change or a covered tuk tuk option, with a link to reply
 
-## 5. Guide mobile view
-- Guides log in and see only their own tours for today, the pickup point and guest phone
-- They mark "Started", "Finished" and "Cash collected", which goes straight into reconciliation
+### 4. Edit the wording yourself
+- New "Guest messages" area under Inbox → Emails where you can change the text of each message in English (and add Portuguese, Spanish or French versions)
+- Placeholders like {guest_name}, {tour}, {time}, {meeting_point}, {guide_name}, {guide_phone}, {balance_due}
 
-## 6. Recovering unfinished bookings
-- A list of guests who started checkout but didn't pay
-- One-tap follow-up by email or WhatsApp with an optional small discount
+### 5. History on the booking
+- Each booking shows which messages went out, when, and by whom, so the team doesn't send the same thing twice
 
-## 7. Smaller clean-ups
-- Merge "Messages" and "Leads & chats" into one Inbox
-- Global search at the top: find any booking, guest or phone number from any page
-- Dashboard shows this week vs last week
+## How you'll use it
+1. Assign a guide and meeting point to the booking (as you do now)
+2. The day-before reminder goes out by itself
+3. On tour day, tap "Driver is here" or "Running late" from the day sheet
 
-## Suggested order
-1. Reports  2. Review requests  3. Guest reminders  4. Availability  5. Guide view  6. Unfinished bookings  7. Clean-ups
-
-Approve this, then tell me which numbers to build first. If you don't choose, I'll start with 1 to 3.
+## Worth knowing
+- WhatsApp messages open in your WhatsApp with the text ready, and you press send. Sending WhatsApp fully automatically needs a WhatsApp Business API account (paid, from Meta). That can be added later.
+- Emails are fully automatic using your existing email setup.
 
 ## Technical notes
-- Reports: server functions aggregating bookings, booking_payments, orders and ops_staff; charts with recharts.
-- Review requests and reminders: a scheduled endpoint under /api/public with a secret check, sending through the existing email queue plus wa.me links; tokenised review links.
-- Availability: new blackout/capacity tables with grants and RLS, checked in checkout and the public bookings API.
-- Guide view: a "staff" role scoped to their assigned bookings through RLS.
+- New table `guest_message_templates` (key, language, subject, body) and `guest_message_log` (booking_id, template, channel, sent_by, sent_at), with grants and admin-only RLS.
+- Day-before reminder: a daily scheduled call (once a day at 17:00 UTC) to a protected `/api/public/cron/tour-reminders` route that picks tomorrow's confirmed bookings with no reminder logged and queues emails through the existing email queue. Once a day means almost no extra running cost.
+- WhatsApp buttons build `wa.me` links from the template with placeholders filled from booking, ops_staff and meetup_points, and write a log row on tap.
+- Buttons added to the booking details, the bookings list row actions, and DashboardToday.
