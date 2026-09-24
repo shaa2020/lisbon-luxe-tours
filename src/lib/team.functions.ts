@@ -29,6 +29,8 @@ export type TeamMember = {
   role: StaffRole | null;
   createdAt: string | null;
   lastSignInAt: string | null;
+  /** Receives internal new-booking / payment alert emails. */
+  emailAlerts: boolean;
 };
 
 export const listTeam = createServerFn({ method: "GET" })
