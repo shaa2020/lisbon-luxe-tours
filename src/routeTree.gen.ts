@@ -67,6 +67,7 @@ import { Route as ToursIndexRouteImport } from './routes/tours.index'
 import { Route as ToursSlugRouteImport } from './routes/tours.$slug'
 import { Route as ToursCustomRouteImport } from './routes/tours.custom'
 import { Route as ToursPricingGuideRouteImport } from './routes/tours.pricing-guide'
+import { Route as TripTokenRouteImport } from './routes/trip.$token'
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as AdminBlogIndexRouteImport } from './routes/admin.blog.index'
 import { Route as AdminBlogIdRouteImport } from './routes/admin.blog.$id'
@@ -414,6 +415,11 @@ const ToursPricingGuideRoute = ToursPricingGuideRouteImport.update({
   path: '/tours/pricing-guide',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TripTokenRoute = TripTokenRouteImport.update({
+  id: '/trip/$token',
+  path: '/trip/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DotlovableOauthConsentRoute = DotlovableOauthConsentRouteImport.update({
   id: '/.lovable/oauth/consent',
   path: '/.lovable/oauth/consent',
@@ -750,6 +756,7 @@ export interface FileRoutesByFullPath {
   '/tours/$slug': typeof ToursSlugRoute
   '/tours/custom': typeof ToursCustomRoute
   '/tours/pricing-guide': typeof ToursPricingGuideRoute
+  '/trip/$token': typeof TripTokenRoute
   '/admin/': typeof AdminIndexRoute
   '/destinations/': typeof DestinationsIndexRoute
   '/journal/': typeof JournalIndexRoute
@@ -865,6 +872,7 @@ export interface FileRoutesByTo {
   '/tours/$slug': typeof ToursSlugRoute
   '/tours/custom': typeof ToursCustomRoute
   '/tours/pricing-guide': typeof ToursPricingGuideRoute
+  '/trip/$token': typeof TripTokenRoute
   '/admin': typeof AdminIndexRoute
   '/destinations': typeof DestinationsIndexRoute
   '/journal': typeof JournalIndexRoute
@@ -981,6 +989,7 @@ export interface FileRoutesById {
   '/tours/$slug': typeof ToursSlugRoute
   '/tours/custom': typeof ToursCustomRoute
   '/tours/pricing-guide': typeof ToursPricingGuideRoute
+  '/trip/$token': typeof TripTokenRoute
   '/admin/': typeof AdminIndexRoute
   '/destinations/': typeof DestinationsIndexRoute
   '/journal/': typeof JournalIndexRoute
@@ -1098,6 +1107,7 @@ export interface FileRouteTypes {
     | '/tours/$slug'
     | '/tours/custom'
     | '/tours/pricing-guide'
+    | '/trip/$token'
     | '/admin/'
     | '/destinations/'
     | '/journal/'
@@ -1213,6 +1223,7 @@ export interface FileRouteTypes {
     | '/tours/$slug'
     | '/tours/custom'
     | '/tours/pricing-guide'
+    | '/trip/$token'
     | '/admin'
     | '/destinations'
     | '/journal'
@@ -1328,6 +1339,7 @@ export interface FileRouteTypes {
     | '/tours/$slug'
     | '/tours/custom'
     | '/tours/pricing-guide'
+    | '/trip/$token'
     | '/admin/'
     | '/destinations/'
     | '/journal/'
@@ -1444,6 +1456,7 @@ export interface RootRouteChildren {
   ToursSlugRoute: typeof ToursSlugRoute
   ToursCustomRoute: typeof ToursCustomRoute
   ToursPricingGuideRoute: typeof ToursPricingGuideRoute
+  TripTokenRoute: typeof TripTokenRoute
   AdminIndexRoute: typeof AdminIndexRoute
   DestinationsIndexRoute: typeof DestinationsIndexRoute
   JournalIndexRoute: typeof JournalIndexRoute
@@ -1913,6 +1926,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ToursPricingGuideRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/trip/$token': {
+      id: '/trip/$token'
+      path: '/trip/$token'
+      fullPath: '/trip/$token'
+      preLoaderRoute: typeof TripTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/.lovable/oauth/consent': {
       id: '/.lovable/oauth/consent'
       path: '/.lovable/oauth/consent'
@@ -2367,6 +2387,7 @@ const rootRouteChildren: RootRouteChildren = {
   ToursSlugRoute: ToursSlugRoute,
   ToursCustomRoute: ToursCustomRoute,
   ToursPricingGuideRoute: ToursPricingGuideRoute,
+  TripTokenRoute: TripTokenRoute,
   AdminIndexRoute: AdminIndexRoute,
   DestinationsIndexRoute: DestinationsIndexRoute,
   JournalIndexRoute: JournalIndexRoute,
