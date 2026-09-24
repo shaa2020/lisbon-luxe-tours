@@ -42,6 +42,24 @@ async function logSend(bookingId: string, key: string) {
   });
 }
 
+/** Templates for a booking + a send() that opens WhatsApp and logs it. */
+export function useGuestMessageSender(booking: any, dueCents = 0) {
+  const qc = useQueryClient();
+  const { data: templates = [] } = useGuestTemplates();
+  const { data: guide } = useGuide(booking.guide_id);
+  const byKey = new Map<string, GuestTemplate>();
+  for (const t of templates) if (t.language === "en" && !byKey.has(t.key)) byKey.set(t.key, t);
+  const list = [...byKey.values()].sort((a, b) => a.sort_order - b.sort_order);
+  const send = async (t: GuestTemplate) => {
+    const url = waUrl(booking.phone, fillTemplate(t.body, booking, guide ?? null, dueCents));
+    if (!url) return toast.error("This guest has no valid phone number");
+    window.open(url, "_blank", "noopener");
+    await logSend(booking.id, t.key);
+    qc.invalidateQueries({ queryKey: ["guest-msg-log", booking.id] });
+  };
+  return { templates: list, send };
+}
+
 /** Dropdown of ready-written WhatsApp messages for one booking. */
 export function GuestMessageMenu({
   booking,
