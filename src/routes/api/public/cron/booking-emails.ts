@@ -58,6 +58,13 @@ export const Route = createFileRoute("/api/public/cron/booking-emails")({
                 .from("bookings")
                 .update({ reminder_sent_at: new Date().toISOString() })
                 .eq("id", b.id);
+              await supabaseAdmin.from("guest_message_log").insert({
+                booking_id: b.id,
+                template_key: "reminder",
+                channel: "email",
+                sent_by: null,
+                sent_by_email: "automatic",
+              });
               reminders++;
             } catch (err) {
               console.error("reminder failed", b.id, err);
