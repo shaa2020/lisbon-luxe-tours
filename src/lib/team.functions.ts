@@ -124,6 +124,27 @@ export const inviteTeamMember = createServerFn({ method: "POST" })
     return { ok: true, userId };
   });
 
+/** Turn internal booking/payment alert emails on or off for one team member. */
+export const setTeamEmailAlerts = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z.object({ userId: z.string().uuid(), enabled: z.boolean() }).parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    await assertPermission(context, "team.manage");
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    const { data: user } = await supabaseAdmin.auth.admin.getUserById(data.userId);
+    const email = user?.user?.email ?? null;
+
+    const { error } = await supabaseAdmin
+      .from("profiles")
+      .upsert({ id: data.userId, email, email_alerts: data.enabled } as never);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+
 export const setTeamRole = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => z.object({ userId: z.string().uuid(), role: roleSchema }).parse(d))
