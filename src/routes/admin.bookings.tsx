@@ -33,6 +33,7 @@ import { BookingCreateDialog } from "@/components/admin/BookingCreateDialog";
 import { BookingManagePanel } from "@/components/admin/BookingManagePanel";
 import { BookingOpsPanel } from "@/components/admin/BookingOpsPanel";
 import { BookingsCalendar } from "@/components/admin/BookingsCalendar";
+import { GuestMessageMenu, GuestMessageHistory } from "@/components/admin/GuestMessages";
 import {
   buildLedger,
   euro,
@@ -710,6 +711,7 @@ function BookingsInbox() {
                     <MessageCircle className="h-3.5 w-3.5" /> WhatsApp
                   </a>
                 )}
+                <GuestMessageMenu booking={b} dueCents={ledgers[b.id]?.dueCents ?? 0} />
                 <button
                   type="button"
                   onClick={() => toggleExpanded(b.id, b.guests)}
@@ -969,6 +971,12 @@ function BookingsInbox() {
               )}
 
               {expandedId === b.id && <BookingManagePanel booking={b} />}
+
+              {expandedId === b.id && (
+                <div className="mt-4">
+                  <GuestMessageHistory bookingId={b.id} />
+                </div>
+              )}
 
               {expandedId === b.id && (
                 <div className="mt-5 pt-5 border-t border-border">
