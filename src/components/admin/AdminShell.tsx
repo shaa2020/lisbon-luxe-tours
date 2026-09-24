@@ -596,19 +596,19 @@ export function AdminShell({ children, requires }: { children: ReactNode; requir
           })}
           <button
             onClick={() => setMoreOpen(true)}
-            className={`relative flex flex-col items-center justify-center gap-0.5 active:scale-95 transition ${
+            className={`relative ios-press flex flex-col items-center justify-center gap-[3px] ${
               moreActive ? "text-primary" : "text-muted-foreground"
             }`}
           >
             <div className="relative">
-              <MoreHorizontal className="w-5 h-5" />
+              <MoreHorizontal className="w-[23px] h-[23px]" />
               {moreBadge > 0 && (
                 <span className="absolute -top-1.5 -right-2 inline-flex items-center justify-center min-w-[16px] h-[16px] px-1 rounded-full text-[9px] font-bold bg-destructive text-destructive-foreground">
                   {moreBadge > 9 ? "9+" : moreBadge}
                 </span>
               )}
             </div>
-            <span className="text-[10px] font-medium tracking-wide">More</span>
+            <span className="text-[10px] font-medium leading-none">More</span>
           </button>
         </div>
       </nav>
