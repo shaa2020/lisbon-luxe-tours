@@ -452,6 +452,7 @@ export type Database = {
           discount_cents: number
           discount_code: string | null
           email: string
+          guest_token: string | null
           guests: number
           guide_id: string | null
           id: string
@@ -504,6 +505,7 @@ export type Database = {
           discount_cents?: number
           discount_code?: string | null
           email: string
+          guest_token?: string | null
           guests?: number
           guide_id?: string | null
           id?: string
@@ -556,6 +558,7 @@ export type Database = {
           discount_cents?: number
           discount_code?: string | null
           email?: string
+          guest_token?: string | null
           guests?: number
           guide_id?: string | null
           id?: string
@@ -1908,36 +1911,42 @@ export type Database = {
       }
       ops_staff: {
         Row: {
+          bio: string | null
           created_at: string
           id: string
           languages: string[]
           name: string
           notes: string | null
           phone: string | null
+          photo_url: string | null
           role: string
           status: string
           updated_at: string
           whatsapp: string | null
         }
         Insert: {
+          bio?: string | null
           created_at?: string
           id?: string
           languages?: string[]
           name: string
           notes?: string | null
           phone?: string | null
+          photo_url?: string | null
           role?: string
           status?: string
           updated_at?: string
           whatsapp?: string | null
         }
         Update: {
+          bio?: string | null
           created_at?: string
           id?: string
           languages?: string[]
           name?: string
           notes?: string | null
           phone?: string | null
+          photo_url?: string | null
           role?: string
           status?: string
           updated_at?: string
