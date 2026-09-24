@@ -10,7 +10,8 @@ import {
   tourStageClass,
   TOUR_STAGE_LABEL,
 } from "@/lib/booking-ledger";
-import { Banknote, Clock, MessageSquare, UserRound } from "lucide-react";
+import { Banknote, Clock, UserRound } from "lucide-react";
+import { GuestMessageMenu } from "@/components/admin/GuestMessages";
 
 /**
  * Operations cockpit for the dashboard: what needs attention right now and a
@@ -183,17 +184,7 @@ export function DashboardToday() {
                   >
                     {l.dueCents > 0 ? `${euro(l.dueCents)} due` : "Paid"}
                   </span>
-                  {b.phone && (
-                    <a
-                      href={`https://wa.me/${String(b.phone).replace(/\D/g, "")}`}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="shrink-0 grid place-items-center w-8 h-8 rounded-lg border border-border text-emerald-600 hover:bg-accent"
-                      aria-label="WhatsApp guest"
-                    >
-                      <MessageSquare className="w-4 h-4" />
-                    </a>
-                  )}
+                  <GuestMessageMenu booking={b} dueCents={l.dueCents} compact />
                 </li>
               );
             })}

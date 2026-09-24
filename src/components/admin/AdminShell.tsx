@@ -80,6 +80,7 @@ const GROUPS: NavGroup[] = [
       { to: "/admin/messages", label: "Messages", icon: MessageSquare, desc: "Contact inbox", perm: "messages.view" },
       { to: "/admin/leads", label: "Leads & chats", icon: MessageSquare, desc: "WhatsApp and AI enquiries", perm: "bookings.view" },
       { to: "/admin/emails", label: "Emails", icon: Mail, desc: "Templates and send log", perm: "emails.manage" },
+      { to: "/admin/guest-messages", label: "Guest messages", icon: MessageSquare, desc: "One-tap WhatsApp texts", perm: "emails.manage" },
     ],
   },
   {

@@ -40,6 +40,7 @@ import { Route as AdminDestinationsRouteImport } from './routes/admin.destinatio
 import { Route as AdminDiscountsRouteImport } from './routes/admin.discounts'
 import { Route as AdminEmailsRouteImport } from './routes/admin.emails'
 import { Route as AdminFaqsRouteImport } from './routes/admin.faqs'
+import { Route as AdminGuestMessagesRouteImport } from './routes/admin.guest-messages'
 import { Route as AdminLeadsRouteImport } from './routes/admin.leads'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AdminMeetupPointsRouteImport } from './routes/admin.meetup-points'
@@ -276,6 +277,11 @@ const AdminEmailsRoute = AdminEmailsRouteImport.update({
 const AdminFaqsRoute = AdminFaqsRouteImport.update({
   id: '/admin/faqs',
   path: '/admin/faqs',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminGuestMessagesRoute = AdminGuestMessagesRouteImport.update({
+  id: '/admin/guest-messages',
+  path: '/admin/guest-messages',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminLeadsRoute = AdminLeadsRouteImport.update({
@@ -721,6 +727,7 @@ export interface FileRoutesByFullPath {
   '/admin/discounts': typeof AdminDiscountsRoute
   '/admin/emails': typeof AdminEmailsRoute
   '/admin/faqs': typeof AdminFaqsRoute
+  '/admin/guest-messages': typeof AdminGuestMessagesRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/meetup-points': typeof AdminMeetupPointsRoute
@@ -835,6 +842,7 @@ export interface FileRoutesByTo {
   '/admin/discounts': typeof AdminDiscountsRoute
   '/admin/emails': typeof AdminEmailsRoute
   '/admin/faqs': typeof AdminFaqsRoute
+  '/admin/guest-messages': typeof AdminGuestMessagesRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/meetup-points': typeof AdminMeetupPointsRoute
@@ -950,6 +958,7 @@ export interface FileRoutesById {
   '/admin/discounts': typeof AdminDiscountsRoute
   '/admin/emails': typeof AdminEmailsRoute
   '/admin/faqs': typeof AdminFaqsRoute
+  '/admin/guest-messages': typeof AdminGuestMessagesRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/meetup-points': typeof AdminMeetupPointsRoute
@@ -1066,6 +1075,7 @@ export interface FileRouteTypes {
     | '/admin/discounts'
     | '/admin/emails'
     | '/admin/faqs'
+    | '/admin/guest-messages'
     | '/admin/leads'
     | '/admin/login'
     | '/admin/meetup-points'
@@ -1180,6 +1190,7 @@ export interface FileRouteTypes {
     | '/admin/discounts'
     | '/admin/emails'
     | '/admin/faqs'
+    | '/admin/guest-messages'
     | '/admin/leads'
     | '/admin/login'
     | '/admin/meetup-points'
@@ -1294,6 +1305,7 @@ export interface FileRouteTypes {
     | '/admin/discounts'
     | '/admin/emails'
     | '/admin/faqs'
+    | '/admin/guest-messages'
     | '/admin/leads'
     | '/admin/login'
     | '/admin/meetup-points'
@@ -1409,6 +1421,7 @@ export interface RootRouteChildren {
   AdminDiscountsRoute: typeof AdminDiscountsRoute
   AdminEmailsRoute: typeof AdminEmailsRoute
   AdminFaqsRoute: typeof AdminFaqsRoute
+  AdminGuestMessagesRoute: typeof AdminGuestMessagesRoute
   AdminLeadsRoute: typeof AdminLeadsRoute
   AdminLoginRoute: typeof AdminLoginRoute
   AdminMeetupPointsRoute: typeof AdminMeetupPointsRoute
@@ -1709,6 +1722,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/faqs'
       fullPath: '/admin/faqs'
       preLoaderRoute: typeof AdminFaqsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/guest-messages': {
+      id: '/admin/guest-messages'
+      path: '/admin/guest-messages'
+      fullPath: '/admin/guest-messages'
+      preLoaderRoute: typeof AdminGuestMessagesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/leads': {
@@ -2324,6 +2344,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminDiscountsRoute: AdminDiscountsRoute,
   AdminEmailsRoute: AdminEmailsRoute,
   AdminFaqsRoute: AdminFaqsRoute,
+  AdminGuestMessagesRoute: AdminGuestMessagesRoute,
   AdminLeadsRoute: AdminLeadsRoute,
   AdminLoginRoute: AdminLoginRoute,
   AdminMeetupPointsRoute: AdminMeetupPointsRoute,
