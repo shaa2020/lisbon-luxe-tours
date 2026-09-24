@@ -533,13 +533,15 @@ export function AdminShell({ children, requires }: { children: ReactNode; requir
               </div>
             </div>
           </div>
-          <div className="md:hidden px-4 pb-2 -mt-1">
-            <p className="text-[11px] text-muted-foreground truncate">{currentLabel}</p>
+          <div className="md:hidden px-4 pb-2.5 -mt-0.5">
+            <p className="truncate font-display text-[26px] font-bold leading-tight tracking-[-0.02em]">
+              {currentLabel}
+            </p>
           </div>
         </header>
 
         {/* ============= Main ============= */}
-        <main className="flex-1 w-full max-w-[1400px] mx-auto px-3 sm:px-6 py-5 md:py-7 pb-[calc(env(safe-area-inset-bottom)+88px)] md:pb-14">
+        <main className="flex-1 w-full max-w-[1400px] mx-auto px-4 sm:px-6 py-5 md:py-7 pb-[calc(env(safe-area-inset-bottom)+92px)] md:pb-14">
           {allowed ? (
             children
           ) : (
