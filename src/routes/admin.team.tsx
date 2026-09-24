@@ -39,6 +39,7 @@ function TeamBody() {
   const setRole = useServerFn(setTeamRole);
   const remove = useServerFn(removeTeamMember);
   const resetPw = useServerFn(sendTeamPasswordReset);
+  const setAlerts = useServerFn(setTeamEmailAlerts);
 
   const [email, setEmail] = useState("");
   const [fullName, setFullName] = useState("");
