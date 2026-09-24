@@ -357,23 +357,20 @@ export function AdminShell({ children, requires }: { children: ReactNode; requir
           <div className="h-[56px] sm:h-16 px-3 sm:px-5 flex items-center gap-2 sm:gap-3">
             <button
               onClick={() => setDrawerOpen(true)}
-              className="md:hidden w-10 h-10 shrink-0 grid place-items-center rounded-xl hover:bg-accent"
+              className="md:hidden ios-press w-10 h-10 shrink-0 grid place-items-center rounded-full text-primary hover:bg-foreground/[0.04]"
               aria-label="Open menu"
             >
               <Menu className="w-5 h-5" />
             </button>
-            <span className="hidden md:grid w-10 h-10 shrink-0 place-items-center rounded-xl text-muted-foreground">
-              <Menu className="w-5 h-5" />
-            </span>
 
             {/* Search */}
             <div className="relative flex-1 min-w-0 max-w-xl">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search sections, bookings, tours…"
-                className="w-full h-10 rounded-xl border border-border bg-background pl-9 pr-3 text-sm outline-none focus:border-primary/60"
+                placeholder="Search"
+                className="w-full h-10 rounded-full border border-transparent bg-foreground/[0.05] pl-10 pr-3 text-[15px] outline-none placeholder:text-muted-foreground focus:border-primary/40 focus:bg-card"
               />
               {results.length > 0 && (
                 <div className="absolute left-0 right-0 top-12 rounded-xl border border-border bg-card shadow-lg overflow-hidden z-40">
