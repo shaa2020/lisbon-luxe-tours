@@ -321,9 +321,9 @@ export function AdminShell({ children, requires }: { children: ReactNode; requir
   );
 
   return (
-    <div className="min-h-[100dvh] bg-muted/40 text-foreground md:flex">
+    <div className="min-h-[100dvh] ios-grouped text-foreground md:flex">
       {/* ============= Desktop sidebar ============= */}
-      <aside className="hidden md:flex w-[250px] lg:w-[264px] shrink-0 flex-col border-r border-border bg-card sticky top-0 h-[100dvh]">
+      <aside className="hidden md:flex w-[250px] lg:w-[272px] shrink-0 flex-col ios-blur border-r border-[var(--ios-hairline)] sticky top-0 h-[100dvh]">
         {SidebarBody}
       </aside>
 
