@@ -31,6 +31,7 @@ import {
   Search,
   Bell,
   ChevronDown,
+  ChevronRight,
   Users,
   ShieldAlert,
   KeyRound,
@@ -269,13 +270,13 @@ export function AdminShell({ children, requires }: { children: ReactNode; requir
                       <Link
                         key={n.to}
                         to={n.to}
-                        className={`group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors ${
+                        className={`group ios-press flex items-center gap-3 rounded-2xl px-3 py-2.5 text-[15px] transition-colors ${
                           active
-                            ? "bg-emerald-600 text-white font-semibold shadow-[0_6px_16px_rgba(5,150,105,0.35)]"
-                            : "text-muted-foreground hover:bg-accent hover:text-foreground"
+                            ? "bg-primary/12 text-primary font-semibold"
+                            : "text-muted-foreground hover:bg-foreground/[0.04] hover:text-foreground"
                         }`}
                       >
-                        <Icon className="w-[18px] h-[18px] shrink-0" />
+                        <Icon className={`w-[19px] h-[19px] shrink-0 ${active ? "stroke-[2.3]" : ""}`} />
                         <span className="truncate">{n.label}</span>
                         <span className="ml-auto shrink-0">
                           <Badge n={badgeFor(n.to)} small />
@@ -321,9 +322,9 @@ export function AdminShell({ children, requires }: { children: ReactNode; requir
   );
 
   return (
-    <div className="min-h-[100dvh] bg-muted/40 text-foreground md:flex">
+    <div className="min-h-[100dvh] ios-grouped text-foreground md:flex">
       {/* ============= Desktop sidebar ============= */}
-      <aside className="hidden md:flex w-[250px] lg:w-[264px] shrink-0 flex-col border-r border-border bg-card sticky top-0 h-[100dvh]">
+      <aside className="hidden md:flex w-[250px] lg:w-[272px] shrink-0 flex-col ios-blur border-r border-[var(--ios-hairline)] sticky top-0 h-[100dvh]">
         {SidebarBody}
       </aside>
 
@@ -331,14 +332,14 @@ export function AdminShell({ children, requires }: { children: ReactNode; requir
       {drawerOpen && (
         <div className="md:hidden fixed inset-0 z-50">
           <button
-            className="absolute inset-0 bg-foreground/40 backdrop-blur-[2px]"
+            className="absolute inset-0 bg-foreground/35 backdrop-blur-[3px]"
             aria-label="Close menu"
             onClick={() => setDrawerOpen(false)}
           />
-          <div className="absolute inset-y-0 left-0 w-[82%] max-w-[300px] bg-card border-r border-border flex flex-col">
+          <div className="absolute inset-y-0 left-0 w-[84%] max-w-[310px] bg-card border-r border-[var(--ios-hairline)] flex flex-col">
             <button
               onClick={() => setDrawerOpen(false)}
-              className="absolute right-2 top-3 w-9 h-9 grid place-items-center rounded-full hover:bg-accent"
+              className="ios-press absolute right-3 top-3 w-8 h-8 grid place-items-center rounded-full bg-foreground/[0.06] text-muted-foreground"
               aria-label="Close"
             >
               <X className="w-4 h-4" />
@@ -351,32 +352,29 @@ export function AdminShell({ children, requires }: { children: ReactNode; requir
       <div className="flex-1 min-w-0 flex flex-col">
         {/* ============= Top bar (all sizes) ============= */}
         <header
-          className="sticky top-0 z-30 border-b border-border bg-card/95 backdrop-blur"
+          className="sticky top-0 z-30 ios-blur ios-hairline-b"
           style={{ paddingTop: "env(safe-area-inset-top)" }}
         >
-          <div className="h-16 px-3 sm:px-5 flex items-center gap-2 sm:gap-3">
+          <div className="h-[56px] sm:h-16 px-3 sm:px-5 flex items-center gap-2 sm:gap-3">
             <button
               onClick={() => setDrawerOpen(true)}
-              className="md:hidden w-10 h-10 shrink-0 grid place-items-center rounded-xl hover:bg-accent"
+              className="md:hidden ios-press w-10 h-10 shrink-0 grid place-items-center rounded-full text-primary hover:bg-foreground/[0.04]"
               aria-label="Open menu"
             >
               <Menu className="w-5 h-5" />
             </button>
-            <span className="hidden md:grid w-10 h-10 shrink-0 place-items-center rounded-xl text-muted-foreground">
-              <Menu className="w-5 h-5" />
-            </span>
 
             {/* Search */}
             <div className="relative flex-1 min-w-0 max-w-xl">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search sections, bookings, tours…"
-                className="w-full h-10 rounded-xl border border-border bg-background pl-9 pr-3 text-sm outline-none focus:border-primary/60"
+                placeholder="Search"
+                className="w-full h-10 rounded-full border border-transparent bg-foreground/[0.05] pl-10 pr-3 text-[15px] outline-none placeholder:text-muted-foreground focus:border-primary/40 focus:bg-card"
               />
               {results.length > 0 && (
-                <div className="absolute left-0 right-0 top-12 rounded-xl border border-border bg-card shadow-lg overflow-hidden z-40">
+                <div className="absolute left-0 right-0 top-12 ios-card overflow-hidden z-40 divide-y divide-[var(--ios-hairline)]">
                   {results.map((r) => {
                     const Icon = r.icon;
                     return (
@@ -384,7 +382,7 @@ export function AdminShell({ children, requires }: { children: ReactNode; requir
                         key={r.to}
                         to={r.to}
                         onClick={() => setQuery("")}
-                        className="flex items-center gap-2.5 px-3 py-2.5 text-sm hover:bg-accent"
+                        className="flex items-center gap-2.5 px-4 py-3 text-[15px] hover:bg-foreground/[0.04]"
                       >
                         <Icon className="w-4 h-4 text-muted-foreground shrink-0" />
                         <span className="truncate">{r.label}</span>
@@ -405,7 +403,7 @@ export function AdminShell({ children, requires }: { children: ReactNode; requir
                   href={waHref}
                   target="_blank"
                   rel="noreferrer"
-                  className="hidden sm:grid w-10 h-10 place-items-center rounded-xl text-emerald-600 hover:bg-accent"
+                  className="hidden sm:grid ios-press w-10 h-10 place-items-center rounded-full text-emerald-600 hover:bg-foreground/[0.04]"
                   aria-label="WhatsApp"
                 >
                   <MessageSquare className="w-5 h-5" />
@@ -417,7 +415,7 @@ export function AdminShell({ children, requires }: { children: ReactNode; requir
                     setUserMenu(false);
                     setNotifOpen((v) => !v);
                   }}
-                  className="relative grid w-10 h-10 place-items-center rounded-xl text-muted-foreground hover:bg-accent"
+                  className="relative ios-press grid w-10 h-10 place-items-center rounded-full text-muted-foreground hover:bg-foreground/[0.04]"
                   aria-label="Notifications"
                 >
                   <Bell className="w-5 h-5" />
@@ -428,7 +426,7 @@ export function AdminShell({ children, requires }: { children: ReactNode; requir
                   )}
                 </button>
                 {notifOpen && (
-                  <div className="absolute right-0 top-12 w-72 rounded-xl border border-border bg-card shadow-lg p-1.5 z-40">
+                  <div className="absolute right-0 top-12 w-72 ios-card p-1.5 z-40">
                     <p className="px-2.5 py-2 text-[11px] uppercase tracking-widest text-muted-foreground">
                       Notifications
                     </p>
@@ -499,7 +497,7 @@ export function AdminShell({ children, requires }: { children: ReactNode; requir
                     setNotifOpen(false);
                     setUserMenu((v) => !v);
                   }}
-                  className="flex items-center gap-2 rounded-xl px-1.5 sm:px-2 py-1.5 hover:bg-accent"
+                  className="flex items-center gap-2 ios-press rounded-full px-1.5 sm:px-2 py-1.5 hover:bg-foreground/[0.04]"
                 >
                   <span className="w-9 h-9 shrink-0 grid place-items-center rounded-full bg-primary/12 text-primary text-xs font-bold">
                     {initials}
@@ -511,7 +509,7 @@ export function AdminShell({ children, requires }: { children: ReactNode; requir
                   <ChevronDown className="hidden lg:block w-4 h-4 text-muted-foreground" />
                 </button>
                 {userMenu && (
-                  <div className="absolute right-0 top-12 w-56 rounded-xl border border-border bg-card shadow-lg p-1.5 z-40">
+                  <div className="absolute right-0 top-12 w-56 ios-card p-1.5 z-40">
                     <p className="px-2.5 py-2 text-[11px] text-muted-foreground truncate">{user.email}</p>
                     <div className="px-1 pb-1.5">
                       <InstallAppButton variant="full" />
@@ -536,13 +534,15 @@ export function AdminShell({ children, requires }: { children: ReactNode; requir
               </div>
             </div>
           </div>
-          <div className="md:hidden px-4 pb-2 -mt-1">
-            <p className="text-[11px] text-muted-foreground truncate">{currentLabel}</p>
+          <div className="md:hidden px-4 pb-2.5 -mt-0.5">
+            <p className="truncate font-display text-[26px] font-bold leading-tight tracking-[-0.02em]">
+              {currentLabel}
+            </p>
           </div>
         </header>
 
         {/* ============= Main ============= */}
-        <main className="flex-1 w-full max-w-[1400px] mx-auto px-3 sm:px-6 py-5 md:py-7 pb-[calc(env(safe-area-inset-bottom)+88px)] md:pb-14">
+        <main className="flex-1 w-full max-w-[1400px] mx-auto px-4 sm:px-6 py-5 md:py-7 pb-[calc(env(safe-area-inset-bottom)+92px)] md:pb-14">
           {allowed ? (
             children
           ) : (
@@ -567,10 +567,10 @@ export function AdminShell({ children, requires }: { children: ReactNode; requir
 
       {/* ============= Mobile bottom tab bar ============= */}
       <nav
-        className="md:hidden fixed bottom-0 inset-x-0 z-30 bg-card/95 backdrop-blur border-t border-border"
+        className="md:hidden fixed bottom-0 inset-x-0 z-30 ios-blur border-t border-[var(--ios-hairline)]"
         style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
       >
-        <div className="grid h-16" style={{ gridTemplateColumns: `repeat(${primary.length + 1}, minmax(0, 1fr))` }}>
+        <div className="grid h-[54px]" style={{ gridTemplateColumns: `repeat(${primary.length + 1}, minmax(0, 1fr))` }}>
           {primary.map((n) => {
             const active = isActiveRoute(n.to, location.pathname);
             const Icon = n.icon;
@@ -579,71 +579,73 @@ export function AdminShell({ children, requires }: { children: ReactNode; requir
               <Link
                 key={n.to}
                 to={n.to}
-                className={`relative flex flex-col items-center justify-center gap-0.5 active:scale-95 transition ${
-                  active ? "text-emerald-600" : "text-muted-foreground"
+                className={`relative ios-press flex flex-col items-center justify-center gap-[3px] ${
+                  active ? "text-primary" : "text-muted-foreground"
                 }`}
               >
                 <div className="relative">
-                  <Icon className={`w-5 h-5 ${active ? "stroke-[2.4]" : ""}`} />
+                  <Icon className={`w-[23px] h-[23px] ${active ? "stroke-[2.2]" : "stroke-[1.8]"}`} />
                   {b > 0 && (
                     <span className="absolute -top-1.5 -right-2 inline-flex items-center justify-center min-w-[16px] h-[16px] px-1 rounded-full text-[9px] font-bold bg-destructive text-destructive-foreground">
                       {b > 9 ? "9+" : b}
                     </span>
                   )}
                 </div>
-                <span className="text-[10px] font-medium tracking-wide">{n.label}</span>
-                {active && <span className="absolute top-0 h-0.5 w-10 bg-primary rounded-b-full" />}
+                <span className="text-[10px] font-medium leading-none">{n.label}</span>
               </Link>
             );
           })}
           <button
             onClick={() => setMoreOpen(true)}
-            className={`relative flex flex-col items-center justify-center gap-0.5 active:scale-95 transition ${
+            className={`relative ios-press flex flex-col items-center justify-center gap-[3px] ${
               moreActive ? "text-primary" : "text-muted-foreground"
             }`}
           >
             <div className="relative">
-              <MoreHorizontal className="w-5 h-5" />
+              <MoreHorizontal className="w-[23px] h-[23px]" />
               {moreBadge > 0 && (
                 <span className="absolute -top-1.5 -right-2 inline-flex items-center justify-center min-w-[16px] h-[16px] px-1 rounded-full text-[9px] font-bold bg-destructive text-destructive-foreground">
                   {moreBadge > 9 ? "9+" : moreBadge}
                 </span>
               )}
             </div>
-            <span className="text-[10px] font-medium tracking-wide">More</span>
+            <span className="text-[10px] font-medium leading-none">More</span>
           </button>
         </div>
       </nav>
 
-      {/* ============= More sheet ============= */}
+      {/* ============= More sheet (iOS) ============= */}
       {moreOpen && (
         <div className="md:hidden fixed inset-0 z-40">
           <button
-            className="absolute inset-0 bg-foreground/40 backdrop-blur-[2px]"
+            className="absolute inset-0 bg-foreground/35 backdrop-blur-[3px]"
             aria-label="Close menu"
             onClick={() => setMoreOpen(false)}
           />
           <div
-            className="absolute bottom-0 inset-x-0 rounded-t-2xl bg-card border-t border-border max-h-[80vh] overflow-y-auto"
-            style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 16px)" }}
+            className="ios-sheet absolute bottom-0 inset-x-0 rounded-t-[28px] bg-[var(--ios-grouped)] max-h-[86vh] overflow-y-auto"
+            style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 20px)" }}
           >
-            <div className="sticky top-0 bg-card px-4 pt-3 pb-2 flex items-center justify-between border-b border-border">
-              <p className="font-display font-bold text-base">All sections</p>
-              <button
-                onClick={() => setMoreOpen(false)}
-                className="w-9 h-9 grid place-items-center rounded-full hover:bg-accent"
-                aria-label="Close"
-              >
-                <X className="w-4 h-4" />
-              </button>
+            <div className="sticky top-0 z-10 ios-blur px-4 pt-2.5 pb-3">
+              <div className="mx-auto mb-3 ios-grab" />
+              <div className="flex items-center justify-between">
+                <p className="font-display text-[22px] font-bold tracking-[-0.02em]">All sections</p>
+                <button
+                  onClick={() => setMoreOpen(false)}
+                  className="ios-press w-8 h-8 grid place-items-center rounded-full bg-foreground/[0.06] text-muted-foreground"
+                  aria-label="Close"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
             </div>
-            <div className="p-4 space-y-5">
+            <div className="px-4 pt-1 space-y-6">
               {groups.map((group) => (
                 <div key={group.title}>
-                  <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                  <p className="mb-2 px-3 text-[12px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
                     {group.title}
                   </p>
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="ios-card overflow-hidden divide-y divide-[var(--ios-hairline)]">
                     {group.items.map((n) => {
                       const Icon = n.icon;
                       const active = isActiveRoute(n.to, location.pathname);
@@ -652,16 +654,29 @@ export function AdminShell({ children, requires }: { children: ReactNode; requir
                         <Link
                           key={n.to}
                           to={n.to}
-                          className={`rounded-xl border p-3 active:scale-[0.98] transition ${
-                            active ? "border-emerald-600 bg-emerald-600 text-white" : "border-border bg-background"
-                          }`}
+                          className="flex items-center gap-3 px-4 py-3 active:bg-foreground/[0.05]"
                         >
-                          <div className="flex items-center justify-between mb-1.5">
-                            <Icon className={`w-5 h-5 ${active ? "text-white" : "text-muted-foreground"}`} />
-                            <Badge n={b} small />
-                          </div>
-                          <p className="text-sm font-semibold leading-tight">{n.label}</p>
-                          {n.desc && <p className="text-[11px] text-muted-foreground leading-snug">{n.desc}</p>}
+                          <span
+                            className={`grid h-8 w-8 shrink-0 place-items-center rounded-[9px] ${
+                              active ? "bg-primary text-primary-foreground" : "bg-primary/10 text-primary"
+                            }`}
+                          >
+                            <Icon className="h-[17px] w-[17px]" />
+                          </span>
+                          <span className="min-w-0 flex-1">
+                            <span
+                              className={`block truncate text-[15px] leading-tight ${
+                                active ? "font-semibold text-primary" : "font-medium"
+                              }`}
+                            >
+                              {n.label}
+                            </span>
+                            {n.desc && (
+                              <span className="block truncate text-[12px] text-muted-foreground">{n.desc}</span>
+                            )}
+                          </span>
+                          <Badge n={b} small />
+                          <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground/60" />
                         </Link>
                       );
                     })}
@@ -670,7 +685,7 @@ export function AdminShell({ children, requires }: { children: ReactNode; requir
               ))}
               <button
                 onClick={() => signOut()}
-                className="w-full rounded-xl border border-border py-3 text-sm font-semibold inline-flex items-center justify-center gap-2"
+                className="ios-press ios-card w-full py-3.5 text-[15px] font-semibold text-destructive inline-flex items-center justify-center gap-2"
               >
                 <LogOut className="w-4 h-4" /> Sign out
               </button>
@@ -696,13 +711,17 @@ export function AdminPageHeader({
   actions?: ReactNode;
 }) {
   return (
-    <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end sm:justify-between">
+    <div className="mb-5 grid grid-cols-[minmax(0,1fr)_auto] items-end gap-3 sm:flex sm:flex-wrap sm:justify-between">
       <div className="min-w-0">
         {eyebrow && (
-          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-primary mb-1.5">{eyebrow}</p>
+          <p className="mb-1 text-[12px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+            {eyebrow}
+          </p>
         )}
-        <h2 className="font-display text-2xl md:text-3xl font-bold leading-tight">{title}</h2>
-        {description && <p className="text-sm text-muted-foreground mt-1">{description}</p>}
+        <h2 className="font-display text-[26px] md:text-[32px] font-bold leading-tight tracking-[-0.022em]">
+          {title}
+        </h2>
+        {description && <p className="mt-1 text-[14px] leading-snug text-muted-foreground">{description}</p>}
       </div>
       {actions && <div className="flex items-center gap-2 shrink-0">{actions}</div>}
     </div>
@@ -711,7 +730,7 @@ export function AdminPageHeader({
 
 export function AdminCard({ className = "", children }: { className?: string; children: ReactNode }) {
   return (
-    <div className={`rounded-2xl border border-border bg-card shadow-[0_1px_2px_rgba(30,58,95,0.04)] ${className}`}>
+    <div className={`ios-card ${className}`}>
       {children}
     </div>
   );
