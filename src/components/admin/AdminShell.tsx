@@ -613,35 +613,38 @@ export function AdminShell({ children, requires }: { children: ReactNode; requir
         </div>
       </nav>
 
-      {/* ============= More sheet ============= */}
+      {/* ============= More sheet (iOS) ============= */}
       {moreOpen && (
         <div className="md:hidden fixed inset-0 z-40">
           <button
-            className="absolute inset-0 bg-foreground/40 backdrop-blur-[2px]"
+            className="absolute inset-0 bg-foreground/35 backdrop-blur-[3px]"
             aria-label="Close menu"
             onClick={() => setMoreOpen(false)}
           />
           <div
-            className="absolute bottom-0 inset-x-0 rounded-t-2xl bg-card border-t border-border max-h-[80vh] overflow-y-auto"
-            style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 16px)" }}
+            className="ios-sheet absolute bottom-0 inset-x-0 rounded-t-[28px] bg-[var(--ios-grouped)] max-h-[86vh] overflow-y-auto"
+            style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 20px)" }}
           >
-            <div className="sticky top-0 bg-card px-4 pt-3 pb-2 flex items-center justify-between border-b border-border">
-              <p className="font-display font-bold text-base">All sections</p>
-              <button
-                onClick={() => setMoreOpen(false)}
-                className="w-9 h-9 grid place-items-center rounded-full hover:bg-accent"
-                aria-label="Close"
-              >
-                <X className="w-4 h-4" />
-              </button>
+            <div className="sticky top-0 z-10 ios-blur px-4 pt-2.5 pb-3">
+              <div className="mx-auto mb-3 ios-grab" />
+              <div className="flex items-center justify-between">
+                <p className="font-display text-[22px] font-bold tracking-[-0.02em]">All sections</p>
+                <button
+                  onClick={() => setMoreOpen(false)}
+                  className="ios-press w-8 h-8 grid place-items-center rounded-full bg-foreground/[0.06] text-muted-foreground"
+                  aria-label="Close"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
             </div>
-            <div className="p-4 space-y-5">
+            <div className="px-4 pt-1 space-y-6">
               {groups.map((group) => (
                 <div key={group.title}>
-                  <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                  <p className="mb-2 px-3 text-[12px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
                     {group.title}
                   </p>
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="ios-card overflow-hidden divide-y divide-[var(--ios-hairline)]">
                     {group.items.map((n) => {
                       const Icon = n.icon;
                       const active = isActiveRoute(n.to, location.pathname);
@@ -650,16 +653,29 @@ export function AdminShell({ children, requires }: { children: ReactNode; requir
                         <Link
                           key={n.to}
                           to={n.to}
-                          className={`rounded-xl border p-3 active:scale-[0.98] transition ${
-                            active ? "border-emerald-600 bg-emerald-600 text-white" : "border-border bg-background"
-                          }`}
+                          className="flex items-center gap-3 px-4 py-3 active:bg-foreground/[0.05]"
                         >
-                          <div className="flex items-center justify-between mb-1.5">
-                            <Icon className={`w-5 h-5 ${active ? "text-white" : "text-muted-foreground"}`} />
-                            <Badge n={b} small />
-                          </div>
-                          <p className="text-sm font-semibold leading-tight">{n.label}</p>
-                          {n.desc && <p className="text-[11px] text-muted-foreground leading-snug">{n.desc}</p>}
+                          <span
+                            className={`grid h-8 w-8 shrink-0 place-items-center rounded-[9px] ${
+                              active ? "bg-primary text-primary-foreground" : "bg-primary/10 text-primary"
+                            }`}
+                          >
+                            <Icon className="h-[17px] w-[17px]" />
+                          </span>
+                          <span className="min-w-0 flex-1">
+                            <span
+                              className={`block truncate text-[15px] leading-tight ${
+                                active ? "font-semibold text-primary" : "font-medium"
+                              }`}
+                            >
+                              {n.label}
+                            </span>
+                            {n.desc && (
+                              <span className="block truncate text-[12px] text-muted-foreground">{n.desc}</span>
+                            )}
+                          </span>
+                          <Badge n={b} small />
+                          <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground/60" />
                         </Link>
                       );
                     })}
@@ -668,7 +684,7 @@ export function AdminShell({ children, requires }: { children: ReactNode; requir
               ))}
               <button
                 onClick={() => signOut()}
-                className="w-full rounded-xl border border-border py-3 text-sm font-semibold inline-flex items-center justify-center gap-2"
+                className="ios-press ios-card w-full py-3.5 text-[15px] font-semibold text-destructive inline-flex items-center justify-center gap-2"
               >
                 <LogOut className="w-4 h-4" /> Sign out
               </button>
