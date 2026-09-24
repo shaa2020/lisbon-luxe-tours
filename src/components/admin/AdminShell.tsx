@@ -373,7 +373,7 @@ export function AdminShell({ children, requires }: { children: ReactNode; requir
                 className="w-full h-10 rounded-full border border-transparent bg-foreground/[0.05] pl-10 pr-3 text-[15px] outline-none placeholder:text-muted-foreground focus:border-primary/40 focus:bg-card"
               />
               {results.length > 0 && (
-                <div className="absolute left-0 right-0 top-12 rounded-xl border border-border bg-card shadow-lg overflow-hidden z-40">
+                <div className="absolute left-0 right-0 top-12 ios-card overflow-hidden z-40 divide-y divide-[var(--ios-hairline)]">
                   {results.map((r) => {
                     const Icon = r.icon;
                     return (
@@ -381,7 +381,7 @@ export function AdminShell({ children, requires }: { children: ReactNode; requir
                         key={r.to}
                         to={r.to}
                         onClick={() => setQuery("")}
-                        className="flex items-center gap-2.5 px-3 py-2.5 text-sm hover:bg-accent"
+                        className="flex items-center gap-2.5 px-4 py-3 text-[15px] hover:bg-foreground/[0.04]"
                       >
                         <Icon className="w-4 h-4 text-muted-foreground shrink-0" />
                         <span className="truncate">{r.label}</span>
