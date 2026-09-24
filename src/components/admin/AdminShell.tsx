@@ -332,14 +332,14 @@ export function AdminShell({ children, requires }: { children: ReactNode; requir
       {drawerOpen && (
         <div className="md:hidden fixed inset-0 z-50">
           <button
-            className="absolute inset-0 bg-foreground/40 backdrop-blur-[2px]"
+            className="absolute inset-0 bg-foreground/35 backdrop-blur-[3px]"
             aria-label="Close menu"
             onClick={() => setDrawerOpen(false)}
           />
-          <div className="absolute inset-y-0 left-0 w-[82%] max-w-[300px] bg-card border-r border-border flex flex-col">
+          <div className="absolute inset-y-0 left-0 w-[84%] max-w-[310px] bg-card border-r border-[var(--ios-hairline)] flex flex-col">
             <button
               onClick={() => setDrawerOpen(false)}
-              className="absolute right-2 top-3 w-9 h-9 grid place-items-center rounded-full hover:bg-accent"
+              className="ios-press absolute right-3 top-3 w-8 h-8 grid place-items-center rounded-full bg-foreground/[0.06] text-muted-foreground"
               aria-label="Close"
             >
               <X className="w-4 h-4" />
