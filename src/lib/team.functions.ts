@@ -29,6 +29,8 @@ export type TeamMember = {
   role: StaffRole | null;
   createdAt: string | null;
   lastSignInAt: string | null;
+  /** Receives internal new-booking / payment alert emails. */
+  emailAlerts: boolean;
 };
 
 export const listTeam = createServerFn({ method: "GET" })
@@ -40,7 +42,9 @@ export const listTeam = createServerFn({ method: "GET" })
     const { data: roles, error: rErr } = await supabaseAdmin.from("user_roles").select("user_id, role");
     if (rErr) throw new Error(rErr.message);
 
-    const { data: profiles } = await supabaseAdmin.from("profiles").select("id, email, full_name");
+    const { data: profiles } = await supabaseAdmin
+      .from("profiles")
+      .select("id, email, full_name, email_alerts");
     const { data: users } = await supabaseAdmin.auth.admin.listUsers({ page: 1, perPage: 200 });
 
     const byId = new Map<string, TeamMember>();
@@ -52,6 +56,7 @@ export const listTeam = createServerFn({ method: "GET" })
         role: null,
         createdAt: u.created_at ?? null,
         lastSignInAt: u.last_sign_in_at ?? null,
+        emailAlerts: false,
       });
     }
     for (const p of profiles ?? []) {
@@ -59,6 +64,7 @@ export const listTeam = createServerFn({ method: "GET" })
       if (m) {
         m.email = m.email || (p.email ?? "");
         m.fullName = p.full_name ?? m.fullName;
+        m.emailAlerts = Boolean((p as { email_alerts?: boolean }).email_alerts);
       }
     }
     for (const r of roles ?? []) {
@@ -117,6 +123,27 @@ export const inviteTeamMember = createServerFn({ method: "POST" })
 
     return { ok: true, userId };
   });
+
+/** Turn internal booking/payment alert emails on or off for one team member. */
+export const setTeamEmailAlerts = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z.object({ userId: z.string().uuid(), enabled: z.boolean() }).parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    await assertPermission(context, "team.manage");
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    const { data: user } = await supabaseAdmin.auth.admin.getUserById(data.userId);
+    const email = user?.user?.email ?? null;
+
+    const { error } = await supabaseAdmin
+      .from("profiles")
+      .upsert({ id: data.userId, email, email_alerts: data.enabled } as never);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
 
 export const setTeamRole = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])

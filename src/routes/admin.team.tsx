@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { Trash2, UserPlus, ShieldCheck, KeyRound } from "lucide-react";
+import { Trash2, UserPlus, ShieldCheck, KeyRound, Bell, BellOff } from "lucide-react";
 import { AdminShell, AdminPageHeader, AdminCard } from "@/components/admin/AdminShell";
 import { ROLE_DESCRIPTIONS, ROLE_LABELS, type StaffRole } from "@/lib/permissions";
 import { useAuth } from "@/lib/auth";
@@ -13,6 +13,7 @@ import {
   setTeamRole,
   removeTeamMember,
   sendTeamPasswordReset,
+  setTeamEmailAlerts,
 } from "@/lib/team.functions";
 
 export const Route = createFileRoute("/admin/team")({
@@ -38,6 +39,7 @@ function TeamBody() {
   const setRole = useServerFn(setTeamRole);
   const remove = useServerFn(removeTeamMember);
   const resetPw = useServerFn(sendTeamPasswordReset);
+  const setAlerts = useServerFn(setTeamEmailAlerts);
 
   const [email, setEmail] = useState("");
   const [fullName, setFullName] = useState("");
@@ -53,6 +55,15 @@ function TeamBody() {
     onSuccess: () => toast.success("Password link sent"),
     onError: (e: Error) => toast.error(e.message),
   });
+
+  const alertsM = useMutation({
+    mutationFn: (v: { userId: string; enabled: boolean }) => setAlerts({ data: v }),
+    onSuccess: (_r, v) =>
+      toast.success(v.enabled ? "Email alerts turned on" : "Email alerts turned off"),
+    onError: (e: Error) => toast.error(e.message),
+    onSettled: () => qc.invalidateQueries({ queryKey: ["admin-team"] }),
+  });
+
 
   const inviteM = useMutation({
     mutationFn: () => invite({ data: { email, fullName: fullName || undefined, role, origin } }),
@@ -93,7 +104,10 @@ function TeamBody() {
 
       <div className="grid gap-6 lg:grid-cols-[1.4fr_0.6fr] items-start">
         <AdminCard className="p-5">
-          <p className="text-sm font-semibold mb-3">Members</p>
+          <p className="text-sm font-semibold">Members</p>
+          <p className="mb-3 mt-1 text-xs text-muted-foreground">
+            Tick a person to email them every new booking and payment.
+          </p>
           {team.isLoading ? (
             <p className="text-sm text-muted-foreground">Loading…</p>
           ) : (team.data ?? []).length === 0 ? (
@@ -120,6 +134,26 @@ function TeamBody() {
                     >
                       {m.lastSignInAt ? "Active" : "Invited — not signed in yet"}
                     </span>
+                    <label className="mt-2 flex items-center gap-2 text-xs">
+                      <input
+                        type="checkbox"
+                        className="h-4 w-4 accent-primary"
+                        checked={m.emailAlerts}
+                        disabled={alertsM.isPending || !m.email}
+                        onChange={(e) =>
+                          alertsM.mutate({ userId: m.userId, enabled: e.target.checked })
+                        }
+                      />
+                      {m.emailAlerts ? (
+                        <span className="inline-flex items-center gap-1 font-medium text-emerald-700">
+                          <Bell className="h-3.5 w-3.5" /> Gets booking emails
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 text-muted-foreground">
+                          <BellOff className="h-3.5 w-3.5" /> No booking emails
+                        </span>
+                      )}
+                    </label>
                   </div>
                   <select
                     value={m.role ?? "staff"}

@@ -8,6 +8,8 @@ type SupabaseLike = Parameters<typeof sendBrandedEmail>[0] & {
 };
 
 async function ownerInbox(supabase: SupabaseLike): Promise<string[]> {
+  const list: string[] = [];
+
   try {
     // Kept out of site_settings: that table is readable by website visitors.
     const { data } = await supabase
@@ -15,15 +17,30 @@ async function ownerInbox(supabase: SupabaseLike): Promise<string[]> {
       .select("owner_notification_email")
       .maybeSingle();
     const str = String((data as { owner_notification_email?: string } | null)?.owner_notification_email ?? "");
-    const list = str
-      .split(/[,;\s]+/)
-      .map((e) => e.trim().toLowerCase())
-      .filter((e) => e.includes("@"));
-    if (list.length) return list;
+    for (const e of str.split(/[,;\s]+/)) {
+      const email = e.trim().toLowerCase();
+      if (email.includes("@")) list.push(email);
+    }
   } catch {
-    /* fall through to the default inbox */
+    /* fall through */
   }
-  return [DEFAULT_OWNER_INBOX];
+
+  try {
+    // Team members who switched alert emails on in Team & roles.
+    const { data } = await supabase
+      .from("profiles")
+      .select("email, email_alerts")
+      .eq("email_alerts", true);
+    for (const row of (data ?? []) as { email?: string | null }[]) {
+      const email = String(row?.email ?? "").trim().toLowerCase();
+      if (email.includes("@")) list.push(email);
+    }
+  } catch {
+    /* fall through */
+  }
+
+  const unique = [...new Set(list)];
+  return unique.length ? unique : [DEFAULT_OWNER_INBOX];
 }
 
 /**
