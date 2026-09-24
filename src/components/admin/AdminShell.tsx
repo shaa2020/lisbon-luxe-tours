@@ -402,7 +402,7 @@ export function AdminShell({ children, requires }: { children: ReactNode; requir
                   href={waHref}
                   target="_blank"
                   rel="noreferrer"
-                  className="hidden sm:grid w-10 h-10 place-items-center rounded-xl text-emerald-600 hover:bg-accent"
+                  className="hidden sm:grid ios-press w-10 h-10 place-items-center rounded-full text-emerald-600 hover:bg-foreground/[0.04]"
                   aria-label="WhatsApp"
                 >
                   <MessageSquare className="w-5 h-5" />
@@ -414,7 +414,7 @@ export function AdminShell({ children, requires }: { children: ReactNode; requir
                     setUserMenu(false);
                     setNotifOpen((v) => !v);
                   }}
-                  className="relative grid w-10 h-10 place-items-center rounded-xl text-muted-foreground hover:bg-accent"
+                  className="relative ios-press grid w-10 h-10 place-items-center rounded-full text-muted-foreground hover:bg-foreground/[0.04]"
                   aria-label="Notifications"
                 >
                   <Bell className="w-5 h-5" />
@@ -425,7 +425,7 @@ export function AdminShell({ children, requires }: { children: ReactNode; requir
                   )}
                 </button>
                 {notifOpen && (
-                  <div className="absolute right-0 top-12 w-72 rounded-xl border border-border bg-card shadow-lg p-1.5 z-40">
+                  <div className="absolute right-0 top-12 w-72 ios-card p-1.5 z-40">
                     <p className="px-2.5 py-2 text-[11px] uppercase tracking-widest text-muted-foreground">
                       Notifications
                     </p>
@@ -496,7 +496,7 @@ export function AdminShell({ children, requires }: { children: ReactNode; requir
                     setNotifOpen(false);
                     setUserMenu((v) => !v);
                   }}
-                  className="flex items-center gap-2 rounded-xl px-1.5 sm:px-2 py-1.5 hover:bg-accent"
+                  className="flex items-center gap-2 ios-press rounded-full px-1.5 sm:px-2 py-1.5 hover:bg-foreground/[0.04]"
                 >
                   <span className="w-9 h-9 shrink-0 grid place-items-center rounded-full bg-primary/12 text-primary text-xs font-bold">
                     {initials}
@@ -508,7 +508,7 @@ export function AdminShell({ children, requires }: { children: ReactNode; requir
                   <ChevronDown className="hidden lg:block w-4 h-4 text-muted-foreground" />
                 </button>
                 {userMenu && (
-                  <div className="absolute right-0 top-12 w-56 rounded-xl border border-border bg-card shadow-lg p-1.5 z-40">
+                  <div className="absolute right-0 top-12 w-56 ios-card p-1.5 z-40">
                     <p className="px-2.5 py-2 text-[11px] text-muted-foreground truncate">{user.email}</p>
                     <div className="px-1 pb-1.5">
                       <InstallAppButton variant="full" />
