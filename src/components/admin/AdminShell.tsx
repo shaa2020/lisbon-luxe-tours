@@ -351,10 +351,10 @@ export function AdminShell({ children, requires }: { children: ReactNode; requir
       <div className="flex-1 min-w-0 flex flex-col">
         {/* ============= Top bar (all sizes) ============= */}
         <header
-          className="sticky top-0 z-30 border-b border-border bg-card/95 backdrop-blur"
+          className="sticky top-0 z-30 ios-blur ios-hairline-b"
           style={{ paddingTop: "env(safe-area-inset-top)" }}
         >
-          <div className="h-16 px-3 sm:px-5 flex items-center gap-2 sm:gap-3">
+          <div className="h-[56px] sm:h-16 px-3 sm:px-5 flex items-center gap-2 sm:gap-3">
             <button
               onClick={() => setDrawerOpen(true)}
               className="md:hidden w-10 h-10 shrink-0 grid place-items-center rounded-xl hover:bg-accent"
