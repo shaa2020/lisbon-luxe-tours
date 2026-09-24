@@ -269,13 +269,13 @@ export function AdminShell({ children, requires }: { children: ReactNode; requir
                       <Link
                         key={n.to}
                         to={n.to}
-                        className={`group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors ${
+                        className={`group ios-press flex items-center gap-3 rounded-2xl px-3 py-2.5 text-[15px] transition-colors ${
                           active
-                            ? "bg-emerald-600 text-white font-semibold shadow-[0_6px_16px_rgba(5,150,105,0.35)]"
-                            : "text-muted-foreground hover:bg-accent hover:text-foreground"
+                            ? "bg-primary/12 text-primary font-semibold"
+                            : "text-muted-foreground hover:bg-foreground/[0.04] hover:text-foreground"
                         }`}
                       >
-                        <Icon className="w-[18px] h-[18px] shrink-0" />
+                        <Icon className={`w-[19px] h-[19px] shrink-0 ${active ? "stroke-[2.3]" : ""}`} />
                         <span className="truncate">{n.label}</span>
                         <span className="ml-auto shrink-0">
                           <Badge n={badgeFor(n.to)} small />
