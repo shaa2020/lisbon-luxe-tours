@@ -1255,6 +1255,80 @@ export type Database = {
           },
         ]
       }
+      guest_message_log: {
+        Row: {
+          booking_id: string
+          channel: string
+          id: string
+          sent_at: string
+          sent_by: string | null
+          sent_by_email: string | null
+          template_key: string
+        }
+        Insert: {
+          booking_id: string
+          channel?: string
+          id?: string
+          sent_at?: string
+          sent_by?: string | null
+          sent_by_email?: string | null
+          template_key: string
+        }
+        Update: {
+          booking_id?: string
+          channel?: string
+          id?: string
+          sent_at?: string
+          sent_by?: string | null
+          sent_by_email?: string | null
+          template_key?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "guest_message_log_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      guest_message_templates: {
+        Row: {
+          active: boolean
+          body: string
+          created_at: string
+          id: string
+          key: string
+          label: string
+          language: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          body: string
+          created_at?: string
+          id?: string
+          key: string
+          label: string
+          language?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          body?: string
+          created_at?: string
+          id?: string
+          key?: string
+          label?: string
+          language?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       guide_settlements: {
         Row: {
           actor: string | null

@@ -71,6 +71,13 @@
       "when": 1790167395508,
       "tag": "0009_private_settings_owner_email",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1790208132513,
+      "tag": "0010_guest_messages",
+      "breakpoints": true
     }
   ]
 }
