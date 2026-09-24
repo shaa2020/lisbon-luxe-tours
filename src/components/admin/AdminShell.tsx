@@ -566,10 +566,10 @@ export function AdminShell({ children, requires }: { children: ReactNode; requir
 
       {/* ============= Mobile bottom tab bar ============= */}
       <nav
-        className="md:hidden fixed bottom-0 inset-x-0 z-30 bg-card/95 backdrop-blur border-t border-border"
+        className="md:hidden fixed bottom-0 inset-x-0 z-30 ios-blur border-t border-[var(--ios-hairline)]"
         style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
       >
-        <div className="grid h-16" style={{ gridTemplateColumns: `repeat(${primary.length + 1}, minmax(0, 1fr))` }}>
+        <div className="grid h-[54px]" style={{ gridTemplateColumns: `repeat(${primary.length + 1}, minmax(0, 1fr))` }}>
           {primary.map((n) => {
             const active = isActiveRoute(n.to, location.pathname);
             const Icon = n.icon;
@@ -578,20 +578,19 @@ export function AdminShell({ children, requires }: { children: ReactNode; requir
               <Link
                 key={n.to}
                 to={n.to}
-                className={`relative flex flex-col items-center justify-center gap-0.5 active:scale-95 transition ${
-                  active ? "text-emerald-600" : "text-muted-foreground"
+                className={`relative ios-press flex flex-col items-center justify-center gap-[3px] ${
+                  active ? "text-primary" : "text-muted-foreground"
                 }`}
               >
                 <div className="relative">
-                  <Icon className={`w-5 h-5 ${active ? "stroke-[2.4]" : ""}`} />
+                  <Icon className={`w-[23px] h-[23px] ${active ? "stroke-[2.2]" : "stroke-[1.8]"}`} />
                   {b > 0 && (
                     <span className="absolute -top-1.5 -right-2 inline-flex items-center justify-center min-w-[16px] h-[16px] px-1 rounded-full text-[9px] font-bold bg-destructive text-destructive-foreground">
                       {b > 9 ? "9+" : b}
                     </span>
                   )}
                 </div>
-                <span className="text-[10px] font-medium tracking-wide">{n.label}</span>
-                {active && <span className="absolute top-0 h-0.5 w-10 bg-primary rounded-b-full" />}
+                <span className="text-[10px] font-medium leading-none">{n.label}</span>
               </Link>
             );
           })}
