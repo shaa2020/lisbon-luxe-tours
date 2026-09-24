@@ -131,6 +131,26 @@ function TeamBody() {
                     >
                       {m.lastSignInAt ? "Active" : "Invited — not signed in yet"}
                     </span>
+                    <label className="mt-2 flex items-center gap-2 text-xs">
+                      <input
+                        type="checkbox"
+                        className="h-4 w-4 accent-primary"
+                        checked={m.emailAlerts}
+                        disabled={alertsM.isPending || !m.email}
+                        onChange={(e) =>
+                          alertsM.mutate({ userId: m.userId, enabled: e.target.checked })
+                        }
+                      />
+                      {m.emailAlerts ? (
+                        <span className="inline-flex items-center gap-1 font-medium text-emerald-700">
+                          <Bell className="h-3.5 w-3.5" /> Gets booking emails
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 text-muted-foreground">
+                          <BellOff className="h-3.5 w-3.5" /> No booking emails
+                        </span>
+                      )}
+                    </label>
                   </div>
                   <select
                     value={m.role ?? "staff"}
