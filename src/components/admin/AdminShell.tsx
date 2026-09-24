@@ -31,6 +31,7 @@ import {
   Search,
   Bell,
   ChevronDown,
+  ChevronRight,
   Users,
   ShieldAlert,
   KeyRound,
