@@ -33,7 +33,9 @@ import { BookingCreateDialog } from "@/components/admin/BookingCreateDialog";
 import { BookingManagePanel } from "@/components/admin/BookingManagePanel";
 import { BookingOpsPanel } from "@/components/admin/BookingOpsPanel";
 import { BookingsCalendar } from "@/components/admin/BookingsCalendar";
-import { GuestMessageMenu, GuestMessageHistory } from "@/components/admin/GuestMessages";
+import { GuestMessageHistory } from "@/components/admin/GuestMessages";
+import { BookingActions } from "@/components/admin/BookingActions";
+import { ChevronDown } from "lucide-react";
 import {
   buildLedger,
   euro,
@@ -119,6 +121,7 @@ function BookingsInbox() {
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [showPay, setShowPay] = useState<Record<string, boolean>>({});
   const [editGuests, setEditGuests] = useState<number | "">("");
   const [editAmount, setEditAmount] = useState<number | "">("");
   const [editNote, setEditNote] = useState("");
@@ -700,35 +703,6 @@ function BookingsInbox() {
                 </p>
               </div>
 
-              <div className="mb-4 flex flex-wrap gap-2">
-                {waLink(b) && (
-                  <a
-                    href={waLink(b)!}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1.5 text-xs font-semibold text-emerald-700 hover:bg-emerald-500/20 dark:text-emerald-400"
-                  >
-                    <MessageCircle className="h-3.5 w-3.5" /> WhatsApp
-                  </a>
-                )}
-                <GuestMessageMenu booking={b} dueCents={ledgers[b.id]?.dueCents ?? 0} />
-                <button
-                  type="button"
-                  onClick={() => toggleExpanded(b.id, b.guests)}
-                  className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-semibold text-foreground hover:border-primary"
-                >
-                  <Users className="h-3.5 w-3.5" />
-                  {expandedId === b.id ? "Close details" : "Assign guide & details"}
-                </button>
-                {ledgers[b.id]?.dueCents > 0 && (
-                  <Link
-                    to="/admin/reconciliation"
-                    className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-1.5 text-xs font-semibold text-amber-700 hover:bg-amber-500/20 dark:text-amber-400"
-                  >
-                    Settle {euro(ledgers[b.id].dueCents)}
-                  </Link>
-                )}
-              </div>
 
               {b.tour_slug === "custom" &&
                 Array.isArray(b.custom_selections) &&
@@ -775,195 +749,114 @@ function BookingsInbox() {
                 </div>
               )}
 
-              <div className="flex flex-wrap items-center gap-2">
-                {b.total_estimate != null &&
-                  b.total_estimate > 0 &&
-                  b.payment_status !== "paid" &&
-                  b.status !== "cancelled" && (
-                    <div className="basis-full rounded-md border border-border bg-muted/40 p-3 mb-1">
-                      <p className="text-xs font-semibold mb-2">Send payment request</p>
-                      <div className="flex flex-wrap items-center gap-2">
-                        {[20, 50, 70, 100].map((percent) => {
-                          const selected = (paymentPercent[b.id] ?? 20) === percent;
-                          return (
-                            <button
-                              key={percent}
-                              type="button"
-                              aria-pressed={selected}
-                              onClick={() =>
-                                setPaymentPercent((current) => ({ ...current, [b.id]: percent }))
-                              }
-                              className={`rounded-md border px-3 py-2 text-xs font-semibold transition ${
-                                selected
-                                  ? "border-primary bg-primary text-primary-foreground"
-                                  : "border-border bg-background hover:border-primary"
-                              }`}
-                            >
-                              {percent === 100 ? "Full amount" : `${percent}%`}
-                            </button>
-                          );
-                        })}
-                        <span className="text-xs text-muted-foreground">
-                          €{(
-                            (b.total_estimate * (paymentPercent[b.id] ?? 20)) /
-                            100
-                          ).toFixed(2)}
-                        </span>
-                        <button
-                          type="button"
-                          onClick={() => sendPaymentRequest(b)}
-                          disabled={sendingKey === `${b.id}:payment_request`}
-                          className="inline-flex items-center gap-1.5 rounded-md bg-foreground px-3 py-2 text-xs font-semibold text-background disabled:opacity-50"
-                        >
-                          {sendingKey === `${b.id}:payment_request` ? (
-                            <Loader2 className="w-4 h-4 animate-spin" />
-                          ) : (
-                            <Mail className="w-4 h-4" />
-                          )}
-                          Email request
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                {waLink(b) && (
-                  <a
-                    href={waLink(b)!}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center gap-1.5 rounded-md bg-[#25D366] text-white px-3 py-2 text-sm font-semibold hover:opacity-90"
-                  >
-                    <MessageCircle className="w-4 h-4" />
-                    WhatsApp customer
-                  </a>
-                )}
-                <button
-                  onClick={() => sendDirect(b, "booking_confirmation", "Confirmation")}
-                  disabled={sendingKey === `${b.id}:booking_confirmation`}
-                  className="inline-flex items-center gap-1.5 rounded-md bg-primary text-primary-foreground px-3 py-2 text-sm font-semibold hover:bg-primary/90 disabled:opacity-50"
-                >
-                  {sendingKey === `${b.id}:booking_confirmation` ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
-                    <Mail className="w-4 h-4" />
-                  )}
-                  Send confirmation
-                </button>
-                <button
-                  onClick={() => sendDirect(b, "tour_reminder", "Reminder")}
-                  disabled={sendingKey === `${b.id}:tour_reminder`}
-                  className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-2 text-sm font-semibold hover:border-primary hover:text-primary disabled:opacity-50"
-                >
-                  {sendingKey === `${b.id}:tour_reminder` ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
-                    <Clock className="w-4 h-4" />
-                  )}
-                  Send reminder
-                </button>
-                <button
-                  onClick={() => sendDirect(b, "review_request", "Review request")}
-                  disabled={sendingKey === `${b.id}:review_request`}
-                  className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-2 text-sm font-semibold hover:border-primary hover:text-primary disabled:opacity-50"
-                >
-                  {sendingKey === `${b.id}:review_request` ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
-                    <Star className="w-4 h-4" />
-                  )}
-                  Ask for review
-                </button>
-                {emailTemplates.length > 0 && (
-                  <div className="inline-flex items-center gap-1.5 rounded-md border border-border bg-background pl-2">
-                    <Mail className="w-4 h-4 text-muted-foreground" />
-                    <select
-                      value={pickedTemplate[b.id] ?? ""}
-                      onChange={(e) =>
-                        setPickedTemplate((prev) => ({ ...prev, [b.id]: e.target.value }))
-                      }
-                      className="bg-transparent py-2 text-sm outline-none"
-                    >
-                      <option value="">Other email…</option>
-                      {emailTemplates.map((t: any) => (
-                        <option key={t.key} value={t.key}>
-                          {t.label}
-                        </option>
-                      ))}
-                    </select>
-                    <button
-                      onClick={() => {
-                        const key = pickedTemplate[b.id];
-                        if (!key) return toast.error("Pick an email first");
-                        const label =
-                          emailTemplates.find((t: any) => t.key === key)?.label || "Email";
-                        sendDirect(b, key, label);
-                      }}
-                      disabled={sendingKey === `${b.id}:${pickedTemplate[b.id]}`}
-                      className="rounded-r-md border-l border-border px-3 py-2 text-sm font-semibold hover:text-primary disabled:opacity-50"
-                    >
-                      {sendingKey === `${b.id}:${pickedTemplate[b.id]}` ? (
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                      ) : (
-                        "Send"
-                      )}
-                    </button>
-                  </div>
-                )}
-                <button
-                  onClick={() => {
+              <div className="space-y-3">
+                <BookingActions
+                  booking={b}
+                  dueCents={ledgers[b.id]?.dueCents ?? 0}
+                  waLink={waLink(b)}
+                  reviewWaLink={reviewRequestWa(b)}
+                  emailTemplates={emailTemplates as any}
+                  sendingKey={sendingKey}
+                  onEmail={(key, label) => sendDirect(b, key, label)}
+                  canRequestPayment={
+                    b.total_estimate != null &&
+                    b.total_estimate > 0 &&
+                    b.payment_status !== "paid" &&
+                    b.status !== "cancelled"
+                  }
+                  onTogglePayment={() => setShowPay((s) => ({ ...s, [b.id]: !s[b.id] }))}
+                  onCopyMessage={() => {
                     navigator.clipboard?.writeText(customerMessage(b));
                     toast.success("Message copied");
                   }}
-                  className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-2 text-sm font-semibold hover:border-primary hover:text-primary"
-                >
-                  <Copy className="w-4 h-4" />
-                  Copy message
-                </button>
-                <button
-                  onClick={() => {
+                  onCopyLink={() => {
                     navigator.clipboard?.writeText(`${window.location.origin}/booking/manage`);
                     toast.success("Booking link copied");
                   }}
-                  className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-2 text-sm font-semibold hover:border-primary hover:text-primary"
-                >
-                  <Link2 className="w-4 h-4" />
-                  Copy link
-                </button>
-                {reviewRequestWa(b) && (
-                  <a
-                    href={reviewRequestWa(b)!}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-2 text-sm font-semibold hover:border-primary hover:text-primary"
-                  >
-                    <Star className="w-4 h-4" />
-                    Review via WhatsApp
-                  </a>
+                  onEdit={() => {
+                    if (expandedId !== b.id) toggleExpanded(b.id, b.guests);
+                  }}
+                  onDelete={() => remove(b.id)}
+                />
+
+                {showPay[b.id] && b.total_estimate != null && b.total_estimate > 0 && (
+                  <div className="rounded-lg border border-border bg-muted/40 p-3">
+                    <p className="text-xs font-semibold mb-2">Send payment request</p>
+                    <div className="flex flex-wrap items-center gap-2">
+                      {[20, 50, 70, 100].map((percent) => {
+                        const selected = (paymentPercent[b.id] ?? 20) === percent;
+                        return (
+                          <button
+                            key={percent}
+                            type="button"
+                            aria-pressed={selected}
+                            onClick={() =>
+                              setPaymentPercent((current) => ({ ...current, [b.id]: percent }))
+                            }
+                            className={`rounded-md border px-3 py-2 text-xs font-semibold transition ${
+                              selected
+                                ? "border-primary bg-primary text-primary-foreground"
+                                : "border-border bg-background hover:border-primary"
+                            }`}
+                          >
+                            {percent === 100 ? "Full amount" : `${percent}%`}
+                          </button>
+                        );
+                      })}
+                      <span className="text-xs text-muted-foreground">
+                        €{((b.total_estimate * (paymentPercent[b.id] ?? 20)) / 100).toFixed(2)}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => sendPaymentRequest(b)}
+                        disabled={sendingKey === `${b.id}:payment_request`}
+                        className="inline-flex items-center gap-1.5 rounded-md bg-foreground px-3 py-2 text-xs font-semibold text-background disabled:opacity-50"
+                      >
+                        {sendingKey === `${b.id}:payment_request` ? (
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : (
+                          <Mail className="w-4 h-4" />
+                        )}
+                        Email request
+                      </button>
+                    </div>
+                  </div>
                 )}
-                <select
-                  value={b.status}
-                  onChange={(e) => updateStatus(b.id, e.target.value)}
-                  className="rounded-md border border-border bg-background px-3 py-2 text-sm"
-                >
-                  {STATUSES.map((s) => (
-                    <option key={s} value={s}>
-                      Mark as {s}
-                    </option>
-                  ))}
-                </select>
-                <button
-                  onClick={() => toggleExpanded(b.id, b.guests)}
-                  className="inline-flex items-center gap-1.5 rounded-md border border-border bg-background px-3 py-2 text-sm font-semibold hover:bg-muted"
-                >
-                  <Edit3 className="w-4 h-4" />
-                  Edit / changes
-                </button>
-                <button
-                  onClick={() => remove(b.id)}
-                  className="ml-auto inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-destructive"
-                >
-                  <Trash2 className="w-3.5 h-3.5" />
-                  Delete
-                </button>
+
+                <div className="flex flex-wrap items-center gap-2 rounded-lg border border-border bg-muted/30 p-2">
+                  <span className="px-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                    Status
+                  </span>
+                  <select
+                    value={b.status}
+                    onChange={(e) => updateStatus(b.id, e.target.value)}
+                    className="h-9 rounded-lg border border-border bg-background px-3 text-sm"
+                  >
+                    {STATUSES.map((s) => (
+                      <option key={s} value={s}>
+                        Mark as {s}
+                      </option>
+                    ))}
+                  </select>
+                  {ledgers[b.id]?.dueCents > 0 && (
+                    <Link
+                      to="/admin/reconciliation"
+                      className="inline-flex h-9 items-center rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 text-sm font-semibold text-amber-700 hover:bg-amber-500/20 dark:text-amber-400"
+                    >
+                      Settle {euro(ledgers[b.id].dueCents)}
+                    </Link>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => toggleExpanded(b.id, b.guests)}
+                    className="ml-auto inline-flex h-9 items-center gap-1.5 rounded-lg px-3 text-sm font-semibold text-primary hover:bg-muted"
+                  >
+                    <ChevronDown
+                      className={`h-4 w-4 transition-transform ${expandedId === b.id ? "rotate-180" : ""}`}
+                    />
+                    {expandedId === b.id ? "Hide tour details" : "Tour details, guide & edit"}
+                  </button>
+                </div>
               </div>
 
               {expandedId === b.id && (
