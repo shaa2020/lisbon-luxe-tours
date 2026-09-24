@@ -104,7 +104,10 @@ function TeamBody() {
 
       <div className="grid gap-6 lg:grid-cols-[1.4fr_0.6fr] items-start">
         <AdminCard className="p-5">
-          <p className="text-sm font-semibold mb-3">Members</p>
+          <p className="text-sm font-semibold">Members</p>
+          <p className="mb-3 mt-1 text-xs text-muted-foreground">
+            Tick a person to email them every new booking and payment.
+          </p>
           {team.isLoading ? (
             <p className="text-sm text-muted-foreground">Loading…</p>
           ) : (team.data ?? []).length === 0 ? (
