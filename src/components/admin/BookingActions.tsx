@@ -8,6 +8,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useGuestMessageSender } from "@/components/admin/GuestMessages";
+import { useState } from "react";
+import { toast } from "sonner";
+import { useServerFn } from "@tanstack/react-start";
+import { resetGuestToken } from "@/lib/guest-tour.functions";
 import {
   ChevronDown,
   Clock,
@@ -22,6 +26,8 @@ import {
   Star,
   Trash2,
   Send,
+  Map as MapIcon,
+  RefreshCw,
 } from "lucide-react";
 
 const btn =
@@ -47,6 +53,21 @@ type Props = {
 export function BookingActions(p: Props) {
   const { templates, send } = useGuestMessageSender(p.booking, p.dueCents);
   const busy = p.sendingKey?.startsWith(`${p.booking.id}:`);
+  const [token, setToken] = useState<string | null>(p.booking.guest_token ?? null);
+  const reset = useServerFn(resetGuestToken);
+  const origin = typeof window !== "undefined" ? window.location.origin : "https://tuktuk24lisbon.com";
+  const tripUrl = token ? `${origin}/trip/${token}` : null;
+  const first = String(p.booking.customer_name || "").split(" ")[0];
+  const tripMsg = tripUrl
+    ? `Hi ${first}! Your tour is confirmed. Here is your personal tour page with your guide, meeting point and all the details: ${tripUrl}`
+    : "";
+  const tripWa =
+    tripUrl && p.booking.phone
+      ? `https://wa.me/${String(p.booking.phone).replace(/[^\d]/g, "")}?text=${encodeURIComponent(tripMsg)}`
+      : null;
+  const tripMail = tripUrl
+    ? `mailto:${p.booking.email}?subject=${encodeURIComponent("Your Tuk Tuk 24 tour page")}&body=${encodeURIComponent(tripMsg)}`
+    : null;
   const skip = new Set(["booking_confirmation", "tour_reminder", "review_request"]);
 
   return (
@@ -64,6 +85,13 @@ export function BookingActions(p: Props) {
             <DropdownMenuItem asChild>
               <a href={p.waLink} target="_blank" rel="noreferrer">
                 <MessageCircle className="h-4 w-4" /> WhatsApp customer
+              </a>
+            </DropdownMenuItem>
+          )}
+          {tripWa && (
+            <DropdownMenuItem asChild>
+              <a href={tripWa} target="_blank" rel="noreferrer">
+                <MapIcon className="h-4 w-4" /> Send guest tour page
               </a>
             </DropdownMenuItem>
           )}
@@ -106,6 +134,13 @@ export function BookingActions(p: Props) {
           <DropdownMenuItem onSelect={() => p.onEmail("review_request", "Review request")}>
             <Star className="h-4 w-4" /> Ask for review
           </DropdownMenuItem>
+          {tripMail && (
+            <DropdownMenuItem asChild>
+              <a href={tripMail}>
+                <MapIcon className="h-4 w-4" /> Send guest tour page
+              </a>
+            </DropdownMenuItem>
+          )}
           {p.canRequestPayment && (
             <DropdownMenuItem onSelect={p.onTogglePayment}>
               <CreditCard className="h-4 w-4" /> Request payment…
@@ -140,6 +175,37 @@ export function BookingActions(p: Props) {
           </DropdownMenuItem>
           <DropdownMenuItem onSelect={p.onCopyLink}>
             <Link2 className="h-4 w-4" /> Copy link
+          </DropdownMenuItem>
+          {tripUrl && (
+            <DropdownMenuItem
+              onSelect={() => {
+                navigator.clipboard?.writeText(tripUrl);
+                toast.success("Guest tour link copied");
+              }}
+            >
+              <MapIcon className="h-4 w-4" /> Copy guest tour link
+            </DropdownMenuItem>
+          )}
+          {tripUrl && (
+            <DropdownMenuItem asChild>
+              <a href={tripUrl} target="_blank" rel="noreferrer">
+                <MapIcon className="h-4 w-4" /> Open guest tour page
+              </a>
+            </DropdownMenuItem>
+          )}
+          <DropdownMenuItem
+            onSelect={async () => {
+              if (token && !confirm("Reset the guest link? The old link will stop working.")) return;
+              try {
+                const r = await reset({ data: { bookingId: p.booking.id } });
+                setToken(r.token);
+                toast.success("New guest link created");
+              } catch (e: any) {
+                toast.error(e?.message || "Could not reset link");
+              }
+            }}
+          >
+            <RefreshCw className="h-4 w-4" /> {token ? "Reset guest link" : "Create guest link"}
           </DropdownMenuItem>
           <DropdownMenuItem onSelect={p.onEdit}>
             <Edit3 className="h-4 w-4" /> Edit / changes
