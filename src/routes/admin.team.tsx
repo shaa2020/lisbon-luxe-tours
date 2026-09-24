@@ -56,6 +56,15 @@ function TeamBody() {
     onError: (e: Error) => toast.error(e.message),
   });
 
+  const alertsM = useMutation({
+    mutationFn: (v: { userId: string; enabled: boolean }) => setAlerts({ data: v }),
+    onSuccess: (_r, v) =>
+      toast.success(v.enabled ? "Email alerts turned on" : "Email alerts turned off"),
+    onError: (e: Error) => toast.error(e.message),
+    onSettled: () => qc.invalidateQueries({ queryKey: ["admin-team"] }),
+  });
+
+
   const inviteM = useMutation({
     mutationFn: () => invite({ data: { email, fullName: fullName || undefined, role, origin } }),
     onSuccess: () => {
