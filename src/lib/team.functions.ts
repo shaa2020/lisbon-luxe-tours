@@ -42,7 +42,9 @@ export const listTeam = createServerFn({ method: "GET" })
     const { data: roles, error: rErr } = await supabaseAdmin.from("user_roles").select("user_id, role");
     if (rErr) throw new Error(rErr.message);
 
-    const { data: profiles } = await supabaseAdmin.from("profiles").select("id, email, full_name");
+    const { data: profiles } = await supabaseAdmin
+      .from("profiles")
+      .select("id, email, full_name, email_alerts");
     const { data: users } = await supabaseAdmin.auth.admin.listUsers({ page: 1, perPage: 200 });
 
     const byId = new Map<string, TeamMember>();
@@ -54,6 +56,7 @@ export const listTeam = createServerFn({ method: "GET" })
         role: null,
         createdAt: u.created_at ?? null,
         lastSignInAt: u.last_sign_in_at ?? null,
+        emailAlerts: false,
       });
     }
     for (const p of profiles ?? []) {
@@ -61,6 +64,7 @@ export const listTeam = createServerFn({ method: "GET" })
       if (m) {
         m.email = m.email || (p.email ?? "");
         m.fullName = p.full_name ?? m.fullName;
+        m.emailAlerts = Boolean((p as { email_alerts?: boolean }).email_alerts);
       }
     }
     for (const r of roles ?? []) {
