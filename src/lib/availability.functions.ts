@@ -68,6 +68,7 @@ export const requestBooking = createServerFn({ method: "POST" })
         notes: z.string().max(2000).optional().nullable(),
         amount: z.number().int().min(0).max(500000),
         tour_option_id: z.string().uuid().optional().nullable(),
+        tip_cents: z.number().int().min(0).max(100000).optional().nullable(),
       })
       .parse(data),
   )
