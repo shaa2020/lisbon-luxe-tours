@@ -27,7 +27,7 @@ import { createCheckoutSession } from "@/lib/checkout.functions";
 import { toast } from "sonner";
 import { trackBookingStart, trackWhatsappClick } from "@/lib/analytics";
 import { PaypalWallet } from "@/components/site/PaypalWallet";
-import { TipChips } from "@/components/site/TipChips";
+import { TipChips, PaySummary } from "@/components/site/TipChips";
 import { PickupSelector } from "@/components/site/PickupSelector";
 import { pickupSummary, type PickupSelection } from "@/lib/meetup-points";
 import { useCheckoutDraft } from "@/lib/checkout-draft";

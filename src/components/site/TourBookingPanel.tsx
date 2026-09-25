@@ -15,7 +15,7 @@ import { toast } from "sonner";
 import { CANCELLATION_POLICY_FULL } from "@/lib/cancellation";
 import { useSiteBrand } from "@/lib/brand";
 import { PaypalWallet } from "@/components/site/PaypalWallet";
-import { TipChips } from "@/components/site/TipChips";
+import { TipChips, PaySummary } from "@/components/site/TipChips";
 import { PickupSelector } from "@/components/site/PickupSelector";
 import { pickupSummary, type PickupSelection } from "@/lib/meetup-points";
 import { trackBookingStart, trackBookingCtaClick, trackDiscountApplied, trackDiscountRejected } from "@/lib/analytics";

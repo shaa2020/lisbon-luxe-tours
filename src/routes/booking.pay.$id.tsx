@@ -5,7 +5,7 @@ import { useState } from "react";
 import { CalendarCheck, CheckCircle2, Loader2, Lock, Users } from "lucide-react";
 import { createBalanceCheckout, getBookingBalance } from "@/lib/balance-pay.functions";
 import { PaypalWallet } from "@/components/site/PaypalWallet";
-import { TipChips } from "@/components/site/TipChips";
+import { TipChips, PaySummary } from "@/components/site/TipChips";
 
 
 export const Route = createFileRoute("/booking/pay/$id")({
