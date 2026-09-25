@@ -20,6 +20,7 @@ import { Route as CascaisPrivateToursRouteImport } from './routes/cascais-privat
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CookiesRouteImport } from './routes/cookies'
 import { Route as FaqRouteImport } from './routes/faq'
+import { Route as LisbonCruisePortToursRouteImport } from './routes/lisbon-cruise-port-tours'
 import { Route as LisbonPrivateToursRouteImport } from './routes/lisbon-private-tours'
 import { Route as McpRouteImport } from './routes/mcp'
 import { Route as PrivacyRouteImport } from './routes/privacy'
@@ -177,6 +178,11 @@ const CookiesRoute = CookiesRouteImport.update({
 const FaqRoute = FaqRouteImport.update({
   id: '/faq',
   path: '/faq',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LisbonCruisePortToursRoute = LisbonCruisePortToursRouteImport.update({
+  id: '/lisbon-cruise-port-tours',
+  path: '/lisbon-cruise-port-tours',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LisbonPrivateToursRoute = LisbonPrivateToursRouteImport.update({
@@ -714,6 +720,7 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/cookies': typeof CookiesRoute
   '/faq': typeof FaqRoute
+  '/lisbon-cruise-port-tours': typeof LisbonCruisePortToursRoute
   '/lisbon-private-tours': typeof LisbonPrivateToursRoute
   '/mcp': typeof McpRoute
   '/privacy': typeof PrivacyRoute
@@ -830,6 +837,7 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/cookies': typeof CookiesRoute
   '/faq': typeof FaqRoute
+  '/lisbon-cruise-port-tours': typeof LisbonCruisePortToursRoute
   '/lisbon-private-tours': typeof LisbonPrivateToursRoute
   '/mcp': typeof McpRoute
   '/privacy': typeof PrivacyRoute
@@ -947,6 +955,7 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/cookies': typeof CookiesRoute
   '/faq': typeof FaqRoute
+  '/lisbon-cruise-port-tours': typeof LisbonCruisePortToursRoute
   '/lisbon-private-tours': typeof LisbonPrivateToursRoute
   '/mcp': typeof McpRoute
   '/privacy': typeof PrivacyRoute
@@ -1065,6 +1074,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/cookies'
     | '/faq'
+    | '/lisbon-cruise-port-tours'
     | '/lisbon-private-tours'
     | '/mcp'
     | '/privacy'
@@ -1181,6 +1191,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/cookies'
     | '/faq'
+    | '/lisbon-cruise-port-tours'
     | '/lisbon-private-tours'
     | '/mcp'
     | '/privacy'
@@ -1297,6 +1308,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/cookies'
     | '/faq'
+    | '/lisbon-cruise-port-tours'
     | '/lisbon-private-tours'
     | '/mcp'
     | '/privacy'
@@ -1414,6 +1426,7 @@ export interface RootRouteChildren {
   ContactRoute: typeof ContactRoute
   CookiesRoute: typeof CookiesRoute
   FaqRoute: typeof FaqRoute
+  LisbonCruisePortToursRoute: typeof LisbonCruisePortToursRoute
   LisbonPrivateToursRoute: typeof LisbonPrivateToursRoute
   McpRoute: typeof McpRoute
   PrivacyRoute: typeof PrivacyRoute
@@ -1595,6 +1608,13 @@ declare module '@tanstack/react-router' {
       path: '/faq'
       fullPath: '/faq'
       preLoaderRoute: typeof FaqRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lisbon-cruise-port-tours': {
+      id: '/lisbon-cruise-port-tours'
+      path: '/lisbon-cruise-port-tours'
+      fullPath: '/lisbon-cruise-port-tours'
+      preLoaderRoute: typeof LisbonCruisePortToursRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/lisbon-private-tours': {
@@ -2344,6 +2364,7 @@ const rootRouteChildren: RootRouteChildren = {
   ContactRoute: ContactRoute,
   CookiesRoute: CookiesRoute,
   FaqRoute: FaqRoute,
+  LisbonCruisePortToursRoute: LisbonCruisePortToursRoute,
   LisbonPrivateToursRoute: LisbonPrivateToursRoute,
   McpRoute: McpRoute,
   PrivacyRoute: PrivacyRoute,
