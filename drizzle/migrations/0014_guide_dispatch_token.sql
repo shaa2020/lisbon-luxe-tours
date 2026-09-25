@@ -1,0 +1,2 @@
+ALTER TABLE public.ops_staff ADD COLUMN IF NOT EXISTS dispatch_token text UNIQUE DEFAULT encode(extensions.gen_random_bytes(24), 'hex');
+UPDATE public.ops_staff SET dispatch_token = encode(extensions.gen_random_bytes(24), 'hex') WHERE dispatch_token IS NULL;

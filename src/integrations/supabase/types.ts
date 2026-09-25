@@ -1913,6 +1913,7 @@ export type Database = {
         Row: {
           bio: string | null
           created_at: string
+          dispatch_token: string | null
           id: string
           languages: string[]
           name: string
@@ -1927,6 +1928,7 @@ export type Database = {
         Insert: {
           bio?: string | null
           created_at?: string
+          dispatch_token?: string | null
           id?: string
           languages?: string[]
           name: string
@@ -1941,6 +1943,7 @@ export type Database = {
         Update: {
           bio?: string | null
           created_at?: string
+          dispatch_token?: string | null
           id?: string
           languages?: string[]
           name?: string
