@@ -113,6 +113,13 @@
       "when": 1790299057383,
       "tag": "0015_guide_app_security",
       "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1790334381315,
+      "tag": "0016_add_tips_support",
+      "breakpoints": true
     }
   ]
 }

@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { getGuestTour } from "@/lib/guest-tour.functions";
 import { DEFAULT_BUSINESS } from "@/lib/brand";
+import { TipCard } from "@/components/site/TipCard";
 
 export const Route = createFileRoute("/trip/$token")({
   head: () => ({
@@ -224,6 +225,10 @@ function TripPage() {
             </Link>
           )}
         </Card>
+      )}
+
+      {step >= 4 && !cancelled && (
+        <TipCard token={token} guideName={t.guide?.name} tippedCents={(t as any).tip_cents} />
       )}
 
       {step >= 5 ? (

@@ -38,10 +38,12 @@ export async function computeBookingBalance(
     .maybeSingle();
   if (!b) return null;
 
+  // Gratuities live in the same ledger but are never part of the fare.
   const { data: orders } = await supabase
     .from("orders")
     .select("amount_total,payment_status")
-    .eq("booking_id", bookingId);
+    .eq("booking_id", bookingId)
+    .neq("kind", "tip");
 
   const paidCents = (orders ?? [])
     .filter((o: any) => o.payment_status === "paid")

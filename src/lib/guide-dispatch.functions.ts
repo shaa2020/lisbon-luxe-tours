@@ -87,7 +87,7 @@ async function ledgers(admin: any, list: any[]) {
   if (!ids.length) return m;
   const [pay, ord] = await Promise.all([
     admin.from("booking_payments").select("booking_id, amount_cents, direction, order_id").in("booking_id", ids),
-    admin.from("orders").select("booking_id, amount_total, payment_status").in("booking_id", ids),
+    admin.from("orders").select("booking_id, amount_total, payment_status").in("booking_id", ids).neq("kind", "tip"),
   ]);
   for (const b of list) {
     m.set(
@@ -226,13 +226,18 @@ export const getGuideRunSheet = createServerFn({ method: "POST" })
 
     // Earnings and cash held
     const monthStart = `${today.slice(0, 7)}-01`;
-    const [payRes, setRes, brandRes] = await Promise.all([
+    const [payRes, setRes, tipRes, brandRes] = await Promise.all([
       supabaseAdmin
         .from("booking_payments")
         .select("amount_cents, method, direction, commission_cents, paid_at")
         .eq("guide_id", guide.id)
         .eq("direction", "payment"),
       supabaseAdmin.from("guide_settlements").select("amount_cents, direction").eq("guide_id", guide.id),
+      supabaseAdmin
+        .from("booking_payments")
+        .select("amount_cents, paid_at")
+        .eq("guide_id", guide.id)
+        .eq("settlement_kind", "tip"),
       supabaseAdmin.from("site_settings").select("contact_phone, whatsapp_phone, google_review_url").eq("id", true).maybeSingle(),
     ]);
     const pays = (payRes.data ?? []) as any[];
@@ -241,6 +246,9 @@ export const getGuideRunSheet = createServerFn({ method: "POST" })
     const monthPays = pays.filter((p) => String(p.paid_at).slice(0, 10) >= monthStart);
     const allCash = sum(pays.filter((p) => p.method === "guide_cash"));
     const handedIn = sum(((setRes.data ?? []) as any[]).filter((s) => s.direction === "received"));
+    const tipRows = (tipRes.data ?? []) as any[];
+    const todayTips = sum(tipRows.filter((t) => String(t.paid_at).slice(0, 10) === today));
+    const monthTips = sum(tipRows.filter((t) => String(t.paid_at).slice(0, 10) >= monthStart));
     const b = brandRes.data as any;
 
     return {
@@ -255,6 +263,8 @@ export const getGuideRunSheet = createServerFn({ method: "POST" })
         monthCard: sum(monthPays.filter((p) => p.method === "guide_card")),
         monthCommission: sum(monthPays, "commission_cents"),
         cashToHandIn: Math.max(0, allCash - handedIn),
+        todayTips,
+        monthTips,
       },
       tours: list.map((r: any) => {
         const l = led.get(r.id)!;

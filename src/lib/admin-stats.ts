@@ -38,6 +38,7 @@ export function useRevenueStats() {
       const { data, error } = await supabase
         .from("orders")
         .select("amount_total, payment_status, created_at")
+        .neq("kind", "tip")
         .eq("payment_status", "paid");
       if (error) throw error;
       const todayStart = startOfDayISO(0);

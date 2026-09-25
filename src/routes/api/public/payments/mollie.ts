@@ -43,6 +43,11 @@ export const Route = createFileRoute("/api/public/payments/mollie")({
             })
             .eq("stripe_session_id", paymentId);
 
+          if (paid) {
+            const { recordTipsForSession } = await import("@/lib/tips.server");
+            await recordTipsForSession(supabaseAdmin, paymentId);
+          }
+
           if (paid && bookingId && !modificationId) {
             const { syncBookingPaymentStatus } = await import("@/lib/balance-pay.server");
             await syncBookingPaymentStatus(supabaseAdmin, bookingId);

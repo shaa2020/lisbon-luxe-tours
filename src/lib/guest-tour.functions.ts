@@ -12,7 +12,7 @@ export const getGuestTour = createServerFn({ method: "GET" })
     const { data: b } = await supabaseAdmin
       .from("bookings")
       .select(
-        "id, booking_reference, customer_name, tour_title, tour_slug, travel_date, travel_time, guests, status, tour_status, payment_status, amount_total, total_estimate, refund_cents, option_duration_label, pickup_type, pickup_place_name, pickup_address, pickup_instructions, pickup_latitude, pickup_longitude, meetup_point_name, meetup_point_address, meetup_point_instructions, guide_id",
+        "id, booking_reference, customer_name, tour_title, tour_slug, travel_date, travel_time, guests, status, tour_status, payment_status, amount_total, total_estimate, refund_cents, option_duration_label, pickup_type, pickup_place_name, pickup_address, pickup_instructions, pickup_latitude, pickup_longitude, meetup_point_name, meetup_point_address, meetup_point_instructions, guide_id, tip_cents",
       )
       .eq("guest_token", data.token)
       .maybeSingle();
@@ -30,7 +30,7 @@ export const getGuestTour = createServerFn({ method: "GET" })
         ? supabaseAdmin.from("tours").select("image_url, duration").eq("slug", b.tour_slug).maybeSingle()
         : Promise.resolve({ data: null }),
       supabaseAdmin.from("booking_payments").select("booking_id, amount_cents, direction, order_id").eq("booking_id", b.id),
-      supabaseAdmin.from("orders").select("booking_id, amount_total, payment_status").eq("booking_id", b.id),
+      supabaseAdmin.from("orders").select("booking_id, amount_total, payment_status").eq("booking_id", b.id).neq("kind", "tip"),
     ]);
 
     // Real time the guide pressed "On my way" (from the booking history).
@@ -56,6 +56,7 @@ export const getGuestTour = createServerFn({ method: "GET" })
       due_cents: led.dueCents,
       stage: led.tourStage,
       on_the_way_at: (onWayEv as any)?.created_at ?? null,
+      tip_cents: Number((b as any).tip_cents || 0),
       guide: g
         ? {
             name: String(g.name || "").split(" ")[0],

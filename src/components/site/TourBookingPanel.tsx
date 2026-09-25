@@ -15,6 +15,7 @@ import { toast } from "sonner";
 import { CANCELLATION_POLICY_FULL } from "@/lib/cancellation";
 import { useSiteBrand } from "@/lib/brand";
 import { PaypalWallet } from "@/components/site/PaypalWallet";
+import { TipChips } from "@/components/site/TipChips";
 import { PickupSelector } from "@/components/site/PickupSelector";
 import { pickupSummary, type PickupSelection } from "@/lib/meetup-points";
 import { trackBookingStart, trackBookingCtaClick, trackDiscountApplied, trackDiscountRejected } from "@/lib/analytics";
@@ -42,6 +43,7 @@ export function TourBookingPanel({
   onSelectOption?: (id: string) => void;
 }) {
   const checkoutFn = useServerFn(createCheckoutSession);
+  const [tipCents, setTipCents] = useState(0);
   const options = activeOptions(tour.options);
   const chosen = selectedOption ?? options[0] ?? null;
   const basePricing = tourPricing(tour);
@@ -232,6 +234,7 @@ export function TourBookingPanel({
           deposit_pct: depositPct,
           discount_code: promo?.code ?? null,
           tour_option_id: chosen?.id ?? null,
+          tip_cents: tipCents,
           image_url: tour.image?.startsWith("http") ? tour.image : null,
 
         },
@@ -297,6 +300,7 @@ export function TourBookingPanel({
         amount: Math.round(subtotal * 100),
         deposit_pct: depositPct,
         discount_code: promo?.code ?? null,
+        tip_cents: tipCents,
         tour_option_id: chosen?.id ?? null,
         image_url: tour.image?.startsWith("http") ? tour.image : null,
       },
@@ -643,6 +647,8 @@ export function TourBookingPanel({
         </div>
 
 
+        {!reference && <TipChips value={tipCents} onChange={setTipCents} />}
+
         {reference ? (
           <div className="border border-gold/40 bg-gold/5 rounded-[2px] p-4 text-center">
             <p className="text-xs text-body">Slot held for 24 hours</p>
@@ -666,7 +672,7 @@ export function TourBookingPanel({
 
             {showContact && (
               <PaypalWallet
-                amount={payNow}
+                amount={payNow + tipCents / 100}
                 label={tour.title}
                 disabled={paying || requesting || !canContinue || !contactValid}
                 createOrder={startWalletOrder}

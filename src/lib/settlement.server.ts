@@ -97,7 +97,7 @@ export async function syncBookingSettlement(
   if (!b) return null;
 
   const [{ data: orders }, { data: manual }] = await Promise.all([
-    supabase.from("orders").select("amount_total,payment_status").eq("booking_id", bookingId),
+    supabase.from("orders").select("amount_total,payment_status").eq("booking_id", bookingId).neq("kind", "tip"),
     supabase
       .from("booking_payments")
       .select("amount_cents,direction,order_id")

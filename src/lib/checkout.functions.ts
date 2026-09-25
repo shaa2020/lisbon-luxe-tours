@@ -34,6 +34,8 @@ const checkoutInput = z.object({
   tour_option_id: z.string().uuid().optional().nullable(),
   /** Guards against double-clicks, refreshes and network retries. */
   idempotency_key: z.string().trim().min(8).max(100).optional().nullable(),
+  /** Optional gratuity for the guide, charged with this payment but never part of the fare. */
+  tip_cents: z.number().int().min(0).max(100000).optional().nullable(),
 });
 
 
@@ -313,9 +315,21 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
             pickupRequested: wantsHotelPickup,
           });
 
+    // Gratuity: charged together with the fare, but kept in its own ledger row
+    // so the booking balance and commission never change because of a tip.
+    const tipCents = Math.max(0, Math.min(100000, Math.round(data.tip_cents ?? 0)));
+    if (tipCents > 0) {
+      lineItems.push({
+        priceId: "guide_tip",
+        name: "Tip for your guide",
+        unitAmountCents: tipCents,
+        quantity: 1,
+      });
+    }
+
     const payment = await createPayment(supabaseAdmin, {
-      amountCents: chargeCents,
-      description: `${data.tour_title} · ${guestCount} guest${guestCount === 1 ? "" : "s"}${data.travel_date ? ` · ${data.travel_date}` : ""}${balanceCents > 0 ? ` · ${depositPct}% deposit` : ""}`,
+      amountCents: chargeCents + tipCents,
+      description: `${data.tour_title} · ${guestCount} guest${guestCount === 1 ? "" : "s"}${data.travel_date ? ` · ${data.travel_date}` : ""}${balanceCents > 0 ? ` · ${depositPct}% deposit` : ""}${tipCents > 0 ? " · incl. guide tip" : ""}`,
       origin,
       lineItems,
       metadata: {
@@ -324,16 +338,15 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
         guests: String(guestCount),
         deposit_pct: String(depositPct),
         balance_cents: String(balanceCents),
+        tip_cents: String(tipCents),
       },
     });
 
 
-    await supabaseAdmin.from("orders").insert({
+    const orderBase = {
       booking_id: booking.id,
       stripe_session_id: payment.id,
       provider: payment.provider,
-      amount_total: chargeCents,
-
       currency: "eur",
       payment_status: "pending",
       customer_name: data.customer_name,
@@ -342,7 +355,15 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
       tour_slug: data.tour_slug,
       guests: data.guests,
       travel_date: data.travel_date || null,
-    });
+    };
+    await supabaseAdmin.from("orders").insert(
+      tipCents > 0
+        ? [
+            { ...orderBase, amount_total: chargeCents, kind: "tour" },
+            { ...orderBase, amount_total: tipCents, kind: "tip" },
+          ]
+        : [{ ...orderBase, amount_total: chargeCents, kind: "tour" }],
+    );
 
     return {
       mode: "pay" as const,
@@ -364,15 +385,28 @@ export const confirmCheckout = createServerFn({ method: "POST" })
     const paid = payment.status === "paid";
     const newStatus = paid ? "paid" : payment.status || "pending";
 
-    const { data: order } = await supabaseAdmin
+    await supabaseAdmin
       .from("orders")
       .update({
         payment_status: newStatus,
         stripe_payment_intent_id: payment.id,
       })
-      .eq("stripe_session_id", data.session_id)
+      .eq("stripe_session_id", data.session_id);
+
+    // A payment may carry two ledger rows (fare + gratuity); the fare row is
+    // the one that drives the booking's status.
+    const { data: order } = await supabaseAdmin
+      .from("orders")
       .select("booking_id, tour_title, amount_total, customer_name, travel_date, guests")
+      .eq("stripe_session_id", data.session_id)
+      .eq("kind", "tour")
       .maybeSingle();
+
+    if (paid) {
+      const { recordTipsForSession } = await import("./tips.server");
+      await recordTipsForSession(supabaseAdmin, data.session_id);
+    }
+
 
     // A declined or unconfirmed attempt must never leave a booking looking paid.
     if (order?.booking_id && !paid) {
