@@ -410,16 +410,40 @@ function TourCard({ t, next, token, pass, online, showDate, reviewUrl, onDone }:
         </div>
       )}
 
+      {t.stops.length > 0 && (
+        <div className="mt-3 rounded-lg border border-border">
+          <button onClick={() => setStopsOpen(!stopsOpen)} className="flex w-full items-center justify-between gap-2 p-3 text-sm font-medium">
+            <span className="flex items-center gap-2"><Route className="h-4 w-4 text-muted-foreground" strokeWidth={1.75} />Route &amp; stops</span>
+            <ChevronDown className={`h-4 w-4 text-muted-foreground transition-transform ${stopsOpen ? "rotate-180" : ""}`} strokeWidth={1.75} />
+          </button>
+          {stopsOpen && (
+            <ol className="space-y-1.5 border-t border-border p-3 text-sm text-muted-foreground">
+              {t.stops.map((s, i) => (
+                <li key={i} className="flex gap-2"><span className="text-xs font-semibold text-primary">{i + 1}</span>{s}</li>
+              ))}
+            </ol>
+          )}
+        </div>
+      )}
+
       <div className="mt-3 grid grid-cols-3 gap-2">
-        {maps ? <a href={maps} target="_blank" rel="noreferrer" className="flex items-center justify-center gap-1 rounded-lg border border-border py-2.5 text-sm"><MapPin className="h-4 w-4" strokeWidth={1.75} />Map</a> : <span />}
+        {maps || waze || apple ? <button onClick={() => setNav(true)} className="flex items-center justify-center gap-1 rounded-lg border border-border py-2.5 text-sm"><Navigation className="h-4 w-4" strokeWidth={1.75} />Navigate</button> : <span />}
         {ph ? <a href={`tel:+${ph}`} className="flex items-center justify-center gap-1 rounded-lg border border-border py-2.5 text-sm"><Phone className="h-4 w-4" strokeWidth={1.75} />Call</a> : <span />}
         {ph ? <a href={`https://wa.me/${ph}`} target="_blank" rel="noreferrer" className="flex items-center justify-center gap-1 rounded-lg border border-border py-2.5 text-sm"><MessageCircle className="h-4 w-4" strokeWidth={1.75} />WhatsApp</a> : <span />}
       </div>
 
       {!done && ph && (
-        <div className="mt-2 flex gap-1.5 overflow-x-auto pb-1">
-          {quick.map((x) => <a key={x.l} href={wa(x.m)!} target="_blank" rel="noreferrer" className="shrink-0 rounded-full border border-border px-3 py-1 text-xs">{x.l}</a>)}
-        </div>
+        <>
+          <div className="mt-2 flex items-center gap-1.5 overflow-x-auto pb-1">
+            <span className="shrink-0 text-xs text-muted-foreground">Message in</span>
+            {LANGS.map((x) => (
+              <button key={x.k} onClick={() => setLang(x.k)} className={`shrink-0 rounded-full px-2.5 py-1 text-xs ${lang === x.k ? "bg-primary text-primary-foreground" : "border border-border"}`}>{x.flag} {x.l}</button>
+            ))}
+          </div>
+          <div className="mt-1.5 flex gap-1.5 overflow-x-auto pb-1">
+            {quick.map((x) => <a key={x.l} href={wa(x.m)!} target="_blank" rel="noreferrer" className="shrink-0 rounded-full border border-border px-3 py-1 text-xs">{x.l}</a>)}
+          </div>
+        </>
       )}
 
       {!done && (
