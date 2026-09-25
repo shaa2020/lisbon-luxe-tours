@@ -6,9 +6,9 @@ import { useTours, tourPricing } from "@/lib/cms";
 import { useSiteBrand } from "@/lib/brand";
 import { CANCELLATION_POLICY_BULLETS } from "@/lib/cancellation";
 
-const TITLE = "Lisbon Tuk-Tuk Tour Prices — Complete Guide";
+const TITLE = "How Much Does a Lisbon Tuk-Tuk Tour Cost? 2026 Prices | TukTuk24";
 const DESCRIPTION =
-  "What a tuk-tuk tour in Lisbon actually costs: our full private-tour price list, what changes the price, private vs shared, hotel pick-up fees and how to pay.";
+  "Real 2026 Lisbon tuk-tuk prices: our full per-person price list, what changes the price, private vs shared, hotel pick-up fees, and why booking direct costs less than the big booking sites.";
 const URL = "https://tuktuk24lisbon.com/tours/pricing-guide";
 
 export const Route = createFileRoute("/tours/pricing-guide")({

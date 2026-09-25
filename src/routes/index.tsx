@@ -41,26 +41,21 @@ export const Route = createFileRoute("/")({
     const fromPrice = prices.length ? Math.min(...prices) : null;
     return { brand, fromPrice, tours, blogPosts };
   },
-  head: ({ loaderData }) => ({
+  head: ({ loaderData }) => {
+    const from = loaderData?.fromPrice ?? null;
+    const priceBit = from ? ` from €${from}` : "";
+    const title = `Private Tuk Tuk Tours in Lisbon${priceBit} | Book Direct — TukTuk24`;
+    const description = `Private electric tuk tuk tours in Lisbon with local drivers${
+      from ? `, from €${from} per person` : ""
+    }. Alfama, Belém, Sintra, Cascais and cruise-port pick-ups. Book direct — no agency booking fee.`;
+    return {
     meta: [
-      { title: "Private Tuk Tuk Tours in Lisbon | TukTuk24" },
-      {
-        name: "description",
-        content:
-          "Private electric tuk tuk tours in Lisbon with local drivers. Explore Alfama, Belém, Sintra and Cascais at your own pace — per-person prices, book online in minutes.",
-      },
-      { property: "og:title", content: "Private Tuk Tuk Tours in Lisbon | TukTuk24" },
-      {
-        property: "og:description",
-        content:
-          "Ride through Alfama, Belém and Sintra with a local driver. Small groups, per-person prices, book in minutes.",
-      },
-      { name: "twitter:title", content: "Private Tuk-Tuk Tours in Lisbon — Tuk Tuk 24" },
-      {
-        name: "twitter:description",
-        content:
-          "Ride through Alfama, Belém and Sintra with a local driver. Small groups, per-person prices, book in minutes.",
-      },
+      { title },
+      { name: "description", content: description },
+      { property: "og:title", content: title },
+      { property: "og:description", content: description },
+      { name: "twitter:title", content: title },
+      { name: "twitter:description", content: description },
       { property: "og:url", content: "https://tuktuk24lisbon.com/" },
     ],
     links: (() => {
@@ -73,7 +68,8 @@ export const Route = createFileRoute("/")({
           : []),
       ];
     })(),
-  }),
+    };
+  },
   component: Index,
 });
 

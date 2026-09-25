@@ -148,6 +148,7 @@ export function Footer() {
             <li><Link to="/sintra-private-tours" className="hover:text-gold transition-colors">Sintra private tours</Link></li>
             <li><Link to="/cascais-private-tours" className="hover:text-gold transition-colors">Cascais private tours</Link></li>
             <li><Link to="/cabo-da-roca-tours" className="hover:text-gold transition-colors">Cabo da Roca tours</Link></li>
+            <li><Link to="/lisbon-cruise-port-tours" className="hover:text-gold transition-colors">Cruise port shore excursions</Link></li>
             <li><Link to="/tours/pricing-guide" className="hover:text-gold transition-colors">Tuk tuk tour prices</Link></li>
           </ul>
         </div>
