@@ -294,12 +294,27 @@ function TourCard({ t, token, pass, online, showDate, reviewUrl, onDone }: {
         <span className="flex items-center gap-2"><Banknote className="h-4 w-4" strokeWidth={1.75} />{t.due_cents > 0 ? `COLLECT ${euro(t.due_cents)}` : "Fully paid (€0 due)"}</span>
       </div>
 
-      {(t.place || t.address) && (
-        <p className="mt-3 flex items-start gap-1.5 text-sm"><MapPin className="mt-0.5 h-4 w-4 shrink-0" strokeWidth={1.75} />
-          <span>{t.place}{t.address && t.address !== t.place ? ` — ${t.address}` : ""}{t.instructions ? <span className="block text-muted-foreground">{t.instructions}</span> : null}</span>
-        </p>
+      {(t.place || t.address || t.instructions || t.notes) && (
+        <div className="mt-3 divide-y divide-border rounded-lg border border-border">
+          {(t.place || t.address) && (
+            <div className="flex items-start gap-2 p-3">
+              <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" strokeWidth={1.75} />
+              <div className="min-w-0 text-sm">
+                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Meeting point</p>
+                <p className="font-medium">{t.place || t.address}</p>
+                {t.address && t.address !== t.place && <p className="text-muted-foreground">{t.address}</p>}
+                {t.instructions && <p className="mt-1 text-muted-foreground">{t.instructions}</p>}
+              </div>
+            </div>
+          )}
+          {t.notes && (
+            <div className="p-3 text-sm">
+              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Notes</p>
+              <p className="whitespace-pre-line">{t.notes}</p>
+            </div>
+          )}
+        </div>
       )}
-      {t.notes && <p className="mt-2 whitespace-pre-line rounded-md bg-muted p-2 text-xs">{t.notes}</p>}
 
       <div className="mt-3 grid grid-cols-3 gap-2">
         {maps ? <a href={maps} target="_blank" rel="noreferrer" className="flex items-center justify-center gap-1 rounded-lg border border-border py-2.5 text-sm"><MapPin className="h-4 w-4" strokeWidth={1.75} />Map</a> : <span />}
