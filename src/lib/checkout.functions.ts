@@ -210,6 +210,19 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
       .single();
     if (bErr || !booking) throw new Error(bErr?.message || "Booking insert failed");
 
+    // This guest reached checkout, so any unfinished-checkout follow-up for
+    // them is done. Never let a failure here block the booking.
+    try {
+      await supabaseAdmin
+        .from("leads")
+        .update({ status: "won" })
+        .eq("lead_kind", "abandoned_checkout")
+        .eq("email", data.email)
+        .in("status", ["new", "contacted"]);
+    } catch {
+      /* follow-up cleanup only */
+    }
+
     // Copy the business inbox on every new booking.
     {
       const { notifyOwner } = await import("./email/owner-notify.server");
