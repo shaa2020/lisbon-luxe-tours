@@ -25,6 +25,8 @@ import { useReviewStatsBySlug } from "@/lib/reviews";
 import { quote, MIN_GUESTS, MAX_GUESTS } from "@/lib/pricing";
 import { DurationOptions } from "@/components/site/DurationOptions";
 import { activeOptions, optionPrice, type TourOption } from "@/lib/tour-options";
+import { useCheckoutDraft, readResumeParams } from "@/lib/checkout-draft";
+import { useEffect } from "react";
 
 const TIME_SLOTS = ["09:00", "10:30", "13:00", "15:00", "17:00", "18:30"];
 
