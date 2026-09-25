@@ -31,6 +31,7 @@ import { Route as TermsRouteImport } from './routes/terms'
 import { Route as UnsubscribeRouteImport } from './routes/unsubscribe'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as AdminAbandonedRouteImport } from './routes/admin.abandoned'
 import { Route as AdminAiWriterRouteImport } from './routes/admin.ai-writer'
 import { Route as AdminApiRouteImport } from './routes/admin.api'
 import { Route as AdminAuditLogRouteImport } from './routes/admin.audit-log'
@@ -234,6 +235,11 @@ const Char91DotwellKnownChar93OauthProtectedResourceRoute =
 const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/admin/',
   path: '/admin/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminAbandonedRoute = AdminAbandonedRouteImport.update({
+  id: '/admin/abandoned',
+  path: '/admin/abandoned',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminAiWriterRoute = AdminAiWriterRouteImport.update({
@@ -730,6 +736,7 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/admin/abandoned': typeof AdminAbandonedRoute
   '/admin/ai-writer': typeof AdminAiWriterRoute
   '/admin/api': typeof AdminApiRoute
   '/admin/audit-log': typeof AdminAuditLogRoute
@@ -847,6 +854,7 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/admin/abandoned': typeof AdminAbandonedRoute
   '/admin/ai-writer': typeof AdminAiWriterRoute
   '/admin/api': typeof AdminApiRoute
   '/admin/audit-log': typeof AdminAuditLogRoute
@@ -965,6 +973,7 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/admin/abandoned': typeof AdminAbandonedRoute
   '/admin/ai-writer': typeof AdminAiWriterRoute
   '/admin/api': typeof AdminApiRoute
   '/admin/audit-log': typeof AdminAuditLogRoute
@@ -1084,6 +1093,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/unsubscribe'
     | '/.well-known/oauth-protected-resource'
+    | '/admin/abandoned'
     | '/admin/ai-writer'
     | '/admin/api'
     | '/admin/audit-log'
@@ -1201,6 +1211,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/unsubscribe'
     | '/.well-known/oauth-protected-resource'
+    | '/admin/abandoned'
     | '/admin/ai-writer'
     | '/admin/api'
     | '/admin/audit-log'
@@ -1318,6 +1329,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/unsubscribe'
     | '/.well-known/oauth-protected-resource'
+    | '/admin/abandoned'
     | '/admin/ai-writer'
     | '/admin/api'
     | '/admin/audit-log'
@@ -1436,6 +1448,7 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   UnsubscribeRoute: typeof UnsubscribeRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  AdminAbandonedRoute: typeof AdminAbandonedRoute
   AdminAiWriterRoute: typeof AdminAiWriterRoute
   AdminApiRoute: typeof AdminApiRoute
   AdminAuditLogRoute: typeof AdminAuditLogRoute
@@ -1685,6 +1698,13 @@ declare module '@tanstack/react-router' {
       path: '/admin'
       fullPath: '/admin/'
       preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/abandoned': {
+      id: '/admin/abandoned'
+      path: '/admin/abandoned'
+      fullPath: '/admin/abandoned'
+      preLoaderRoute: typeof AdminAbandonedRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/ai-writer': {
@@ -2375,6 +2395,7 @@ const rootRouteChildren: RootRouteChildren = {
   UnsubscribeRoute: UnsubscribeRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
     Char91DotwellKnownChar93OauthProtectedResourceRoute,
+  AdminAbandonedRoute: AdminAbandonedRoute,
   AdminAiWriterRoute: AdminAiWriterRoute,
   AdminApiRoute: AdminApiRoute,
   AdminAuditLogRoute: AdminAuditLogRoute,

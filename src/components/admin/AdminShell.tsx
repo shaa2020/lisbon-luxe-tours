@@ -62,6 +62,7 @@ const GROUPS: NavGroup[] = [
     title: "Operations",
     items: [
       { to: "/admin/bookings", label: "Bookings", icon: CalendarCheck, desc: "Requests and schedule", perm: "bookings.view" },
+      { to: "/admin/abandoned", label: "Unfinished bookings", icon: RotateCcw, desc: "Guests who left before paying", perm: "bookings.view" },
       { to: "/admin/ops", label: "Day sheet & fleet", icon: Gauge, desc: "Today, guides, vehicles", perm: "ops.view" },
       { to: "/admin/meetup-points", label: "Meeting points", icon: MapPin, desc: "Where guests meet the tuk tuk", perm: "ops.view" },
     ],
