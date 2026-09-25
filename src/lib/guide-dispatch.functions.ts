@@ -317,11 +317,15 @@ export const guideTourAction = createServerFn({ method: "POST" })
     const next = { onway: "on_the_way", start: "in_progress", noshow: "no_show", finish: "completed" }[data.action];
     const label = { onway: "Guide on the way", start: "Tour started", noshow: "Marked no-show", finish: "Tour finished" }[data.action];
     await supabaseAdmin.from("bookings").update({ tour_status: next }).eq("id", b.id);
+    const note = (data.note || "").trim().slice(0, 280);
     const { logEvent } = await import("./bookings-admin.server");
     await logEvent(supabaseAdmin, b.id, "status", `${label} — ${guide.name} (guide app)`, {} as any, null);
+    if (note) {
+      await logEvent(supabaseAdmin, b.id, "note", `Guide note from ${guide.name}: ${note}`, {} as any, null);
+    }
     await supabaseAdmin.from("admin_audit_log").insert({
       actor: null, entity: "booking", entity_id: b.id, action: `guide_${data.action}`,
-      summary: `${label} by ${guide.name} via guide app`,
+      summary: `${label} by ${guide.name} via guide app${note ? ` — note: ${note}` : ""}`,
     } as any);
     return { ok: true };
   });
