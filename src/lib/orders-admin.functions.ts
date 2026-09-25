@@ -34,6 +34,8 @@ export type AdminOrder = {
   guests: number | null;
   travel_date: string | null;
   created_at: string;
+  /** "tour" for the fare, "tip" for a gratuity paid to the guide. */
+  kind?: string | null;
   booking: AdminOrderBooking | null;
 };
 

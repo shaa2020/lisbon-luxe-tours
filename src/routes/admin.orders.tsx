@@ -490,6 +490,11 @@ function OrdersPage() {
                       <span className="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full border border-border text-muted-foreground">
                         {providerLabel(o.provider)}
                       </span>
+                      {o.kind === "tip" && (
+                        <span className="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full border border-rose-500/30 bg-rose-500/10 text-rose-700">
+                          Guide tip
+                        </span>
+                      )}
                     </div>
                     <p className="text-xs text-muted-foreground mt-0.5">
                       {o.tour_title || b?.tour_title || "—"} ·{" "}
