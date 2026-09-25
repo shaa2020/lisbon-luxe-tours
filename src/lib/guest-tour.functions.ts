@@ -33,6 +33,16 @@ export const getGuestTour = createServerFn({ method: "GET" })
       supabaseAdmin.from("orders").select("booking_id, amount_total, payment_status").eq("booking_id", b.id),
     ]);
 
+    // Real time the guide pressed "On my way" (from the booking history).
+    const { data: onWayEv } = await supabaseAdmin
+      .from("booking_events")
+      .select("created_at")
+      .eq("booking_id", b.id)
+      .ilike("summary", "Guide on the way%")
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
     const led = buildLedger(b as any, (ordRes.data ?? []) as any, (payRes.data ?? []) as any);
     const g = guideRes.data as any;
     const t = tourRes.data as any;
@@ -45,6 +55,7 @@ export const getGuestTour = createServerFn({ method: "GET" })
       paid_cents: led.paidCents,
       due_cents: led.dueCents,
       stage: led.tourStage,
+      on_the_way_at: (onWayEv as any)?.created_at ?? null,
       guide: g
         ? {
             name: String(g.name || "").split(" ")[0],

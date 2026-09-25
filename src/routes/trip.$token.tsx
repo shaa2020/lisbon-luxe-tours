@@ -44,7 +44,7 @@ function currentStep(t: any) {
   if (t.stage === "in_progress") return 4;
   if (t.tour_status === "on_the_way") return 3;
   const today = lisbonToday();
-  if (t.travel_date && t.travel_date === today) return t.guide ? 3 : 2;
+  if (t.travel_date && t.travel_date === today) return 2;
   if (t.guide) return 1;
   return 0;
 }
@@ -135,7 +135,14 @@ function TripPage() {
                     {done ? <Check className="w-3.5 h-3.5" strokeWidth={2.5} /> : i + 1}
                   </span>
                   <span className={`text-sm ${active ? "text-ink font-semibold" : done ? "text-ink" : "text-body/70"}`}>{s}</span>
-                  {active && <span className="ml-auto text-[10px] font-semibold uppercase tracking-widest text-gold">Now</span>}
+                  {s === "On the way" && t.on_the_way_at && (
+                    <span className="ml-auto text-[10px] font-semibold uppercase tracking-widest text-gold">
+                      {active ? "Since " : ""}
+                      {new Date(t.on_the_way_at).toLocaleTimeString("en-GB", { timeZone: "Europe/Lisbon", hour: "2-digit", minute: "2-digit" })}
+                    </span>
+                  )}
+                  {active && s !== "On the way" && <span className="ml-auto text-[10px] font-semibold uppercase tracking-widest text-gold">Now</span>}
+                  {active && s === "On the way" && !t.on_the_way_at && <span className="ml-auto text-[10px] font-semibold uppercase tracking-widest text-gold">Now</span>}
                 </li>
               );
             })}
