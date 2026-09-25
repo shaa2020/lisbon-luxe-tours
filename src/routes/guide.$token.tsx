@@ -6,7 +6,6 @@ import {
   Languages, Link2, Lock, MapPin, MessageCircle, Navigation, Phone, Play, Route as RouteIcon,
   Star, UserX, Users, Wallet, WifiOff, X,
 } from "lucide-react";
-const Route_ = RouteIcon;
 import {
   getGuideRunSheet, guideCollect, guideStatus, guideTourAction, guideUnlock,
 } from "@/lib/guide-dispatch.functions";
@@ -415,7 +414,7 @@ function TourCard({ t, next, token, pass, online, showDate, reviewUrl, onDone }:
       {t.stops.length > 0 && (
         <div className="mt-3 rounded-lg border border-border">
           <button onClick={() => setStopsOpen(!stopsOpen)} className="flex w-full items-center justify-between gap-2 p-3 text-sm font-medium">
-            <span className="flex items-center gap-2"><Route className="h-4 w-4 text-muted-foreground" strokeWidth={1.75} />Route &amp; stops</span>
+            <span className="flex items-center gap-2"><RouteIcon className="h-4 w-4 text-muted-foreground" strokeWidth={1.75} />Route &amp; stops</span>
             <ChevronDown className={`h-4 w-4 text-muted-foreground transition-transform ${stopsOpen ? "rotate-180" : ""}`} strokeWidth={1.75} />
           </button>
           {stopsOpen && (
