@@ -493,6 +493,11 @@ export function BookingModal({
                   </p>
                 </div>
                 <TipChips value={tipCents} onChange={setTipCents} className="mt-1" />
+                <PaySummary
+                  fareLabel="Tour payment"
+                  fareCents={Math.round(total * 100)}
+                  tipCents={tipCents}
+                />
                 <div className="grid gap-2">
                   <button
                     type="submit"

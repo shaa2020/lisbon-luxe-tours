@@ -647,7 +647,17 @@ export function TourBookingPanel({
         </div>
 
 
-        {!reference && <TipChips value={tipCents} onChange={setTipCents} />}
+        {!reference && (
+          <>
+            <TipChips value={tipCents} onChange={setTipCents} />
+            <PaySummary
+              fareLabel={depositPct >= 100 ? "Tour payment (full amount)" : `Tour deposit (${depositPct}%)`}
+              fareCents={Math.round(payNow * 100)}
+              tipCents={tipCents}
+              balanceCents={Math.round(balanceDue * 100)}
+            />
+          </>
+        )}
 
         {reference ? (
           <div className="border border-gold/40 bg-gold/5 rounded-[2px] p-4 text-center">
