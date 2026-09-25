@@ -50,6 +50,7 @@ export function BookingModal({
   const { business, groupTiers, groupDiscountEnabled, hotelPickupFeeCents } = useSiteBrand();
   const checkoutFn = useServerFn(createCheckoutSession);
   const [tipCents, setTipCents] = useState(0);
+  const [depositPct, setDepositPct] = useState(100);
   const [date, setDate] = useState<Date | undefined>(
     defaultDate ? new Date(`${defaultDate}T00:00:00`) : undefined,
   );
@@ -129,6 +130,8 @@ export function BookingModal({
     pickupRequested: pickup,
   });
   const total = q.total;
+  const payNow = depositPct >= 100 ? total : Math.round((total * depositPct)) / 100;
+  const balanceDue = Math.round((total - payNow) * 100) / 100;
 
   const reset = () => {
     setDate(defaultDate ? new Date(`${defaultDate}T00:00:00`) : undefined);
