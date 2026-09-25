@@ -666,9 +666,13 @@ function BookingsInbox() {
                         </span>
                       )}
                     </p>
-                    {Number(b.tip_cents || 0) > 0 && (
+                    {Number(b.tip_cents || 0) > 0 ? (
                       <p className="mt-1 inline-flex items-center gap-1 rounded-full border border-rose-500/30 bg-rose-500/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-rose-700">
                         Guide tip {euro(Number(b.tip_cents))}
+                      </p>
+                    ) : (
+                      <p className="mt-1 inline-flex items-center gap-1 rounded-full border border-border bg-muted px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                        Tip: none
                       </p>
                     )}
                   </div>
