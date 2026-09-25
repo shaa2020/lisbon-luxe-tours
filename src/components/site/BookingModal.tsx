@@ -29,6 +29,7 @@ import { trackBookingStart, trackWhatsappClick } from "@/lib/analytics";
 import { PaypalWallet } from "@/components/site/PaypalWallet";
 import { PickupSelector } from "@/components/site/PickupSelector";
 import { pickupSummary, type PickupSelection } from "@/lib/meetup-points";
+import { useCheckoutDraft } from "@/lib/checkout-draft";
 
 const TIME_SLOTS = ["09:00", "10:30", "13:00", "15:00", "17:00", "18:30"];
 
@@ -88,6 +89,23 @@ export function BookingModal({
       pickupChoice?.type === "hotel" ? pickupChoice.placeId || pickupChoice.address : null,
     ]),
   };
+
+  // Saves the half-finished booking so it can be followed up if the guest
+  // closes the window before paying.
+  useCheckoutDraft(
+    "modal",
+    {
+      tourSlug: tour?.slug ?? "",
+      tourTitle: tour?.title ?? null,
+      name,
+      email: contact,
+      phone,
+      travelDate: date ? format(date, "yyyy-MM-dd") : null,
+      travelTime: time || null,
+      guests,
+    },
+    open && !!tour && !submitted,
+  );
 
   if (!tour) return null;
 

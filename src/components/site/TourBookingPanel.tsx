@@ -25,6 +25,8 @@ import { useReviewStatsBySlug } from "@/lib/reviews";
 import { quote, MIN_GUESTS, MAX_GUESTS } from "@/lib/pricing";
 import { DurationOptions } from "@/components/site/DurationOptions";
 import { activeOptions, optionPrice, type TourOption } from "@/lib/tour-options";
+import { useCheckoutDraft, readResumeParams } from "@/lib/checkout-draft";
+import { useEffect } from "react";
 
 const TIME_SLOTS = ["09:00", "10:30", "13:00", "15:00", "17:00", "18:30"];
 
@@ -139,6 +141,38 @@ export function TourBookingPanel({
   const isEmail = (s: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);
   const isPhone = (s: string) => s.replace(/[^\d]/g, "").length >= 8;
   const canContinue = !!date && !!time && guests >= minGuests && !slotInfo(time)?.full;
+
+  // Saves the half-finished booking so it can be followed up if the guest
+  // leaves before paying.
+  useCheckoutDraft("panel", {
+    tourSlug: tour.slug,
+    tourTitle: tour.title,
+    name,
+    email,
+    phone,
+    travelDate: date ? format(date, "yyyy-MM-dd") : null,
+    travelTime: time || null,
+    guests,
+    amountCents: Math.round(total * 100),
+  });
+
+  // Someone arriving from a "finish your booking" link lands with their
+  // details already filled in.
+  useEffect(() => {
+    const resume = readResumeParams();
+    if (!resume) return;
+    if (resume.name) setName(resume.name);
+    if (resume.email) setEmail(resume.email);
+    if (resume.phone) setPhone(resume.phone);
+    if (resume.time) setTime(resume.time);
+    if (resume.guests) setGuests(resume.guests);
+    if (resume.date) {
+      const parsed = new Date(`${resume.date}T00:00:00`);
+      if (!Number.isNaN(parsed.getTime())) setDate(parsed);
+    }
+    setShowContact(true);
+  }, []);
+
 
 
   const handleRequest = async () => {
