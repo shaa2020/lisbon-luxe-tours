@@ -42,6 +42,7 @@ const digits = (p: string) => p.replace(/[^\d]/g, "");
 function currentStep(t: any) {
   if (t.stage === "completed") return 5;
   if (t.stage === "in_progress") return 4;
+  if (t.tour_status === "on_the_way") return 3;
   const today = lisbonToday();
   if (t.travel_date && t.travel_date === today) return t.guide ? 3 : 2;
   if (t.guide) return 1;
