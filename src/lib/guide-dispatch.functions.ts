@@ -306,6 +306,7 @@ export const guideTourAction = createServerFn({ method: "POST" })
       pass: passSchema,
       bookingId: z.string().uuid(),
       action: z.enum(["onway", "start", "noshow", "finish"]),
+      note: z.string().max(280).optional(),
     }).parse(d),
   )
   .handler(async ({ data }) => {
