@@ -463,7 +463,31 @@ function TourCard({ t, next, token, pass, online, showDate, reviewUrl, onDone }:
       )}
 
       {t.stage === "completed" && ph && (
-        <a href={wa(`Hi ${g}, thank you so much for touring Lisbon with Tuk Tuk 24! If you enjoyed it, a quick review would mean the world to us: ${reviewUrl}`)!} target="_blank" rel="noreferrer" className="mt-3 flex items-center justify-center gap-1.5 rounded-lg border border-border py-2.5 text-sm"><Star className="h-4 w-4" strokeWidth={1.75} />Ask for a review</a>
+        <a href={wa(`${msg(lang, "review", g)} ${reviewUrl}`)!} target="_blank" rel="noreferrer" className="mt-3 flex items-center justify-center gap-1.5 rounded-lg border border-border py-2.5 text-sm"><Star className="h-4 w-4" strokeWidth={1.75} />Ask for a review</a>
+      )}
+
+      {next && !done && (
+        <p className="mt-3 flex items-center gap-2 rounded-lg bg-muted px-3 py-2 text-xs text-muted-foreground">
+          <Hourglass className="h-3.5 w-3.5 shrink-0" strokeWidth={1.75} />
+          Next tour {next.time?.slice(0, 5)}{gap !== null ? ` · ${gap >= 60 ? `${Math.floor(gap / 60)}h ${gap % 60}m` : `${gap}m`} gap` : ""}{next.place ? ` · ${next.place}` : ""}
+        </p>
+      )}
+
+      {nav && (
+        <div className="fixed inset-0 z-50 flex items-end bg-foreground/40" onClick={() => setNav(false)}>
+          <div className="w-full rounded-t-2xl bg-background p-5 pb-8" onClick={(e) => e.stopPropagation()}>
+            <div className="mb-4 flex items-center justify-between">
+              <h3 className="text-lg font-semibold">Navigate</h3>
+              <button onClick={() => setNav(false)} aria-label="Close"><X className="h-5 w-5" strokeWidth={1.75} /></button>
+            </div>
+            <p className="mb-3 text-sm text-muted-foreground">{t.place || t.address}</p>
+            <div className="space-y-2">
+              {maps && <a href={maps} target="_blank" rel="noreferrer" onClick={() => setNav(false)} className="flex items-center gap-2 rounded-lg border border-border px-4 py-3.5 text-sm font-medium"><MapPin className="h-4 w-4" strokeWidth={1.75} />Google Maps</a>}
+              {waze && <a href={waze} target="_blank" rel="noreferrer" onClick={() => setNav(false)} className="flex items-center gap-2 rounded-lg border border-border px-4 py-3.5 text-sm font-medium"><Navigation className="h-4 w-4" strokeWidth={1.75} />Waze</a>}
+              {apple && <a href={apple} target="_blank" rel="noreferrer" onClick={() => setNav(false)} className="flex items-center gap-2 rounded-lg border border-border px-4 py-3.5 text-sm font-medium"><Compass className="h-4 w-4" strokeWidth={1.75} />Apple Maps</a>}
+            </div>
+          </div>
+        </div>
       )}
 
       {pay && <PaySheet t={t} token={token} pass={pass} onClose={() => setPay(false)} onDone={() => { setPay(false); onDone(); }} wa={wa} />}
