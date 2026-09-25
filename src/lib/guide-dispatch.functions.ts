@@ -166,6 +166,20 @@ export const guideUnlock = createServerFn({ method: "POST" })
 
 const rangeEnum = z.enum(["today", "tomorrow", "week", "history"]);
 
+/**
+ * Notes are shown to guides, so remove anything about money or details that
+ * are already displayed elsewhere on the card (time, meetup point).
+ */
+function guideSafeNotes(notes: string | null | undefined): string | null {
+  if (!notes) return null;
+  const drop = /(deposit|balance due|paid online|promo code|discount|€|eur\b|total|price|pickup fee|preferred time|meetup point)/i;
+  const kept = String(notes)
+    .split("\n")
+    .map((l) => l.trim())
+    .filter((l) => l && !drop.test(l));
+  return kept.length ? kept.join("\n") : null;
+}
+
 /** Guide (link + PIN pass): tours for a range, plus earnings. */
 export const getGuideRunSheet = createServerFn({ method: "POST" })
   .inputValidator((d) => z.object({ token: tokenSchema, pass: passSchema, range: rangeEnum }).parse(d))
