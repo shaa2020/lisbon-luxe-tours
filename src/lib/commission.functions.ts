@@ -100,7 +100,8 @@ export const getCommissionOverview = createServerFn({ method: "POST" })
       supabaseAdmin
         .from("orders")
         .select("id,booking_id,amount_total,payment_status,created_at,provider")
-        .eq("payment_status", "paid"),
+        .eq("payment_status", "paid")
+        .neq("kind", "tip"),
       supabaseAdmin
         .from("booking_payments")
         .select(

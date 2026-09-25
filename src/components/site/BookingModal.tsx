@@ -27,6 +27,7 @@ import { createCheckoutSession } from "@/lib/checkout.functions";
 import { toast } from "sonner";
 import { trackBookingStart, trackWhatsappClick } from "@/lib/analytics";
 import { PaypalWallet } from "@/components/site/PaypalWallet";
+import { TipChips } from "@/components/site/TipChips";
 import { PickupSelector } from "@/components/site/PickupSelector";
 import { pickupSummary, type PickupSelection } from "@/lib/meetup-points";
 import { useCheckoutDraft } from "@/lib/checkout-draft";
@@ -48,6 +49,7 @@ export function BookingModal({
 }) {
   const { business, groupTiers, groupDiscountEnabled, hotelPickupFeeCents } = useSiteBrand();
   const checkoutFn = useServerFn(createCheckoutSession);
+  const [tipCents, setTipCents] = useState(0);
   const [date, setDate] = useState<Date | undefined>(
     defaultDate ? new Date(`${defaultDate}T00:00:00`) : undefined,
   );
@@ -199,6 +201,7 @@ export function BookingModal({
           amount: total * 100,
           image_url: tour.image?.startsWith("http") ? tour.image : null,
           tour_option_id: selectedOption?.id ?? null,
+          tip_cents: tipCents,
           ...pickupPayload,
         },
       });
@@ -234,6 +237,7 @@ export function BookingModal({
         amount: total * 100,
         image_url: tour.image?.startsWith("http") ? tour.image : null,
         tour_option_id: selectedOption?.id ?? null,
+        tip_cents: tipCents,
         ...pickupPayload,
       },
     });
@@ -488,6 +492,7 @@ export function BookingModal({
                     Reserve via WhatsApp and pay later, or pay instantly with PayPal.
                   </p>
                 </div>
+                <TipChips value={tipCents} onChange={setTipCents} className="mt-1" />
                 <div className="grid gap-2">
                   <button
                     type="submit"
@@ -499,7 +504,7 @@ export function BookingModal({
                 </div>
 
                 <PaypalWallet
-                  amount={total}
+                  amount={total + tipCents / 100}
                   label={tour.title}
                   disabled={paying || !contactValid}
                   createOrder={startWalletOrder}

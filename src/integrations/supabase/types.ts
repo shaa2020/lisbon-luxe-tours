@@ -485,6 +485,7 @@ export type Database = {
           review_request_sent_at: string | null
           source: string
           status: string
+          tip_cents: number
           total_estimate: number | null
           tour_option_id: string | null
           tour_slug: string | null
@@ -538,6 +539,7 @@ export type Database = {
           review_request_sent_at?: string | null
           source?: string
           status?: string
+          tip_cents?: number
           total_estimate?: number | null
           tour_option_id?: string | null
           tour_slug?: string | null
@@ -591,6 +593,7 @@ export type Database = {
           review_request_sent_at?: string | null
           source?: string
           status?: string
+          tip_cents?: number
           total_estimate?: number | null
           tour_option_id?: string | null
           tour_slug?: string | null
@@ -2083,6 +2086,7 @@ export type Database = {
           customer_name: string | null
           guests: number | null
           id: string
+          kind: string
           payment_status: string
           provider: string
           raw: Json | null
@@ -2102,6 +2106,7 @@ export type Database = {
           customer_name?: string | null
           guests?: number | null
           id?: string
+          kind?: string
           payment_status?: string
           provider?: string
           raw?: Json | null
@@ -2121,6 +2126,7 @@ export type Database = {
           customer_name?: string | null
           guests?: number | null
           id?: string
+          kind?: string
           payment_status?: string
           provider?: string
           raw?: Json | null

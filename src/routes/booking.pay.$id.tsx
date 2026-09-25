@@ -5,6 +5,7 @@ import { useState } from "react";
 import { CalendarCheck, CheckCircle2, Loader2, Lock, Users } from "lucide-react";
 import { createBalanceCheckout, getBookingBalance } from "@/lib/balance-pay.functions";
 import { PaypalWallet } from "@/components/site/PaypalWallet";
+import { TipChips } from "@/components/site/TipChips";
 
 
 export const Route = createFileRoute("/booking/pay/$id")({
@@ -39,6 +40,7 @@ function PayBalancePage() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedPercent, setSelectedPercent] = useState<20 | 50 | 70 | 100 | null>(null);
+  const [tipCents, setTipCents] = useState(0);
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["booking-balance", id],
@@ -50,7 +52,7 @@ function PayBalancePage() {
     setBusy(true);
     setError(null);
     try {
-      const res = await startCheckout({ data: { id, percent: selectedPercent ?? undefined } });
+      const res = await startCheckout({ data: { id, percent: selectedPercent ?? undefined, tip_cents: tipCents } });
       if (res.url) {
         window.location.href = res.url;
         return;
@@ -67,7 +69,7 @@ function PayBalancePage() {
   const startWalletOrder = async (): Promise<string | null> => {
     setError(null);
     try {
-      const res = await startCheckout({ data: { id, percent: selectedPercent ?? undefined } });
+      const res = await startCheckout({ data: { id, percent: selectedPercent ?? undefined, tip_cents: tipCents } });
       return res.sessionId ?? null;
     } catch (e) {
       setError(e instanceof Error ? e.message : "Something went wrong. Please try again.");
@@ -228,9 +230,10 @@ function PayBalancePage() {
 
               {data.paymentsAvailable ? (
                 <>
-                  <div className="mt-6">
+                  <TipChips value={tipCents} onChange={setTipCents} className="mt-6" />
+                  <div className="mt-3">
                     <PaypalWallet
-                      amount={selectedCents / 100}
+                      amount={(selectedCents + tipCents) / 100}
                       label={data.tourTitle || "Tuk Tuk 24 tour"}
                       disabled={busy}
                       createOrder={startWalletOrder}
@@ -247,7 +250,7 @@ function PayBalancePage() {
                     ) : (
                       <Lock className="w-4 h-4" />
                     )}
-                    Other ways to pay {money(selectedCents)}
+                    Other ways to pay {money(selectedCents + tipCents)}
                   </button>
                   <p className="mt-3 text-center text-xs text-muted-foreground">
                     Secure checkout · PayPal, Google Pay, Apple Pay and cards

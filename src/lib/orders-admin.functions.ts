@@ -47,7 +47,7 @@ export const adminListOrders = createServerFn({ method: "POST" })
     const { data: orders, error } = await supabaseAdmin
       .from("orders")
       .select(
-        "id,booking_id,provider,stripe_session_id,stripe_payment_intent_id,amount_total,currency,payment_status,customer_name,customer_email,tour_title,tour_slug,guests,travel_date,created_at",
+        "id,booking_id,provider,stripe_session_id,stripe_payment_intent_id,amount_total,currency,payment_status,customer_name,customer_email,tour_title,tour_slug,guests,travel_date,created_at,kind",
       )
       .order("created_at", { ascending: false })
       .limit(1000);

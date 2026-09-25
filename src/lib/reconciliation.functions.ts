@@ -147,6 +147,7 @@ export const adminReconciliation = createServerFn({ method: "POST" })
         .select(
           "id,booking_id,provider,stripe_session_id,stripe_payment_intent_id,amount_total,payment_status,customer_name,customer_email,tour_title,created_at",
         )
+        .neq("kind", "tip")
         .gte("created_at", since)
         .order("created_at", { ascending: false })
         .limit(4000),

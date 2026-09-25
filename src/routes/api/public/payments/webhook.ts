@@ -56,6 +56,9 @@ async function markPaid(session: Record<string, unknown>) {
     })
     .eq("stripe_session_id", sessionId);
 
+  const { recordTipsForSession } = await import("@/lib/tips.server");
+  await recordTipsForSession(supabaseAdmin, sessionId);
+
   if (bookingId && !modificationId) {
     const { syncBookingPaymentStatus } = await import("@/lib/balance-pay.server");
     await syncBookingPaymentStatus(supabaseAdmin, bookingId);

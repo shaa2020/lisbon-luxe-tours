@@ -5,6 +5,7 @@ import {
   Banknote, CheckCircle2, ChevronDown, Clock, Compass, CreditCard, Delete, Download, Hourglass,
   Languages, Link2, Lock, MapPin, MessageCircle, Navigation, Phone, Play, Route as RouteIcon,
   Star, UserX, Users, Wallet, WifiOff, X,
+  Heart,
 } from "lucide-react";
 import {
   getGuideRunSheet, guideCollect, guideStatus, guideTourAction, guideUnlock,
@@ -39,7 +40,7 @@ const cacheKey = (t: string, r: string) => `t24_guide_cache_${t.slice(0, 12)}_${
 
 /* ---- guest languages for the quick WhatsApp messages ---- */
 type LangKey = "en" | "pt" | "es" | "fr" | "de";
-type MsgKey = "onway" | "late" | "arrived" | "where" | "weather" | "review";
+type MsgKey = "onway" | "late" | "arrived" | "where" | "weather" | "review" | "tip";
 
 const LANGS: { k: LangKey; flag: string; l: string }[] = [
   { k: "en", flag: "🇬🇧", l: "EN" },
@@ -70,6 +71,7 @@ function msg(lang: LangKey, key: MsgKey, name: string, place?: string | null) {
       where: `Hi ${name}, I'm at ${p} — where are you? Send me your location and I'll come to you.`,
       weather: `Hi ${name}, just a heads-up: the tuk-tuk has rain covers, so the tour goes ahead in any weather. See you soon!`,
       review: `Hi ${name}, thank you so much for touring Lisbon with Tuk Tuk 24! If you enjoyed it, a quick review would mean the world to us:`,
+      tip: `Hi ${name}, thank you for touring Lisbon with Tuk Tuk 24! If you'd like to leave your guide a tip, you can do it safely here:`,
     },
     pt: {
       onway: `Olá ${name}! Sou o seu guia da Tuk Tuk 24 e estou a caminho de ${p}. Até já!`,
@@ -78,6 +80,7 @@ function msg(lang: LangKey, key: MsgKey, name: string, place?: string | null) {
       where: `Olá ${name}, estou em ${p} — onde está? Envie-me a sua localização e eu vou ter consigo.`,
       weather: `Olá ${name}, só para avisar: o tuk-tuk tem capotas de chuva, por isso o passeio realiza-se com qualquer tempo. Até já!`,
       review: `Olá ${name}, muito obrigado por ter passeado por Lisboa com a Tuk Tuk 24! Se gostou, uma avaliação rápida ajudaria imenso:`,
+      tip: `Olá ${name}, obrigado por ter passeado por Lisboa com a Tuk Tuk 24! Se quiser deixar uma gorjeta ao seu guia, pode fazê-lo em segurança aqui:`,
     },
     es: {
       onway: `¡Hola ${name}! Soy tu guía de Tuk Tuk 24 y voy de camino a ${p}. ¡Hasta ahora!`,
@@ -86,6 +89,7 @@ function msg(lang: LangKey, key: MsgKey, name: string, place?: string | null) {
       where: `Hola ${name}, estoy en ${p} — ¿dónde estás? Mándame tu ubicación y voy a buscarte.`,
       weather: `Hola ${name}, un aviso: el tuk-tuk tiene toldos para la lluvia, así que el tour se hace con cualquier tiempo. ¡Hasta ahora!`,
       review: `Hola ${name}, ¡muchas gracias por recorrer Lisboa con Tuk Tuk 24! Si te ha gustado, una reseña rápida nos ayudaría muchísimo:`,
+      tip: `Hola ${name}, ¡gracias por recorrer Lisboa con Tuk Tuk 24! Si quieres dejar una propina a tu guía, puedes hacerlo de forma segura aquí:`,
     },
     fr: {
       onway: `Bonjour ${name} ! Je suis votre guide Tuk Tuk 24 et je suis en route vers ${p}. À tout de suite !`,
@@ -94,6 +98,7 @@ function msg(lang: LangKey, key: MsgKey, name: string, place?: string | null) {
       where: `Bonjour ${name}, je suis à ${p} — où êtes-vous ? Envoyez-moi votre position et je viens vous chercher.`,
       weather: `Bonjour ${name}, petite info : le tuk-tuk a des bâches de pluie, le tour a donc lieu par tous les temps. À tout de suite !`,
       review: `Bonjour ${name}, merci beaucoup d'avoir visité Lisbonne avec Tuk Tuk 24 ! Si vous avez aimé, un petit avis nous aiderait énormément :`,
+      tip: `Bonjour ${name}, merci d'avoir visité Lisbonne avec Tuk Tuk 24 ! Si vous souhaitez laisser un pourboire à votre guide, c'est possible en toute sécurité ici :`,
     },
     de: {
       onway: `Hallo ${name}! Ich bin Ihr Tuk Tuk 24 Guide und auf dem Weg zu ${p}. Bis gleich!`,
@@ -102,6 +107,7 @@ function msg(lang: LangKey, key: MsgKey, name: string, place?: string | null) {
       where: `Hallo ${name}, ich bin an ${p} — wo sind Sie? Schicken Sie mir Ihren Standort, ich komme zu Ihnen.`,
       weather: `Hallo ${name}, kurzer Hinweis: Das Tuk-Tuk hat Regenverdecke, die Tour findet bei jedem Wetter statt. Bis gleich!`,
       review: `Hallo ${name}, vielen Dank, dass Sie Lissabon mit Tuk Tuk 24 erkundet haben! Wenn es Ihnen gefallen hat, würde uns eine kurze Bewertung sehr helfen:`,
+      tip: `Hallo ${name}, danke, dass Sie Lissabon mit Tuk Tuk 24 erkundet haben! Wenn Sie Ihrem Guide ein Trinkgeld geben möchten, geht das sicher hier:`,
     },
   };
   return T[lang][key];
@@ -464,7 +470,12 @@ function TourCard({ t, next, token, pass, online, showDate, reviewUrl, onDone }:
       )}
 
       {t.stage === "completed" && ph && (
-        <a href={wa(`${msg(lang, "review", g)} ${reviewUrl}`)!} target="_blank" rel="noreferrer" className="mt-3 flex items-center justify-center gap-1.5 rounded-lg border border-border py-2.5 text-sm"><Star className="h-4 w-4" strokeWidth={1.75} />Ask for a review</a>
+        <div className="mt-3 grid gap-2">
+          <a href={wa(`${msg(lang, "review", g)} ${reviewUrl}`)!} target="_blank" rel="noreferrer" className="flex items-center justify-center gap-1.5 rounded-lg border border-border py-2.5 text-sm"><Star className="h-4 w-4" strokeWidth={1.75} />Ask for a review</a>
+          {t.tripUrl && (
+            <a href={wa(`${msg(lang, "tip", g)} ${t.tripUrl}`)!} target="_blank" rel="noreferrer" className="flex items-center justify-center gap-1.5 rounded-lg border border-border py-2.5 text-sm"><Heart className="h-4 w-4" strokeWidth={1.75} />Send tip link</a>
+          )}
+        </div>
       )}
 
       {next && !done && (

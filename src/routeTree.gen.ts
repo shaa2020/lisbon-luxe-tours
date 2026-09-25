@@ -67,6 +67,7 @@ import { Route as JournalIndexRouteImport } from './routes/journal.index'
 import { Route as JournalSlugRouteImport } from './routes/journal.$slug'
 import { Route as LisbonGuideIndexRouteImport } from './routes/lisbon-guide.index'
 import { Route as LisbonGuideSlugRouteImport } from './routes/lisbon-guide.$slug'
+import { Route as TipThanksRouteImport } from './routes/tip.thanks'
 import { Route as ToursIndexRouteImport } from './routes/tours.index'
 import { Route as ToursSlugRouteImport } from './routes/tours.$slug'
 import { Route as ToursCustomRouteImport } from './routes/tours.custom'
@@ -417,6 +418,11 @@ const LisbonGuideIndexRoute = LisbonGuideIndexRouteImport.update({
 const LisbonGuideSlugRoute = LisbonGuideSlugRouteImport.update({
   id: '/lisbon-guide/$slug',
   path: '/lisbon-guide/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TipThanksRoute = TipThanksRouteImport.update({
+  id: '/tip/thanks',
+  path: '/tip/thanks',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ToursIndexRoute = ToursIndexRouteImport.update({
@@ -780,6 +786,7 @@ export interface FileRoutesByFullPath {
   '/invoice/$id': typeof InvoiceIdRoute
   '/journal/$slug': typeof JournalSlugRoute
   '/lisbon-guide/$slug': typeof LisbonGuideSlugRoute
+  '/tip/thanks': typeof TipThanksRoute
   '/tours/$slug': typeof ToursSlugRoute
   '/tours/custom': typeof ToursCustomRoute
   '/tours/pricing-guide': typeof ToursPricingGuideRoute
@@ -900,6 +907,7 @@ export interface FileRoutesByTo {
   '/invoice/$id': typeof InvoiceIdRoute
   '/journal/$slug': typeof JournalSlugRoute
   '/lisbon-guide/$slug': typeof LisbonGuideSlugRoute
+  '/tip/thanks': typeof TipThanksRoute
   '/tours/$slug': typeof ToursSlugRoute
   '/tours/custom': typeof ToursCustomRoute
   '/tours/pricing-guide': typeof ToursPricingGuideRoute
@@ -1021,6 +1029,7 @@ export interface FileRoutesById {
   '/invoice/$id': typeof InvoiceIdRoute
   '/journal/$slug': typeof JournalSlugRoute
   '/lisbon-guide/$slug': typeof LisbonGuideSlugRoute
+  '/tip/thanks': typeof TipThanksRoute
   '/tours/$slug': typeof ToursSlugRoute
   '/tours/custom': typeof ToursCustomRoute
   '/tours/pricing-guide': typeof ToursPricingGuideRoute
@@ -1143,6 +1152,7 @@ export interface FileRouteTypes {
     | '/invoice/$id'
     | '/journal/$slug'
     | '/lisbon-guide/$slug'
+    | '/tip/thanks'
     | '/tours/$slug'
     | '/tours/custom'
     | '/tours/pricing-guide'
@@ -1263,6 +1273,7 @@ export interface FileRouteTypes {
     | '/invoice/$id'
     | '/journal/$slug'
     | '/lisbon-guide/$slug'
+    | '/tip/thanks'
     | '/tours/$slug'
     | '/tours/custom'
     | '/tours/pricing-guide'
@@ -1383,6 +1394,7 @@ export interface FileRouteTypes {
     | '/invoice/$id'
     | '/journal/$slug'
     | '/lisbon-guide/$slug'
+    | '/tip/thanks'
     | '/tours/$slug'
     | '/tours/custom'
     | '/tours/pricing-guide'
@@ -1504,6 +1516,7 @@ export interface RootRouteChildren {
   InvoiceIdRoute: typeof InvoiceIdRoute
   JournalSlugRoute: typeof JournalSlugRoute
   LisbonGuideSlugRoute: typeof LisbonGuideSlugRoute
+  TipThanksRoute: typeof TipThanksRoute
   ToursSlugRoute: typeof ToursSlugRoute
   ToursCustomRoute: typeof ToursCustomRoute
   ToursPricingGuideRoute: typeof ToursPricingGuideRoute
@@ -1976,6 +1989,13 @@ declare module '@tanstack/react-router' {
       path: '/lisbon-guide/$slug'
       fullPath: '/lisbon-guide/$slug'
       preLoaderRoute: typeof LisbonGuideSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tip/thanks': {
+      id: '/tip/thanks'
+      path: '/tip/thanks'
+      fullPath: '/tip/thanks'
+      preLoaderRoute: typeof TipThanksRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/tours/': {
@@ -2467,6 +2487,7 @@ const rootRouteChildren: RootRouteChildren = {
   InvoiceIdRoute: InvoiceIdRoute,
   JournalSlugRoute: JournalSlugRoute,
   LisbonGuideSlugRoute: LisbonGuideSlugRoute,
+  TipThanksRoute: TipThanksRoute,
   ToursSlugRoute: ToursSlugRoute,
   ToursCustomRoute: ToursCustomRoute,
   ToursPricingGuideRoute: ToursPricingGuideRoute,

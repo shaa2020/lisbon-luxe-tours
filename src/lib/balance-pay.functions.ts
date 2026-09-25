@@ -5,6 +5,8 @@ import { z } from "zod";
 const idInput = z.object({ id: z.string().uuid() });
 const checkoutInput = idInput.extend({
   percent: z.union([z.literal(20), z.literal(50), z.literal(70), z.literal(100)]).optional(),
+  /** Optional gratuity for the guide, added to this payment, never to the fare. */
+  tip_cents: z.number().int().min(0).max(100000).optional(),
 });
 
 /** Public, safe balance summary for the customer pay page (UUID acts as the key). */
@@ -63,22 +65,24 @@ export const createBalanceCheckout = createServerFn({ method: "POST" })
     const proto = host.includes("localhost") ? "http" : "https";
     const origin = `${proto}://${host}`;
 
+    const tipCents = Math.max(0, Math.min(100000, Math.round(data.tip_cents ?? 0)));
+
     const payment = await createPayment(supabaseAdmin, {
-      amountCents: chargeCents,
-      description: `${booking.tour_title || "Tuk Tuk 24 tour"} — ${isDeposit ? "deposit payment" : "balance payment"}`,
+      amountCents: chargeCents + tipCents,
+      description: `${booking.tour_title || "Tuk Tuk 24 tour"} — ${isDeposit ? "deposit payment" : "balance payment"}${tipCents > 0 ? " + guide tip" : ""}`,
       origin,
       metadata: {
         booking_id: data.id,
         kind: isDeposit ? "deposit" : "balance",
         selected_percent: String(data.percent ?? "requested"),
+        tip_cents: String(tipCents),
       },
     });
 
-    await supabaseAdmin.from("orders").insert({
+    const orderBase = {
       booking_id: data.id,
       stripe_session_id: payment.id,
       provider: payment.provider,
-      amount_total: chargeCents,
       currency: "eur",
       payment_status: "pending",
       customer_name: booking.customer_name,
@@ -87,7 +91,15 @@ export const createBalanceCheckout = createServerFn({ method: "POST" })
       tour_slug: booking.tour_slug,
       guests: booking.guests,
       travel_date: booking.travel_date || null,
-    });
+    };
+    await supabaseAdmin.from("orders").insert(
+      tipCents > 0
+        ? [
+            { ...orderBase, amount_total: chargeCents, kind: "tour" },
+            { ...orderBase, amount_total: tipCents, kind: "tip" },
+          ]
+        : [{ ...orderBase, amount_total: chargeCents, kind: "tour" }],
+    );
 
     return { url: payment.checkoutUrl, sessionId: payment.id };
   });
