@@ -244,11 +244,12 @@ export const getGuideRunSheet = createServerFn({ method: "POST" })
           instructions: r.pickup_instructions || r.meetup_point_instructions || null,
           lat: r.pickup_latitude,
           lng: r.pickup_longitude,
-          notes: r.notes ?? null,
+          // Guides must never see tour prices, deposits or totals — strip any
+          // money/admin lines from the notes and keep only real instructions.
+          notes: guideSafeNotes(r.notes),
           rawStatus: String(r.tour_status || ""),
           stage: l.tourStage,
           due_cents: l.dueCents,
-          total_cents: l.totalCents,
           payUrl: `https://tuktuk24lisbon.com/booking/pay/${r.id}`,
           tripUrl: r.guest_token ? `https://tuktuk24lisbon.com/trip/${r.guest_token}` : null,
         };
