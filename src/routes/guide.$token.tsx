@@ -2,8 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import {
-  Banknote, CheckCircle2, Clock, CreditCard, Delete, Download, Languages, Link2, Lock, MapPin,
-  MessageCircle, Navigation, Phone, Play, Star, UserX, Users, Wallet, WifiOff, X,
+  Banknote, CheckCircle2, ChevronDown, Clock, Compass, CreditCard, Delete, Download, Hourglass,
+  Languages, Link2, Lock, MapPin, MessageCircle, Navigation, Phone, Play, Route as RouteIcon,
+  Star, UserX, Users, Wallet, WifiOff, X,
 } from "lucide-react";
 import {
   getGuideRunSheet, guideCollect, guideStatus, guideTourAction, guideUnlock,
@@ -35,6 +36,83 @@ const digits = (p: string) => p.replace(/[^\d]/g, "");
 const first = (n: string) => String(n || "").split(" ")[0];
 const passKey = (t: string) => `t24_guide_pass_${t.slice(0, 12)}`;
 const cacheKey = (t: string, r: string) => `t24_guide_cache_${t.slice(0, 12)}_${r}`;
+
+/* ---- guest languages for the quick WhatsApp messages ---- */
+type LangKey = "en" | "pt" | "es" | "fr" | "de";
+type MsgKey = "onway" | "late" | "arrived" | "where" | "weather" | "review";
+
+const LANGS: { k: LangKey; flag: string; l: string }[] = [
+  { k: "en", flag: "🇬🇧", l: "EN" },
+  { k: "pt", flag: "🇵🇹", l: "PT" },
+  { k: "es", flag: "🇪🇸", l: "ES" },
+  { k: "fr", flag: "🇫🇷", l: "FR" },
+  { k: "de", flag: "🇩🇪", l: "DE" },
+];
+
+const QUICK_LABELS: Record<LangKey, Record<"late" | "arrived" | "where" | "weather", string>> = {
+  en: { late: "Running late", arrived: "I've arrived", where: "Where are you?", weather: "Weather" },
+  pt: { late: "Atrasado", arrived: "Cheguei", where: "Onde está?", weather: "Tempo" },
+  es: { late: "Con retraso", arrived: "He llegado", where: "¿Dónde está?", weather: "Tiempo" },
+  fr: { late: "En retard", arrived: "Je suis arrivé", where: "Où êtes-vous ?", weather: "Météo" },
+  de: { late: "Verspätung", arrived: "Bin da", where: "Wo sind Sie?", weather: "Wetter" },
+};
+
+function msg(lang: LangKey, key: MsgKey, name: string, place?: string | null) {
+  const p = place || {
+    en: "the meeting point", pt: "o ponto de encontro", es: "el punto de encuentro",
+    fr: "le point de rendez-vous", de: "dem Treffpunkt",
+  }[lang];
+  const T: Record<LangKey, Record<MsgKey, string>> = {
+    en: {
+      onway: `Hi ${name}! I'm your Tuk Tuk 24 guide and I'm on my way to ${p}. See you soon!`,
+      late: `Hi ${name}, it's your Tuk Tuk 24 guide. I'm running about 10 minutes late — so sorry, see you very soon!`,
+      arrived: `Hi ${name}, I've arrived at ${p}. Look for the Tuk Tuk 24 tuk-tuk!`,
+      where: `Hi ${name}, I'm at ${p} — where are you? Send me your location and I'll come to you.`,
+      weather: `Hi ${name}, just a heads-up: the tuk-tuk has rain covers, so the tour goes ahead in any weather. See you soon!`,
+      review: `Hi ${name}, thank you so much for touring Lisbon with Tuk Tuk 24! If you enjoyed it, a quick review would mean the world to us:`,
+    },
+    pt: {
+      onway: `Olá ${name}! Sou o seu guia da Tuk Tuk 24 e estou a caminho de ${p}. Até já!`,
+      late: `Olá ${name}, é o seu guia da Tuk Tuk 24. Vou atrasar-me cerca de 10 minutos — peço desculpa, até já!`,
+      arrived: `Olá ${name}, já cheguei a ${p}. Procure o tuk-tuk da Tuk Tuk 24!`,
+      where: `Olá ${name}, estou em ${p} — onde está? Envie-me a sua localização e eu vou ter consigo.`,
+      weather: `Olá ${name}, só para avisar: o tuk-tuk tem capotas de chuva, por isso o passeio realiza-se com qualquer tempo. Até já!`,
+      review: `Olá ${name}, muito obrigado por ter passeado por Lisboa com a Tuk Tuk 24! Se gostou, uma avaliação rápida ajudaria imenso:`,
+    },
+    es: {
+      onway: `¡Hola ${name}! Soy tu guía de Tuk Tuk 24 y voy de camino a ${p}. ¡Hasta ahora!`,
+      late: `Hola ${name}, soy tu guía de Tuk Tuk 24. Llego unos 10 minutos tarde — lo siento mucho, ¡nos vemos enseguida!`,
+      arrived: `Hola ${name}, ya he llegado a ${p}. ¡Busca el tuk-tuk de Tuk Tuk 24!`,
+      where: `Hola ${name}, estoy en ${p} — ¿dónde estás? Mándame tu ubicación y voy a buscarte.`,
+      weather: `Hola ${name}, un aviso: el tuk-tuk tiene toldos para la lluvia, así que el tour se hace con cualquier tiempo. ¡Hasta ahora!`,
+      review: `Hola ${name}, ¡muchas gracias por recorrer Lisboa con Tuk Tuk 24! Si te ha gustado, una reseña rápida nos ayudaría muchísimo:`,
+    },
+    fr: {
+      onway: `Bonjour ${name} ! Je suis votre guide Tuk Tuk 24 et je suis en route vers ${p}. À tout de suite !`,
+      late: `Bonjour ${name}, c'est votre guide Tuk Tuk 24. J'ai environ 10 minutes de retard — désolé, à très vite !`,
+      arrived: `Bonjour ${name}, je suis arrivé à ${p}. Cherchez le tuk-tuk Tuk Tuk 24 !`,
+      where: `Bonjour ${name}, je suis à ${p} — où êtes-vous ? Envoyez-moi votre position et je viens vous chercher.`,
+      weather: `Bonjour ${name}, petite info : le tuk-tuk a des bâches de pluie, le tour a donc lieu par tous les temps. À tout de suite !`,
+      review: `Bonjour ${name}, merci beaucoup d'avoir visité Lisbonne avec Tuk Tuk 24 ! Si vous avez aimé, un petit avis nous aiderait énormément :`,
+    },
+    de: {
+      onway: `Hallo ${name}! Ich bin Ihr Tuk Tuk 24 Guide und auf dem Weg zu ${p}. Bis gleich!`,
+      late: `Hallo ${name}, hier ist Ihr Tuk Tuk 24 Guide. Ich komme ca. 10 Minuten später — tut mir leid, bis gleich!`,
+      arrived: `Hallo ${name}, ich bin an ${p} angekommen. Achten Sie auf das Tuk Tuk 24 Tuk-Tuk!`,
+      where: `Hallo ${name}, ich bin an ${p} — wo sind Sie? Schicken Sie mir Ihren Standort, ich komme zu Ihnen.`,
+      weather: `Hallo ${name}, kurzer Hinweis: Das Tuk-Tuk hat Regenverdecke, die Tour findet bei jedem Wetter statt. Bis gleich!`,
+      review: `Hallo ${name}, vielen Dank, dass Sie Lissabon mit Tuk Tuk 24 erkundet haben! Wenn es Ihnen gefallen hat, würde uns eine kurze Bewertung sehr helfen:`,
+    },
+  };
+  return T[lang][key];
+}
+
+function gapMinutes(a?: string | null, b?: string | null) {
+  if (!a || !b) return null;
+  const m = (s: string) => Number(s.slice(0, 2)) * 60 + Number(s.slice(3, 5));
+  const d = m(b) - m(a);
+  return Number.isFinite(d) && d > 0 ? d : null;
+}
 
 function useOnline() {
   const [on, setOn] = useState(true);
@@ -191,9 +269,12 @@ function Main({ token, pass, onLock }: { token: string; pass: string; onLock: ()
       {d && tab !== "money" && (
         <div className="space-y-3">
           {d.tours.length === 0 && <p className="rounded-lg border border-border bg-card p-4 text-sm text-muted-foreground">No tours.</p>}
-          {d.tours.map((t) => (
-            <TourCard key={t.id} t={t} token={token} pass={pass} online={online} showDate={tab === "week" || tab === "history"} reviewUrl={d.reviewUrl} onDone={refresh} />
-          ))}
+          {d.tours.map((t, i) => {
+            const n = d.tours[i + 1];
+            return (
+              <TourCard key={t.id} t={t} next={n && n.date === t.date ? n : null} token={token} pass={pass} online={online} showDate={tab === "week" || tab === "history"} reviewUrl={d.reviewUrl} onDone={refresh} />
+            );
+          })}
         </div>
       )}
 
@@ -235,29 +316,46 @@ function Money({ d }: { d: RunSheet }) {
   );
 }
 
-function TourCard({ t, token, pass, online, showDate, reviewUrl, onDone }: {
-  t: Tour; token: string; pass: string; online: boolean; showDate: boolean; reviewUrl: string; onDone: () => void;
+function TourCard({ t, next, token, pass, online, showDate, reviewUrl, onDone }: {
+  t: Tour; next?: Tour | null; token: string; pass: string; online: boolean; showDate: boolean; reviewUrl: string; onDone: () => void;
 }) {
   const [busy, setBusy] = useState<string | null>(null);
   const [pay, setPay] = useState(false);
+  const [nav, setNav] = useState(false);
+  const [stopsOpen, setStopsOpen] = useState(false);
+  const [lang, setLang] = useState<LangKey>("en");
   const done = t.stage === "completed" || t.stage === "no_show" || t.rawStatus === "no_show";
   const started = t.stage === "in_progress";
   const onWay = t.rawStatus === "on_the_way";
   const ph = t.phone ? digits(t.phone) : "";
   const g = first(t.guest);
+  const dest = t.address || t.place || "";
   const maps = t.lat && t.lng
     ? `https://www.google.com/maps/search/?api=1&query=${t.lat},${t.lng}`
-    : t.address || t.place ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(t.address || t.place || "")}` : null;
+    : dest ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(dest)}` : null;
+  const waze = t.lat && t.lng
+    ? `https://waze.com/ul?ll=${t.lat},${t.lng}&navigate=yes`
+    : dest ? `https://waze.com/ul?q=${encodeURIComponent(dest)}&navigate=yes` : null;
+  const apple = t.lat && t.lng
+    ? `https://maps.apple.com/?daddr=${t.lat},${t.lng}&dirflg=d`
+    : dest ? `https://maps.apple.com/?daddr=${encodeURIComponent(dest)}&dirflg=d` : null;
   const wa = (text: string) => ph ? `https://wa.me/${ph}?text=${encodeURIComponent(text)}` : null;
+  const gap = next ? gapMinutes(t.time, next.time) : null;
 
   async function act(action: "onway" | "start" | "noshow" | "finish") {
     if (action === "noshow" && !window.confirm("Mark this guest as a no-show?")) return;
     if (action === "finish" && t.due_cents > 0 && !window.confirm(`${euro(t.due_cents)} is still owed. Finish anyway?`)) return;
+    let note: string | undefined;
+    if (action === "finish") {
+      const answer = window.prompt("Anything the office should know? (optional)\nE.g. guest left a jacket, battery low, tour extended.", "");
+      if (answer === null) return;
+      note = answer.trim() || undefined;
+    }
     setBusy(action);
     try {
-      await guideTourAction({ data: { token, pass, bookingId: t.id, action } });
+      await guideTourAction({ data: { token, pass, bookingId: t.id, action, note } });
       if (action === "onway") {
-        const link = wa(`Hi ${g}! I'm your Tuk Tuk 24 guide and I'm on my way to ${t.place || "the meeting point"}. See you soon!${t.tripUrl ? `\nFollow your tour: ${t.tripUrl}` : ""}`);
+        const link = wa(`${msg(lang, "onway", g, t.place)}${t.tripUrl ? `\n${t.tripUrl}` : ""}`);
         if (link) window.open(link, "_blank");
       }
       onDone();
@@ -265,12 +363,9 @@ function TourCard({ t, token, pass, online, showDate, reviewUrl, onDone }: {
     finally { setBusy(null); }
   }
 
-  const quick = [
-    { l: "Running late", m: `Hi ${g}, it's your Tuk Tuk 24 guide. I'm running about 10 minutes late — so sorry, see you very soon!` },
-    { l: "I've arrived", m: `Hi ${g}, I've arrived at ${t.place || "the meeting point"}. Look for the Tuk Tuk 24 tuk-tuk!` },
-    { l: "Where are you?", m: `Hi ${g}, I'm at ${t.place || "the meeting point"} — where are you? Send me your location and I'll come to you.` },
-    { l: "Weather", m: `Hi ${g}, just a heads-up: the tuk-tuk has rain covers, so the tour goes ahead in any weather. See you soon!` },
-  ];
+  const quick = (["late", "arrived", "where", "weather"] as const).map((k) => ({
+    l: QUICK_LABELS[lang][k], m: msg(lang, k, g, t.place),
+  }));
 
   return (
     <article className={`rounded-xl border border-border bg-card p-4 ${done ? "opacity-70" : ""}`}>
@@ -316,16 +411,40 @@ function TourCard({ t, token, pass, online, showDate, reviewUrl, onDone }: {
         </div>
       )}
 
+      {t.stops.length > 0 && (
+        <div className="mt-3 rounded-lg border border-border">
+          <button onClick={() => setStopsOpen(!stopsOpen)} className="flex w-full items-center justify-between gap-2 p-3 text-sm font-medium">
+            <span className="flex items-center gap-2"><RouteIcon className="h-4 w-4 text-muted-foreground" strokeWidth={1.75} />Route &amp; stops</span>
+            <ChevronDown className={`h-4 w-4 text-muted-foreground transition-transform ${stopsOpen ? "rotate-180" : ""}`} strokeWidth={1.75} />
+          </button>
+          {stopsOpen && (
+            <ol className="space-y-1.5 border-t border-border p-3 text-sm text-muted-foreground">
+              {t.stops.map((s, i) => (
+                <li key={i} className="flex gap-2"><span className="text-xs font-semibold text-primary">{i + 1}</span>{s}</li>
+              ))}
+            </ol>
+          )}
+        </div>
+      )}
+
       <div className="mt-3 grid grid-cols-3 gap-2">
-        {maps ? <a href={maps} target="_blank" rel="noreferrer" className="flex items-center justify-center gap-1 rounded-lg border border-border py-2.5 text-sm"><MapPin className="h-4 w-4" strokeWidth={1.75} />Map</a> : <span />}
+        {maps || waze || apple ? <button onClick={() => setNav(true)} className="flex items-center justify-center gap-1 rounded-lg border border-border py-2.5 text-sm"><Navigation className="h-4 w-4" strokeWidth={1.75} />Navigate</button> : <span />}
         {ph ? <a href={`tel:+${ph}`} className="flex items-center justify-center gap-1 rounded-lg border border-border py-2.5 text-sm"><Phone className="h-4 w-4" strokeWidth={1.75} />Call</a> : <span />}
         {ph ? <a href={`https://wa.me/${ph}`} target="_blank" rel="noreferrer" className="flex items-center justify-center gap-1 rounded-lg border border-border py-2.5 text-sm"><MessageCircle className="h-4 w-4" strokeWidth={1.75} />WhatsApp</a> : <span />}
       </div>
 
       {!done && ph && (
-        <div className="mt-2 flex gap-1.5 overflow-x-auto pb-1">
-          {quick.map((x) => <a key={x.l} href={wa(x.m)!} target="_blank" rel="noreferrer" className="shrink-0 rounded-full border border-border px-3 py-1 text-xs">{x.l}</a>)}
-        </div>
+        <>
+          <div className="mt-2 flex items-center gap-1.5 overflow-x-auto pb-1">
+            <span className="shrink-0 text-xs text-muted-foreground">Message in</span>
+            {LANGS.map((x) => (
+              <button key={x.k} onClick={() => setLang(x.k)} className={`shrink-0 rounded-full px-2.5 py-1 text-xs ${lang === x.k ? "bg-primary text-primary-foreground" : "border border-border"}`}>{x.flag} {x.l}</button>
+            ))}
+          </div>
+          <div className="mt-1.5 flex gap-1.5 overflow-x-auto pb-1">
+            {quick.map((x) => <a key={x.l} href={wa(x.m)!} target="_blank" rel="noreferrer" className="shrink-0 rounded-full border border-border px-3 py-1 text-xs">{x.l}</a>)}
+          </div>
+        </>
       )}
 
       {!done && (
@@ -345,7 +464,31 @@ function TourCard({ t, token, pass, online, showDate, reviewUrl, onDone }: {
       )}
 
       {t.stage === "completed" && ph && (
-        <a href={wa(`Hi ${g}, thank you so much for touring Lisbon with Tuk Tuk 24! If you enjoyed it, a quick review would mean the world to us: ${reviewUrl}`)!} target="_blank" rel="noreferrer" className="mt-3 flex items-center justify-center gap-1.5 rounded-lg border border-border py-2.5 text-sm"><Star className="h-4 w-4" strokeWidth={1.75} />Ask for a review</a>
+        <a href={wa(`${msg(lang, "review", g)} ${reviewUrl}`)!} target="_blank" rel="noreferrer" className="mt-3 flex items-center justify-center gap-1.5 rounded-lg border border-border py-2.5 text-sm"><Star className="h-4 w-4" strokeWidth={1.75} />Ask for a review</a>
+      )}
+
+      {next && !done && (
+        <p className="mt-3 flex items-center gap-2 rounded-lg bg-muted px-3 py-2 text-xs text-muted-foreground">
+          <Hourglass className="h-3.5 w-3.5 shrink-0" strokeWidth={1.75} />
+          Next tour {next.time?.slice(0, 5)}{gap !== null ? ` · ${gap >= 60 ? `${Math.floor(gap / 60)}h ${gap % 60}m` : `${gap}m`} gap` : ""}{next.place ? ` · ${next.place}` : ""}
+        </p>
+      )}
+
+      {nav && (
+        <div className="fixed inset-0 z-50 flex items-end bg-foreground/40" onClick={() => setNav(false)}>
+          <div className="w-full rounded-t-2xl bg-background p-5 pb-8" onClick={(e) => e.stopPropagation()}>
+            <div className="mb-4 flex items-center justify-between">
+              <h3 className="text-lg font-semibold">Navigate</h3>
+              <button onClick={() => setNav(false)} aria-label="Close"><X className="h-5 w-5" strokeWidth={1.75} /></button>
+            </div>
+            <p className="mb-3 text-sm text-muted-foreground">{t.place || t.address}</p>
+            <div className="space-y-2">
+              {maps && <a href={maps} target="_blank" rel="noreferrer" onClick={() => setNav(false)} className="flex items-center gap-2 rounded-lg border border-border px-4 py-3.5 text-sm font-medium"><MapPin className="h-4 w-4" strokeWidth={1.75} />Google Maps</a>}
+              {waze && <a href={waze} target="_blank" rel="noreferrer" onClick={() => setNav(false)} className="flex items-center gap-2 rounded-lg border border-border px-4 py-3.5 text-sm font-medium"><Navigation className="h-4 w-4" strokeWidth={1.75} />Waze</a>}
+              {apple && <a href={apple} target="_blank" rel="noreferrer" onClick={() => setNav(false)} className="flex items-center gap-2 rounded-lg border border-border px-4 py-3.5 text-sm font-medium"><Compass className="h-4 w-4" strokeWidth={1.75} />Apple Maps</a>}
+            </div>
+          </div>
+        </div>
       )}
 
       {pay && <PaySheet t={t} token={token} pass={pass} onClose={() => setPay(false)} onDone={() => { setPay(false); onDone(); }} wa={wa} />}

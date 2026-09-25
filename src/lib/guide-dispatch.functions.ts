@@ -196,7 +196,7 @@ export const getGuideRunSheet = createServerFn({ method: "POST" })
     let q = supabaseAdmin
       .from("bookings")
       .select(
-        "id, booking_reference, customer_name, phone, tour_title, travel_date, travel_time, guests, status, tour_status, payment_status, amount_total, total_estimate, refund_cents, option_duration_label, pickup_place_name, pickup_address, pickup_instructions, pickup_latitude, pickup_longitude, meetup_point_name, meetup_point_address, meetup_point_instructions, notes, guest_token",
+        "id, booking_reference, customer_name, phone, tour_title, tour_slug, travel_date, travel_time, guests, status, tour_status, payment_status, amount_total, total_estimate, refund_cents, option_duration_label, pickup_place_name, pickup_address, pickup_instructions, pickup_latitude, pickup_longitude, meetup_point_name, meetup_point_address, meetup_point_instructions, notes, guest_token",
       )
       .eq("guide_id", guide.id)
       .gte("travel_date", from)
@@ -207,6 +207,22 @@ export const getGuideRunSheet = createServerFn({ method: "POST" })
     if (qErr) throw new Error("Could not load tours");
     const list = (rows ?? []).filter((b: any) => String(b.status).toLowerCase() !== "cancelled");
     const led = await ledgers(supabaseAdmin, list);
+
+    // Route highlights / stops for the tours on this run sheet (reference only).
+    const slugs = Array.from(new Set(list.map((b: any) => b.tour_slug).filter(Boolean)));
+    const stopsBySlug = new Map<string, string[]>();
+    if (slugs.length) {
+      const { data: tourRows } = await supabaseAdmin
+        .from("tours").select("slug, highlights, itinerary").in("slug", slugs as string[]);
+      for (const t of (tourRows ?? []) as any[]) {
+        const fromItinerary = Array.isArray(t.itinerary)
+          ? t.itinerary.map((i: any) => [i?.time, i?.title].filter(Boolean).join(" · ")).filter(Boolean)
+          : [];
+        const fromHighlights = Array.isArray(t.highlights) ? t.highlights.map((h: any) => String(h)) : [];
+        const stops = (fromItinerary.length ? fromItinerary : fromHighlights).slice(0, 12);
+        if (stops.length) stopsBySlug.set(t.slug, stops);
+      }
+    }
 
     // Earnings and cash held
     const monthStart = `${today.slice(0, 7)}-01`;
@@ -264,6 +280,7 @@ export const getGuideRunSheet = createServerFn({ method: "POST" })
           rawStatus: String(r.tour_status || ""),
           stage: l.tourStage,
           due_cents: l.dueCents,
+          stops: (r.tour_slug ? stopsBySlug.get(r.tour_slug) : null) ?? [],
           payUrl: `https://tuktuk24lisbon.com/booking/pay/${r.id}`,
           tripUrl: r.guest_token ? `https://tuktuk24lisbon.com/trip/${r.guest_token}` : null,
         };
@@ -289,6 +306,7 @@ export const guideTourAction = createServerFn({ method: "POST" })
       pass: passSchema,
       bookingId: z.string().uuid(),
       action: z.enum(["onway", "start", "noshow", "finish"]),
+      note: z.string().max(280).optional(),
     }).parse(d),
   )
   .handler(async ({ data }) => {
@@ -299,11 +317,15 @@ export const guideTourAction = createServerFn({ method: "POST" })
     const next = { onway: "on_the_way", start: "in_progress", noshow: "no_show", finish: "completed" }[data.action];
     const label = { onway: "Guide on the way", start: "Tour started", noshow: "Marked no-show", finish: "Tour finished" }[data.action];
     await supabaseAdmin.from("bookings").update({ tour_status: next }).eq("id", b.id);
+    const note = (data.note || "").trim().slice(0, 280);
     const { logEvent } = await import("./bookings-admin.server");
     await logEvent(supabaseAdmin, b.id, "status", `${label} — ${guide.name} (guide app)`, {} as any, null);
+    if (note) {
+      await logEvent(supabaseAdmin, b.id, "note", `Guide note from ${guide.name}: ${note}`, {} as any, null);
+    }
     await supabaseAdmin.from("admin_audit_log").insert({
       actor: null, entity: "booking", entity_id: b.id, action: `guide_${data.action}`,
-      summary: `${label} by ${guide.name} via guide app`,
+      summary: `${label} by ${guide.name} via guide app${note ? ` — note: ${note}` : ""}`,
     } as any);
     return { ok: true };
   });
