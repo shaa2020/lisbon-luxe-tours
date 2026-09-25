@@ -541,7 +541,7 @@ export function BookingModal({
                 </div>
 
                 <PaypalWallet
-                  amount={total + tipCents / 100}
+                  amount={payNow + tipCents / 100}
                   label={tour.title}
                   disabled={paying || !contactValid}
                   createOrder={startWalletOrder}
