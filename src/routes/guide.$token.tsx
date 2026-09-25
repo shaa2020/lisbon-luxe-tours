@@ -238,29 +238,46 @@ function Money({ d }: { d: RunSheet }) {
   );
 }
 
-function TourCard({ t, token, pass, online, showDate, reviewUrl, onDone }: {
-  t: Tour; token: string; pass: string; online: boolean; showDate: boolean; reviewUrl: string; onDone: () => void;
+function TourCard({ t, next, token, pass, online, showDate, reviewUrl, onDone }: {
+  t: Tour; next?: Tour | null; token: string; pass: string; online: boolean; showDate: boolean; reviewUrl: string; onDone: () => void;
 }) {
   const [busy, setBusy] = useState<string | null>(null);
   const [pay, setPay] = useState(false);
+  const [nav, setNav] = useState(false);
+  const [stopsOpen, setStopsOpen] = useState(false);
+  const [lang, setLang] = useState<LangKey>("en");
   const done = t.stage === "completed" || t.stage === "no_show" || t.rawStatus === "no_show";
   const started = t.stage === "in_progress";
   const onWay = t.rawStatus === "on_the_way";
   const ph = t.phone ? digits(t.phone) : "";
   const g = first(t.guest);
+  const dest = t.address || t.place || "";
   const maps = t.lat && t.lng
     ? `https://www.google.com/maps/search/?api=1&query=${t.lat},${t.lng}`
-    : t.address || t.place ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(t.address || t.place || "")}` : null;
+    : dest ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(dest)}` : null;
+  const waze = t.lat && t.lng
+    ? `https://waze.com/ul?ll=${t.lat},${t.lng}&navigate=yes`
+    : dest ? `https://waze.com/ul?q=${encodeURIComponent(dest)}&navigate=yes` : null;
+  const apple = t.lat && t.lng
+    ? `https://maps.apple.com/?daddr=${t.lat},${t.lng}&dirflg=d`
+    : dest ? `https://maps.apple.com/?daddr=${encodeURIComponent(dest)}&dirflg=d` : null;
   const wa = (text: string) => ph ? `https://wa.me/${ph}?text=${encodeURIComponent(text)}` : null;
+  const gap = next ? gapMinutes(t.time, next.time) : null;
 
   async function act(action: "onway" | "start" | "noshow" | "finish") {
     if (action === "noshow" && !window.confirm("Mark this guest as a no-show?")) return;
     if (action === "finish" && t.due_cents > 0 && !window.confirm(`${euro(t.due_cents)} is still owed. Finish anyway?`)) return;
+    let note: string | undefined;
+    if (action === "finish") {
+      const answer = window.prompt("Anything the office should know? (optional)\nE.g. guest left a jacket, battery low, tour extended.", "");
+      if (answer === null) return;
+      note = answer.trim() || undefined;
+    }
     setBusy(action);
     try {
-      await guideTourAction({ data: { token, pass, bookingId: t.id, action } });
+      await guideTourAction({ data: { token, pass, bookingId: t.id, action, note } });
       if (action === "onway") {
-        const link = wa(`Hi ${g}! I'm your Tuk Tuk 24 guide and I'm on my way to ${t.place || "the meeting point"}. See you soon!${t.tripUrl ? `\nFollow your tour: ${t.tripUrl}` : ""}`);
+        const link = wa(`${msg(lang, "onway", g, t.place)}${t.tripUrl ? `\n${t.tripUrl}` : ""}`);
         if (link) window.open(link, "_blank");
       }
       onDone();
@@ -268,12 +285,9 @@ function TourCard({ t, token, pass, online, showDate, reviewUrl, onDone }: {
     finally { setBusy(null); }
   }
 
-  const quick = [
-    { l: "Running late", m: `Hi ${g}, it's your Tuk Tuk 24 guide. I'm running about 10 minutes late — so sorry, see you very soon!` },
-    { l: "I've arrived", m: `Hi ${g}, I've arrived at ${t.place || "the meeting point"}. Look for the Tuk Tuk 24 tuk-tuk!` },
-    { l: "Where are you?", m: `Hi ${g}, I'm at ${t.place || "the meeting point"} — where are you? Send me your location and I'll come to you.` },
-    { l: "Weather", m: `Hi ${g}, just a heads-up: the tuk-tuk has rain covers, so the tour goes ahead in any weather. See you soon!` },
-  ];
+  const quick = (["late", "arrived", "where", "weather"] as const).map((k) => ({
+    l: QUICK_LABELS[lang][k], m: msg(lang, k, g, t.place),
+  }));
 
   return (
     <article className={`rounded-xl border border-border bg-card p-4 ${done ? "opacity-70" : ""}`}>
