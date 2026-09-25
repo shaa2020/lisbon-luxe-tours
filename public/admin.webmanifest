@@ -7,7 +7,7 @@
   "scope": "/admin",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#1e3a5f",
+  "theme_color": "#0b2a5b",
   "icons": [
     {
       "src": "/admin-icon-192.png",
@@ -23,8 +23,17 @@
     }
   ],
   "shortcuts": [
-    { "name": "Bookings", "url": "/admin/bookings" },
-    { "name": "Today's operations", "url": "/admin/ops/today" },
-    { "name": "Messages", "url": "/admin/messages" }
+    {
+      "name": "Bookings",
+      "url": "/admin/bookings"
+    },
+    {
+      "name": "Today's operations",
+      "url": "/admin/ops/today"
+    },
+    {
+      "name": "Messages",
+      "url": "/admin/messages"
+    }
   ]
 }

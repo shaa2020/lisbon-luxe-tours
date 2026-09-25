@@ -1,13 +1,13 @@
 {
-  "name": "Tuk Tuk 24 — Lisbon Tours",
+  "name": "Tuk Tuk 24 \u2014 Lisbon Tours",
   "short_name": "Tuk Tuk 24",
-  "description": "Private tuk-tuk tours through Alfama, Belém and historic Lisbon.",
+  "description": "Private tuk-tuk tours through Alfama, Bel\u00e9m and historic Lisbon.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#ffffff",
-  "theme_color": "#1e3a5f",
+  "theme_color": "#f0a500",
   "icons": [
     {
       "src": "/app-icon-192.png",
