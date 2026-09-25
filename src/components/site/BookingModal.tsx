@@ -498,11 +498,37 @@ export function BookingModal({
                     Reserve via WhatsApp and pay later, or pay instantly with PayPal.
                   </p>
                 </div>
+                {/* Pay in full or leave a deposit */}
+                <div>
+                  <p className="text-[10px] uppercase tracking-widest text-body font-bold mb-2">Payment option</p>
+                  <div className="grid grid-cols-4 gap-2">
+                    {[100, 50, 30, 20].map((p) => (
+                      <button
+                        key={p}
+                        type="button"
+                        onClick={() => setDepositPct(p)}
+                        className={`py-2.5 min-h-[44px] text-[11px] rounded-lg border transition-colors ${
+                          depositPct === p
+                            ? "border-gold bg-gold/10 text-ink font-semibold"
+                            : "border-border text-ink hover:border-gold"
+                        }`}
+                      >
+                        {p === 100 ? "Full" : `${p}%`}
+                      </button>
+                    ))}
+                  </div>
+                  <p className="mt-2 text-[11px] text-body">
+                    {balanceDue > 0
+                      ? `Pay €${payNow.toFixed(2)} now, €${balanceDue.toFixed(2)} on the day.`
+                      : "Paying the full amount now. Minimum deposit is 20%."}
+                  </p>
+                </div>
                 <TipChips value={tipCents} onChange={setTipCents} className="mt-1" />
                 <PaySummary
-                  fareLabel="Tour payment"
-                  fareCents={Math.round(total * 100)}
+                  fareLabel={depositPct >= 100 ? "Tour payment (full amount)" : `Tour deposit (${depositPct}%)`}
+                  fareCents={Math.round(payNow * 100)}
                   tipCents={tipCents}
+                  balanceCents={Math.round(balanceDue * 100)}
                 />
                 <div className="grid gap-2">
                   <button
