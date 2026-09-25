@@ -280,6 +280,7 @@ export const getGuideRunSheet = createServerFn({ method: "POST" })
           rawStatus: String(r.tour_status || ""),
           stage: l.tourStage,
           due_cents: l.dueCents,
+          stops: (r.tour_slug ? stopsBySlug.get(r.tour_slug) : null) ?? [],
           payUrl: `https://tuktuk24lisbon.com/booking/pay/${r.id}`,
           tripUrl: r.guest_token ? `https://tuktuk24lisbon.com/trip/${r.guest_token}` : null,
         };
