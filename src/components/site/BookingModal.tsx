@@ -50,6 +50,7 @@ export function BookingModal({
   const { business, groupTiers, groupDiscountEnabled, hotelPickupFeeCents } = useSiteBrand();
   const checkoutFn = useServerFn(createCheckoutSession);
   const [tipCents, setTipCents] = useState(0);
+  const [depositPct, setDepositPct] = useState(100);
   const [date, setDate] = useState<Date | undefined>(
     defaultDate ? new Date(`${defaultDate}T00:00:00`) : undefined,
   );
@@ -129,6 +130,8 @@ export function BookingModal({
     pickupRequested: pickup,
   });
   const total = q.total;
+  const payNow = depositPct >= 100 ? total : Math.round((total * depositPct)) / 100;
+  const balanceDue = Math.round((total - payNow) * 100) / 100;
 
   const reset = () => {
     setDate(defaultDate ? new Date(`${defaultDate}T00:00:00`) : undefined);
@@ -136,6 +139,7 @@ export function BookingModal({
     setOptionId(null);
     setPickupChoice(null);
     setName(""); setContact(""); setPhone(""); setSubmitted(false); setPaying(false);
+    setTipCents(0); setDepositPct(100);
   };
 
   const handleClose = (v: boolean) => {
@@ -202,6 +206,7 @@ export function BookingModal({
           image_url: tour.image?.startsWith("http") ? tour.image : null,
           tour_option_id: selectedOption?.id ?? null,
           tip_cents: tipCents,
+          deposit_pct: depositPct,
           ...pickupPayload,
         },
       });
@@ -238,6 +243,7 @@ export function BookingModal({
         image_url: tour.image?.startsWith("http") ? tour.image : null,
         tour_option_id: selectedOption?.id ?? null,
         tip_cents: tipCents,
+        deposit_pct: depositPct,
         ...pickupPayload,
       },
     });
@@ -492,11 +498,37 @@ export function BookingModal({
                     Reserve via WhatsApp and pay later, or pay instantly with PayPal.
                   </p>
                 </div>
+                {/* Pay in full or leave a deposit */}
+                <div>
+                  <p className="text-[10px] uppercase tracking-widest text-body font-bold mb-2">Payment option</p>
+                  <div className="grid grid-cols-4 gap-2">
+                    {[100, 50, 30, 20].map((p) => (
+                      <button
+                        key={p}
+                        type="button"
+                        onClick={() => setDepositPct(p)}
+                        className={`py-2.5 min-h-[44px] text-[11px] rounded-lg border transition-colors ${
+                          depositPct === p
+                            ? "border-gold bg-gold/10 text-ink font-semibold"
+                            : "border-border text-ink hover:border-gold"
+                        }`}
+                      >
+                        {p === 100 ? "Full" : `${p}%`}
+                      </button>
+                    ))}
+                  </div>
+                  <p className="mt-2 text-[11px] text-body">
+                    {balanceDue > 0
+                      ? `Pay €${payNow.toFixed(2)} now, €${balanceDue.toFixed(2)} on the day.`
+                      : "Paying the full amount now. Minimum deposit is 20%."}
+                  </p>
+                </div>
                 <TipChips value={tipCents} onChange={setTipCents} className="mt-1" />
                 <PaySummary
-                  fareLabel="Tour payment"
-                  fareCents={Math.round(total * 100)}
+                  fareLabel={depositPct >= 100 ? "Tour payment (full amount)" : `Tour deposit (${depositPct}%)`}
+                  fareCents={Math.round(payNow * 100)}
                   tipCents={tipCents}
+                  balanceCents={Math.round(balanceDue * 100)}
                 />
                 <div className="grid gap-2">
                   <button
@@ -509,7 +541,7 @@ export function BookingModal({
                 </div>
 
                 <PaypalWallet
-                  amount={total + tipCents / 100}
+                  amount={payNow + tipCents / 100}
                   label={tour.title}
                   disabled={paying || !contactValid}
                   createOrder={startWalletOrder}
