@@ -303,6 +303,34 @@ export function BookingManagePanel({ booking }: { booking: Booking }) {
 
       {tab === "details" && (
         <>
+          <div className="mb-4 rounded-lg border border-border bg-muted/40 p-3 text-sm">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Money breakdown
+            </p>
+            <div className="flex justify-between py-0.5">
+              <span className="text-muted-foreground">Tour fare</span>
+              <span className="tabular-nums">€{(totalCents / 100).toFixed(2)}</span>
+            </div>
+            <div className="flex justify-between py-0.5">
+              <span className="text-muted-foreground">Guide tip (100% to the guide)</span>
+              <span
+                className={
+                  Number(booking.tip_cents || 0) > 0
+                    ? "tabular-nums font-semibold text-rose-600"
+                    : "tabular-nums text-muted-foreground"
+                }
+              >
+                €{(Number(booking.tip_cents || 0) / 100).toFixed(2)}
+              </span>
+            </div>
+            <div className="mt-1 flex justify-between border-t border-border pt-1.5 font-semibold">
+              <span>Total</span>
+              <span className="tabular-nums">
+                €{((totalCents + Number(booking.tip_cents || 0)) / 100).toFixed(2)}
+              </span>
+            </div>
+          </div>
+
           <div className="grid sm:grid-cols-2 gap-4">
             <div>
               <label className={lbl}>Name</label>
