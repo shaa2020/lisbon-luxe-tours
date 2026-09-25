@@ -36,6 +36,83 @@ const first = (n: string) => String(n || "").split(" ")[0];
 const passKey = (t: string) => `t24_guide_pass_${t.slice(0, 12)}`;
 const cacheKey = (t: string, r: string) => `t24_guide_cache_${t.slice(0, 12)}_${r}`;
 
+/* ---- guest languages for the quick WhatsApp messages ---- */
+type LangKey = "en" | "pt" | "es" | "fr" | "de";
+type MsgKey = "onway" | "late" | "arrived" | "where" | "weather" | "review";
+
+const LANGS: { k: LangKey; flag: string; l: string }[] = [
+  { k: "en", flag: "🇬🇧", l: "EN" },
+  { k: "pt", flag: "🇵🇹", l: "PT" },
+  { k: "es", flag: "🇪🇸", l: "ES" },
+  { k: "fr", flag: "🇫🇷", l: "FR" },
+  { k: "de", flag: "🇩🇪", l: "DE" },
+];
+
+const QUICK_LABELS: Record<LangKey, Record<"late" | "arrived" | "where" | "weather", string>> = {
+  en: { late: "Running late", arrived: "I've arrived", where: "Where are you?", weather: "Weather" },
+  pt: { late: "Atrasado", arrived: "Cheguei", where: "Onde está?", weather: "Tempo" },
+  es: { late: "Con retraso", arrived: "He llegado", where: "¿Dónde está?", weather: "Tiempo" },
+  fr: { late: "En retard", arrived: "Je suis arrivé", where: "Où êtes-vous ?", weather: "Météo" },
+  de: { late: "Verspätung", arrived: "Bin da", where: "Wo sind Sie?", weather: "Wetter" },
+};
+
+function msg(lang: LangKey, key: MsgKey, name: string, place?: string | null) {
+  const p = place || {
+    en: "the meeting point", pt: "o ponto de encontro", es: "el punto de encuentro",
+    fr: "le point de rendez-vous", de: "dem Treffpunkt",
+  }[lang];
+  const T: Record<LangKey, Record<MsgKey, string>> = {
+    en: {
+      onway: `Hi ${name}! I'm your Tuk Tuk 24 guide and I'm on my way to ${p}. See you soon!`,
+      late: `Hi ${name}, it's your Tuk Tuk 24 guide. I'm running about 10 minutes late — so sorry, see you very soon!`,
+      arrived: `Hi ${name}, I've arrived at ${p}. Look for the Tuk Tuk 24 tuk-tuk!`,
+      where: `Hi ${name}, I'm at ${p} — where are you? Send me your location and I'll come to you.`,
+      weather: `Hi ${name}, just a heads-up: the tuk-tuk has rain covers, so the tour goes ahead in any weather. See you soon!`,
+      review: `Hi ${name}, thank you so much for touring Lisbon with Tuk Tuk 24! If you enjoyed it, a quick review would mean the world to us:`,
+    },
+    pt: {
+      onway: `Olá ${name}! Sou o seu guia da Tuk Tuk 24 e estou a caminho de ${p}. Até já!`,
+      late: `Olá ${name}, é o seu guia da Tuk Tuk 24. Vou atrasar-me cerca de 10 minutos — peço desculpa, até já!`,
+      arrived: `Olá ${name}, já cheguei a ${p}. Procure o tuk-tuk da Tuk Tuk 24!`,
+      where: `Olá ${name}, estou em ${p} — onde está? Envie-me a sua localização e eu vou ter consigo.`,
+      weather: `Olá ${name}, só para avisar: o tuk-tuk tem capotas de chuva, por isso o passeio realiza-se com qualquer tempo. Até já!`,
+      review: `Olá ${name}, muito obrigado por ter passeado por Lisboa com a Tuk Tuk 24! Se gostou, uma avaliação rápida ajudaria imenso:`,
+    },
+    es: {
+      onway: `¡Hola ${name}! Soy tu guía de Tuk Tuk 24 y voy de camino a ${p}. ¡Hasta ahora!`,
+      late: `Hola ${name}, soy tu guía de Tuk Tuk 24. Llego unos 10 minutos tarde — lo siento mucho, ¡nos vemos enseguida!`,
+      arrived: `Hola ${name}, ya he llegado a ${p}. ¡Busca el tuk-tuk de Tuk Tuk 24!`,
+      where: `Hola ${name}, estoy en ${p} — ¿dónde estás? Mándame tu ubicación y voy a buscarte.`,
+      weather: `Hola ${name}, un aviso: el tuk-tuk tiene toldos para la lluvia, así que el tour se hace con cualquier tiempo. ¡Hasta ahora!`,
+      review: `Hola ${name}, ¡muchas gracias por recorrer Lisboa con Tuk Tuk 24! Si te ha gustado, una reseña rápida nos ayudaría muchísimo:`,
+    },
+    fr: {
+      onway: `Bonjour ${name} ! Je suis votre guide Tuk Tuk 24 et je suis en route vers ${p}. À tout de suite !`,
+      late: `Bonjour ${name}, c'est votre guide Tuk Tuk 24. J'ai environ 10 minutes de retard — désolé, à très vite !`,
+      arrived: `Bonjour ${name}, je suis arrivé à ${p}. Cherchez le tuk-tuk Tuk Tuk 24 !`,
+      where: `Bonjour ${name}, je suis à ${p} — où êtes-vous ? Envoyez-moi votre position et je viens vous chercher.`,
+      weather: `Bonjour ${name}, petite info : le tuk-tuk a des bâches de pluie, le tour a donc lieu par tous les temps. À tout de suite !`,
+      review: `Bonjour ${name}, merci beaucoup d'avoir visité Lisbonne avec Tuk Tuk 24 ! Si vous avez aimé, un petit avis nous aiderait énormément :`,
+    },
+    de: {
+      onway: `Hallo ${name}! Ich bin Ihr Tuk Tuk 24 Guide und auf dem Weg zu ${p}. Bis gleich!`,
+      late: `Hallo ${name}, hier ist Ihr Tuk Tuk 24 Guide. Ich komme ca. 10 Minuten später — tut mir leid, bis gleich!`,
+      arrived: `Hallo ${name}, ich bin an ${p} angekommen. Achten Sie auf das Tuk Tuk 24 Tuk-Tuk!`,
+      where: `Hallo ${name}, ich bin an ${p} — wo sind Sie? Schicken Sie mir Ihren Standort, ich komme zu Ihnen.`,
+      weather: `Hallo ${name}, kurzer Hinweis: Das Tuk-Tuk hat Regenverdecke, die Tour findet bei jedem Wetter statt. Bis gleich!`,
+      review: `Hallo ${name}, vielen Dank, dass Sie Lissabon mit Tuk Tuk 24 erkundet haben! Wenn es Ihnen gefallen hat, würde uns eine kurze Bewertung sehr helfen:`,
+    },
+  };
+  return T[lang][key];
+}
+
+function gapMinutes(a?: string | null, b?: string | null) {
+  if (!a || !b) return null;
+  const m = (s: string) => Number(s.slice(0, 2)) * 60 + Number(s.slice(3, 5));
+  const d = m(b) - m(a);
+  return Number.isFinite(d) && d > 0 ? d : null;
+}
+
 function useOnline() {
   const [on, setOn] = useState(true);
   useEffect(() => {
