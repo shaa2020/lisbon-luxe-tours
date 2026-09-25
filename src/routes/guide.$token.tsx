@@ -229,8 +229,6 @@ function Money({ d }: { d: RunSheet }) {
         <div className="divide-y divide-border">
           <Row l="Cash collected" v={e.monthCash} />
           <Row l="Card collected" v={e.monthCard} />
-          <Row l="Company commission" v={e.monthCommission} />
-          <Row l="Your share" v={Math.max(0, e.monthCash + e.monthCard - e.monthCommission)} strong />
         </div>
       </section>
     </div>
