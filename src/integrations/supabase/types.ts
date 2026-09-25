@@ -1911,45 +1911,63 @@ export type Database = {
       }
       ops_staff: {
         Row: {
+          access_paused: boolean
           bio: string | null
           created_at: string
           dispatch_token: string | null
           id: string
           languages: string[]
+          last_seen_at: string | null
           name: string
           notes: string | null
           phone: string | null
           photo_url: string | null
+          pin_failed_count: number
+          pin_hash: string | null
+          pin_locked_until: string | null
+          pin_salt: string | null
           role: string
           status: string
           updated_at: string
           whatsapp: string | null
         }
         Insert: {
+          access_paused?: boolean
           bio?: string | null
           created_at?: string
           dispatch_token?: string | null
           id?: string
           languages?: string[]
+          last_seen_at?: string | null
           name: string
           notes?: string | null
           phone?: string | null
           photo_url?: string | null
+          pin_failed_count?: number
+          pin_hash?: string | null
+          pin_locked_until?: string | null
+          pin_salt?: string | null
           role?: string
           status?: string
           updated_at?: string
           whatsapp?: string | null
         }
         Update: {
+          access_paused?: boolean
           bio?: string | null
           created_at?: string
           dispatch_token?: string | null
           id?: string
           languages?: string[]
+          last_seen_at?: string | null
           name?: string
           notes?: string | null
           phone?: string | null
           photo_url?: string | null
+          pin_failed_count?: number
+          pin_hash?: string | null
+          pin_locked_until?: string | null
+          pin_salt?: string | null
           role?: string
           status?: string
           updated_at?: string
