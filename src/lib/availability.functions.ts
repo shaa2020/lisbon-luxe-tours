@@ -129,6 +129,9 @@ export const requestBooking = createServerFn({ method: "POST" })
           .join("\n\n"),
         total_estimate: Math.round(data.amount / 100),
         amount_total: data.amount,
+        // Gratuity the guest chose while reserving; charged with the payment link,
+        // never part of the fare, balance or commission.
+        tip_cents: Math.max(0, Math.min(100000, Math.round(data.tip_cents ?? 0))),
         status: "new",
         payment_status: "request",
       })
