@@ -199,6 +199,7 @@ export function TourBookingPanel({
           notes: pickupChoice ? pickupSummary(pickupChoice) : null,
           amount: total * 100,
           tour_option_id: chosen?.id ?? null,
+          tip_cents: tipCents,
         },
       });
       setReference(res.reference);
