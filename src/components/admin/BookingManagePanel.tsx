@@ -26,6 +26,7 @@ type Booking = {
   status: string;
   payment_status: string | null;
   notes: string | null;
+  tip_cents?: number | null;
 };
 
 const field = "w-full rounded-md border border-border bg-background px-3 py-2 text-sm";
