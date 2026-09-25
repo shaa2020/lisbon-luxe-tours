@@ -208,6 +208,22 @@ export const getGuideRunSheet = createServerFn({ method: "POST" })
     const list = (rows ?? []).filter((b: any) => String(b.status).toLowerCase() !== "cancelled");
     const led = await ledgers(supabaseAdmin, list);
 
+    // Route highlights / stops for the tours on this run sheet (reference only).
+    const slugs = Array.from(new Set(list.map((b: any) => b.tour_slug).filter(Boolean)));
+    const stopsBySlug = new Map<string, string[]>();
+    if (slugs.length) {
+      const { data: tourRows } = await supabaseAdmin
+        .from("tours").select("slug, highlights, itinerary").in("slug", slugs as string[]);
+      for (const t of (tourRows ?? []) as any[]) {
+        const fromItinerary = Array.isArray(t.itinerary)
+          ? t.itinerary.map((i: any) => [i?.time, i?.title].filter(Boolean).join(" · ")).filter(Boolean)
+          : [];
+        const fromHighlights = Array.isArray(t.highlights) ? t.highlights.map((h: any) => String(h)) : [];
+        const stops = (fromItinerary.length ? fromItinerary : fromHighlights).slice(0, 12);
+        if (stops.length) stopsBySlug.set(t.slug, stops);
+      }
+    }
+
     // Earnings and cash held
     const monthStart = `${today.slice(0, 7)}-01`;
     const [payRes, setRes, brandRes] = await Promise.all([
