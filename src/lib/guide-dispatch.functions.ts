@@ -22,7 +22,8 @@ async function nodeCrypto() {
 
 async function hashPin(pin: string, salt: string) {
   const c = await nodeCrypto();
-  return c.pbkdf2Sync(pin, salt, 120000, 32, "sha256").toString("hex");
+  // Worker runtime caps PBKDF2 at 100000 iterations.
+  return c.pbkdf2Sync(pin, salt, 100000, 32, "sha256").toString("hex");
 }
 
 async function sign(payload: string) {
