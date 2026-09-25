@@ -90,6 +90,23 @@ export function BookingModal({
     ]),
   };
 
+  // Saves the half-finished booking so it can be followed up if the guest
+  // closes the window before paying.
+  useCheckoutDraft(
+    "modal",
+    {
+      tourSlug: tour?.slug ?? "",
+      tourTitle: tour?.title ?? null,
+      name,
+      email: contact,
+      phone,
+      travelDate: date ? format(date, "yyyy-MM-dd") : null,
+      travelTime: time || null,
+      guests,
+    },
+    open && !!tour && !submitted,
+  );
+
   if (!tour) return null;
 
   const options = activeOptions(tour.options);
