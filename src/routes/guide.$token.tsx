@@ -2,9 +2,11 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import {
-  Banknote, CheckCircle2, Clock, CreditCard, Delete, Download, Languages, Link2, Lock, MapPin,
-  MessageCircle, Navigation, Phone, Play, Star, UserX, Users, Wallet, WifiOff, X,
+  Banknote, CheckCircle2, ChevronDown, Clock, Compass, CreditCard, Delete, Download, Hourglass,
+  Languages, Link2, Lock, MapPin, MessageCircle, Navigation, Phone, Play, Route as RouteIcon,
+  Star, UserX, Users, Wallet, WifiOff, X,
 } from "lucide-react";
+const Route_ = RouteIcon;
 import {
   getGuideRunSheet, guideCollect, guideStatus, guideTourAction, guideUnlock,
 } from "@/lib/guide-dispatch.functions";
