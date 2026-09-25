@@ -42,6 +42,7 @@ export const Route = createFileRoute("/sitemap.xml")({
           { path: "/belem-tuk-tuk-tours", changefreq: "monthly", priority: "0.8" },
           { path: "/cascais-private-tours", changefreq: "monthly", priority: "0.8" },
           { path: "/cabo-da-roca-tours", changefreq: "monthly", priority: "0.8" },
+          { path: "/lisbon-cruise-port-tours", changefreq: "weekly", priority: "0.9" },
           { path: "/build-your-own-tour", changefreq: "weekly", priority: "0.9" },
           { path: "/journal", changefreq: "weekly", priority: "0.8" },
           { path: "/lisbon-guide", changefreq: "weekly", priority: "0.9" },
