@@ -191,9 +191,12 @@ function Main({ token, pass, onLock }: { token: string; pass: string; onLock: ()
       {d && tab !== "money" && (
         <div className="space-y-3">
           {d.tours.length === 0 && <p className="rounded-lg border border-border bg-card p-4 text-sm text-muted-foreground">No tours.</p>}
-          {d.tours.map((t) => (
-            <TourCard key={t.id} t={t} token={token} pass={pass} online={online} showDate={tab === "week" || tab === "history"} reviewUrl={d.reviewUrl} onDone={refresh} />
-          ))}
+          {d.tours.map((t, i) => {
+            const n = d.tours[i + 1];
+            return (
+              <TourCard key={t.id} t={t} next={n && n.date === t.date ? n : null} token={token} pass={pass} online={online} showDate={tab === "week" || tab === "history"} reviewUrl={d.reviewUrl} onDone={refresh} />
+            );
+          })}
         </div>
       )}
 
