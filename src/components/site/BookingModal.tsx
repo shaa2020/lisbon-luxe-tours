@@ -139,6 +139,7 @@ export function BookingModal({
     setOptionId(null);
     setPickupChoice(null);
     setName(""); setContact(""); setPhone(""); setSubmitted(false); setPaying(false);
+    setTipCents(0); setDepositPct(100);
   };
 
   const handleClose = (v: boolean) => {
@@ -205,6 +206,7 @@ export function BookingModal({
           image_url: tour.image?.startsWith("http") ? tour.image : null,
           tour_option_id: selectedOption?.id ?? null,
           tip_cents: tipCents,
+          deposit_pct: depositPct,
           ...pickupPayload,
         },
       });
@@ -241,6 +243,7 @@ export function BookingModal({
         image_url: tour.image?.startsWith("http") ? tour.image : null,
         tour_option_id: selectedOption?.id ?? null,
         tip_cents: tipCents,
+        deposit_pct: depositPct,
         ...pickupPayload,
       },
     });
