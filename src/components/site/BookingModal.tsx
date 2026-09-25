@@ -27,7 +27,7 @@ import { createCheckoutSession } from "@/lib/checkout.functions";
 import { toast } from "sonner";
 import { trackBookingStart, trackWhatsappClick } from "@/lib/analytics";
 import { PaypalWallet } from "@/components/site/PaypalWallet";
-import { TipChips } from "@/components/site/TipChips";
+import { TipChips, PaySummary } from "@/components/site/TipChips";
 import { PickupSelector } from "@/components/site/PickupSelector";
 import { pickupSummary, type PickupSelection } from "@/lib/meetup-points";
 import { useCheckoutDraft } from "@/lib/checkout-draft";
@@ -493,6 +493,11 @@ export function BookingModal({
                   </p>
                 </div>
                 <TipChips value={tipCents} onChange={setTipCents} className="mt-1" />
+                <PaySummary
+                  fareLabel="Tour payment"
+                  fareCents={Math.round(total * 100)}
+                  tipCents={tipCents}
+                />
                 <div className="grid gap-2">
                   <button
                     type="submit"

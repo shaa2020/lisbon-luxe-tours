@@ -5,7 +5,7 @@ import { useState } from "react";
 import { CalendarCheck, CheckCircle2, Loader2, Lock, Users } from "lucide-react";
 import { createBalanceCheckout, getBookingBalance } from "@/lib/balance-pay.functions";
 import { PaypalWallet } from "@/components/site/PaypalWallet";
-import { TipChips } from "@/components/site/TipChips";
+import { TipChips, PaySummary } from "@/components/site/TipChips";
 
 
 export const Route = createFileRoute("/booking/pay/$id")({
@@ -231,6 +231,13 @@ function PayBalancePage() {
               {data.paymentsAvailable ? (
                 <>
                   <TipChips value={tipCents} onChange={setTipCents} className="mt-6" />
+                  <PaySummary
+                    fareLabel={isDeposit ? "Deposit due now" : "Tour payment due now"}
+                    fareCents={selectedCents}
+                    tipCents={tipCents}
+                    balanceCents={Math.max(0, data.dueCents - selectedCents)}
+                    className="mt-3"
+                  />
                   <div className="mt-3">
                     <PaypalWallet
                       amount={(selectedCents + tipCents) / 100}
