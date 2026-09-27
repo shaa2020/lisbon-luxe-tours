@@ -99,8 +99,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient; loca
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
 
-      { property: "og:image", content: "https://tuktuk24lisbon.com/__l5e/assets-v1/4c6e5056-d7f4-4af3-888c-8b7be3d509d9/social-banner.png" },
-      { name: "twitter:image", content: "https://tuktuk24lisbon.com/__l5e/assets-v1/4c6e5056-d7f4-4af3-888c-8b7be3d509d9/social-banner.png" },
+      { property: "og:image", content: "https://tuktuk24lisbon.com/__l5e/assets-v1/c8a63cf7-f8bc-4323-a347-5e55cd68e86d/social-banner-v2.jpg" },
+      { name: "twitter:image", content: "https://tuktuk24lisbon.com/__l5e/assets-v1/c8a63cf7-f8bc-4323-a347-5e55cd68e86d/social-banner-v2.jpg" },
       { name: "theme-color", content: "#1e3a5f" },
       { name: "apple-mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
