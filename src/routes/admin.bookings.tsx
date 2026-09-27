@@ -168,7 +168,8 @@ function BookingsInbox() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("orders")
-        .select("booking_id,amount_total,payment_status");
+        .select("booking_id,amount_total,payment_status")
+        .neq("kind", "tip");
       if (error) throw error;
       return data ?? [];
     },

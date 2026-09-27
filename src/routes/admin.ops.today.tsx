@@ -51,6 +51,7 @@ function Page() {
       const { data } = await supabase
         .from("orders")
         .select("booking_id,amount_total,payment_status")
+        .neq("kind", "tip")
         .in("booking_id", ids);
       return data ?? [];
     },
