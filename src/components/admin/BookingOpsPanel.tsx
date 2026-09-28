@@ -59,6 +59,26 @@ export function BookingOpsPanel({ booking, ledger }: { booking: B; ledger?: Book
       return data ?? [];
     },
   });
+  const [editPickup, setEditPickup] = useState(false);
+  const [pk, setPk] = useState({
+    mode: (booking.pickup_type === "hotel" ? "hotel" : "meetup") as "hotel" | "meetup",
+    meetupId: "",
+    name: booking.pickup_place_name ?? "",
+    address: booking.pickup_address ?? "",
+    instructions: booking.pickup_instructions ?? "",
+  });
+  const { data: meetups = [] } = useQuery({
+    queryKey: ["meetup-points-admin-min"],
+    enabled: editPickup,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("meetup_points")
+        .select("id,name")
+        .eq("active", true)
+        .order("sort_order");
+      return data ?? [];
+    },
+  });
   const { data: payments = [] } = useQuery({
     queryKey: ["booking-payments", booking.id],
     queryFn: async () => {
@@ -124,6 +144,24 @@ export function BookingOpsPanel({ booking, ledger }: { booking: B; ledger?: Book
         ? `${booking.meetup_point_name}${booking.meetup_point_address ? ` — ${booking.meetup_point_address}` : ""}`
         : "Not chosen";
 
+  const savePickup = async () => {
+    if (pk.mode === "meetup") {
+      if (!pk.meetupId) return toast.error("Choose a meeting point");
+      await save({ pickup: { type: "meetup", meetup_point_id: pk.meetupId } });
+    } else {
+      if (!pk.name.trim()) return toast.error("Enter the hotel or place name");
+      await save({
+        pickup: {
+          type: "hotel",
+          place_name: pk.name.trim(),
+          address: pk.address.trim() || null,
+          instructions: pk.instructions.trim() || null,
+        },
+      });
+    }
+    setEditPickup(false);
+  };
+
   return (
     <div className="mt-5 pt-5 border-t border-border space-y-5">
       <div>
@@ -132,17 +170,91 @@ export function BookingOpsPanel({ booking, ledger }: { booking: B; ledger?: Book
         </p>
         <div className="grid gap-3 sm:grid-cols-3">
           <div className="rounded-lg border border-border bg-muted/30 p-3">
-            <p className="flex items-center gap-1.5 text-[11px] uppercase tracking-wider text-muted-foreground mb-1">
-              <MapPin className="w-3.5 h-3.5" /> Pickup
-            </p>
-            <p className="text-sm">{pickup}</p>
-            {!!booking.pickup_fee_cents && (
-              <p className="text-xs text-muted-foreground mt-1">
-                Pickup fee charged: {euro(Number(booking.pickup_fee_cents))}
+            <div className="flex items-center justify-between mb-1">
+              <p className="flex items-center gap-1.5 text-[11px] uppercase tracking-wider text-muted-foreground">
+                <MapPin className="w-3.5 h-3.5" /> Pickup
               </p>
-            )}
-            {booking.pickup_instructions && (
-              <p className="text-xs text-muted-foreground mt-1">{booking.pickup_instructions}</p>
+              {!editPickup && (
+                <button
+                  type="button"
+                  className="text-xs font-medium text-primary hover:underline"
+                  onClick={() => setEditPickup(true)}
+                >
+                  {pickup === "Not chosen" ? "Add" : "Change"}
+                </button>
+              )}
+            </div>
+            {!editPickup ? (
+              <>
+                <p className="text-sm">{pickup}</p>
+                {!!booking.pickup_fee_cents && (
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Pickup fee charged: {euro(Number(booking.pickup_fee_cents))}
+                  </p>
+                )}
+                {booking.pickup_instructions && (
+                  <p className="text-xs text-muted-foreground mt-1">{booking.pickup_instructions}</p>
+                )}
+              </>
+            ) : (
+              <div className="space-y-2">
+                <select
+                  className={field}
+                  value={pk.mode === "hotel" ? "__hotel" : pk.meetupId}
+                  onChange={(e) =>
+                    e.target.value === "__hotel"
+                      ? setPk({ ...pk, mode: "hotel" })
+                      : setPk({ ...pk, mode: "meetup", meetupId: e.target.value })
+                  }
+                >
+                  <option value="">Choose a meeting point…</option>
+                  {meetups.map((m: any) => (
+                    <option key={m.id} value={m.id}>
+                      {m.name}
+                    </option>
+                  ))}
+                  <option value="__hotel">Hotel / custom address…</option>
+                </select>
+                {pk.mode === "hotel" && (
+                  <>
+                    <input
+                      className={field}
+                      placeholder="Hotel or place name"
+                      value={pk.name}
+                      onChange={(e) => setPk({ ...pk, name: e.target.value })}
+                    />
+                    <input
+                      className={field}
+                      placeholder="Address (optional)"
+                      value={pk.address}
+                      onChange={(e) => setPk({ ...pk, address: e.target.value })}
+                    />
+                    <input
+                      className={field}
+                      placeholder="Instructions for the driver (optional)"
+                      value={pk.instructions}
+                      onChange={(e) => setPk({ ...pk, instructions: e.target.value })}
+                    />
+                  </>
+                )}
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    disabled={busy}
+                    onClick={savePickup}
+                    className="rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground disabled:opacity-50"
+                  >
+                    Save pickup
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setEditPickup(false)}
+                    className="rounded-md border border-border px-3 py-1.5 text-xs"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
             )}
           </div>
 

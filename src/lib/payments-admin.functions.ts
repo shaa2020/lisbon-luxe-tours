@@ -128,6 +128,17 @@ const assignSchema = z.object({
     .enum(["upcoming", "confirmed", "in_progress", "completed", "cancelled", "no_show"])
     .nullable()
     .optional(),
+  pickup: z
+    .discriminatedUnion("type", [
+      z.object({ type: z.literal("meetup"), meetup_point_id: z.string().uuid() }),
+      z.object({
+        type: z.literal("hotel"),
+        place_name: z.string().trim().min(1).max(200),
+        address: z.string().trim().max(300).nullable().optional(),
+        instructions: z.string().trim().max(500).nullable().optional(),
+      }),
+    ])
+    .optional(),
 });
 
 /** Assign a guide / vehicle and move the tour along its stages. */
@@ -139,7 +150,7 @@ export const adminAssignBooking = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { logEvent } = await import("./bookings-admin.server");
 
-    const patch: {
+    const patch: Record<string, unknown> & {
       guide_id?: string | null;
       vehicle_id?: string | null;
       tour_status?: string;
@@ -147,6 +158,29 @@ export const adminAssignBooking = createServerFn({ method: "POST" })
     if (data.guide_id !== undefined) patch.guide_id = data.guide_id ?? null;
     if (data.vehicle_id !== undefined) patch.vehicle_id = data.vehicle_id ?? null;
     if (data.tour_status) patch.tour_status = data.tour_status;
+    // Admin-set pickup. Never changes the pickup fee or any money on the booking.
+    if (data.pickup?.type === "meetup") {
+      const { data: mp } = await supabaseAdmin
+        .from("meetup_points")
+        .select("id,name,address,instructions")
+        .eq("id", data.pickup.meetup_point_id)
+        .maybeSingle();
+      if (!mp) throw new Error("Meeting point not found");
+      Object.assign(patch, {
+        pickup_type: "meetup",
+        meetup_point_id: mp.id,
+        meetup_point_name: mp.name,
+        meetup_point_address: mp.address,
+        meetup_point_instructions: mp.instructions,
+      });
+    } else if (data.pickup?.type === "hotel") {
+      Object.assign(patch, {
+        pickup_type: "hotel",
+        pickup_place_name: data.pickup.place_name,
+        pickup_address: data.pickup.address || null,
+        pickup_instructions: data.pickup.instructions || null,
+      });
+    }
     if (Object.keys(patch).length === 0) return { ok: true, conflicts: [] as string[] };
 
     const { data: booking } = await supabaseAdmin
@@ -177,7 +211,7 @@ export const adminAssignBooking = createServerFn({ method: "POST" })
       }
     }
 
-    const { error } = await supabaseAdmin.from("bookings").update(patch).eq("id", data.booking_id);
+    const { error } = await supabaseAdmin.from("bookings").update(patch as never).eq("id", data.booking_id);
     if (error) throw new Error(error.message);
 
     await logEvent(
