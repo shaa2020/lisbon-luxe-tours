@@ -211,7 +211,7 @@ export const adminAssignBooking = createServerFn({ method: "POST" })
       }
     }
 
-    const { error } = await supabaseAdmin.from("bookings").update(patch).eq("id", data.booking_id);
+    const { error } = await supabaseAdmin.from("bookings").update(patch as never).eq("id", data.booking_id);
     if (error) throw new Error(error.message);
 
     await logEvent(
