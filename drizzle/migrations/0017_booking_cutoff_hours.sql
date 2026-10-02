@@ -1,0 +1,1 @@
+ALTER TABLE public.site_settings ADD COLUMN IF NOT EXISTS booking_cutoff_hours numeric NOT NULL DEFAULT 3;

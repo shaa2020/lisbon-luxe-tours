@@ -120,6 +120,13 @@
       "when": 1790334381315,
       "tag": "0016_add_tips_support",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1790939488663,
+      "tag": "0017_booking_cutoff_hours",
+      "breakpoints": true
     }
   ]
 }

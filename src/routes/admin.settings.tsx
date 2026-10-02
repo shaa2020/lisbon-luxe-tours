@@ -106,6 +106,7 @@ function AdminSettings() {
     footer_legal: "",
     hotel_pickup_fee_cents: 2000,
     daily_slot_capacity: 3,
+    booking_cutoff_hours: 3,
     payments_enabled: true,
     payments_maintenance_message: "",
     offer_bar_enabled: false,
@@ -154,6 +155,7 @@ function AdminSettings() {
       footer_legal: d.footer_legal ?? "",
       hotel_pickup_fee_cents: Number(d.hotel_pickup_fee_cents ?? 2000) || 0,
       daily_slot_capacity: Number(d.daily_slot_capacity ?? 3) || 1,
+      booking_cutoff_hours: Number.isFinite(Number(d.booking_cutoff_hours)) ? Number(d.booking_cutoff_hours) : 3,
       payments_enabled: d.payments_enabled !== false,
       payments_maintenance_message: d.payments_maintenance_message ?? "",
       offer_bar_enabled: d.offer_bar_enabled === true,
@@ -556,6 +558,23 @@ function AdminSettings() {
             />
             <span className="block text-[11px] text-muted-foreground">
               Controls the live availability shown on tour pages.
+            </span>
+          </label>
+          <label className="block space-y-1">
+            <span className="text-xs font-medium text-foreground">Minimum notice for online bookings (hours)</span>
+            <input
+              type="number"
+              min={0}
+              max={72}
+              step="0.5"
+              value={biz.booking_cutoff_hours}
+              onChange={(e) =>
+                setBiz((b) => ({ ...b, booking_cutoff_hours: Math.max(0, Math.min(72, Number(e.target.value) || 0)) }))
+              }
+              className={input}
+            />
+            <span className="block text-[11px] text-muted-foreground">
+              Guests can't book or pay online for a tour starting sooner than this; they're sent to WhatsApp instead. Set to 0 to turn off.
             </span>
           </label>
           <div className="space-y-3 pt-2 border-t border-border">

@@ -77,8 +77,8 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
     }
 
     // Hold the slot: refuse if it filled up while the customer was deciding.
-    const { assertNotTooSoon } = await import("./booking-cutoff");
-    assertNotTooSoon(data.travel_date, data.time);
+    const { assertNotTooSoon, loadCutoffHours } = await import("./booking-cutoff");
+    assertNotTooSoon(data.travel_date, data.time, await loadCutoffHours(supabaseAdmin));
     await assertSlotAvailable(supabaseAdmin, data.travel_date, data.time);
 
     // Exactly two pickup choices: an included meetup point, or hotel pickup at
