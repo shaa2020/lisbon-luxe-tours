@@ -31,7 +31,7 @@ import { TipChips, PaySummary } from "@/components/site/TipChips";
 import { PickupSelector } from "@/components/site/PickupSelector";
 import { pickupSummary, type PickupSelection } from "@/lib/meetup-points";
 import { useCheckoutDraft } from "@/lib/checkout-draft";
-import { isTooSoon, TOO_SOON_MESSAGE } from "@/lib/booking-cutoff";
+import { isTooSoon, tooSoonMessage } from "@/lib/booking-cutoff";
 import { whatsappHref } from "@/components/site/Whatsapp";
 
 const TIME_SLOTS = ["09:00", "10:30", "13:00", "15:00", "17:00", "18:30"];
@@ -49,7 +49,7 @@ export function BookingModal({
   defaultDate?: string | undefined;
   defaultGuests?: number | undefined;
 }) {
-  const { business, groupTiers, groupDiscountEnabled, hotelPickupFeeCents } = useSiteBrand();
+  const { business, groupTiers, groupDiscountEnabled, hotelPickupFeeCents, bookingCutoffHours } = useSiteBrand();
   const checkoutFn = useServerFn(createCheckoutSession);
   const [tipCents, setTipCents] = useState(0);
   const [depositPct, setDepositPct] = useState(100);
@@ -57,7 +57,7 @@ export function BookingModal({
     defaultDate ? new Date(`${defaultDate}T00:00:00`) : undefined,
   );
   const [time, setTime] = useState<string>("");
-  const tooSoon = !!date && !!time && isTooSoon(format(date, "yyyy-MM-dd"), time);
+  const tooSoon = !!date && !!time && isTooSoon(format(date, "yyyy-MM-dd"), time, bookingCutoffHours);
   const [guests, setGuests] = useState(defaultGuests && defaultGuests >= 2 ? defaultGuests : 2);
   const [name, setName] = useState("");
   const [contact, setContact] = useState("");
@@ -409,7 +409,7 @@ export function BookingModal({
               </div>
               {tooSoon && (
                 <div className="rounded-lg border border-gold/40 bg-gold/5 p-3 text-[12px] text-ink">
-                  <p>{TOO_SOON_MESSAGE}</p>
+                  <p>{tooSoonMessage(bookingCutoffHours)}</p>
                   <a
                     href={whatsappHref(business.whatsappPhone, `Hi TukTuk24! I'd like to check last-minute availability for ${tour.title} on ${date ? format(date, "d MMM") : ""} at ${time} for ${guests} guests. Do you have a tuk-tuk available?`)}
                     target="_blank"

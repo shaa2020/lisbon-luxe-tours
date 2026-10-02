@@ -155,6 +155,7 @@ export type SiteBrand = {
   business: BusinessInfo;
   customTour: CustomTourHero;
   hotelPickupFeeCents: number;
+  bookingCutoffHours: number;
   offerBar: OfferBar;
   promoBanner: PromoBanner;
   exitPopup: ExitPopup;
@@ -204,6 +205,7 @@ export function mapSiteBrand(data: any): SiteBrand {
     customTour: mapCustomTour(data),
     hotelPickupFeeCents:
       Number((data as any)?.hotel_pickup_fee_cents ?? DEFAULT_HOTEL_PICKUP_FEE_CENTS) || 0,
+    bookingCutoffHours: Number.isFinite(Number((data as any)?.booking_cutoff_hours)) ? Number((data as any)?.booking_cutoff_hours) : 3,
     offerBar: mapOfferBar(data),
     promoBanner: mapPromoBanner(data),
     exitPopup: mapExitPopup(data),
@@ -253,6 +255,7 @@ export function useSiteBrand() {
       business: DEFAULT_BUSINESS,
       customTour: DEFAULT_CUSTOM_TOUR,
       hotelPickupFeeCents: DEFAULT_HOTEL_PICKUP_FEE_CENTS,
+      bookingCutoffHours: 3,
       offerBar: DEFAULT_OFFER_BAR,
       promoBanner: DEFAULT_PROMO_BANNER,
       exitPopup: DEFAULT_EXIT_POPUP,
@@ -273,6 +276,7 @@ export function useSiteBrand() {
     business: query.data?.business ?? DEFAULT_BUSINESS,
     customTour: query.data?.customTour ?? DEFAULT_CUSTOM_TOUR,
     hotelPickupFeeCents: query.data?.hotelPickupFeeCents ?? DEFAULT_HOTEL_PICKUP_FEE_CENTS,
+    bookingCutoffHours: query.data?.bookingCutoffHours ?? 3,
     offerBar: query.data?.offerBar ?? DEFAULT_OFFER_BAR,
     promoBanner: query.data?.promoBanner ?? DEFAULT_PROMO_BANNER,
     exitPopup: query.data?.exitPopup ?? DEFAULT_EXIT_POPUP,
