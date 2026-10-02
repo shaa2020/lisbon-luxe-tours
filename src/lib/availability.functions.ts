@@ -73,6 +73,8 @@ export const requestBooking = createServerFn({ method: "POST" })
       .parse(data),
   )
   .handler(async ({ data }) => {
+    const { assertNotTooSoon } = await import("./booking-cutoff");
+    assertNotTooSoon(data.travel_date, data.time);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
     // Snapshot the chosen duration option so the request keeps its own prices.
