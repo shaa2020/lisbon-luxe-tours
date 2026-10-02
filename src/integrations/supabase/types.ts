@@ -2680,6 +2680,7 @@ export type Database = {
           address_line2: string | null
           auto_reminder_enabled: boolean
           auto_review_request_enabled: boolean
+          booking_cutoff_hours: number
           brand_name: string
           city: string | null
           commission_rate_percent: number
@@ -2735,6 +2736,7 @@ export type Database = {
           address_line2?: string | null
           auto_reminder_enabled?: boolean
           auto_review_request_enabled?: boolean
+          booking_cutoff_hours?: number
           brand_name?: string
           city?: string | null
           commission_rate_percent?: number
@@ -2790,6 +2792,7 @@ export type Database = {
           address_line2?: string | null
           auto_reminder_enabled?: boolean
           auto_review_request_enabled?: boolean
+          booking_cutoff_hours?: number
           brand_name?: string
           city?: string | null
           commission_rate_percent?: number
