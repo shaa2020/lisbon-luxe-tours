@@ -18,6 +18,8 @@ import { PaypalWallet } from "@/components/site/PaypalWallet";
 import { TipChips, PaySummary } from "@/components/site/TipChips";
 import { PickupSelector } from "@/components/site/PickupSelector";
 import { pickupSummary, type PickupSelection } from "@/lib/meetup-points";
+import { isTooSoon, TOO_SOON_MESSAGE } from "@/lib/booking-cutoff";
+import { whatsappHref } from "@/components/site/Whatsapp";
 import { trackBookingStart, trackBookingCtaClick, trackDiscountApplied, trackDiscountRejected } from "@/lib/analytics";
 import { checkDiscountCode } from "@/lib/discounts.functions";
 import { WhatsappInline } from "@/components/site/Whatsapp";
@@ -60,7 +62,7 @@ export function TourBookingPanel({
       }
     : basePricing;
   const durationLabel = chosen?.durationLabel || tour.duration;
-  const { hotelPickupFeeCents, groupTiers, groupDiscountEnabled } = useSiteBrand();
+  const { hotelPickupFeeCents, groupTiers, groupDiscountEnabled, business } = useSiteBrand();
   const perPersonPricing = tour.perPersonPricing !== false;
   const minGuests = perPersonPricing ? MIN_GUESTS : 1;
   const pickupFee = Math.max(0, Math.round((hotelPickupFeeCents || 0) / 100));
@@ -142,7 +144,8 @@ export function TourBookingPanel({
   const balanceDue = Math.round((total - payNow) * 100) / 100;
   const isEmail = (s: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);
   const isPhone = (s: string) => s.replace(/[^\d]/g, "").length >= 8;
-  const canContinue = !!date && !!time && guests >= minGuests && !slotInfo(time)?.full;
+  const tooSoon = !!date && !!time && isTooSoon(format(date, "yyyy-MM-dd"), time);
+  const canContinue = !!date && !!time && guests >= minGuests && !slotInfo(time)?.full && !tooSoon;
 
   // Saves the half-finished booking so it can be followed up if the guest
   // leaves before paying.
@@ -472,6 +475,19 @@ export function TourBookingPanel({
            </label>
         </div>
 
+{tooSoon && (
+                <div className="rounded-lg border border-gold/40 bg-gold/5 p-3 text-[12px] text-ink">
+                  <p>{TOO_SOON_MESSAGE}</p>
+                  <a
+                    href={whatsappHref(business.whatsappPhone, `Hi TukTuk24! I'd like to check last-minute availability for ${tour.title} on ${date ? format(date, "d MMM") : ""} at ${time} for ${guests} guests. Do you have a tuk-tuk available?`)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-2 inline-flex items-center gap-2 font-semibold text-gold underline"
+                  >
+                    Check availability on WhatsApp
+                  </a>
+                </div>
+              )}
         {dateKey && availability?.dayFull && (
           <p className="text-[11px] text-gold">
              The suggested times are full — choose another time or message us on WhatsApp.

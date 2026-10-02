@@ -31,6 +31,8 @@ import { TipChips, PaySummary } from "@/components/site/TipChips";
 import { PickupSelector } from "@/components/site/PickupSelector";
 import { pickupSummary, type PickupSelection } from "@/lib/meetup-points";
 import { useCheckoutDraft } from "@/lib/checkout-draft";
+import { isTooSoon, TOO_SOON_MESSAGE } from "@/lib/booking-cutoff";
+import { whatsappHref } from "@/components/site/Whatsapp";
 
 const TIME_SLOTS = ["09:00", "10:30", "13:00", "15:00", "17:00", "18:30"];
 
@@ -55,6 +57,7 @@ export function BookingModal({
     defaultDate ? new Date(`${defaultDate}T00:00:00`) : undefined,
   );
   const [time, setTime] = useState<string>("");
+  const tooSoon = !!date && !!time && isTooSoon(format(date, "yyyy-MM-dd"), time);
   const [guests, setGuests] = useState(defaultGuests && defaultGuests >= 2 ? defaultGuests : 2);
   const [name, setName] = useState("");
   const [contact, setContact] = useState("");
@@ -404,6 +407,19 @@ export function BookingModal({
                    />
                  </label>
               </div>
+              {tooSoon && (
+                <div className="rounded-lg border border-gold/40 bg-gold/5 p-3 text-[12px] text-ink">
+                  <p>{TOO_SOON_MESSAGE}</p>
+                  <a
+                    href={whatsappHref(business.whatsappPhone, `Hi TukTuk24! I'd like to check last-minute availability for ${tour.title} on ${date ? format(date, "d MMM") : ""} at ${time} for ${guests} guests. Do you have a tuk-tuk available?`)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-2 inline-flex items-center gap-2 font-semibold text-gold underline"
+                  >
+                    Check availability on WhatsApp
+                  </a>
+                </div>
+              )}
 
               {/* Guests */}
               <div>
@@ -543,7 +559,7 @@ export function BookingModal({
                 <PaypalWallet
                   amount={payNow + tipCents / 100}
                   label={tour.title}
-                  disabled={paying || !contactValid}
+                  disabled={paying || !contactValid || tooSoon}
                   createOrder={startWalletOrder}
                   onPaid={finishWalletOrder}
                 />
