@@ -854,6 +854,57 @@ export type Database = {
           },
         ]
       }
+      cruise_arrivals: {
+        Row: {
+          arrival_date: string
+          arrival_time: string | null
+          created_at: string
+          cruise_line: string | null
+          departure_date: string | null
+          departure_time: string | null
+          id: string
+          notes: string | null
+          passengers: number | null
+          ship_name: string
+          source: string
+          synced_at: string | null
+          terminal: string | null
+          updated_at: string
+        }
+        Insert: {
+          arrival_date: string
+          arrival_time?: string | null
+          created_at?: string
+          cruise_line?: string | null
+          departure_date?: string | null
+          departure_time?: string | null
+          id?: string
+          notes?: string | null
+          passengers?: number | null
+          ship_name: string
+          source?: string
+          synced_at?: string | null
+          terminal?: string | null
+          updated_at?: string
+        }
+        Update: {
+          arrival_date?: string
+          arrival_time?: string | null
+          created_at?: string
+          cruise_line?: string | null
+          departure_date?: string | null
+          departure_time?: string | null
+          id?: string
+          notes?: string | null
+          passengers?: number | null
+          ship_name?: string
+          source?: string
+          synced_at?: string | null
+          terminal?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       custom_tour_components: {
         Row: {
           active: boolean

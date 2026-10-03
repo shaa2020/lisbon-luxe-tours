@@ -127,6 +127,13 @@
       "when": 1790939488663,
       "tag": "0017_booking_cutoff_hours",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1791039060764,
+      "tag": "0018_cruise_arrivals",
+      "breakpoints": true
     }
   ]
 }
