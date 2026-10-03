@@ -20,6 +20,7 @@ type B = {
   vehicle_id?: string | null;
   pickup_type?: string | null;
   meetup_point_name?: string | null;
+  meetup_point_instructions?: string | null;
   meetup_point_address?: string | null;
   pickup_place_name?: string | null;
   pickup_address?: string | null;
@@ -192,8 +193,14 @@ export function BookingOpsPanel({ booking, ledger }: { booking: B; ledger?: Book
                     Pickup fee charged: {euro(Number(booking.pickup_fee_cents))}
                   </p>
                 )}
-                {booking.pickup_instructions && (
-                  <p className="text-xs text-muted-foreground mt-1">{booking.pickup_instructions}</p>
+                {(booking.pickup_type === "hotel"
+                  ? booking.pickup_instructions
+                  : booking.meetup_point_instructions) && (
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {booking.pickup_type === "hotel"
+                      ? booking.pickup_instructions
+                      : booking.meetup_point_instructions}
+                  </p>
                 )}
               </>
             ) : (

@@ -279,9 +279,19 @@ export const getGuideRunSheet = createServerFn({ method: "POST" })
           guests: r.guests,
           language: null as string | null,
           duration: r.option_duration_label,
-          place: r.pickup_place_name || r.meetup_point_name || null,
-          address: r.pickup_address || r.meetup_point_address || null,
-          instructions: r.pickup_instructions || r.meetup_point_instructions || null,
+          // Respect pickup_type so stale fields from a previous mode never win.
+          place:
+            r.pickup_type === "hotel"
+              ? r.pickup_place_name || null
+              : r.meetup_point_name || r.pickup_place_name || null,
+          address:
+            r.pickup_type === "hotel"
+              ? r.pickup_address || null
+              : r.meetup_point_address || r.pickup_address || null,
+          instructions:
+            r.pickup_type === "hotel"
+              ? r.pickup_instructions || null
+              : r.meetup_point_instructions || r.pickup_instructions || null,
           lat: r.pickup_latitude,
           lng: r.pickup_longitude,
           // Guides must never see tour prices, deposits or totals — strip any

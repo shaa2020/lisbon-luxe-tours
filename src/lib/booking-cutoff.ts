@@ -31,12 +31,15 @@ export function isTooSoon(
   const n = lisbonNow(now);
   if (date < n.date) return true;
   if (date > n.date) {
-    // Shortly after midnight edge: tomorrow's early slot within 3h of late-night now.
-    const tomorrow = new Date(`${n.date}T12:00:00Z`);
-    tomorrow.setUTCDate(tomorrow.getUTCDate() + 1);
-    if (date !== tomorrow.toISOString().slice(0, 10) || !time) return false;
+    // Future dates: compute whole minutes until the slot so cutoffs over 24h
+    // (e.g. 48h or 72h) are enforced for the day after tomorrow and beyond.
+    if (!time) return false;
+    const days = Math.round(
+      (Date.parse(`${date}T00:00:00Z`) - Date.parse(`${n.date}T00:00:00Z`)) / 86400000,
+    );
     const [h, m] = time.split(":").map(Number);
-    return h * 60 + (m || 0) + 24 * 60 - n.minutes < limit;
+    if (Number.isNaN(h)) return false;
+    return h * 60 + (m || 0) + days * 24 * 60 - n.minutes < limit;
   }
   if (!time) return false;
   const [h, m] = time.split(":").map(Number);
