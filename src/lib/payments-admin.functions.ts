@@ -172,6 +172,12 @@ export const adminAssignBooking = createServerFn({ method: "POST" })
         meetup_point_name: mp.name,
         meetup_point_address: mp.address,
         meetup_point_instructions: mp.instructions,
+        // Clear the previous mode's fields so stale hotel details can't linger.
+        pickup_place_name: null,
+        pickup_address: null,
+        pickup_instructions: null,
+        pickup_latitude: null,
+        pickup_longitude: null,
       });
     } else if (data.pickup?.type === "hotel") {
       Object.assign(patch, {
@@ -179,6 +185,11 @@ export const adminAssignBooking = createServerFn({ method: "POST" })
         pickup_place_name: data.pickup.place_name,
         pickup_address: data.pickup.address || null,
         pickup_instructions: data.pickup.instructions || null,
+        // Clear the previous mode's fields so stale meeting-point details can't linger.
+        meetup_point_id: null,
+        meetup_point_name: null,
+        meetup_point_address: null,
+        meetup_point_instructions: null,
       });
     }
     if (Object.keys(patch).length === 0) return { ok: true, conflicts: [] as string[] };

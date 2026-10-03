@@ -192,8 +192,14 @@ export function BookingOpsPanel({ booking, ledger }: { booking: B; ledger?: Book
                     Pickup fee charged: {euro(Number(booking.pickup_fee_cents))}
                   </p>
                 )}
-                {booking.pickup_instructions && (
-                  <p className="text-xs text-muted-foreground mt-1">{booking.pickup_instructions}</p>
+                {(booking.pickup_type === "hotel"
+                  ? booking.pickup_instructions
+                  : booking.meetup_point_instructions) && (
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {booking.pickup_type === "hotel"
+                      ? booking.pickup_instructions
+                      : booking.meetup_point_instructions}
+                  </p>
                 )}
               </>
             ) : (
