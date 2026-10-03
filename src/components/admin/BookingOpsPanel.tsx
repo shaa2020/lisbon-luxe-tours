@@ -20,6 +20,7 @@ type B = {
   vehicle_id?: string | null;
   pickup_type?: string | null;
   meetup_point_name?: string | null;
+  meetup_point_instructions?: string | null;
   meetup_point_address?: string | null;
   pickup_place_name?: string | null;
   pickup_address?: string | null;
