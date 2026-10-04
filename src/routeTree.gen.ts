@@ -14,6 +14,7 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as AlfamaTukTukToursRouteImport } from './routes/alfama-tuk-tuk-tours'
 import { Route as BelemTukTukToursRouteImport } from './routes/belem-tuk-tuk-tours'
 import { Route as BookATourRouteImport } from './routes/book-a-tour'
+import { Route as BookDirectRouteImport } from './routes/book-direct'
 import { Route as BuildYourOwnTourRouteImport } from './routes/build-your-own-tour'
 import { Route as CaboDaRocaToursRouteImport } from './routes/cabo-da-roca-tours'
 import { Route as CascaisPrivateToursRouteImport } from './routes/cascais-private-tours'
@@ -152,6 +153,11 @@ const BelemTukTukToursRoute = BelemTukTukToursRouteImport.update({
 const BookATourRoute = BookATourRouteImport.update({
   id: '/book-a-tour',
   path: '/book-a-tour',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BookDirectRoute = BookDirectRouteImport.update({
+  id: '/book-direct',
+  path: '/book-direct',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BuildYourOwnTourRoute = BuildYourOwnTourRouteImport.update({
@@ -738,6 +744,7 @@ export interface FileRoutesByFullPath {
   '/alfama-tuk-tuk-tours': typeof AlfamaTukTukToursRoute
   '/belem-tuk-tuk-tours': typeof BelemTukTukToursRoute
   '/book-a-tour': typeof BookATourRoute
+  '/book-direct': typeof BookDirectRoute
   '/build-your-own-tour': typeof BuildYourOwnTourRoute
   '/cabo-da-roca-tours': typeof CaboDaRocaToursRoute
   '/cascais-private-tours': typeof CascaisPrivateToursRoute
@@ -859,6 +866,7 @@ export interface FileRoutesByTo {
   '/alfama-tuk-tuk-tours': typeof AlfamaTukTukToursRoute
   '/belem-tuk-tuk-tours': typeof BelemTukTukToursRoute
   '/book-a-tour': typeof BookATourRoute
+  '/book-direct': typeof BookDirectRoute
   '/build-your-own-tour': typeof BuildYourOwnTourRoute
   '/cabo-da-roca-tours': typeof CaboDaRocaToursRoute
   '/cascais-private-tours': typeof CascaisPrivateToursRoute
@@ -981,6 +989,7 @@ export interface FileRoutesById {
   '/alfama-tuk-tuk-tours': typeof AlfamaTukTukToursRoute
   '/belem-tuk-tuk-tours': typeof BelemTukTukToursRoute
   '/book-a-tour': typeof BookATourRoute
+  '/book-direct': typeof BookDirectRoute
   '/build-your-own-tour': typeof BuildYourOwnTourRoute
   '/cabo-da-roca-tours': typeof CaboDaRocaToursRoute
   '/cascais-private-tours': typeof CascaisPrivateToursRoute
@@ -1104,6 +1113,7 @@ export interface FileRouteTypes {
     | '/alfama-tuk-tuk-tours'
     | '/belem-tuk-tuk-tours'
     | '/book-a-tour'
+    | '/book-direct'
     | '/build-your-own-tour'
     | '/cabo-da-roca-tours'
     | '/cascais-private-tours'
@@ -1225,6 +1235,7 @@ export interface FileRouteTypes {
     | '/alfama-tuk-tuk-tours'
     | '/belem-tuk-tuk-tours'
     | '/book-a-tour'
+    | '/book-direct'
     | '/build-your-own-tour'
     | '/cabo-da-roca-tours'
     | '/cascais-private-tours'
@@ -1346,6 +1357,7 @@ export interface FileRouteTypes {
     | '/alfama-tuk-tuk-tours'
     | '/belem-tuk-tuk-tours'
     | '/book-a-tour'
+    | '/book-direct'
     | '/build-your-own-tour'
     | '/cabo-da-roca-tours'
     | '/cascais-private-tours'
@@ -1468,6 +1480,7 @@ export interface RootRouteChildren {
   AlfamaTukTukToursRoute: typeof AlfamaTukTukToursRoute
   BelemTukTukToursRoute: typeof BelemTukTukToursRoute
   BookATourRoute: typeof BookATourRoute
+  BookDirectRoute: typeof BookDirectRoute
   BuildYourOwnTourRoute: typeof BuildYourOwnTourRoute
   CaboDaRocaToursRoute: typeof CaboDaRocaToursRoute
   CascaisPrivateToursRoute: typeof CascaisPrivateToursRoute
@@ -1618,6 +1631,13 @@ declare module '@tanstack/react-router' {
       path: '/book-a-tour'
       fullPath: '/book-a-tour'
       preLoaderRoute: typeof BookATourRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/book-direct': {
+      id: '/book-direct'
+      path: '/book-direct'
+      fullPath: '/book-direct'
+      preLoaderRoute: typeof BookDirectRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/build-your-own-tour': {
@@ -2438,6 +2458,7 @@ const rootRouteChildren: RootRouteChildren = {
   AlfamaTukTukToursRoute: AlfamaTukTukToursRoute,
   BelemTukTukToursRoute: BelemTukTukToursRoute,
   BookATourRoute: BookATourRoute,
+  BookDirectRoute: BookDirectRoute,
   BuildYourOwnTourRoute: BuildYourOwnTourRoute,
   CaboDaRocaToursRoute: CaboDaRocaToursRoute,
   CascaisPrivateToursRoute: CascaisPrivateToursRoute,
