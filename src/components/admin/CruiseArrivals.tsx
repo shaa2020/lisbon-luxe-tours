@@ -163,7 +163,8 @@ export function CruiseArrivals() {
                     </div>
                     <div className="flex items-center gap-3 shrink-0">
                       <div className="text-right text-xs">
-                        <div className="tabular-nums">{c.arrival_time ?? "--:--"} → {c.departure_time ?? "--:--"}</div>
+                        <div className="tabular-nums">{c.arrival_time ?? "--:--"} → {c.departure_time ?? "--:--"}
+                          {c.departure_date && c.departure_date !== c.arrival_date && <span className="text-muted-foreground"> (next day)</span>}</div>
                         {c.passengers != null && (
                           <div className="text-muted-foreground inline-flex items-center gap-1">
                             <Users className="h-3 w-3" /> {nf.format(c.passengers)}
