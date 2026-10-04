@@ -44,10 +44,10 @@ export const Route = createFileRoute("/")({
   head: ({ loaderData }) => {
     const from = loaderData?.fromPrice ?? null;
     const priceBit = from ? ` from €${from}` : "";
-    const title = `Private Tuk Tuk Tours in Lisbon${priceBit} | Book Direct — TukTuk24`;
-    const description = `Private electric tuk tuk tours in Lisbon with local drivers${
-      from ? `, from €${from} per person` : ""
-    }. Alfama, Belém, Sintra, Cascais and cruise-port pick-ups. Book direct — no agency booking fee.`;
+    const title = `Lisbon Tuk Tuk Tours${priceBit} | Private & Local — Book Direct | TukTuk24`;
+    const description = `Private tuk tuk tours in Lisbon with local drivers${
+      from ? ` from €${from} per person` : ""
+    }. Alfama, Belém, Sintra & cruise-port pick-up. Pay from a 20% deposit, no agency fee — book in 60 seconds.`;
     return {
     meta: [
       { title },

@@ -8,5 +8,8 @@ Disallow: /unsubscribe
 Disallow: /email/
 Disallow: /api/
 Disallow: /lovable/
+Disallow: /guide/
+Disallow: /trip/
+Disallow: /tip/
 
 Sitemap: https://tuktuk24lisbon.com/sitemap.xml
