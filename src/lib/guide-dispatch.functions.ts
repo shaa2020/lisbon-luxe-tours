@@ -196,7 +196,7 @@ export const getGuideRunSheet = createServerFn({ method: "POST" })
     let q = supabaseAdmin
       .from("bookings")
       .select(
-        "id, booking_reference, customer_name, phone, tour_title, tour_slug, travel_date, travel_time, guests, status, tour_status, payment_status, amount_total, total_estimate, refund_cents, option_duration_label, pickup_place_name, pickup_address, pickup_instructions, pickup_latitude, pickup_longitude, meetup_point_name, meetup_point_address, meetup_point_instructions, notes, guest_token",
+        "id, booking_reference, customer_name, phone, tour_title, tour_slug, travel_date, travel_time, guests, status, tour_status, payment_status, amount_total, total_estimate, refund_cents, option_duration_label, pickup_type, pickup_place_name, pickup_address, pickup_instructions, pickup_latitude, pickup_longitude, meetup_point_name, meetup_point_address, meetup_point_instructions, notes, guest_token",
       )
       .eq("guide_id", guide.id)
       .gte("travel_date", from)
