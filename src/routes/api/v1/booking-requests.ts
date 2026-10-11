@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
-import { apiOk, preflight, withApi } from "@/lib/api/core.server";
+import { apiOk, badRequest, preflight, withApi } from "@/lib/api/core.server";
 import { normalizePhone, upsertCustomer } from "@/lib/api/data.server";
 
 const schema = z.object({
@@ -93,6 +93,37 @@ export const Route = createFileRoute("/api/v1/booking-requests")({
           },
           201,
         );
+      }),
+      // GET: list booking requests for external team tools (Tuktukconnect).
+      GET: withApi({ scope: "CREATE_BOOKING_REQUEST" }, async ({ request, url }) => {
+        const limitRaw = Number(url.searchParams.get("limit") ?? 50);
+        const limit = Number.isFinite(limitRaw)
+          ? Math.min(Math.max(Math.trunc(limitRaw), 1), 100)
+          : 50;
+        const status = url.searchParams.get("status");
+        const since = url.searchParams.get("since");
+        if (
+          since &&
+          !/^\d{4}-\d{2}-\d{2}(T[\d:.-]+(Z|[+-]\d{2}:?\d{2}))?$/.test(since)
+        ) {
+          badRequest("`since` must be an ISO date string (e.g. 2026-10-01 or 2026-10-01T00:00:00Z)");
+        }
+
+        const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+        let query = supabaseAdmin
+          .from("bookings")
+          .select(
+            "id, tour_slug, tour_title, customer_name, email, phone, travel_date, travel_time, guests, notes, status, payment_status, source, created_at",
+          )
+          .order("created_at", { ascending: false })
+          .limit(limit);
+        if (status) query = query.eq("status", status);
+        if (since) query = query.gte("created_at", since);
+
+        const { data: bookings, error } = await query;
+        if (error) throw new Error(error.message);
+
+        return apiOk(request, { data: bookings });
       }),
     },
   },
