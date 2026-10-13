@@ -14,6 +14,9 @@ const schema = z.object({
   time: z.string().trim().max(20).optional(),
   party_size: z.number().int().min(1).max(60),
   pickup_location: z.string().trim().max(300).optional(),
+  duration_minutes: z.number().int().min(15).max(1440).optional(),
+  amount_total: z.number().min(0).max(100000).optional(),
+  language: z.string().trim().max(60).optional(),
   notes: z.string().trim().max(4000).optional(),
   source: z.string().trim().max(60).default("api"),
 });
@@ -48,6 +51,7 @@ export const Route = createFileRoute("/api/v1/booking-requests")({
           "Booking REQUEST created via API — not confirmed until staff review.",
           input.time ? `Preferred time: ${input.time}` : null,
           input.pickup_location ? `Pickup: ${input.pickup_location}` : null,
+          input.language ? `Language: ${input.language}` : null,
           `WhatsApp: ${normalizePhone(input.phone)}`,
           input.notes,
         ]
@@ -65,6 +69,8 @@ export const Route = createFileRoute("/api/v1/booking-requests")({
             travel_date: input.date ?? null,
             travel_time: input.time ?? null,
             guests: input.party_size,
+            option_duration_minutes: input.duration_minutes ?? null,
+            amount_total: input.amount_total ?? null,
             notes,
             status: "new",
             payment_status: "request",
@@ -113,7 +119,7 @@ export const Route = createFileRoute("/api/v1/booking-requests")({
         let query = supabaseAdmin
           .from("bookings")
           .select(
-            "id, tour_slug, tour_title, customer_name, email, phone, travel_date, travel_time, guests, notes, status, payment_status, source, created_at",
+            "id, booking_reference, tour_slug, tour_title, customer_name, email, phone, travel_date, travel_time, guests, notes, status, payment_status, source, created_at, option_duration_minutes, option_duration_label, option_label, amount_total, total_estimate, pickup_type, pickup_place_name, pickup_address, meetup_point_name, meetup_point_address",
           )
           .order("created_at", { ascending: false })
           .limit(limit);
