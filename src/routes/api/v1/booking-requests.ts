@@ -69,6 +69,8 @@ export const Route = createFileRoute("/api/v1/booking-requests")({
             travel_date: input.date ?? null,
             travel_time: input.time ?? null,
             guests: input.party_size,
+            option_duration_minutes: input.duration_minutes ?? null,
+            amount_total: input.amount_total ?? null,
             notes,
             status: "new",
             payment_status: "request",
