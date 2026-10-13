@@ -14,6 +14,9 @@ const schema = z.object({
   time: z.string().trim().max(20).optional(),
   party_size: z.number().int().min(1).max(60),
   pickup_location: z.string().trim().max(300).optional(),
+  duration_minutes: z.number().int().min(15).max(1440).optional(),
+  amount_total: z.number().min(0).max(100000).optional(),
+  language: z.string().trim().max(60).optional(),
   notes: z.string().trim().max(4000).optional(),
   source: z.string().trim().max(60).default("api"),
 });
