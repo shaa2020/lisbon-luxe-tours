@@ -119,7 +119,7 @@ export const Route = createFileRoute("/api/v1/booking-requests")({
         let query = supabaseAdmin
           .from("bookings")
           .select(
-            "id, tour_slug, tour_title, customer_name, email, phone, travel_date, travel_time, guests, notes, status, payment_status, source, created_at",
+            "id, booking_reference, tour_slug, tour_title, customer_name, email, phone, travel_date, travel_time, guests, notes, status, payment_status, source, created_at, option_duration_minutes, option_duration_label, option_label, amount_total, total_estimate, pickup_type, pickup_place_name, pickup_address, meetup_point_name, meetup_point_address",
           )
           .order("created_at", { ascending: false })
           .limit(limit);
