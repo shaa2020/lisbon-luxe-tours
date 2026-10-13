@@ -51,6 +51,7 @@ export const Route = createFileRoute("/api/v1/booking-requests")({
           "Booking REQUEST created via API — not confirmed until staff review.",
           input.time ? `Preferred time: ${input.time}` : null,
           input.pickup_location ? `Pickup: ${input.pickup_location}` : null,
+          input.language ? `Language: ${input.language}` : null,
           `WhatsApp: ${normalizePhone(input.phone)}`,
           input.notes,
         ]
