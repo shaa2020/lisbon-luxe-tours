@@ -111,6 +111,7 @@ import { Route as LovableEmailSuppressionRouteImport } from './routes/lovable/em
 import { Route as AdminOpsJobsIndexRouteImport } from './routes/admin.ops.jobs.index'
 import { Route as AdminOpsJobsIdRouteImport } from './routes/admin.ops.jobs.$id'
 import { Route as ApiPublicCronBookingEmailsRouteImport } from './routes/api/public/cron/booking-emails'
+import { Route as ApiPublicCronSiteStatusRouteImport } from './routes/api/public/cron/site-status'
 import { Route as ApiPublicPaymentsMollieRouteImport } from './routes/api/public/payments/mollie'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as ApiV1AiBusinessRouteImport } from './routes/api/v1/ai.business'
@@ -642,6 +643,11 @@ const ApiPublicCronBookingEmailsRoute =
     path: '/api/public/cron/booking-emails',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicCronSiteStatusRoute = ApiPublicCronSiteStatusRouteImport.update({
+  id: '/api/public/cron/site-status',
+  path: '/api/public/cron/site-status',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicPaymentsMollieRoute = ApiPublicPaymentsMollieRouteImport.update({
   id: '/api/public/payments/mollie',
   path: '/api/public/payments/mollie',
@@ -840,6 +846,7 @@ export interface FileRoutesByFullPath {
   '/admin/web-intel/': typeof AdminWebIntelIndexRoute
   '/admin/ops/jobs/$id': typeof AdminOpsJobsIdRoute
   '/api/public/cron/booking-emails': typeof ApiPublicCronBookingEmailsRoute
+  '/api/public/cron/site-status': typeof ApiPublicCronSiteStatusRoute
   '/api/public/payments/mollie': typeof ApiPublicPaymentsMollieRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/api/v1/ai/business': typeof ApiV1AiBusinessRoute
@@ -962,6 +969,7 @@ export interface FileRoutesByTo {
   '/admin/web-intel': typeof AdminWebIntelIndexRoute
   '/admin/ops/jobs/$id': typeof AdminOpsJobsIdRoute
   '/api/public/cron/booking-emails': typeof ApiPublicCronBookingEmailsRoute
+  '/api/public/cron/site-status': typeof ApiPublicCronSiteStatusRoute
   '/api/public/payments/mollie': typeof ApiPublicPaymentsMollieRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/api/v1/ai/business': typeof ApiV1AiBusinessRoute
@@ -1085,6 +1093,7 @@ export interface FileRoutesById {
   '/admin/web-intel/': typeof AdminWebIntelIndexRoute
   '/admin/ops/jobs/$id': typeof AdminOpsJobsIdRoute
   '/api/public/cron/booking-emails': typeof ApiPublicCronBookingEmailsRoute
+  '/api/public/cron/site-status': typeof ApiPublicCronSiteStatusRoute
   '/api/public/payments/mollie': typeof ApiPublicPaymentsMollieRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/api/v1/ai/business': typeof ApiV1AiBusinessRoute
@@ -1209,6 +1218,7 @@ export interface FileRouteTypes {
     | '/admin/web-intel/'
     | '/admin/ops/jobs/$id'
     | '/api/public/cron/booking-emails'
+    | '/api/public/cron/site-status'
     | '/api/public/payments/mollie'
     | '/api/public/payments/webhook'
     | '/api/v1/ai/business'
@@ -1331,6 +1341,7 @@ export interface FileRouteTypes {
     | '/admin/web-intel'
     | '/admin/ops/jobs/$id'
     | '/api/public/cron/booking-emails'
+    | '/api/public/cron/site-status'
     | '/api/public/payments/mollie'
     | '/api/public/payments/webhook'
     | '/api/v1/ai/business'
@@ -1453,6 +1464,7 @@ export interface FileRouteTypes {
     | '/admin/web-intel/'
     | '/admin/ops/jobs/$id'
     | '/api/public/cron/booking-emails'
+    | '/api/public/cron/site-status'
     | '/api/public/payments/mollie'
     | '/api/public/payments/webhook'
     | '/api/v1/ai/business'
@@ -1576,6 +1588,7 @@ export interface RootRouteChildren {
   AdminWebIntelIndexRoute: typeof AdminWebIntelIndexRoute
   AdminOpsJobsIdRoute: typeof AdminOpsJobsIdRoute
   ApiPublicCronBookingEmailsRoute: typeof ApiPublicCronBookingEmailsRoute
+  ApiPublicCronSiteStatusRoute: typeof ApiPublicCronSiteStatusRoute
   ApiPublicPaymentsMollieRoute: typeof ApiPublicPaymentsMollieRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
   ApiV1AiBusinessRoute: typeof ApiV1AiBusinessRoute
@@ -2312,6 +2325,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicCronBookingEmailsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/cron/site-status': {
+      id: '/api/public/cron/site-status'
+      path: '/api/public/cron/site-status'
+      fullPath: '/api/public/cron/site-status'
+      preLoaderRoute: typeof ApiPublicCronSiteStatusRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/payments/mollie': {
       id: '/api/public/payments/mollie'
       path: '/api/public/payments/mollie'
@@ -2555,6 +2575,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminWebIntelIndexRoute: AdminWebIntelIndexRoute,
   AdminOpsJobsIdRoute: AdminOpsJobsIdRoute,
   ApiPublicCronBookingEmailsRoute: ApiPublicCronBookingEmailsRoute,
+  ApiPublicCronSiteStatusRoute: ApiPublicCronSiteStatusRoute,
   ApiPublicPaymentsMollieRoute: ApiPublicPaymentsMollieRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
   ApiV1AiBusinessRoute: ApiV1AiBusinessRoute,

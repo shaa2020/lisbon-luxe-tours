@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { AdminShell, AdminCard } from "@/components/admin/AdminShell";
 import { DashboardToday } from "@/components/admin/DashboardToday";
 import { CruiseArrivals } from "@/components/admin/CruiseArrivals";
+import { SiteStatus } from "@/components/admin/SiteStatus";
 
 import { useAdminPromotions, isPromotionLive } from "@/lib/promotions";
 import { useAuth } from "@/lib/auth";
@@ -141,6 +142,7 @@ function AdminDashboard() {
       </div>
       )}
 
+      {can("bookings.view") && <SiteStatus />}
       <div className="grid grid-cols-[minmax(0,1fr)] lg:grid-cols-[minmax(0,1.35fr)_minmax(0,0.65fr)] gap-6 items-start">
         <div className="min-w-0 space-y-6">
           {can("bookings.view") && <DashboardToday />}

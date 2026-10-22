@@ -2895,6 +2895,36 @@ export type Database = {
         }
         Relationships: []
       }
+      site_status_checks: {
+        Row: {
+          checked_at: string
+          error: string | null
+          id: string
+          ok: boolean
+          response_ms: number | null
+          status_code: number | null
+          url: string
+        }
+        Insert: {
+          checked_at?: string
+          error?: string | null
+          id?: string
+          ok: boolean
+          response_ms?: number | null
+          status_code?: number | null
+          url: string
+        }
+        Update: {
+          checked_at?: string
+          error?: string | null
+          id?: string
+          ok?: boolean
+          response_ms?: number | null
+          status_code?: number | null
+          url?: string
+        }
+        Relationships: []
+      }
       subscribers: {
         Row: {
           created_at: string
