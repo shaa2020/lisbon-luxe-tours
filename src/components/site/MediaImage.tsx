@@ -74,7 +74,7 @@ export function MediaImage({
           decoding="async"
           onLoad={() => setLoadedSrc(src)}
           onError={() => setFailedSrc(src)}
-          className={`${className} transition-opacity duration-300 ${loaded ? "opacity-100" : "opacity-0"}`}
+          className={`${className} relative`}
         />
       )}
     </span>
