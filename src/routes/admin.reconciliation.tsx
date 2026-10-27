@@ -18,6 +18,7 @@ import { AdminShell, AdminPageHeader, AdminCard } from "@/components/admin/Admin
 import {
   adminReconciliation,
   adminVerifyPaymentWithProvider,
+  adminCloseAbandonedPayment,
   adminSettleBalance,
   adminEditSettlement,
   adminUndoSettlement,
@@ -47,6 +48,8 @@ const ISSUE_LABELS: Record<ReconIssue, string> = {
   failed_attempt_only: "Only failed attempts — nothing collected",
   overpaid: "More money received than the booking total",
 };
+
+const PENDING_UI = new Set(["pending", "created", "open", "request", "authorized"]);
 
 const SETTLEMENT_BADGE: Record<SettlementStatus, { label: string; cls: string }> = {
   fully_settled: {
@@ -121,6 +124,16 @@ function ReconciliationBody() {
           ? `${r.provider} says "${r.providerStatus}" — record corrected.`
           : `${r.provider} confirms "${r.providerStatus}". Records already match.`,
       );
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const closeAttempt = useServerFn(adminCloseAbandonedPayment);
+  const closeM = useMutation({
+    mutationFn: (orderId: string) => closeAttempt({ data: { orderId } }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["admin-reconciliation"] });
+      toast.success("Unfinished payment attempt closed.");
     },
     onError: (e: Error) => toast.error(e.message),
   });
@@ -284,6 +297,8 @@ function ReconciliationBody() {
                   onVerify={(orderId) => verifyM.mutate(orderId)}
                   verifying={verifyM.isPending}
                   onSettle={() => setSettling(b)}
+                  onClose={(orderId) => closeM.mutate(orderId)}
+                  closing={closeM.isPending}
                 />
               ))
             )}
@@ -368,6 +383,8 @@ function BookingRow({
   onVerify,
   verifying,
   onSettle,
+  onClose,
+  closing,
 }: {
   b: ReconBooking;
   expanded: boolean;
@@ -375,6 +392,8 @@ function BookingRow({
   onVerify: (orderId: string) => void;
   verifying: boolean;
   onSettle: () => void;
+  onClose: (orderId: string) => void;
+  closing: boolean;
 }) {
   const balanced = b.issues.length === 0;
   const badge = SETTLEMENT_BADGE[b.settlement];
@@ -457,15 +476,35 @@ function BookingRow({
                       {p.reference || "no reference"} · {day(p.createdAt)}
                     </p>
                   </div>
-                  <button
-                    type="button"
-                    disabled={verifying}
-                    onClick={() => onVerify(p.id)}
-                    className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1 text-xs font-semibold hover:border-primary disabled:opacity-60"
-                  >
-                    <Scale className="h-3.5 w-3.5" />
-                    Check with provider
-                  </button>
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      disabled={verifying}
+                      onClick={() => onVerify(p.id)}
+                      className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1 text-xs font-semibold hover:border-primary disabled:opacity-60"
+                    >
+                      <Scale className="h-3.5 w-3.5" />
+                      Check with provider
+                    </button>
+                    {PENDING_UI.has(p.status) && (
+                      <button
+                        type="button"
+                        disabled={closing}
+                        onClick={() => {
+                          if (
+                            window.confirm(
+                              `Close this unfinished ${p.provider} attempt of ${money(p.amountCents)}? Use this when the guest never completed it (e.g. paid cash instead). Confirmed payments are never affected.`,
+                            )
+                          )
+                            onClose(p.id);
+                        }}
+                        className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1 text-xs font-semibold hover:border-rose-400 disabled:opacity-60"
+                      >
+                        <X className="h-3.5 w-3.5" />
+                        Mark abandoned
+                      </button>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>
