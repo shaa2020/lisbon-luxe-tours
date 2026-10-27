@@ -262,7 +262,12 @@ export const adminReconciliation = createServerFn({ method: "POST" })
       if (totals.refundCents > totals.onlineCents + totals.manualCents)
         issues.push("refund_exceeds_collected");
       if (totals.overpaidCents > 0) issues.push("overpaid");
-      if (payments.some((p) => PENDING_STATES.has(p.status) && new Date(p.createdAt).getTime() < dayAgo))
+      // A stale unfinished online attempt only matters while money is still due;
+      // once the booking is fully covered (e.g. cash on the day) it's just history.
+      if (
+        totals.remainingCents > 0 &&
+        payments.some((p) => PENDING_STATES.has(p.status) && new Date(p.createdAt).getTime() < dayAgo)
+      )
         issues.push("payment_stuck_pending");
       if (
         totals.paidCents === 0 &&
@@ -621,6 +626,57 @@ export const adminUndoSettlement = createServerFn({ method: "POST" })
     });
 
     return { ok: true, totals };
+  });
+
+/**
+ * Closes an online payment attempt the guest never completed (e.g. they paid
+ * cash on the day instead). Only unconfirmed attempts can be closed — paid
+ * payments are never touched. Reversible via "Check with provider".
+ */
+export const adminCloseAbandonedPayment = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z.object({ orderId: z.string().uuid(), reason: z.string().trim().max(300).optional() }).parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    await assertRole(context, "manager");
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { syncBookingSettlement } = await import("./settlement.server");
+
+    const { data: order, error } = await supabaseAdmin
+      .from("orders")
+      .select("id,booking_id,provider,amount_total,payment_status")
+      .eq("id", data.orderId)
+      .maybeSingle();
+    if (error) throw new Error(error.message);
+    if (!order) throw new Error("Payment record not found");
+    if (!PENDING_STATES.has(String(order.payment_status || "pending")))
+      throw new Error(`Only unconfirmed attempts can be closed (this one is "${order.payment_status}").`);
+
+    const { error: uErr } = await supabaseAdmin
+      .from("orders")
+      .update({ payment_status: "expired" })
+      .eq("id", order.id);
+    if (uErr) throw new Error(uErr.message);
+
+    if (order.booking_id) await syncBookingSettlement(supabaseAdmin, order.booking_id as string);
+
+    const summary = `Abandoned ${order.provider || "online"} attempt of €${(
+      Number(order.amount_total || 0) / 100
+    ).toFixed(2)} closed${data.reason ? ` — ${data.reason}` : ""}`;
+    if (order.booking_id) {
+      const { logEvent } = await import("./bookings-admin.server");
+      await logEvent(supabaseAdmin, order.booking_id as string, "payment", summary, order as any, context.userId);
+    }
+    await supabaseAdmin.from("admin_audit_log").insert({
+      actor: context.userId,
+      entity: "orders",
+      entity_id: order.id,
+      action: "close_abandoned",
+      summary,
+      before_value: order as any,
+    });
+    return { ok: true };
   });
 
 /** Audit trail for one booking's money: who recorded or changed what, and when. */
