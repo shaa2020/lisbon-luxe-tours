@@ -535,4 +535,12 @@ export const AUTO_ES: Record<string, string> = {
   "up to 24 hours before your tour start time — full refund, no questions asked.": "hasta 24 horas antes de la hora de inicio de tu tour — reembolso completo, sin preguntas.",
   "up to 24 hours before your tour. Later cancellations are non-refundable.": "hasta 24 horas antes de tu tour. Las cancelaciones posteriores no son reembolsables.",
   "use code": "usa el código",
+  "Licensed Lisbon operator": "Operador lisboeta con licencia",
+  "Registered local company, insured tuk-tuks": "Empresa local registrada, tuk-tuks asegurados",
+  "Full refund up to 24h before your tour": "Reembolso completo hasta 24 h antes de tu tour",
+  "Book with 20% deposit": "Reserva con un depósito del 20%",
+  "Pay the balance on the day of the tour": "Paga el resto el día del tour",
+  "100% electric & private": "100% eléctrico y privado",
+  "Quiet, fume-free, your group only": "Silencioso, sin humos, solo tu grupo",
+  "We usually reply within minutes": "Normalmente respondemos en minutos",
 };
