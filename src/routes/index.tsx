@@ -128,7 +128,7 @@ function Hero() {
 
         {/* Centered headline */}
         <div className="relative md:h-full container-x flex flex-col items-center justify-center text-center pt-[110px] md:pt-[110px] pb-14 md:pb-32">
-          <h1 className="flex flex-col items-center">
+          <div className="flex flex-col items-center">
             <span
               className="text-white text-3xl sm:text-4xl md:text-6xl -mb-3 sm:-mb-5 md:-mb-8 font-normal"
               style={{ fontFamily: '"Yellowtail", cursive' }}
@@ -143,10 +143,12 @@ function Hero() {
               {currentSlide?.label || "Lisbon"}
             </span>
 
-            <span className="mt-2 text-white/90 text-[13px] md:text-[15px] uppercase tracking-[0.28em]">
+            {/* Stable H1: the rotating word above is decorative, so Google always
+                sees the same headline for "tuk tuk tours lisbon". */}
+            <h1 className="mt-2 text-white/90 text-[13px] md:text-[15px] uppercase tracking-[0.28em]">
               Private Tuk Tuk Tours in Lisbon
-            </span>
-          </h1>
+            </h1>
+          </div>
 
           <p className="mt-4 md:mt-5 max-w-xl text-white/85 text-[14px] md:text-[16px] leading-relaxed px-4">
             Private electric tuk tuk tours with local Lisbon drivers — Alfama, Belém, Sintra and
