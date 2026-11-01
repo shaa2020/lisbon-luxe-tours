@@ -1,8 +1,8 @@
 # Roadmap
 
 ## Independent Hostinger migration (2026-11-01)
-- [ ] Read-only full application, live schema, storage, integration and hosting audit.
-- [ ] Migration strategy and approval before runtime changes; preserve live site and data.
+- [x] Read-only full application, live schema, storage, integration and hosting audit.
+- [ ] Migration strategy prepared; waiting for plan approval before runtime changes.
 - [ ] Independent source/configuration preparation and deployment package after plan approval.
 - [ ] Database/auth export and storage import handover; official production export required from owner.
 - [ ] Isolated target validation, payment/email checks, authorized cutover and rollback rehearsal.
