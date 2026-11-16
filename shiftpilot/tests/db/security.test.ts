@@ -332,3 +332,19 @@ describe("pathway separation", () => {
     });
   });
 });
+
+describe("rate limiting", () => {
+  it("allows up to the limit within a window, service role only", async () => {
+    const { asService } = await import("./helpers");
+    const key = "test:" + Math.random();
+    const results = await asService(db, async (tx) => {
+      const out: boolean[] = [];
+      for (let i = 0; i < 4; i++) out.push((await tx.query("select public.consume_rate_limit($1, 3, 60) ok", [key])).rows[0].ok);
+      return out;
+    });
+    expect(results).toEqual([true, true, true, false]);
+    await asUser(db, f.users.adminA, async (tx) => {
+      await expectError(attempt(tx, "select public.consume_rate_limit('x:y', 3, 60)"), "permission denied");
+    });
+  });
+});

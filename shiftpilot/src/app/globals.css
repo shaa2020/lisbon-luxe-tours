@@ -1,26 +1,145 @@
 @import "tailwindcss";
 
+/* Class-based dark mode (managed by next-themes). */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ---------------------------------------------------------------------------
+   ShiftPilot design tokens
+   --------------------------------------------------------------------------- */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --sp-navy: #10243a;
+  --sp-blue: #2563eb;
+  --sp-blue-light: #dbeafe;
+
+  --background: #f5f7fb;
+  --surface: #ffffff;
+  --surface-muted: #f8fafc;
+  --foreground: #172033;
+  --muted-foreground: #64748b;
+  --border: #e2e8f0;
+  --input: #cbd5e1;
+  --ring: #2563eb;
+
+  --primary: #2563eb;
+  --primary-foreground: #ffffff;
+  --primary-soft: #dbeafe;
+  --primary-soft-foreground: #1e40af;
+
+  --sidebar: #10243a;
+  --sidebar-foreground: #cbd5e1;
+  --sidebar-active: #1d3a5c;
+  --sidebar-active-foreground: #ffffff;
+  --sidebar-border: #1c3550;
+
+  --success: #16a34a;
+  --success-soft: #dcfce7;
+  --success-soft-foreground: #166534;
+  --warning: #d97706;
+  --warning-soft: #fef3c7;
+  --warning-soft-foreground: #92400e;
+  --danger: #dc2626;
+  --danger-soft: #fee2e2;
+  --danger-soft-foreground: #991b1b;
+
+  --radius: 0.5rem;
+  color-scheme: light;
+}
+
+.dark {
+  --background: #0b1626;
+  --surface: #111f33;
+  --surface-muted: #0f1c2e;
+  --foreground: #e6edf7;
+  --muted-foreground: #94a3b8;
+  --border: #1f3350;
+  --input: #2a4163;
+  --ring: #60a5fa;
+
+  --primary: #3b82f6;
+  --primary-foreground: #ffffff;
+  --primary-soft: #172b4a;
+  --primary-soft-foreground: #93c5fd;
+
+  --sidebar: #08111e;
+  --sidebar-foreground: #94a3b8;
+  --sidebar-active: #15263f;
+  --sidebar-active-foreground: #ffffff;
+  --sidebar-border: #13233a;
+
+  --success: #22c55e;
+  --success-soft: #0f2e1d;
+  --success-soft-foreground: #86efac;
+  --warning: #f59e0b;
+  --warning-soft: #33240b;
+  --warning-soft-foreground: #fcd34d;
+  --danger: #ef4444;
+  --danger-soft: #3a1414;
+  --danger-soft-foreground: #fca5a5;
+  color-scheme: dark;
 }
 
 @theme inline {
   --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-soft: var(--primary-soft);
+  --color-primary-soft-foreground: var(--primary-soft-foreground);
+  --color-navy: var(--sp-navy);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-active: var(--sidebar-active);
+  --color-sidebar-active-foreground: var(--sidebar-active-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-success-soft-foreground: var(--success-soft-foreground);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+  --color-warning-soft-foreground: var(--warning-soft-foreground);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-danger-soft-foreground: var(--danger-soft-foreground);
+
+  --radius-sm: calc(var(--radius) - 2px);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 2px);
+  --radius-xl: calc(var(--radius) + 6px);
+
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  * {
+    border-color: var(--border);
   }
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    font-feature-settings: "cv11", "ss01";
+    -webkit-font-smoothing: antialiased;
+  }
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
 }

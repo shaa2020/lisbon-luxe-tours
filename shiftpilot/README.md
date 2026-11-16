@@ -1,36 +1,80 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ShiftPilot
 
-## Getting Started
+Staffing agency management platform: clients, workers (employees **and** freelancers), shifts, attendance, timesheets,
+invoicing and compliance, with four portals on one backend.
 
-First, run the development server:
+| Portal | Route | Users |
+| --- | --- | --- |
+| Admin HQ | `/admin` | Agency staff (role-based permissions) |
+| Client portal | `/client` | Client managers (per-client, per-location capabilities) |
+| Worker portal | `/worker` | Agency employees and freelancers (mobile-first PWA) |
+| Recruitment | `/recruitment` | Public careers site + recruiter tools (Phase 2) |
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+> **Status:** Phase 1 (foundation) is complete and tested. See [DEVELOPMENT_STATUS.md](DEVELOPMENT_STATUS.md) for what is
+> built, what is pending and the exact next task. ShiftPilot is **not yet ready for commercial release**.
+
+## Repository layout
+
+This application lives in `shiftpilot/` and is fully independent of the other application in the repository root
+(a tour-booking site, which is not modified by ShiftPilot work). Deploy it with the project root set to `shiftpilot/`.
+
+```
+shiftpilot/
+├── src/
+│   ├── app/                 Next.js App Router (routes per portal)
+│   │   ├── (auth)/          login, password recovery
+│   │   ├── (portals)/       admin, client, worker, portal chooser, account
+│   │   ├── auth/            email-link confirmation, sign-out
+│   │   └── invite/[token]   invitation acceptance
+│   ├── components/          design system (ui/), layout shell, forms
+│   ├── lib/
+│   │   ├── auth/            session DAL, permissions, portal resolution
+│   │   ├── supabase/        server/browser/admin clients, proxy session refresh
+│   │   ├── security/        CSP, rate limiting, origin checks
+│   │   ├── integrations/    provider adapters (email)
+│   │   ├── validation/      Zod schemas
+│   │   └── database.types.ts  generated from the schema
+│   └── proxy.ts             session refresh, CSP nonce, route protection
+├── supabase/
+│   ├── migrations/          SQL migrations (schema, RLS, triggers, functions)
+│   └── test-support/        Supabase shim for running tests on plain PostgreSQL
+├── tests/
+│   ├── db/                  RLS, scheduling-concurrency and finance tests
+│   └── e2e/                 Playwright tests
+└── scripts/                 db reset, type generation, agency bootstrap
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Quick start (local development)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Prerequisites: Node.js 22, the [Supabase CLI](https://supabase.com/docs/guides/cli) and Docker.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+cd shiftpilot
+npm ci
+supabase start                       # local Postgres, Auth, Storage, Studio
+cp .env.example .env.local           # fill in the anon + service-role keys printed by `supabase start`
+supabase db reset                    # applies supabase/migrations
+node scripts/bootstrap-agency.mjs --name "Demo Agency" --slug demo \
+  --owner-email you@example.nl --owner-name "Your Name" --password 'choose-a-long-password'
+npm run dev                          # http://localhost:3000
+```
 
-## Learn More
+There is no sample data: the bootstrap script creates an empty agency with its default configuration (industries and
+document types) and your owner account. Invite colleagues from **Admin HQ → Team & access**.
 
-To learn more about Next.js, take a look at the following resources:
+## Scripts
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Command | Purpose |
+| --- | --- |
+| `npm run dev` / `build` / `start` | Next.js development, production build, production server |
+| `npm run lint` / `typecheck` | ESLint, TypeScript strict |
+| `npm test` | Unit tests (Vitest) |
+| `npm run test:db` | Recreate a test database, apply all migrations, run RLS/integrity tests |
+| `npm run test:e2e` | Playwright smoke tests (desktop + mobile) |
+| `npm run db:types` | Regenerate `src/lib/database.types.ts` from the migrated schema |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Documentation
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+[ARCHITECTURE](ARCHITECTURE.md) · [DATABASE](DATABASE.md) · [API](API.md) · [SECURITY](SECURITY.md) · [GDPR](GDPR.md) ·
+[COMPLIANCE](COMPLIANCE.md) · [DEPLOYMENT](DEPLOYMENT.md) · [TESTING](TESTING.md) · [ENVIRONMENT](ENVIRONMENT.md) ·
+[OPERATIONS](OPERATIONS.md) · [BACKUP_AND_RECOVERY](BACKUP_AND_RECOVERY.md) · [DEVELOPMENT_STATUS](DEVELOPMENT_STATUS.md)
